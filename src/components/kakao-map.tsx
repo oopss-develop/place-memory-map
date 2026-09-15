@@ -7,6 +7,13 @@ import type { Visit } from "@/types/domain";
 
 declare global { interface Window { kakao?: any; } }
 
+function markerImage(color: string, highlighted: boolean) {
+  const width = highlighted ? 46 : 34;
+  const height = highlighted ? 58 : 44;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 40 52"><path d="M20 2C10.6 2 3 9.6 3 19c0 12.8 17 30.8 17 30.8S37 31.8 37 19C37 9.6 29.4 2 20 2Z" fill="${color}" stroke="#fffdf6" stroke-width="2.5"/><circle cx="20" cy="19" r="6" fill="#fffdf6"/></svg>`;
+  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
 interface Props {
   visits: Visit[];
   selectedId?: string;
@@ -45,13 +52,24 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onManualPoi
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = visits.map((visit) => {
       const highlighted = highlightedIds.includes(visit.id);
-      const element = document.createElement("button");
-      element.type = "button";
-      element.className = `kakao-pin-overlay ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`;
-      element.setAttribute("aria-label", `${visit.place.name} 기록 보기`);
-      element.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" fill="currentColor" stroke="white" stroke-width="1.5"/><circle cx="12" cy="10" r="2.5" fill="white"/></svg>';
-      element.addEventListener("click", (event) => { event.stopPropagation(); onSelect(visit); });
-      return new window.kakao.maps.CustomOverlay({ map: mapRef.current, position: new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude), content: element, yAnchor: 1, zIndex: highlighted ? 3 : 1 });
+      const selected = selectedId === visit.id;
+      const markerWidth = highlighted ? 46 : 34;
+      const markerHeight = highlighted ? 58 : 44;
+      const imageSize = new window.kakao.maps.Size(markerWidth, markerHeight);
+      const image = new window.kakao.maps.MarkerImage(
+        markerImage(highlighted ? "#d84c32" : selected ? "#a93324" : "#4d89ad", highlighted),
+        imageSize,
+        { offset: new window.kakao.maps.Point(markerWidth / 2, markerHeight) },
+      );
+      const marker = new window.kakao.maps.Marker({
+        map: mapRef.current,
+        position: new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude),
+        image,
+        clickable: true,
+        zIndex: highlighted ? 3 : selected ? 2 : 1,
+      });
+      window.kakao.maps.event.addListener(marker, "click", () => onSelect(visit));
+      return marker;
     });
   }, [ready, visits, onSelect, selectedId, highlightedIds]);
 
