@@ -107,7 +107,6 @@ button, select { cursor: pointer; }
 .map-pin:hover, .map-pin.selected { color: var(--vermilion-dark); transform: translate(-50%, -100%) scale(1.16); }
 .map-pin span { position: absolute; top: 8px; left: 0; right: 0; color: var(--white); font-size: 10px; font-weight: 800; }
 .current-location-dot { position: absolute; left: 50%; top: 50%; width: 17px; height: 17px; border: 4px solid var(--white); border-radius: 50%; background: #2869a8; box-shadow: 0 0 0 2px rgba(40, 105, 168, .28); transform: translate(-50%, -50%); }
-.selection-thread { position: absolute; z-index: 1; top: 27%; left: -1%; width: 36%; height: 20%; border: 1px dashed rgba(216,76,50,.7); border-width: 0 0 1px 1px; pointer-events: none; transform: rotate(-9deg); transform-origin: left bottom; }
 .demo-map-note { position: absolute; right: 18px; bottom: 18px; padding: 6px 9px; color: #5d675f; background: rgba(244,239,223,.88); font-size: 11px; }
 .map-topbar { position: absolute; z-index: 5; top: 20px; left: 22px; right: 22px; display: flex; align-items: center; justify-content: space-between; pointer-events: none; }
 .map-topbar > * { pointer-events: auto; }
@@ -175,7 +174,6 @@ button, select { cursor: pointer; }
   .map-topbar { top: 14px; left: 12px; right: 12px; }
   .map-date { display: none; }
   .location-button { margin-left: auto; }
-  .selection-thread { display: none; }
   .place-sheet { right: 10px; bottom: 76px; width: calc(100% - 20px); max-height: 55dvh; overflow-y: auto; border-radius: 12px 12px 5px 5px; }
   .sheet-photo { height: 118px; }
   .add-pin-button { right: 14px; bottom: 82px; width: 48px; padding: 0; justify-content: center; border-radius: 50%; }
