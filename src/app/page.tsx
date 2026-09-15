@@ -9,5 +9,5 @@ export default async function Home() {
   const forcedDemo = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
   const member = await getAccessMemberFromCookies();
   if (!forcedDemo && !member) redirect("/login");
-  return <MapJournal initialData={await getDashboardData()} viewerName={member?.displayName} />;
+  return <MapJournal initialData={await getDashboardData()} viewerId={member?.id ?? "access-또"} viewerName={member?.displayName} />;
 }

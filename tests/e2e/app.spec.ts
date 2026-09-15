@@ -35,3 +35,17 @@ test("group owner can delete an additional map", async ({ page }) => {
   await page.getByRole("button", { name: "현재 지도 삭제" }).click();
   await expect(page.getByText("“삭제할 지도” 지도를 삭제했습니다.")).toBeVisible();
 });
+
+test("a member cannot delete a map created by someone else", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("place-memory-groups-v1", JSON.stringify([
+      { id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", name: "나린의 지도", role: "owner", memberCount: 4, ownerId: "access-나" },
+    ]));
+  });
+  await page.goto("/");
+  await expect(page.getByText("나린의 지도")).toBeVisible();
+  if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
+  await page.getByRole("button", { name: "그룹 메뉴" }).click();
+  await expect(page.getByRole("button", { name: "현재 지도 삭제" })).toHaveCount(0);
+  await expect(page.getByText("구성원 4명 · 멤버")).toBeVisible();
+});

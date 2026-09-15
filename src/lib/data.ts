@@ -38,6 +38,7 @@ export async function getDashboardData(userId?: string): Promise<DashboardData> 
     name: row.groups.name,
     role: row.role,
     memberCount: 0,
+    ownerId: row.groups.created_by,
   }));
 
   if (!groups.length) return { groups: [], members: [], visits: [], demoMode: false };

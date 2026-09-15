@@ -18,7 +18,7 @@ const formatDate = (date: string) => new Intl.DateTimeFormat("ko-KR", { month: "
 const VISITS_STORAGE_KEY = "place-memory-visits-v2";
 const GROUPS_STORAGE_KEY = "place-memory-groups-v1";
 
-export function MapJournal({ initialData, viewerName }: { initialData: DashboardData; viewerName?: string }) {
+export function MapJournal({ initialData, viewerId, viewerName }: { initialData: DashboardData; viewerId?: string; viewerName?: string }) {
   const router = useRouter();
   const [groups, setGroups] = useState(initialData.groups);
   const [activeGroupId, setActiveGroupId] = useState(initialData.groups[0]?.id ?? "");
@@ -86,6 +86,7 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
   const allTags = useMemo(() => ["전체", ...Array.from(new Set(visits.flatMap((visit) => visit.tags))).slice(0, 4)], [visits]);
   const selected = visits.find((visit) => visit.id === selectedId);
   const mapSummary = groupVisits.length ? `${groupVisits.length}곳의 기록` : "첫 장소를 남겨보세요";
+  const canManageActiveGroup = initialData.demoMode ? activeGroup?.ownerId === viewerId : activeGroup?.role === "owner";
 
   function openForPlace(place: Place) {
     setDraftPlace(place); setEditing(null); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
@@ -181,7 +182,7 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
     event.preventDefault();
     const name = newGroupName.trim();
     if (name.length < 2) return setNotice("지도 이름을 두 글자 이상 입력해 주세요.");
-    const group: Group = { id: crypto.randomUUID(), name, role: "owner", memberCount: 4 };
+    const group: Group = { id: crypto.randomUUID(), name, role: "owner", memberCount: 4, ownerId: viewerId };
     setGroups((current) => [...current, group]);
     setActiveGroupId(group.id);
     setSelectedId(undefined);
@@ -191,7 +192,8 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
   }
 
   async function createInvite() {
-    if (!activeGroup || initialData.demoMode) return setNotice("실제 계정을 연결하면 초대 링크를 만들 수 있어요.");
+    if (!activeGroup || !canManageActiveGroup) return setNotice("이 지도는 만든 사람만 관리할 수 있어요.");
+    if (initialData.demoMode) return setNotice("간편 코드 로그인에서는 초대 링크를 만들 수 없어요.");
     const response = await fetch("/api/groups/invite", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ groupId: activeGroup.id }) });
     const data = await response.json();
     if (!response.ok) return setNotice(data.error);
@@ -199,7 +201,7 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
   }
 
   async function deleteGroup() {
-    if (!activeGroup || activeGroup.role !== "owner") return setNotice("이 지도는 만든 사람만 삭제할 수 있어요.");
+    if (!activeGroup || !canManageActiveGroup) return setNotice("이 지도는 만든 사람만 삭제할 수 있어요.");
     if (groups.length <= 1) return setNotice("마지막 지도는 삭제할 수 없어요. 새 지도를 만든 뒤 다시 시도해 주세요.");
     const visitCount = visits.filter((visit) => visit.groupId === activeGroup.id).length;
     if (!window.confirm(`“${activeGroup.name}” 지도와 방문 기록 ${visitCount}개를 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) return;
@@ -261,7 +263,7 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
             </section>;
           })}
         </div>
-        <footer className="sidebar-footer"><span className="avatar">{(viewerName ?? initialData.members[0]?.displayName ?? "여행자").slice(0, 1)}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {activeGroup?.role === "owner" ? "그룹장" : "멤버"}</span>{activeGroup?.role === "owner" && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton />{activeGroup?.role === "owner" && <button className="group-menu-delete" type="button" disabled={groups.length <= 1} title={groups.length <= 1 ? "마지막 지도는 삭제할 수 없습니다." : undefined} onClick={deleteGroup}>현재 지도 삭제</button>}{activeGroup?.role === "owner" && groups.length <= 1 && <small className="group-menu-hint">마지막 지도는 삭제할 수 없어요.</small>}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
+        <footer className="sidebar-footer"><span className="avatar">{(viewerName ?? initialData.members[0]?.displayName ?? "여행자").slice(0, 1)}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {canManageActiveGroup ? "그룹장" : "멤버"}</span>{canManageActiveGroup && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton />{canManageActiveGroup && <button className="group-menu-delete" type="button" disabled={groups.length <= 1} title={groups.length <= 1 ? "마지막 지도는 삭제할 수 없습니다." : undefined} onClick={deleteGroup}>현재 지도 삭제</button>}{canManageActiveGroup && groups.length <= 1 && <small className="group-menu-hint">마지막 지도는 삭제할 수 없어요.</small>}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
       </aside>
 
       <section className="map-stage">

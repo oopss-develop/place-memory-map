@@ -3,10 +3,10 @@ import { cookies } from "next/headers";
 export const ACCESS_COOKIE = "place-memory-access";
 
 const accessMembers = {
-  또: { displayName: "이교혁", initials: "이" },
-  나: { displayName: "박나린", initials: "박" },
-  우: { displayName: "박우성", initials: "박" },
-  쥐: { displayName: "이은지", initials: "이" },
+  또: { id: "access-또", displayName: "이교혁", initials: "이" },
+  나: { id: "access-나", displayName: "박나린", initials: "박" },
+  우: { id: "access-우", displayName: "박우성", initials: "박" },
+  쥐: { id: "access-쥐", displayName: "이은지", initials: "이" },
 } as const;
 
 export type AccessCode = keyof typeof accessMembers;

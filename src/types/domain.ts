@@ -12,6 +12,7 @@ export interface Group {
   name: string;
   role: MemberRole;
   memberCount: number;
+  ownerId?: string;
 }
 
 export interface Place {
