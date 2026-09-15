@@ -14,3 +14,11 @@ test("manual pin opens the visit form", async ({ page }) => {
   await page.locator(".map-canvas").click({ position: { x: 220, y: 180 }, force: true });
   await expect(page.getByRole("heading", { name: "이 위치에 이름을 붙여주세요" })).toBeVisible();
 });
+
+test("empty journal guides a first visit from the record list", async ({ page }) => {
+  await page.goto("/");
+  const firstVisit = page.getByRole("button", { name: "지도에서 첫 장소 추가" });
+  if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
+  await firstVisit.click();
+  await expect(page.getByText("지도에서 방문한 위치를 한 번 눌러주세요.")).toBeVisible();
+});

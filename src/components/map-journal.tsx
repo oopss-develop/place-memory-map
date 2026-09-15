@@ -4,7 +4,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, Camera, ChevronDown, Filter, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, MoreHorizontal, Plus, Search, Star, Users, X } from "lucide-react";
+import { CalendarDays, Camera, ChevronDown, Filter, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Plus, Search, Star, Users, X } from "lucide-react";
 import { KakaoMap } from "@/components/kakao-map";
 import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
@@ -85,11 +85,27 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
   const highlightedIds = useMemo(() => dateGroups.find((group) => group.date === selectedDateKey)?.visits.map((visit) => visit.id) ?? [], [dateGroups, selectedDateKey]);
   const allTags = useMemo(() => ["전체", ...Array.from(new Set(visits.flatMap((visit) => visit.tags))).slice(0, 4)], [visits]);
   const selected = visits.find((visit) => visit.id === selectedId);
+  const mapSummary = groupVisits.length ? `${groupVisits.length}곳의 기록` : "첫 장소를 남겨보세요";
 
   function openForPlace(place: Place) {
     setDraftPlace(place); setEditing(null); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
   }
   function openEdit(visit: Visit) { setDraftPlace(visit.place); setEditing(visit); dialogRef.current?.showModal(); }
+
+  function chooseGroup(groupId: string) {
+    setActiveGroupId(groupId);
+    setTag("전체");
+    setSelectedId(undefined);
+    setSelectedDateKey(undefined);
+    setGroupPickerOpen(false);
+  }
+
+  function startManualPin() {
+    setManualMode(true);
+    setSelectedId(undefined);
+    setMobileList(false);
+    setNotice("지도에서 방문한 위치를 한 번 눌러주세요.");
+  }
 
   async function searchPlaces(event: React.FormEvent) {
     event.preventDefault();
@@ -204,13 +220,12 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
     <main className="journal-app">
       <aside className={`journal-sidebar ${mobileList ? "mobile-open" : ""}`}>
         <header className="sidebar-header"><div className="wordmark"><span className="wordmark-pin"><MapPin size={17} fill="currentColor" /></span><span>PLACE<br />MEMORY MAP</span></div><button className="icon-button mobile-close" onClick={() => setMobileList(false)} aria-label="목록 닫기"><X size={20} /></button></header>
-        <div className="group-row"><label id="group-label">함께 보는 지도</label><div className="group-picker"><button className="group-picker-trigger" type="button" aria-labelledby="group-label" aria-haspopup="listbox" aria-expanded={groupPickerOpen} onClick={() => setGroupPickerOpen((value) => !value)}><span>{activeGroup?.name ?? "지도 선택"}</span><ChevronDown size={17} /></button>{groupPickerOpen && <div className="group-picker-menu" role="listbox" aria-label="함께 보는 지도 선택">{groups.filter((group) => group.id !== activeGroupId).map((group) => <button key={group.id} className="group-picker-option" type="button" role="option" aria-selected={false} onClick={() => { setActiveGroupId(group.id); setSelectedId(undefined); setSelectedDateKey(undefined); setGroupPickerOpen(false); }}>{group.name}<span>{group.memberCount}명</span></button>)}<button className="group-picker-add" type="button" onClick={openCreateGroup}><Plus size={15} />함께 보는 지도 추가</button></div>}</div><span>{activeGroup?.memberCount ?? 0}명</span></div>
-        <form className="place-search" onSubmit={searchPlaces}><Search size={19} aria-hidden="true" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="장소 이름으로 찾기" aria-label="장소 검색" /><button type="submit" disabled={searching}>{searching ? "…" : "찾기"}</button></form>
-        {(searchResults.length > 0 || searchMessage) && <div className="search-popover">{searchResults.map((result) => <button key={result.id} onClick={() => openForPlace({ id: crypto.randomUUID(), provider: "kakao", providerPlaceId: result.id, name: result.placeName, address: result.roadAddressName || result.addressName, category: result.categoryName, latitude: result.latitude, longitude: result.longitude })}><strong>{result.placeName}</strong><span>{result.roadAddressName || result.addressName}</span></button>)}{searchMessage && <p>{searchMessage}</p>}</div>}
+        <div className="group-row"><label id="group-label">함께 보는 지도</label><div className="group-picker"><button className="group-picker-trigger" type="button" aria-labelledby="group-label" aria-haspopup="listbox" aria-expanded={groupPickerOpen} onClick={() => setGroupPickerOpen((value) => !value)}><span>{activeGroup?.name ?? "지도 선택"}</span><ChevronDown size={17} /></button>{groupPickerOpen && <div className="group-picker-menu" role="listbox" aria-label="함께 보는 지도 선택">{groups.filter((group) => group.id !== activeGroupId).map((group) => <button key={group.id} className="group-picker-option" type="button" role="option" aria-selected={false} onClick={() => chooseGroup(group.id)}>{group.name}<span>{group.memberCount}명</span></button>)}<button className="group-picker-add" type="button" onClick={openCreateGroup}><Plus size={15} />함께 보는 지도 추가</button></div>}</div><span>{activeGroup?.memberCount ?? 0}명</span></div>
+        <div className="search-area"><form className="place-search" onSubmit={searchPlaces}><Search size={19} aria-hidden="true" /><input value={query} onChange={(event) => { setQuery(event.target.value); setSearchResults([]); setSearchMessage(""); }} placeholder="장소 이름으로 찾기" aria-label="장소 검색" autoComplete="off" /><button type="submit" disabled={searching}>{searching ? "찾는 중" : "찾기"}</button></form>{(searchResults.length > 0 || searchMessage) && <div className="search-popover" aria-live="polite">{searchResults.map((result) => <button key={result.id} type="button" onClick={() => openForPlace({ id: crypto.randomUUID(), provider: "kakao", providerPlaceId: result.id, name: result.placeName, address: result.roadAddressName || result.addressName, category: result.categoryName, latitude: result.latitude, longitude: result.longitude })}><strong>{result.placeName}</strong><span>{result.roadAddressName || result.addressName}</span></button>)}{searchMessage && <p>{searchMessage}</p>}</div>}</div>
         <div className="filter-row" aria-label="기록 필터"><Filter size={15} />{allTags.map((item) => <button key={item} className={tag === item ? "active" : ""} onClick={() => setTag(item)}>{item}</button>)}</div>
-        <div className="record-heading"><div><h1>우리의 발자국</h1><p>{groupVisits.length}개의 방문 기록</p></div><button className="icon-button" aria-label="더보기"><MoreHorizontal size={20} /></button></div>
+        <div className="record-heading"><div><h1>우리의 발자국</h1><p>{groupVisits.length}개의 방문 기록</p></div></div>
         <div className="record-list">
-          {!groupVisits.length && <div className="empty-records"><MapPin size={24} /><strong>아직 남긴 발자국이 없어요.</strong><span>장소를 찾거나 지도에 핀을 찍어보세요.</span></div>}
+          {!groupVisits.length && <div className="empty-records"><MapPin size={24} /><strong>아직 남긴 발자국이 없어요.</strong><span>장소를 검색하거나, 지도에서 위치를 직접 고를 수 있어요.</span><button type="button" onClick={startManualPin}><Plus size={16} />지도에서 첫 장소 추가</button></div>}
           {dateGroups.map(({ date, visits: dateVisits }) => {
             const active = selectedDateKey === date;
             return <section key={date} className={`date-group ${active ? "active" : ""}`}>
@@ -224,11 +239,11 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
 
       <section className="map-stage">
         <KakaoMap visits={groupVisits} selectedId={selectedId} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={(visit) => setSelectedId(visit.id)} onManualPoint={manualPoint} focusLocation={currentLocation} />
-        <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => setMobileList(true)} aria-label="기록 목록 열기"><List size={20} /></button><div className="map-date"><CalendarDays size={16} /><span>2026년의 기록</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
-        <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => setManualMode((value) => !value)}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
+        <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => setMobileList(true)} aria-label="기록 목록 열기"><List size={20} /></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
+        <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
         {selected && <article className="place-sheet"><button className="sheet-close" onClick={() => setSelectedId(undefined)} aria-label="상세 닫기"><X size={18} /></button>{selected.photoUrls[0] && <div className="sheet-photo"><img src={selected.photoUrls[0]} alt={`${selected.place.name} 방문 사진`} /><span>방문 사진</span></div>}<div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button onClick={() => openEdit(selected)}>기록 고치기</button><button className="danger-button" onClick={() => deleteVisit(selected)}>기록 삭제</button></div></div></div></article>}
         {notice && <button className="notice" onClick={() => setNotice("")} aria-live="polite">{notice}<X size={14} /></button>}
-        <nav className="mobile-nav" aria-label="모바일 주요 메뉴"><button className="active"><MapIcon size={20} />지도</button><button onClick={() => setMobileList(true)}><List size={20} />기록</button><button onClick={() => setManualMode(true)}><Plus size={22} />추가</button><button><Users size={20} />그룹</button></nav>
+        <nav className="mobile-nav" aria-label="모바일 주요 메뉴"><button className="active" type="button"><MapIcon size={20} />지도</button><button type="button" onClick={() => setMobileList(true)}><List size={20} />기록</button><button type="button" onClick={startManualPin}><Plus size={22} />추가</button><button type="button" onClick={() => { setMobileList(true); setGroupPickerOpen(true); }}><Users size={20} />그룹</button></nav>
       </section>
 
       <dialog ref={dialogRef} className="visit-dialog" onClose={() => { setDraftPlace(null); setEditing(null); }}>
