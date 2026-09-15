@@ -82,13 +82,11 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onManualPoi
     const selectedVisit = visits.find((visit) => visit.id === selectedId);
     if (selectedVisit) {
       mapRef.current.setCenter(new window.kakao.maps.LatLng(selectedVisit.place.latitude, selectedVisit.place.longitude));
-      mapRef.current.setLevel(5);
       return;
     }
     if (visibleVisits.length === 1) {
       const visit = visibleVisits[0];
       mapRef.current.setCenter(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude));
-      mapRef.current.setLevel(5);
       return;
     }
     const bounds = new window.kakao.maps.LatLngBounds();
