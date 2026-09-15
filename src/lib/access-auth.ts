@@ -2,11 +2,11 @@ import { cookies } from "next/headers";
 
 export const ACCESS_COOKIE = "place-memory-access";
 
-const accessMembers = {
-  또: { id: "access-또", displayName: "이교혁", initials: "이" },
-  나: { id: "access-나", displayName: "박나린", initials: "박" },
-  우: { id: "access-우", displayName: "박우성", initials: "박" },
-  쥐: { id: "access-쥐", displayName: "이은지", initials: "이" },
+export const accessMembers = {
+  또: { id: "access-또", email: "place-memory-map-ggyo@users.invalid", displayName: "이교혁", initials: "이" },
+  나: { id: "access-나", email: "place-memory-map-narin@users.invalid", displayName: "박나린", initials: "박" },
+  우: { id: "access-우", email: "place-memory-map-woosung@users.invalid", displayName: "박우성", initials: "박" },
+  쥐: { id: "access-쥐", email: "place-memory-map-eunji@users.invalid", displayName: "이은지", initials: "이" },
 } as const;
 
 export type AccessCode = keyof typeof accessMembers;

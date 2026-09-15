@@ -1,7 +1,7 @@
 import "server-only";
 import { demoGroups, demoMembers, demoVisits } from "@/lib/demo-data";
-import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isServerPersistenceConfigured } from "@/lib/supabase/config";
+import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import type { Group, Profile, Visit } from "@/types/domain";
 
 export interface DashboardData {
@@ -21,11 +21,11 @@ interface VisitRow {
 }
 
 export async function getDashboardData(userId?: string): Promise<DashboardData> {
-  if (!isSupabaseConfigured() || !userId) {
+  if (!isServerPersistenceConfigured() || !userId) {
     return { groups: demoGroups, members: demoMembers, visits: demoVisits, demoMode: true };
   }
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   const { data: memberships, error: membershipError } = await supabase
     .from("group_members")
     .select("role, groups(id,name,created_by), profiles(id,display_name)")
@@ -59,11 +59,15 @@ export async function getDashboardData(userId?: string): Promise<DashboardData> 
   if (visitError) throw visitError;
 
   const typedMemberRows = (memberRows ?? []) as unknown as MemberRow[];
-  const members: Profile[] = typedMemberRows.map((row) => ({
-    id: row.profiles.id,
-    displayName: row.profiles.display_name,
-    initials: row.profiles.display_name.slice(0, 1),
-  }));
+  const membersById = new Map<string, Profile>();
+  typedMemberRows.forEach((row) => {
+    membersById.set(row.profiles.id, {
+      id: row.profiles.id,
+      displayName: row.profiles.display_name,
+      initials: row.profiles.display_name.slice(0, 1),
+    });
+  });
+  const members = Array.from(membersById.values());
 
   const visits: Visit[] = await Promise.all(
     ((visitRows ?? []) as unknown as VisitRow[]).map(async (row) => {

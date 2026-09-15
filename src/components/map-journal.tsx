@@ -10,7 +10,6 @@ import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
 import { prepareVisitImage } from "@/lib/images";
 import { visitSchema } from "@/lib/schemas";
-import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import type { DashboardData } from "@/lib/data";
 import type { Group, KakaoPlaceResult, Place, Visit } from "@/types/domain";
 
@@ -23,7 +22,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [groups, setGroups] = useState(initialData.groups);
   const [activeGroupId, setActiveGroupId] = useState(initialData.groups[0]?.id ?? "");
   const [visits, setVisits] = useState(initialData.visits);
-  const [storageReady, setStorageReady] = useState(false);
+  const [storageReady, setStorageReady] = useState(() => !initialData.demoMode);
   const [selectedId, setSelectedId] = useState<string | undefined>(initialData.visits[0]?.id);
   const [query, setQuery] = useState("");
   const [searchResults, setSearchResults] = useState<KakaoPlaceResult[]>([]);
@@ -34,7 +33,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [mobileList, setMobileList] = useState(false);
   const [draftPlace, setDraftPlace] = useState<Place | null>(null);
   const [editing, setEditing] = useState<Visit | null>(null);
-  const [notice, setNotice] = useState(initialData.demoMode ? "간편 코드 로그인 모드입니다. 이 브라우저에서 기록을 정리할 수 있어요." : "");
+  const [notice, setNotice] = useState(initialData.demoMode ? "서버 저장소를 연결하면 모든 기기에서 같은 기록을 볼 수 있어요." : "");
   const [groupMenu, setGroupMenu] = useState(false);
   const [groupPickerOpen, setGroupPickerOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
@@ -45,6 +44,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const groupDialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
+    if (!initialData.demoMode) return;
     const timer = window.setTimeout(() => {
       try {
         const saved = window.localStorage.getItem(VISITS_STORAGE_KEY);
@@ -67,13 +67,13 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       }
     }, 0);
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [initialData.demoMode]);
 
   useEffect(() => {
-    if (!storageReady) return;
+    if (!initialData.demoMode || !storageReady) return;
     window.localStorage.setItem(VISITS_STORAGE_KEY, JSON.stringify(visits));
     window.localStorage.setItem(GROUPS_STORAGE_KEY, JSON.stringify(groups));
-  }, [groups, storageReady, visits]);
+  }, [groups, initialData.demoMode, storageReady, visits]);
 
   const activeGroup = groups.find((group) => group.id === activeGroupId) ?? groups[0];
   const groupVisits = useMemo(() => visits.filter((visit) => visit.groupId === activeGroupId && (tag === "전체" || visit.tags.includes(tag))), [activeGroupId, tag, visits]);
@@ -147,14 +147,13 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
         if (!response.ok) throw new Error(data.error);
         id = data.id; version = data.version;
         if (files.length) {
-          const supabase = createSupabaseBrowserClient();
           const prepared = await Promise.all(files.map(prepareVisitImage));
-          for (const [index, file] of prepared.entries()) {
-            const path = `${activeGroup.id}/${id}/${file.name}`;
-            const { error } = await supabase.storage.from("visit-photos").upload(path, file, { contentType: "image/webp" });
-            if (error) throw error;
-            await supabase.from("visit_photos").insert({ visit_id: id, storage_path: path, sort_order: index });
-          }
+          const photoData = new FormData();
+          prepared.forEach((file) => photoData.append("photos", file, file.name));
+          const photoResponse = await fetch(`/api/visits/${id}/photos`, { method: "POST", body: photoData });
+          const photoResult = await photoResponse.json();
+          if (!photoResponse.ok) throw new Error(photoResult.error);
+          photoUrls = [...photoUrls, ...(photoResult.photoUrls ?? [])];
         }
       } else if (files.length) photoUrls = files.map((file) => URL.createObjectURL(file));
 
@@ -164,8 +163,17 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     } catch (error) { setNotice(error instanceof Error ? error.message : "기록을 저장하지 못했습니다."); }
   }
 
-  function deleteVisit(visit: Visit) {
+  async function deleteVisit(visit: Visit) {
     if (!window.confirm(`“${visit.place.name}” 방문 기록을 삭제할까요?`)) return;
+    if (!initialData.demoMode) {
+      try {
+        const response = await fetch("/api/visits", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: visit.id, version: visit.version }) });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
+      } catch (error) {
+        return setNotice(error instanceof Error ? error.message : "방문 기록을 삭제하지 못했습니다.");
+      }
+    }
     setVisits((current) => current.filter((item) => item.id !== visit.id));
     setSelectedId(undefined);
     setSelectedDateKey(undefined);
@@ -178,11 +186,21 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     groupDialogRef.current?.showModal();
   }
 
-  function createGroup(event: React.FormEvent<HTMLFormElement>) {
+  async function createGroup(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const name = newGroupName.trim();
     if (name.length < 2) return setNotice("지도 이름을 두 글자 이상 입력해 주세요.");
-    const group: Group = { id: crypto.randomUUID(), name, role: "owner", memberCount: 4, ownerId: viewerId };
+    let group: Group = { id: crypto.randomUUID(), name, role: "owner", memberCount: 4, ownerId: viewerId };
+    if (!initialData.demoMode) {
+      try {
+        const response = await fetch("/api/groups", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
+        group = data.group as Group;
+      } catch (error) {
+        return setNotice(error instanceof Error ? error.message : "지도를 만들지 못했습니다.");
+      }
+    }
     setGroups((current) => [...current, group]);
     setActiveGroupId(group.id);
     setSelectedId(undefined);
@@ -193,7 +211,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
   async function createInvite() {
     if (!activeGroup || !canManageActiveGroup) return setNotice("이 지도는 만든 사람만 관리할 수 있어요.");
-    if (initialData.demoMode) return setNotice("간편 코드 로그인에서는 초대 링크를 만들 수 없어요.");
+    if (initialData.demoMode) return setNotice("서버 저장소를 연결하면 초대 링크를 만들 수 있어요.");
     const response = await fetch("/api/groups/invite", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ groupId: activeGroup.id }) });
     const data = await response.json();
     if (!response.ok) return setNotice(data.error);

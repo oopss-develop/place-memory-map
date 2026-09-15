@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getAccessWorkspaceUser } from "@/lib/access-workspace";
 
 const groupIdSchema = z.string().uuid();
 
@@ -8,13 +8,13 @@ export async function DELETE(_: Request, context: { params: Promise<{ groupId: s
   const { groupId } = await context.params;
   if (!groupIdSchema.safeParse(groupId).success) return NextResponse.json({ error: "그룹 정보가 올바르지 않습니다." }, { status: 400 });
 
-  const supabase = await createSupabaseServerClient();
-  const { data: auth } = await supabase.auth.getUser();
-  if (!auth.user) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  const workspace = await getAccessWorkspaceUser();
+  if (!workspace) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
+  const { supabase, userId } = workspace;
 
   const [{ data: membership, error: membershipError }, { data: memberships, error: membershipsError }] = await Promise.all([
-    supabase.from("group_members").select("role").eq("group_id", groupId).eq("user_id", auth.user.id).maybeSingle(),
-    supabase.from("group_members").select("group_id").eq("user_id", auth.user.id),
+    supabase.from("group_members").select("role").eq("group_id", groupId).eq("user_id", userId).maybeSingle(),
+    supabase.from("group_members").select("group_id").eq("user_id", userId),
   ]);
   if (membershipError || membershipsError) return NextResponse.json({ error: "그룹 권한을 확인하지 못했습니다." }, { status: 500 });
   if (membership?.role !== "owner") return NextResponse.json({ error: "이 지도는 만든 사람만 삭제할 수 있어요." }, { status: 403 });

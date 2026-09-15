@@ -1,14 +1,18 @@
 import { NextResponse } from "next/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { visitSchema } from "@/lib/schemas";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { getAccessWorkspaceUser } from "@/lib/access-workspace";
 
 async function authClient() {
-  if (!isSupabaseConfigured()) return null;
-  const supabase = await createSupabaseServerClient();
-  const { data } = await supabase.auth.getUser();
-  if (!data.user) return null;
-  return { supabase, user: data.user };
+  const workspace = await getAccessWorkspaceUser();
+  if (!workspace) return null;
+  return { supabase: workspace.supabase, user: { id: workspace.userId } };
+}
+
+async function isGroupMember(supabase: SupabaseClient, groupId: string, userId: string) {
+  const { data, error } = await supabase.from("group_members").select("group_id").eq("group_id", groupId).eq("user_id", userId).maybeSingle();
+  if (error) throw error;
+  return Boolean(data);
 }
 
 export async function POST(request: Request) {
@@ -18,6 +22,7 @@ export async function POST(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
 
   const input = parsed.data;
+  if (!await isGroupMember(auth.supabase, input.groupId, auth.user.id)) return NextResponse.json({ error: "이 지도에 기록할 권한이 없습니다." }, { status: 403 });
   let placeId: string | undefined;
   if (input.place.provider === "kakao" && input.place.providerPlaceId) {
     const { data } = await auth.supabase
@@ -85,6 +90,9 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: parsed.success ? "기록 ID가 필요합니다." : parsed.error.issues[0]?.message }, { status: 400 });
   }
   const input = parsed.data;
+  const { data: currentVisit, error: currentVisitError } = await auth.supabase.from("visits").select("group_id").eq("id", input.id).maybeSingle();
+  if (currentVisitError || !currentVisit) return NextResponse.json({ error: "방문 기록을 찾지 못했습니다." }, { status: 404 });
+  if (!await isGroupMember(auth.supabase, currentVisit.group_id, auth.user.id)) return NextResponse.json({ error: "이 기록을 수정할 권한이 없습니다." }, { status: 403 });
   const { data, error } = await auth.supabase
     .from("visits")
     .update({
@@ -120,6 +128,9 @@ export async function DELETE(request: Request) {
   if (typeof body.id !== "string" || typeof body.version !== "number") {
     return NextResponse.json({ error: "삭제할 기록 정보가 올바르지 않습니다." }, { status: 400 });
   }
+  const { data: currentVisit, error: currentVisitError } = await auth.supabase.from("visits").select("group_id").eq("id", body.id).maybeSingle();
+  if (currentVisitError || !currentVisit) return NextResponse.json({ error: "방문 기록을 찾지 못했습니다." }, { status: 404 });
+  if (!await isGroupMember(auth.supabase, currentVisit.group_id, auth.user.id)) return NextResponse.json({ error: "이 기록을 삭제할 권한이 없습니다." }, { status: 403 });
   const { data, error } = await auth.supabase
     .from("visits")
     .update({ deleted_at: new Date().toISOString(), updated_by: auth.user.id, version: body.version + 1 })
