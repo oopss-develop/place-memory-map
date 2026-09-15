@@ -115,6 +115,10 @@ button, select { cursor: pointer; }
 .group-menu button { margin-top: 5px; padding: 8px 10px; border: 0; border-radius: 6px; color: var(--white); background: var(--ink); font-size: 12px; font-weight: 800; }
 .group-menu .group-menu-logout { display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: var(--vermilion-dark); border: 1px solid rgba(169,51,36,.38); background: transparent; }
 .group-menu .group-menu-install { display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: var(--olive); border: 1px solid rgba(105,120,77,.48); background: var(--white); }
+.group-menu .group-menu-delete { color: var(--vermilion-dark); border: 1px solid rgba(169,51,36,.38); background: var(--white); }
+.group-menu .group-menu-delete:hover:not(:disabled) { color: var(--white); background: var(--vermilion-dark); }
+.group-menu .group-menu-delete:disabled { color: #9e9a8d; border-color: #c9c2b1; background: #f3efe3; cursor: not-allowed; }
+.group-menu-hint { margin: 1px 0 0; color: var(--ink-muted); font-size: 11px; line-height: 1.45; }
 .ios-install-help { margin: 2px 0 0; color: var(--ink-muted); font-size: 11px; line-height: 1.45; }
 .group-menu input { width: 100%; padding: 6px; border: 1px solid var(--line); color: var(--ink-muted); background: var(--paper); font-size: 10px; }
 

@@ -198,6 +198,33 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
     setInviteLink(data.url); await navigator.clipboard.writeText(data.url); setNotice("7일 동안 유효한 초대 링크를 복사했습니다.");
   }
 
+  async function deleteGroup() {
+    if (!activeGroup || activeGroup.role !== "owner") return setNotice("이 지도는 만든 사람만 삭제할 수 있어요.");
+    if (groups.length <= 1) return setNotice("마지막 지도는 삭제할 수 없어요. 새 지도를 만든 뒤 다시 시도해 주세요.");
+    const visitCount = visits.filter((visit) => visit.groupId === activeGroup.id).length;
+    if (!window.confirm(`“${activeGroup.name}” 지도와 방문 기록 ${visitCount}개를 삭제할까요? 이 작업은 되돌릴 수 없습니다.`)) return;
+
+    try {
+      if (!initialData.demoMode) {
+        const response = await fetch(`/api/groups/${activeGroup.id}`, { method: "DELETE" });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
+      }
+      const nextGroups = groups.filter((group) => group.id !== activeGroup.id);
+      const nextGroup = nextGroups[0];
+      setGroups(nextGroups);
+      setVisits((current) => current.filter((visit) => visit.groupId !== activeGroup.id));
+      setActiveGroupId(nextGroup.id);
+      setTag("전체");
+      setSelectedId(undefined);
+      setSelectedDateKey(undefined);
+      setGroupMenu(false);
+      setNotice(`“${activeGroup.name}” 지도를 삭제했습니다.`);
+    } catch (error) {
+      setNotice(error instanceof Error ? error.message : "지도를 삭제하지 못했습니다.");
+    }
+  }
+
   async function logout() {
     await fetch("/api/access/logout", { method: "POST" });
     router.replace("/login");
@@ -234,7 +261,7 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
             </section>;
           })}
         </div>
-        <footer className="sidebar-footer"><span className="avatar">{(viewerName ?? initialData.members[0]?.displayName ?? "여행자").slice(0, 1)}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {activeGroup?.role === "owner" ? "그룹장" : "멤버"}</span>{activeGroup?.role === "owner" && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton /><button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
+        <footer className="sidebar-footer"><span className="avatar">{(viewerName ?? initialData.members[0]?.displayName ?? "여행자").slice(0, 1)}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {activeGroup?.role === "owner" ? "그룹장" : "멤버"}</span>{activeGroup?.role === "owner" && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton />{activeGroup?.role === "owner" && <button className="group-menu-delete" type="button" disabled={groups.length <= 1} title={groups.length <= 1 ? "마지막 지도는 삭제할 수 없습니다." : undefined} onClick={deleteGroup}>현재 지도 삭제</button>}{activeGroup?.role === "owner" && groups.length <= 1 && <small className="group-menu-hint">마지막 지도는 삭제할 수 없어요.</small>}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
       </aside>
 
       <section className="map-stage">
