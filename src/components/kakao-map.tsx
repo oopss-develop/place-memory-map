@@ -14,9 +14,10 @@ interface Props {
   onSelect: (visit: Visit) => void;
   onManualPoint: (latitude: number, longitude: number) => void;
   focusLocation?: { latitude: number; longitude: number };
+  highlightedIds?: string[];
 }
 
-export function KakaoMap({ visits, selectedId, manualMode, onSelect, onManualPoint, focusLocation }: Props) {
+export function KakaoMap({ visits, selectedId, manualMode, onSelect, onManualPoint, focusLocation, highlightedIds = [] }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -43,11 +44,16 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onManualPoi
     if (!ready || !mapRef.current || !window.kakao) return;
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = visits.map((visit) => {
-      const marker = new window.kakao.maps.Marker({ map: mapRef.current, position: new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude), title: visit.place.name });
-      window.kakao.maps.event.addListener(marker, "click", () => onSelect(visit));
-      return marker;
+      const highlighted = highlightedIds.includes(visit.id);
+      const element = document.createElement("button");
+      element.type = "button";
+      element.className = `kakao-pin-overlay ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`;
+      element.setAttribute("aria-label", `${visit.place.name} 기록 보기`);
+      element.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" fill="currentColor" stroke="white" stroke-width="1.5"/><circle cx="12" cy="10" r="2.5" fill="white"/></svg>';
+      element.addEventListener("click", (event) => { event.stopPropagation(); onSelect(visit); });
+      return new window.kakao.maps.CustomOverlay({ map: mapRef.current, position: new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude), content: element, yAnchor: 1, zIndex: highlighted ? 3 : 1 });
     });
-  }, [ready, visits, onSelect]);
+  }, [ready, visits, onSelect, selectedId, highlightedIds]);
 
   useEffect(() => {
     if (!ready || !mapRef.current || !window.kakao || !manualMode) return;
@@ -79,7 +85,8 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onManualPoi
           {visits.map((visit, index) => {
             const left = 13 + ((visit.place.longitude - 126.91) / 0.18) * 74;
             const top = 10 + ((37.61 - visit.place.latitude) / 0.11) * 74;
-            return <button key={visit.id} className={`map-pin ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${Math.max(8, Math.min(88, left))}%`, top: `${Math.max(8, Math.min(84, top))}%` }} onClick={(event) => { event.stopPropagation(); onSelect(visit); }} aria-label={`${visit.place.name} 기록 보기`}><MapPin size={selectedId === visit.id ? 34 : 28} fill="currentColor" strokeWidth={1.6} /><span>{index + 1}</span></button>;
+            const highlighted = highlightedIds.includes(visit.id);
+            return <button key={visit.id} className={`map-pin ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${Math.max(8, Math.min(88, left))}%`, top: `${Math.max(8, Math.min(84, top))}%` }} onClick={(event) => { event.stopPropagation(); onSelect(visit); }} aria-label={`${visit.place.name} 기록 보기`}><MapPin size={highlighted ? 36 : 28} fill="currentColor" strokeWidth={1.6} /><span>{index + 1}</span></button>;
           })}
           {focusLocation && <span className="current-location-dot" aria-label="현재 위치" />}
           <div className="demo-map-note">Kakao Map 키 연결 전 데모 지도</div>

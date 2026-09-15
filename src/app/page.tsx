@@ -8,7 +8,8 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   let userId: string | undefined;
-  if (isSupabaseConfigured()) {
+  const forcedDemo = process.env.NEXT_PUBLIC_DEMO_MODE === "true";
+  if (isSupabaseConfigured() && !forcedDemo) {
     const supabase = await createSupabaseServerClient();
     const { data } = await supabase.auth.getUser();
     if (!data.user) redirect("/login");
