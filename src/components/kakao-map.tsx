@@ -56,6 +56,29 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onManualPoi
   }, [ready, visits, onSelect, selectedId, highlightedIds]);
 
   useEffect(() => {
+    if (!ready || !mapRef.current || !window.kakao || !visits.length) return;
+    const visibleVisits = highlightedIds.length
+      ? visits.filter((visit) => highlightedIds.includes(visit.id))
+      : visits;
+    if (!visibleVisits.length) return;
+    const selectedVisit = visits.find((visit) => visit.id === selectedId);
+    if (selectedVisit) {
+      mapRef.current.setCenter(new window.kakao.maps.LatLng(selectedVisit.place.latitude, selectedVisit.place.longitude));
+      mapRef.current.setLevel(5);
+      return;
+    }
+    if (visibleVisits.length === 1) {
+      const visit = visibleVisits[0];
+      mapRef.current.setCenter(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude));
+      mapRef.current.setLevel(5);
+      return;
+    }
+    const bounds = new window.kakao.maps.LatLngBounds();
+    visibleVisits.forEach((visit) => bounds.extend(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude)));
+    mapRef.current.setBounds(bounds, 72, 72, 72, 72);
+  }, [ready, visits, selectedId, highlightedIds]);
+
+  useEffect(() => {
     if (!ready || !mapRef.current || !window.kakao || !manualMode) return;
     const handler = (event: any) => onManualPoint(event.latLng.getLat(), event.latLng.getLng());
     window.kakao.maps.event.addListener(mapRef.current, "click", handler);
