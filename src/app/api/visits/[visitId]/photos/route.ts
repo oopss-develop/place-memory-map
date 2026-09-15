@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getAccessWorkspaceUser } from "@/lib/access-workspace";
+import { MAX_VISIT_IMAGE_BYTES } from "@/lib/images";
 
 const visitIdSchema = z.string().uuid();
 
@@ -18,7 +19,7 @@ export async function POST(request: Request, context: { params: Promise<{ visitI
   const formData = await request.formData();
   const files = formData.getAll("photos").filter((item): item is File => item instanceof File).slice(0, 5);
   if (!files.length) return NextResponse.json({ error: "사진을 선택해 주세요." }, { status: 400 });
-  if (files.some((file) => file.type !== "image/webp" || file.size > 1_572_864)) return NextResponse.json({ error: "WebP 형식의 1.5MB 이하 사진만 추가할 수 있어요." }, { status: 400 });
+  if (files.some((file) => file.type !== "image/webp" || file.size > MAX_VISIT_IMAGE_BYTES)) return NextResponse.json({ error: "사진은 자동 압축된 WebP 350KB 이하만 저장할 수 있어요." }, { status: 400 });
 
   const { data: existingPhotos, error: existingError } = await workspace.supabase.from("visit_photos").select("sort_order").eq("visit_id", visitId).order("sort_order", { ascending: false });
   if (existingError) return NextResponse.json({ error: "기존 사진을 확인하지 못했습니다." }, { status: 500 });

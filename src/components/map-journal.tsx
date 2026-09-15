@@ -141,21 +141,21 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
     let id = editing?.id ?? crypto.randomUUID(); let version = editing?.version ?? 1; let photoUrls = editing?.photoUrls ?? [];
     try {
+      const preparedFiles = files.length ? await Promise.all(files.map(prepareVisitImage)) : [];
       if (!initialData.demoMode) {
         const response = await fetch("/api/visits", { method: editing ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(parsed.data) });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error);
         id = data.id; version = data.version;
-        if (files.length) {
-          const prepared = await Promise.all(files.map(prepareVisitImage));
+        if (preparedFiles.length) {
           const photoData = new FormData();
-          prepared.forEach((file) => photoData.append("photos", file, file.name));
+          preparedFiles.forEach((file) => photoData.append("photos", file, file.name));
           const photoResponse = await fetch(`/api/visits/${id}/photos`, { method: "POST", body: photoData });
           const photoResult = await photoResponse.json();
           if (!photoResponse.ok) throw new Error(photoResult.error);
           photoUrls = [...photoUrls, ...(photoResult.photoUrls ?? [])];
         }
-      } else if (files.length) photoUrls = files.map((file) => URL.createObjectURL(file));
+      } else if (preparedFiles.length) photoUrls = preparedFiles.map((file) => URL.createObjectURL(file));
 
       const nextVisit: Visit = { id, groupId: activeGroup.id, place: parsed.data.place as Place, visitedOn: parsed.data.visitedOn, title: parsed.data.title, note: parsed.data.note, rating: parsed.data.rating, tags: parsed.data.tags, participants: initialData.members.filter((member) => participantIds.includes(member.id)), photoUrls, version, updatedBy: initialData.members[0]?.displayName ?? "나" };
     setVisits((current) => editing ? current.map((visit) => visit.id === editing.id ? nextVisit : visit) : [nextVisit, ...current]);
@@ -295,7 +295,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
       <dialog ref={dialogRef} className="visit-dialog" onClose={() => { setDraftPlace(null); setEditing(null); }}>
         <form method="dialog" className="dialog-close-form"><button aria-label="창 닫기"><X size={20} /></button></form>
-        {draftPlace && <form className="visit-form" onSubmit={saveVisit}><div className="form-title"><MapPin size={22} /><div><span>{editing ? "기록 고치기" : "새 방문 기록"}</span><h2>{draftPlace.name || "이 위치에 이름을 붙여주세요"}</h2></div></div><div className="form-grid"><label>장소 이름<input name="placeName" defaultValue={draftPlace.name} required /></label><label>방문한 날<input name="visitedOn" type="date" defaultValue={editing?.visitedOn ?? new Date().toISOString().slice(0, 10)} required /></label></div><label>주소 또는 위치 설명<input name="address" defaultValue={draftPlace.address} placeholder="예: 해방촌 골목 안쪽" /></label><label>기록 제목<input name="title" defaultValue={editing?.title} placeholder="그날을 한 문장으로" required /></label><label>무엇을 했나요?<textarea name="note" defaultValue={editing?.note} rows={4} placeholder="먹은 것, 나눈 이야기, 다시 오고 싶은 이유…" /></label><div className="form-grid"><label>별점<select name="rating" defaultValue={editing?.rating ?? 5}>{[5,4,3,2,1].map((value) => <option key={value} value={value}>{"★".repeat(value)} {value}.0</option>)}</select></label><label>태그<input name="tags" defaultValue={editing?.tags.join(", ")} placeholder="데이트, 산책, 맛집" /></label></div><fieldset><legend>함께한 사람</legend><div className="member-checks">{initialData.members.map((member) => <label key={member.id}><input type="checkbox" name={`member-${member.id}`} defaultChecked={editing ? editing.participants.some((person) => person.id === member.id) : true} /><span>{member.initials}</span>{member.displayName}</label>)}</div></fieldset><label className="photo-input"><Camera size={20} /><span><strong>사진 추가</strong><small>최대 5장 · 업로드 전 자동 압축</small></span><input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple /></label><div className="form-actions"><button type="button" onClick={() => dialogRef.current?.close()}>취소</button><button className="primary-button" type="submit">{editing ? "수정 내용 저장" : "지도에 기록 남기기"}</button></div></form>}
+        {draftPlace && <form className="visit-form" onSubmit={saveVisit}><div className="form-title"><MapPin size={22} /><div><span>{editing ? "기록 고치기" : "새 방문 기록"}</span><h2>{draftPlace.name || "이 위치에 이름을 붙여주세요"}</h2></div></div><div className="form-grid"><label>장소 이름<input name="placeName" defaultValue={draftPlace.name} required /></label><label>방문한 날<input name="visitedOn" type="date" defaultValue={editing?.visitedOn ?? new Date().toISOString().slice(0, 10)} required /></label></div><label>주소 또는 위치 설명<input name="address" defaultValue={draftPlace.address} placeholder="예: 해방촌 골목 안쪽" /></label><label>기록 제목<input name="title" defaultValue={editing?.title} placeholder="그날을 한 문장으로" required /></label><label>무엇을 했나요?<textarea name="note" defaultValue={editing?.note} rows={4} placeholder="먹은 것, 나눈 이야기, 다시 오고 싶은 이유…" /></label><div className="form-grid"><label>별점<select name="rating" defaultValue={editing?.rating ?? 5}>{[5,4,3,2,1].map((value) => <option key={value} value={value}>{"★".repeat(value)} {value}.0</option>)}</select></label><label>태그<input name="tags" defaultValue={editing?.tags.join(", ")} placeholder="데이트, 산책, 맛집" /></label></div><fieldset><legend>함께한 사람</legend><div className="member-checks">{initialData.members.map((member) => <label key={member.id}><input type="checkbox" name={`member-${member.id}`} defaultChecked={editing ? editing.participants.some((person) => person.id === member.id) : true} /><span>{member.initials}</span>{member.displayName}</label>)}</div></fieldset><label className="photo-input"><Camera size={20} /><span><strong>사진 추가</strong><small>최대 5장 · 사진당 약 350KB로 자동 압축</small></span><input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple /></label><div className="form-actions"><button type="button" onClick={() => dialogRef.current?.close()}>취소</button><button className="primary-button" type="submit">{editing ? "수정 내용 저장" : "지도에 기록 남기기"}</button></div></form>}
       </dialog>
       <dialog ref={groupDialogRef} className="group-dialog" onClose={() => setNewGroupName("")}>
         <form className="group-create-form" onSubmit={createGroup}>
