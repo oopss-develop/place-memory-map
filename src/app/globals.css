@@ -55,13 +55,13 @@ button, select { cursor: pointer; }
 .group-row > span { align-self: center; color: var(--olive); font-size: 13px; font-weight: 700; }
 .group-picker { position: relative; min-width: 0; }
 .group-picker-trigger { display: flex; width: 100%; min-height: 42px; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 8px; border: 1px solid transparent; border-radius: 7px; color: var(--ink); background: transparent; font-family: var(--font-serif), serif; font-size: 19px; font-weight: 700; text-align: left; }
-.group-picker-trigger:hover, .group-picker-trigger:focus-visible { border-color: var(--vermilion); background: rgba(255,253,246,.55); }
+.group-picker-trigger:hover, .group-picker-trigger:focus-visible, .group-picker-trigger[aria-expanded="true"] { border-color: var(--line); background: var(--white); }
 .group-picker-trigger svg { flex: 0 0 auto; transition: transform .18s ease; }
 .group-picker-trigger[aria-expanded="true"] svg { transform: rotate(180deg); }
-.group-picker-menu { position: absolute; z-index: 9; top: calc(100% + 5px); left: 0; right: 0; overflow: hidden; border: 1px solid var(--rule); border-radius: 8px; background: var(--sheet); box-shadow: 0 14px 30px rgba(39,42,32,.2); }
+.group-picker-menu { position: static; display: flex; flex-direction: column; width: 100%; margin-top: 7px; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; background: var(--white); }
 .group-picker-option, .group-picker-add { display: flex; width: 100%; min-height: 44px; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 11px; border: 0; border-bottom: 1px solid rgba(200,192,169,.58); color: var(--ink); background: transparent; font-size: 13px; text-align: left; }
 .group-picker-option span { color: var(--ink-muted); font-size: 11px; }
-.group-picker-option:hover, .group-picker-option:focus-visible, .group-picker-option.active { color: var(--vermilion-dark); background: rgba(216,76,50,.1); }
+.group-picker-option:hover, .group-picker-option:focus-visible { color: var(--vermilion-dark); background: #f9e8df; }
 .group-picker-add { justify-content: flex-start; gap: 7px; border-bottom: 0; color: var(--olive); font-weight: 800; }
 .group-picker-add:hover, .group-picker-add:focus-visible { color: var(--vermilion-dark); background: var(--paper-deep); }
 
