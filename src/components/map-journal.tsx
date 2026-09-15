@@ -3,7 +3,8 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CalendarDays, Camera, ChevronDown, Filter, List, LocateFixed, Map as MapIcon, MapPin, Menu, MoreHorizontal, Plus, Search, Star, Users, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { CalendarDays, Camera, ChevronDown, Filter, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, MoreHorizontal, Plus, Search, Star, Users, X } from "lucide-react";
 import { KakaoMap } from "@/components/kakao-map";
 import { GroupOnboarding } from "@/components/group-onboarding";
 import { prepareVisitImage } from "@/lib/images";
@@ -17,6 +18,7 @@ const VISITS_STORAGE_KEY = "place-memory-visits-v2";
 const GROUPS_STORAGE_KEY = "place-memory-groups-v1";
 
 export function MapJournal({ initialData, viewerName }: { initialData: DashboardData; viewerName?: string }) {
+  const router = useRouter();
   const [groups, setGroups] = useState(initialData.groups);
   const [activeGroupId, setActiveGroupId] = useState(initialData.groups[0]?.id ?? "");
   const [visits, setVisits] = useState(initialData.visits);
@@ -179,6 +181,12 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
     setInviteLink(data.url); await navigator.clipboard.writeText(data.url); setNotice("7일 동안 유효한 초대 링크를 복사했습니다.");
   }
 
+  async function logout() {
+    await fetch("/api/access/logout", { method: "POST" });
+    router.replace("/login");
+    router.refresh();
+  }
+
   function locateMe() {
     if (!navigator.geolocation) return setNotice("이 브라우저에서는 현재 위치를 사용할 수 없습니다.");
     setNotice("현재 위치를 찾고 있습니다…");
@@ -210,7 +218,7 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
             </section>;
           })}
         </div>
-        <footer className="sidebar-footer"><span className="avatar">{(viewerName ?? initialData.members[0]?.displayName ?? "여행자").slice(0, 1)}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {activeGroup?.role === "owner" ? "그룹장" : "멤버"}</span>{activeGroup?.role === "owner" && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}</div>}</footer>
+        <footer className="sidebar-footer"><span className="avatar">{(viewerName ?? initialData.members[0]?.displayName ?? "여행자").slice(0, 1)}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {activeGroup?.role === "owner" ? "그룹장" : "멤버"}</span>{activeGroup?.role === "owner" && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
       </aside>
 
       <section className="map-stage">
