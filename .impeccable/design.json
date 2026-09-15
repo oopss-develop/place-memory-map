@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-15T00:00:00+09:00",
+  "title": "Design System: Place Memory Map",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Travel Pin Vermilion", "canonical": "#d84c32", "tonalRamp": ["#43140d", "#6d2117", "#963021", "#bd3e2b", "#d84c32", "#e77d69", "#f2b4a7", "#fbe9e4"] },
+      "paper": { "role": "neutral", "displayName": "Notebook Paper", "canonical": "#f4efdf", "tonalRamp": ["#28251c", "#494335", "#6f6652", "#958a70", "#b9ad90", "#d8ceb5", "#f4efdf", "#fffdf6"] },
+      "ink": { "role": "neutral", "displayName": "Blue-Black Ink", "canonical": "#162d38", "tonalRamp": ["#081116", "#10232b", "#193943", "#2b515d", "#52717a", "#819ca3", "#b7c8cb", "#edf4f3"] },
+      "olive": { "role": "secondary", "displayName": "Field Olive", "canonical": "#69784d", "tonalRamp": ["#19200e", "#303d1d", "#4a5a31", "#69784d", "#8e9a71", "#b4bea0", "#d9dfce", "#f3f5ed"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Memory Serif", "purpose": "Place names, memory prose, and rare first-use display statements." },
+      "body": { "displayName": "Operational Sans", "purpose": "Controls, forms, lists, and supporting information." },
+      "label": { "displayName": "Field Label", "purpose": "Dates, categories, status, and compact metadata." }
+    },
+    "shadows": [
+      { "name": "notebook-edge", "value": "9px 0 28px rgba(45, 42, 31, .12)", "purpose": "Separate the notebook index from the map." },
+      { "name": "raised-paper", "value": "0 22px 55px rgba(36, 39, 31, .26)", "purpose": "Lift visit details above the map." },
+      { "name": "modal-paper", "value": "0 30px 90px rgba(20, 31, 32, .42)", "purpose": "Focus the visit entry dialog." }
+    ],
+    "motion": [
+      { "name": "sheet-enter", "value": ".32s cubic-bezier(.2,.8,.2,1)", "purpose": "Bring a selected memory up from the map edge." },
+      { "name": "state-change", "value": ".18s ease", "purpose": "Record selection and lightweight hover feedback." }
+    ],
+    "breakpoints": [{ "name": "map-mobile", "value": "820px" }]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Commits a visit or begins the pin-placement flow.",
+      "html": "<button class=\"ds-btn-primary\">지도에 기록 남기기</button>",
+      "css": ".ds-btn-primary{min-height:42px;padding:0 16px;border:0;border-radius:7px;background:var(--vermilion,#d84c32);color:var(--white,#fffdf6);font-family:var(--font-sans),sans-serif;font-weight:700;transition:background .18s ease}.ds-btn-primary:hover{background:var(--vermilion-dark,#a93324)}.ds-btn-primary:focus-visible{outline:3px solid #e39447;outline-offset:3px}.ds-btn-primary:active{transform:translateY(1px)}"
+    },
+    {
+      "name": "Place Search",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Searches Kakao while retaining the notebook's compact working character.",
+      "html": "<label class=\"ds-search\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"m20 20-4-4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/></svg><input placeholder=\"장소 이름으로 찾기\"><button>찾기</button></label>",
+      "css": ".ds-search{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:9px;padding:4px 5px 4px 13px;border:1px solid #9c9582;border-radius:9px;background:#fffdf6;color:#162d38}.ds-search svg{width:19px}.ds-search input{height:38px;border:0;outline:0;background:transparent;font:inherit}.ds-search:focus-within{box-shadow:0 0 0 2px rgba(216,76,50,.16)}.ds-search button{height:34px;padding:0 12px;border:0;border-radius:6px;background:#162d38;color:#fffdf6;font-weight:700}"
+    },
+    {
+      "name": "Selected Filter",
+      "kind": "chip",
+      "refersTo": "filter-selected",
+      "description": "Marks an active journal filter without competing with map pins.",
+      "html": "<button class=\"ds-filter\">전체</button>",
+      "css": ".ds-filter{padding:5px 9px;border:1px solid #7d8864;border-radius:999px;background:#69784d;color:#fffdf6;font-size:12px;font-weight:600}.ds-filter:hover{background:#56643d}.ds-filter:focus-visible{outline:3px solid #e39447;outline-offset:3px}.ds-filter:active{transform:translateY(1px)}"
+    },
+    {
+      "name": "Visit Detail Sheet",
+      "kind": "card",
+      "refersTo": "visit-detail",
+      "description": "The primary memory object layered over the map.",
+      "html": "<article class=\"ds-visit\"><time>8월 23일 (일)</time><h2>서촌 작은 식탁</h2><p>비 오기 전, 늦은 점심</p></article>",
+      "css": ".ds-visit{width:320px;padding:18px 20px;border:1px solid #98917d;border-radius:11px;background:#fffdf6;color:#162d38;box-shadow:0 22px 55px rgba(36,39,31,.26)}.ds-visit time{color:#69784d;font-size:11px;font-weight:800}.ds-visit h2{margin:5px 0 8px;font-family:var(--font-serif),serif;font-size:25px;line-height:1.25}.ds-visit p{margin:0;color:#435157;font-family:var(--font-serif),serif;line-height:1.7}.ds-visit:focus-within{outline:3px solid #e39447;outline-offset:3px}"
+    },
+    {
+      "name": "Mobile Navigation",
+      "kind": "nav",
+      "refersTo": "mobile-navigation",
+      "description": "A flat paper strip that keeps the map primary on small screens.",
+      "html": "<nav class=\"ds-nav\"><button class=\"is-active\">지도</button><button>기록</button><button>추가</button><button>그룹</button></nav>",
+      "css": ".ds-nav{display:grid;height:64px;grid-template-columns:repeat(4,1fr);border-top:1px solid #918a78;background:#fffdf6}.ds-nav button{border:0;background:transparent;color:#162d38;font-size:11px}.ds-nav button:hover{background:rgba(22,45,56,.06)}.ds-nav button:focus-visible{outline:3px solid #e39447;outline-offset:-3px}.ds-nav button.is-active{color:#d84c32;font-weight:800}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Working Travel Field Notebook",
+    "overview": "The interface feels like a notebook that is actively used on a trip, not a themed scrapbook. Warm paper, ruled divisions, editorial serif headings, compact date marks, and real visit photography give memories a physical home while the map remains the dominant working surface. The system is calm and information-dense.",
+    "keyCharacteristics": ["Map-first split workspace on desktop and map-plus-bottom-sheet on mobile.", "Restrained physical cues: rules, paper tones, date stamps, and attached photographs.", "Small-radius rectangular controls; pills only for tags, filters, and people.", "Korean editorial serif for memory titles, clear sans-serif for operation."],
+    "rules": [
+      { "name": "The Functional Ink Rule", "body": "Vermilion locates or commits, olive classifies, and blue-black communicates; do not swap these roles for decoration.", "section": "colors" },
+      { "name": "The Paper Majority Rule", "body": "Warm neutral fields occupy most of every screen so accent colors remain meaningful.", "section": "colors" },
+      { "name": "The Memory Voice Rule", "body": "Use the serif face for places, memories, and reflective prose; keep operational text in sans-serif.", "section": "typography" },
+      { "name": "The Physical Cause Rule", "body": "A shadow is allowed only when a paper layer is visibly above another surface.", "section": "elevation" }
+    ],
+    "dos": ["Do let the map and member photographs carry visual interest.", "Do use rules and paper tone to establish hierarchy before adding a shadow.", "Do keep core controls at least 42px tall and preserve visible keyboard focus.", "Do label demonstration content explicitly as synthetic."],
+    "donts": ["Don't introduce glassmorphism, purple gradients, oversized marketing copy, or decorative AI illustrations.", "Don't turn every piece of information into a rounded floating card.", "Don't use vermilion as ambient decoration; reserve it for location, selection, and commitment.", "Don't simulate paper with noisy fake grain; the ruled structure is enough."]
+  }
+}

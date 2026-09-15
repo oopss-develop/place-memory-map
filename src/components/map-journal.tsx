@@ -1,0 +1,155 @@
+"use client";
+
+/* eslint-disable @next/next/no-img-element */
+
+import { useMemo, useRef, useState } from "react";
+import { CalendarDays, Camera, ChevronDown, Filter, List, LocateFixed, Map as MapIcon, MapPin, Menu, MoreHorizontal, Plus, Search, Star, Users, X } from "lucide-react";
+import { KakaoMap } from "@/components/kakao-map";
+import { GroupOnboarding } from "@/components/group-onboarding";
+import { prepareVisitImage } from "@/lib/images";
+import { visitSchema } from "@/lib/schemas";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import type { DashboardData } from "@/lib/data";
+import type { KakaoPlaceResult, Place, Visit } from "@/types/domain";
+
+const formatDate = (date: string) => new Intl.DateTimeFormat("ko-KR", { month: "short", day: "numeric", weekday: "short" }).format(new Date(`${date}T12:00:00`));
+
+export function MapJournal({ initialData }: { initialData: DashboardData }) {
+  const [groups] = useState(initialData.groups);
+  const [activeGroupId, setActiveGroupId] = useState(initialData.groups[0]?.id ?? "");
+  const [visits, setVisits] = useState(initialData.visits);
+  const [selectedId, setSelectedId] = useState<string | undefined>(initialData.visits[0]?.id);
+  const [query, setQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<KakaoPlaceResult[]>([]);
+  const [searchMessage, setSearchMessage] = useState("");
+  const [searching, setSearching] = useState(false);
+  const [manualMode, setManualMode] = useState(false);
+  const [tag, setTag] = useState("전체");
+  const [mobileList, setMobileList] = useState(false);
+  const [draftPlace, setDraftPlace] = useState<Place | null>(null);
+  const [editing, setEditing] = useState<Visit | null>(null);
+  const [notice, setNotice] = useState(initialData.demoMode ? "예시 기록입니다. 키를 연결하면 실제 그룹 지도로 전환됩니다." : "");
+  const [groupMenu, setGroupMenu] = useState(false);
+  const [inviteLink, setInviteLink] = useState("");
+  const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number }>();
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  const activeGroup = groups.find((group) => group.id === activeGroupId) ?? groups[0];
+  const groupVisits = useMemo(() => visits.filter((visit) => visit.groupId === activeGroupId && (tag === "전체" || visit.tags.includes(tag))), [activeGroupId, tag, visits]);
+  const allTags = useMemo(() => ["전체", ...Array.from(new Set(visits.flatMap((visit) => visit.tags))).slice(0, 4)], [visits]);
+  const selected = visits.find((visit) => visit.id === selectedId);
+
+  function openForPlace(place: Place) {
+    setDraftPlace(place); setEditing(null); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
+  }
+  function openEdit(visit: Visit) { setDraftPlace(visit.place); setEditing(visit); dialogRef.current?.showModal(); }
+
+  async function searchPlaces(event: React.FormEvent) {
+    event.preventDefault();
+    if (query.trim().length < 2) return setSearchMessage("두 글자 이상 입력해 주세요.");
+    setSearching(true); setSearchMessage("");
+    try {
+      const response = await fetch(`/api/places/search?q=${encodeURIComponent(query.trim())}`);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+      setSearchResults(data.results);
+      if (!data.results.length) setSearchMessage("검색 결과가 없어요. 지도에 직접 핀을 찍어보세요.");
+    } catch (error) {
+      const local = visits.filter((visit) => visit.place.name.includes(query.trim())).map((visit) => ({ id: visit.place.providerPlaceId ?? visit.place.id, placeName: visit.place.name, addressName: visit.place.address, roadAddressName: visit.place.address, categoryName: visit.place.category, latitude: visit.place.latitude, longitude: visit.place.longitude }));
+      setSearchResults(local);
+      setSearchMessage(local.length ? "현재 기록에서 찾았습니다." : error instanceof Error ? error.message : "장소를 찾지 못했습니다.");
+    } finally { setSearching(false); }
+  }
+
+  function manualPoint(latitude: number, longitude: number) {
+    openForPlace({ id: crypto.randomUUID(), provider: "manual", name: "", address: "", category: "직접 지정", latitude, longitude });
+  }
+
+  async function saveVisit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!draftPlace || !activeGroup) return;
+    const form = new FormData(event.currentTarget);
+    const files = form.getAll("photos").filter((item): item is File => item instanceof File && item.size > 0).slice(0, 5);
+    const participantIds = initialData.members.filter((member) => form.get(`member-${member.id}`) === "on").map((member) => member.id);
+    const raw = { id: editing?.id, groupId: activeGroup.id, place: { ...draftPlace, name: String(form.get("placeName") ?? draftPlace.name), address: String(form.get("address") ?? draftPlace.address) }, visitedOn: String(form.get("visitedOn")), title: String(form.get("title")), note: String(form.get("note")), rating: Number(form.get("rating")), tags: String(form.get("tags") ?? "").split(",").map((item) => item.trim()).filter(Boolean).slice(0, 8), participantIds, version: editing?.version ?? 1 };
+    const parsed = visitSchema.safeParse(raw);
+    if (!parsed.success) return setNotice(parsed.error.issues[0]?.message ?? "입력을 확인해 주세요.");
+
+    let id = editing?.id ?? crypto.randomUUID(); let version = editing?.version ?? 1; let photoUrls = editing?.photoUrls ?? [];
+    try {
+      if (!initialData.demoMode) {
+        const response = await fetch("/api/visits", { method: editing ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(parsed.data) });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error);
+        id = data.id; version = data.version;
+        if (files.length) {
+          const supabase = createSupabaseBrowserClient();
+          const prepared = await Promise.all(files.map(prepareVisitImage));
+          for (const [index, file] of prepared.entries()) {
+            const path = `${activeGroup.id}/${id}/${file.name}`;
+            const { error } = await supabase.storage.from("visit-photos").upload(path, file, { contentType: "image/webp" });
+            if (error) throw error;
+            await supabase.from("visit_photos").insert({ visit_id: id, storage_path: path, sort_order: index });
+          }
+        }
+      } else if (files.length) photoUrls = files.map((file) => URL.createObjectURL(file));
+
+      const nextVisit: Visit = { id, groupId: activeGroup.id, place: parsed.data.place as Place, visitedOn: parsed.data.visitedOn, title: parsed.data.title, note: parsed.data.note, rating: parsed.data.rating, tags: parsed.data.tags, participants: initialData.members.filter((member) => participantIds.includes(member.id)), photoUrls, version, updatedBy: initialData.members[0]?.displayName ?? "나" };
+      setVisits((current) => editing ? current.map((visit) => visit.id === editing.id ? nextVisit : visit) : [nextVisit, ...current]);
+      setSelectedId(id); setNotice(editing ? "기록을 고쳤습니다." : "새로운 기억을 지도에 남겼습니다."); dialogRef.current?.close();
+    } catch (error) { setNotice(error instanceof Error ? error.message : "기록을 저장하지 못했습니다."); }
+  }
+
+  async function createInvite() {
+    if (!activeGroup || initialData.demoMode) return setNotice("실제 계정을 연결하면 초대 링크를 만들 수 있어요.");
+    const response = await fetch("/api/groups/invite", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ groupId: activeGroup.id }) });
+    const data = await response.json();
+    if (!response.ok) return setNotice(data.error);
+    setInviteLink(data.url); await navigator.clipboard.writeText(data.url); setNotice("7일 동안 유효한 초대 링크를 복사했습니다.");
+  }
+
+  function locateMe() {
+    if (!navigator.geolocation) return setNotice("이 브라우저에서는 현재 위치를 사용할 수 없습니다.");
+    setNotice("현재 위치를 찾고 있습니다…");
+    navigator.geolocation.getCurrentPosition(
+      ({ coords }) => { setCurrentLocation({ latitude: coords.latitude, longitude: coords.longitude }); setNotice("현재 위치로 지도를 옮겼습니다."); },
+      () => setNotice("위치 권한을 확인한 뒤 다시 시도해 주세요."),
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  }
+
+  if (!groups.length) return <GroupOnboarding />;
+
+  return (
+    <main className="journal-app">
+      <aside className={`journal-sidebar ${mobileList ? "mobile-open" : ""}`}>
+        <header className="sidebar-header"><div className="wordmark"><span className="wordmark-pin"><MapPin size={17} fill="currentColor" /></span><span>PLACE<br />MEMORY MAP</span></div><button className="icon-button mobile-close" onClick={() => setMobileList(false)} aria-label="목록 닫기"><X size={20} /></button></header>
+        <div className="group-row"><label htmlFor="group">함께 보는 지도</label><div className="select-wrap"><select id="group" value={activeGroupId} onChange={(event) => { setActiveGroupId(event.target.value); setSelectedId(undefined); }} disabled={!groups.length}>{groups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}</select><ChevronDown size={16} /></div><span>{activeGroup?.memberCount ?? 0}명</span></div>
+        <form className="place-search" onSubmit={searchPlaces}><Search size={19} aria-hidden="true" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="장소 이름으로 찾기" aria-label="장소 검색" /><button type="submit" disabled={searching}>{searching ? "…" : "찾기"}</button></form>
+        {(searchResults.length > 0 || searchMessage) && <div className="search-popover">{searchResults.map((result) => <button key={result.id} onClick={() => openForPlace({ id: crypto.randomUUID(), provider: "kakao", providerPlaceId: result.id, name: result.placeName, address: result.roadAddressName || result.addressName, category: result.categoryName, latitude: result.latitude, longitude: result.longitude })}><strong>{result.placeName}</strong><span>{result.roadAddressName || result.addressName}</span></button>)}{searchMessage && <p>{searchMessage}</p>}</div>}
+        <div className="filter-row" aria-label="기록 필터"><Filter size={15} />{allTags.map((item) => <button key={item} className={tag === item ? "active" : ""} onClick={() => setTag(item)}>{item}</button>)}</div>
+        <div className="record-heading"><div><h1>우리의 발자국</h1><p>{groupVisits.length}개의 방문 기록</p></div><button className="icon-button" aria-label="더보기"><MoreHorizontal size={20} /></button></div>
+        <div className="record-list">
+          {!groupVisits.length && <div className="empty-records"><MapPin size={24} /><strong>아직 남긴 발자국이 없어요.</strong><span>장소를 찾거나 지도에 핀을 찍어보세요.</span></div>}
+          {groupVisits.map((visit, index) => <button key={visit.id} className={`record-item ${selectedId === visit.id ? "selected" : ""}`} onClick={() => { setSelectedId(visit.id); setMobileList(false); }}><span className="record-index">{String(index + 1).padStart(2, "0")}</span><div><time>{formatDate(visit.visitedOn)}</time><strong>{visit.place.name}</strong><p>{visit.title}</p><div className="mini-meta"><span><Star size={13} fill="currentColor" /> {visit.rating}.0</span><span><Users size={13} /> {visit.participants.length}</span>{visit.photoUrls.length > 0 && <span><Camera size={13} /> {visit.photoUrls.length}</span>}</div></div></button>)}
+        </div>
+        <footer className="sidebar-footer"><span className="avatar">민</span><div><strong>{initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "둘러보기 모드" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {activeGroup?.role === "owner" ? "그룹장" : "멤버"}</span>{activeGroup?.role === "owner" && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}</div>}</footer>
+      </aside>
+
+      <section className="map-stage">
+        <KakaoMap visits={groupVisits} selectedId={selectedId} manualMode={manualMode} onSelect={(visit) => setSelectedId(visit.id)} onManualPoint={manualPoint} focusLocation={currentLocation} />
+        {selected && <span className="selection-thread" aria-hidden="true" />}
+        <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => setMobileList(true)} aria-label="기록 목록 열기"><List size={20} /></button><div className="map-date"><CalendarDays size={16} /><span>2026년의 기록</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
+        <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => setManualMode((value) => !value)}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
+        {selected && <article className="place-sheet"><button className="sheet-close" onClick={() => setSelectedId(undefined)} aria-label="상세 닫기"><X size={18} /></button>{selected.photoUrls[0] && <div className="sheet-photo"><img src={selected.photoUrls[0]} alt={`${selected.place.name} 방문 예시`} /><span>예시 사진</span></div>}<div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><button onClick={() => openEdit(selected)}>기록 고치기</button></div></div></article>}
+        {notice && <button className="notice" onClick={() => setNotice("")} aria-live="polite">{notice}<X size={14} /></button>}
+        <nav className="mobile-nav" aria-label="모바일 주요 메뉴"><button className="active"><MapIcon size={20} />지도</button><button onClick={() => setMobileList(true)}><List size={20} />기록</button><button onClick={() => setManualMode(true)}><Plus size={22} />추가</button><button><Users size={20} />그룹</button></nav>
+      </section>
+
+      <dialog ref={dialogRef} className="visit-dialog" onClose={() => { setDraftPlace(null); setEditing(null); }}>
+        <form method="dialog" className="dialog-close-form"><button aria-label="창 닫기"><X size={20} /></button></form>
+        {draftPlace && <form className="visit-form" onSubmit={saveVisit}><div className="form-title"><MapPin size={22} /><div><span>{editing ? "기록 고치기" : "새 방문 기록"}</span><h2>{draftPlace.name || "이 위치에 이름을 붙여주세요"}</h2></div></div><div className="form-grid"><label>장소 이름<input name="placeName" defaultValue={draftPlace.name} required /></label><label>방문한 날<input name="visitedOn" type="date" defaultValue={editing?.visitedOn ?? new Date().toISOString().slice(0, 10)} required /></label></div><label>주소 또는 위치 설명<input name="address" defaultValue={draftPlace.address} placeholder="예: 해방촌 골목 안쪽" /></label><label>기록 제목<input name="title" defaultValue={editing?.title} placeholder="그날을 한 문장으로" required /></label><label>무엇을 했나요?<textarea name="note" defaultValue={editing?.note} rows={4} placeholder="먹은 것, 나눈 이야기, 다시 오고 싶은 이유…" /></label><div className="form-grid"><label>별점<select name="rating" defaultValue={editing?.rating ?? 5}>{[5,4,3,2,1].map((value) => <option key={value} value={value}>{"★".repeat(value)} {value}.0</option>)}</select></label><label>태그<input name="tags" defaultValue={editing?.tags.join(", ")} placeholder="데이트, 산책, 맛집" /></label></div><fieldset><legend>함께한 사람</legend><div className="member-checks">{initialData.members.map((member) => <label key={member.id}><input type="checkbox" name={`member-${member.id}`} defaultChecked={editing ? editing.participants.some((person) => person.id === member.id) : true} /><span>{member.initials}</span>{member.displayName}</label>)}</div></fieldset><label className="photo-input"><Camera size={20} /><span><strong>사진 추가</strong><small>최대 5장 · 업로드 전 자동 압축</small></span><input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple /></label><div className="form-actions"><button type="button" onClick={() => dialogRef.current?.close()}>취소</button><button className="primary-button" type="submit">{editing ? "수정 내용 저장" : "지도에 기록 남기기"}</button></div></form>}
+      </dialog>
+    </main>
+  );
+}
