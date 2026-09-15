@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { placeSearchSchema } from "@/lib/schemas";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getAccessMemberFromCookies } from "@/lib/access-auth";
 
 export async function GET(request: Request) {
   if (!process.env.KAKAO_REST_API_KEY) {
@@ -11,7 +12,8 @@ export async function GET(request: Request) {
     );
   }
 
-  if (isSupabaseConfigured()) {
+  const accessMember = await getAccessMemberFromCookies();
+  if (isSupabaseConfigured() && !accessMember) {
     const supabase = await createSupabaseServerClient();
     const { data } = await supabase.auth.getUser();
     if (!data.user) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
