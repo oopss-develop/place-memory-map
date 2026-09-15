@@ -1,41 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Mail } from "lucide-react";
-import { magicLinkSchema } from "@/lib/schemas";
-import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { ArrowRight, KeyRound } from "lucide-react";
 
-export function LoginForm({ configured, next = "/" }: { configured: boolean; next?: string }) {
-  const [email, setEmail] = useState("");
+export function LoginForm({ next = "/" }: { next?: string }) {
+  const [code, setCode] = useState("");
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
-    const parsed = magicLinkSchema.safeParse({ email });
-    if (!parsed.success) return setMessage(parsed.error.issues[0]?.message ?? "이메일을 확인해 주세요.");
-    if (!configured) return setMessage("Supabase 키를 연결하면 실제 로그인 메일이 발송됩니다.");
     setPending(true);
-    const supabase = createSupabaseBrowserClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email: parsed.data.email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
-    });
+    const response = await fetch("/api/access/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code }) });
+    const data = await response.json().catch(() => null) as { error?: string } | null;
     setPending(false);
-    setMessage(error ? "메일을 보내지 못했습니다. 잠시 후 다시 시도해 주세요." : "메일함에서 로그인 링크를 확인해 주세요.");
+    if (!response.ok) return setMessage(data?.error ?? "입장 코드를 확인해 주세요.");
+    window.location.assign(next);
   }
 
   return (
     <form className="login-form" onSubmit={submit}>
-      <label htmlFor="email">이메일</label>
+      <label htmlFor="access-code">우리만의 입장 코드</label>
       <div className="input-with-icon">
-        <Mail aria-hidden="true" size={18} />
-        <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" autoComplete="email" required />
+        <KeyRound aria-hidden="true" size={18} />
+        <input id="access-code" type="text" value={code} onChange={(event) => setCode(event.target.value)} placeholder="네 글자 중 하나를 입력하세요" autoComplete="off" maxLength={1} required />
       </div>
       <button className="primary-button" type="submit" disabled={pending}>
-        {pending ? "보내는 중…" : "로그인 링크 받기"}<ArrowRight size={18} aria-hidden="true" />
+        {pending ? "확인하는 중…" : "지도 들어가기"}<ArrowRight size={18} aria-hidden="true" />
       </button>
-      <p className="form-message" aria-live="polite">{message || "비밀번호 없이 이메일 링크로 안전하게 들어갑니다."}</p>
+      <p className="form-message" aria-live="polite">{message || "또 · 나 · 우 · 쥐 중 하나를 입력해 주세요."}</p>
     </form>
   );
 }

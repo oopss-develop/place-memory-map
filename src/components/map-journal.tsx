@@ -14,7 +14,7 @@ import type { KakaoPlaceResult, Place, Visit } from "@/types/domain";
 
 const formatDate = (date: string) => new Intl.DateTimeFormat("ko-KR", { month: "short", day: "numeric", weekday: "short" }).format(new Date(`${date}T12:00:00`));
 
-export function MapJournal({ initialData }: { initialData: DashboardData }) {
+export function MapJournal({ initialData, viewerName }: { initialData: DashboardData; viewerName?: string }) {
   const [groups] = useState(initialData.groups);
   const [activeGroupId, setActiveGroupId] = useState(initialData.groups[0]?.id ?? "");
   const [visits, setVisits] = useState(initialData.visits);
@@ -28,7 +28,7 @@ export function MapJournal({ initialData }: { initialData: DashboardData }) {
   const [mobileList, setMobileList] = useState(false);
   const [draftPlace, setDraftPlace] = useState<Place | null>(null);
   const [editing, setEditing] = useState<Visit | null>(null);
-  const [notice, setNotice] = useState(initialData.demoMode ? "예시 기록입니다. 키를 연결하면 실제 그룹 지도로 전환됩니다." : "");
+  const [notice, setNotice] = useState(initialData.demoMode ? "간편 코드 로그인 모드입니다. 이 브라우저에서 기록을 정리할 수 있어요." : "");
   const [groupMenu, setGroupMenu] = useState(false);
   const [inviteLink, setInviteLink] = useState("");
   const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number }>();
@@ -146,7 +146,7 @@ export function MapJournal({ initialData }: { initialData: DashboardData }) {
             </section>;
           })}
         </div>
-        <footer className="sidebar-footer"><span className="avatar">민</span><div><strong>{initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "둘러보기 모드" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {activeGroup?.role === "owner" ? "그룹장" : "멤버"}</span>{activeGroup?.role === "owner" && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}</div>}</footer>
+        <footer className="sidebar-footer"><span className="avatar">{(viewerName ?? initialData.members[0]?.displayName ?? "여행자").slice(0, 1)}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {activeGroup?.role === "owner" ? "그룹장" : "멤버"}</span>{activeGroup?.role === "owner" && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}</div>}</footer>
       </aside>
 
       <section className="map-stage">

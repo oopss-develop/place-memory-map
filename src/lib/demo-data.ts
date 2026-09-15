@@ -1,13 +1,14 @@
 import type { Group, Profile, Visit } from "@/types/domain";
 
 export const demoMembers: Profile[] = [
-  { id: "11111111-1111-4111-8111-111111111111", displayName: "민준", initials: "민" },
-  { id: "22222222-2222-4222-8222-222222222222", displayName: "서연", initials: "서" },
-  { id: "33333333-3333-4333-8333-333333333333", displayName: "지우", initials: "지" },
+  { id: "11111111-1111-4111-8111-111111111111", displayName: "이교혁", initials: "이" },
+  { id: "22222222-2222-4222-8222-222222222222", displayName: "박나린", initials: "박" },
+  { id: "33333333-3333-4333-8333-333333333333", displayName: "박우성", initials: "박" },
+  { id: "44444444-4444-4444-8444-444444444444", displayName: "이은지", initials: "이" },
 ];
 
 export const demoGroups: Group[] = [
-  { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", name: "우리 둘의 지도", role: "owner", memberCount: 2 },
+  { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", name: "우리 넷의 지도", role: "owner", memberCount: 4 },
   { id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", name: "주말 탐험대", role: "member", memberCount: 5 },
 ];
 
