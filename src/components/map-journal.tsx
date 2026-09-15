@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { CalendarDays, Camera, ChevronDown, Filter, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, MoreHorizontal, Plus, Search, Star, Users, X } from "lucide-react";
 import { KakaoMap } from "@/components/kakao-map";
 import { GroupOnboarding } from "@/components/group-onboarding";
+import { InstallAppButton } from "@/components/install-app-button";
 import { prepareVisitImage } from "@/lib/images";
 import { visitSchema } from "@/lib/schemas";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
@@ -218,7 +219,7 @@ export function MapJournal({ initialData, viewerName }: { initialData: Dashboard
             </section>;
           })}
         </div>
-        <footer className="sidebar-footer"><span className="avatar">{(viewerName ?? initialData.members[0]?.displayName ?? "여행자").slice(0, 1)}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {activeGroup?.role === "owner" ? "그룹장" : "멤버"}</span>{activeGroup?.role === "owner" && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
+        <footer className="sidebar-footer"><span className="avatar">{(viewerName ?? initialData.members[0]?.displayName ?? "여행자").slice(0, 1)}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {activeGroup?.role === "owner" ? "그룹장" : "멤버"}</span>{activeGroup?.role === "owner" && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton /><button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
       </aside>
 
       <section className="map-stage">

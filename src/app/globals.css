@@ -110,6 +110,8 @@ button, select { cursor: pointer; }
 .group-menu { position: absolute; z-index: 8; right: 12px; bottom: 60px; display: flex !important; width: 250px; gap: 5px; padding: 14px; border: 1px solid #938b77; border-radius: 9px; background: var(--white); box-shadow: 0 12px 28px rgba(39,42,32,.18); }
 .group-menu button { margin-top: 5px; padding: 8px 10px; border: 0; border-radius: 6px; color: var(--white); background: var(--ink); font-size: 12px; font-weight: 800; }
 .group-menu .group-menu-logout { display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: var(--vermilion-dark); border: 1px solid rgba(169,51,36,.38); background: transparent; }
+.group-menu .group-menu-install { display: inline-flex; align-items: center; justify-content: center; gap: 6px; color: var(--olive); border: 1px solid rgba(105,120,77,.48); background: var(--white); }
+.ios-install-help { margin: 2px 0 0; color: var(--ink-muted); font-size: 11px; line-height: 1.45; }
 .group-menu input { width: 100%; padding: 6px; border: 1px solid var(--line); color: var(--ink-muted); background: var(--paper); font-size: 10px; }
 
 .map-stage { position: relative; min-width: 0; overflow: hidden; background: #d9d8c8; }
@@ -186,6 +188,8 @@ button, select { cursor: pointer; }
 .form-actions { display: flex; justify-content: flex-end; gap: 8px; padding-top: 5px; }.form-actions button { min-height: 42px; padding: 0 16px; border: 1px solid #9f9783; border-radius: 7px; background: transparent; font-weight: 700; }.primary-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0 !important; color: var(--white) !important; background: var(--vermilion) !important; }.primary-button:hover { background: var(--vermilion-dark) !important; }.primary-button:disabled { opacity: .55; cursor: wait; }
 
 .login-page { display: grid; min-height: 100dvh; grid-template-columns: minmax(390px, 44%) 1fr; background: var(--paper); }
+.offline-page { display: flex; min-height: 100dvh; flex-direction: column; align-items: center; justify-content: center; gap: 13px; padding: 28px; color: var(--ink); background: var(--paper); text-align: center; }
+.offline-page svg { color: var(--vermilion); }.offline-page h1 { margin: 0; font-family: var(--font-serif), serif; font-size: 28px; }.offline-page p { max-width: 360px; margin: 0; color: var(--ink-muted); line-height: 1.65; }
 .login-notebook { display: flex; flex-direction: column; justify-content: center; padding: 44px clamp(38px, 7vw, 110px); background-image: linear-gradient(90deg, transparent 40px, rgba(216,76,50,.25) 41px, transparent 42px); }
 .brand-mark { position: absolute; top: 38px; display: flex; align-items: center; gap: 9px; font-size: 11px; font-weight: 900; letter-spacing: .12em; }.brand-mark svg { color: var(--vermilion); }
 .login-copy h1 { margin: 0; font-family: var(--font-serif), serif; font-size: clamp(43px, 5vw, 72px); line-height: 1.12; letter-spacing: -.03em; }.login-copy p { max-width: 430px; margin: 22px 0 36px; color: var(--ink-muted); line-height: 1.75; }

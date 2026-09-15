@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Gowun_Batang, Noto_Sans_KR } from "next/font/google";
+import { PwaRegistration } from "@/components/pwa-registration";
 import "./globals.css";
 
 const sans = Noto_Sans_KR({
@@ -18,6 +19,9 @@ const serif = Gowun_Batang({
 export const metadata: Metadata = {
   title: "Place Memory Map — 함께 남기는 장소 기록",
   description: "커플과 작은 그룹을 위한 비공개 여행 기록 지도",
+  applicationName: "Place Memory Map",
+  appleWebApp: { capable: true, title: "Place Map", statusBarStyle: "default" },
+  formatDetection: { telephone: false },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -26,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ko"
       className={`${sans.variable} ${serif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col"><PwaRegistration />{children}</body>
     </html>
   );
 }
