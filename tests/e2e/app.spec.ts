@@ -150,6 +150,8 @@ test("reselecting a record reopens its popup", async ({ page }) => {
   await page.getByRole("button", { name: /9월 16일.*방문 기록 1개/ }).click();
   await page.locator(".record-item", { hasText: "다시 여는 장소" }).click();
   await expect(page.locator(".place-sheet.is-positioned")).toBeVisible();
+  await page.locator(".map-canvas").click({ position: { x: 20, y: 20 }, force: true });
+  await expect(page.locator(".place-sheet.is-positioned")).toBeHidden();
 
   if (mobile) await page.getByRole("button", { name: "기록 목록 열기" }).click();
   await page.locator(".record-item", { hasText: "다시 여는 장소" }).click();

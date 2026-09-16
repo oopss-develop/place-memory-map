@@ -147,6 +147,19 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     setSelectionRequest((request) => request + 1);
   }, []);
 
+  useEffect(() => {
+    if (!selectedId) return;
+    const dismissOnOutsidePointer = (event: PointerEvent) => {
+      const target = event.target;
+      if (target instanceof Node && sheetRef.current?.contains(target)) return;
+      setSelectedId(undefined);
+      setSelectedAnchor(undefined);
+      setPopupPosition(undefined);
+    };
+    document.addEventListener("pointerdown", dismissOnOutsidePointer, true);
+    return () => document.removeEventListener("pointerdown", dismissOnOutsidePointer, true);
+  }, [selectedId]);
+
   function showPhoto(offset: number) {
     if (!selected || selected.photoUrls.length < 2) return;
     setPhotoView((current) => {
