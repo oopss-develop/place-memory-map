@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Gowun_Batang, Noto_Sans_KR } from "next/font/google";
 import { PwaRegistration } from "@/components/pwa-registration";
 import { FontPreference } from "@/components/font-preference";
@@ -23,6 +23,13 @@ export const metadata: Metadata = {
   applicationName: "Place Memory Map",
   appleWebApp: { capable: true, title: "Place Map", statusBarStyle: "default" },
   formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

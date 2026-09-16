@@ -80,6 +80,27 @@ serif, numbered index and notebook-rule treatments described below.
 The sidebar is an operational list, with a flat surface and no decorative
 vertical notebook rule. Serif remains available for memory detail content.
 
+## Mobile usability (September 16 revision)
+
+- Keep a labeled place-search entry visible above the map. Opening search focuses
+  the input during the tap; failed searches offer a direct manual-pin action.
+- The record drawer leaves a 32px backdrop edge (390px maximum width), blocks
+  interaction with the map, traps keyboard focus, and closes with Escape, its
+  close button, or a backdrop tap. Closed drawers are hidden from navigation.
+- The 64px bottom navigation adds the device's bottom safe area. Map controls,
+  notices, install prompts, and record sheets account for that space and notches.
+- Use 44px minimum touch controls and 16px form inputs on mobile. Keep the map
+  pin action labeled, and show an explicit cancel state while placing a pin.
+- Record details have a persistent expand/close toolbar and independently
+  scrolling content. Expanded details stop below the map toolbar and above the
+  navigation. Editing and deletion actions have full touch targets.
+- Visit entry uses a full-width bottom dialog with a sticky save/cancel bar.
+  Validation and save errors appear inside the dialog, and saving disables
+  dismissal. Short landscape screens allow the drawer itself to scroll.
+
+These rules supersede the original mobile dimensions and control sizes below;
+the notebook palette, theme/font choices, and desktop split layout remain.
+
 ## Overview
 
 **Creative North Star: "The Working Travel Field Notebook"**

@@ -2,14 +2,13 @@ import { expect, test } from "@playwright/test";
 
 test("shows an empty map journal", async ({ page }) => {
   await page.goto("/");
+  if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
   await expect(page.getByRole("heading", { name: "기록" })).toBeVisible();
   await expect(page.getByText("아직 남긴 발자국이 없어요.")).toBeVisible();
-  if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
 });
 
 test("manual pin opens the visit form", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "기록" })).toBeVisible();
   await page.getByRole("button", { name: "지도에 핀 추가" }).click();
   await page.locator(".map-canvas").click({ position: { x: 220, y: 180 }, force: true });
   await expect(page.getByRole("heading", { name: "이 위치에 이름을 붙여주세요" })).toBeVisible();
@@ -44,8 +43,8 @@ test("a member cannot delete a map created by someone else", async ({ page }) =>
     ]));
   });
   await page.goto("/");
-  await expect(page.getByText("나린의 지도")).toBeVisible();
   if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
+  await expect(page.getByText("나린의 지도")).toBeVisible();
   await page.getByRole("button", { name: "그룹 메뉴" }).click();
   await expect(page.getByRole("button", { name: "현재 지도 삭제" })).toHaveCount(0);
   await expect(page.getByText("구성원 4명 · 멤버")).toBeVisible();
@@ -150,7 +149,7 @@ test("reselecting a record reopens its popup", async ({ page }) => {
   await page.getByRole("button", { name: /9월 16일.*방문 기록 1개/ }).click();
   await page.locator(".record-item", { hasText: "다시 여는 장소" }).click();
   await expect(page.locator(".place-sheet.is-positioned")).toBeVisible();
-  await page.locator(".map-canvas").click({ position: { x: 20, y: 20 }, force: true });
+  await page.locator(".map-canvas").click({ position: { x: 20, y: 200 } });
   await expect(page.locator(".place-sheet.is-positioned")).toBeHidden();
 
   if (mobile) await page.getByRole("button", { name: "기록 목록 열기" }).click();
