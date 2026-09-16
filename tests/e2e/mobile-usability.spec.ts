@@ -146,6 +146,10 @@ test("reduced motion keeps a static selection image", async ({ page }) => {
   await page.goto("/");
   await page.locator('[data-visit-id="reduced-pulse"]').click();
   await expect(page.locator(".map-focus-pulse")).toBeVisible();
-  const animationName = await page.locator(".map-focus-pulse img").evaluate((element) => getComputedStyle(element).animationName);
-  expect(animationName).toBe("none");
+  const imageStyle = await page.locator(".map-focus-pulse img").evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { animationName: style.animationName, transformOrigin: style.transformOrigin };
+  });
+  expect(imageStyle.animationName).toBe("none");
+  expect(imageStyle.transformOrigin).toBe("24px 24px");
 });

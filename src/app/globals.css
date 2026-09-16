@@ -269,7 +269,7 @@ button, select { cursor: pointer; }
 .map-pin.highlighted:not(.selected) { transform: translate(-50%, -100%) scale(1.1); }
 .map-pin-pulse { position: relative; display: block; width: 72px; height: 72px; pointer-events: none; }
 .map-focus-pulse { position: absolute; z-index: 1; width: 72px; height: 72px; pointer-events: none; transform: translate(-50%, -100%); }
-.map-pin-pulse img, .map-focus-pulse img { position: absolute; left: 50%; bottom: 0; display: block; width: 48px; height: 48px; opacity: .62; transform: translateX(-50%) scale(.72); transform-origin: 50% 100%; animation: map-pin-image-pulse 1.8s ease-out infinite; }
+.map-pin-pulse img, .map-focus-pulse img { position: absolute; left: 50%; bottom: 0; display: block; width: 48px; height: 48px; opacity: .62; transform: translateX(-50%) scale(.72); transform-origin: 50% 50%; animation: map-pin-image-pulse 1.8s ease-out infinite; }
 @keyframes map-pin-image-pulse { 0% { opacity: .62; transform: translateX(-50%) scale(.72); } 70%, 100% { opacity: 0; transform: translateX(-50%) scale(1.48); } }
 .map-pin-overlay { width: 30px; height: 38px; padding: 0; border: 0; color: #4d89ad; background: transparent; cursor: pointer; transform: translateY(2px); transition: color .18s ease, transform .18s ease; }
 .map-pin-overlay svg { display: block; width: 100%; height: 100%; }
