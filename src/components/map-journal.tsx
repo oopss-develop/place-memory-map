@@ -408,7 +408,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
           {pendingAction === "delete" && <div className="operation-progress" role="progressbar" aria-label="기록 삭제 중" />}
           <button className="sheet-close" disabled={Boolean(pendingAction)} onClick={() => { setPhotoView({ visitId: "", index: 0 }); setSelectedId(undefined); setSelectedAnchor(undefined); }} aria-label="상세 닫기"><X size={18} /></button>
           {activePhotoUrl && <div className="sheet-photo" onTouchStart={(event) => { photoTouchStartX.current = event.touches[0]?.clientX ?? null; }} onTouchEnd={(event) => { const start = photoTouchStartX.current; const end = event.changedTouches[0]?.clientX; photoTouchStartX.current = null; if (start === null || end === undefined || Math.abs(start - end) < 42) return; showPhoto(start > end ? 1 : -1); }}>
-            <img src={activePhotoUrl} alt={`${selected.place.name} 방문 사진 ${activePhotoIndex + 1}/${selected.photoUrls.length}`} draggable={false} />
+            <img key={activePhotoUrl} src={activePhotoUrl} alt={`${selected.place.name} 방문 사진 ${activePhotoIndex + 1}/${selected.photoUrls.length}`} draggable={false} />
             <span className="sheet-photo-label">방문 사진</span>
             {selected.photoUrls.length > 1 && <>
               <button className="sheet-photo-nav previous" type="button" onClick={() => showPhoto(-1)} aria-label="이전 사진"><ChevronLeft size={21} /></button>

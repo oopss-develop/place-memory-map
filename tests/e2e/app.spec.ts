@@ -51,8 +51,8 @@ test("a member cannot delete a map created by someone else", async ({ page }) =>
 });
 
 test("multiple visit photos can be browsed", async ({ page }) => {
-  await page.addInitScript(() => {
-    const image = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23697855'/%3E%3C/svg%3E";
+  const images = ["697855", "d84c32", "315a6b", "8a6f4d"].map((color) => `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23${color}'/%3E%3C/svg%3E`);
+  await page.addInitScript((photoUrls) => {
     localStorage.setItem("place-memory-visits-v2", JSON.stringify([{
       id: "gallery-visit",
       groupId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
@@ -63,15 +63,16 @@ test("multiple visit photos can be browsed", async ({ page }) => {
       rating: 5,
       tags: ["사진"],
       participants: [],
-      photoUrls: [image, image, image, image],
+      photoUrls,
       version: 1,
       updatedBy: "test",
     }]));
     localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true");
-  });
+  }, images);
   await page.goto("/");
   await page.locator('[data-visit-id="gallery-visit"]').click();
   await expect(page.getByText("1 / 4")).toBeVisible();
   await page.getByRole("button", { name: "다음 사진" }).click();
   await expect(page.getByText("2 / 4")).toBeVisible();
+  await expect(page.locator(".sheet-photo img")).toHaveAttribute("src", images[1]);
 });

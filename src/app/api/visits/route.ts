@@ -128,7 +128,12 @@ export async function DELETE(request: Request) {
   if (typeof body.id !== "string" || typeof body.version !== "number") {
     return NextResponse.json({ error: "삭제할 기록 정보가 올바르지 않습니다." }, { status: 400 });
   }
-  const { data: currentVisit, error: currentVisitError } = await auth.supabase.from("visits").select("group_id").eq("id", body.id).maybeSingle();
+  const { data: currentVisit, error: currentVisitError } = await auth.supabase
+    .from("visits")
+    .select("group_id,visit_photos(storage_path)")
+    .eq("id", body.id)
+    .is("deleted_at", null)
+    .maybeSingle();
   if (currentVisitError || !currentVisit) return NextResponse.json({ error: "방문 기록을 찾지 못했습니다." }, { status: 404 });
   if (!await isGroupMember(auth.supabase, currentVisit.group_id, auth.user.id)) return NextResponse.json({ error: "이 기록을 삭제할 권한이 없습니다." }, { status: 403 });
   const { data, error } = await auth.supabase
@@ -140,5 +145,20 @@ export async function DELETE(request: Request) {
     .maybeSingle();
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   if (!data) return NextResponse.json({ error: "이미 변경된 기록입니다." }, { status: 409 });
-  return NextResponse.json({ ok: true });
+
+  const photoPaths = (currentVisit.visit_photos ?? []).map((photo) => photo.storage_path).filter(Boolean);
+  if (photoPaths.length) {
+    const { error: storageError } = await auth.supabase.storage.from("visit-photos").remove(photoPaths);
+    if (storageError) {
+      await auth.supabase
+        .from("visits")
+        .update({ deleted_at: null, updated_by: auth.user.id, version: body.version })
+        .eq("id", body.id)
+        .eq("version", body.version + 1);
+      return NextResponse.json({ error: "사진 저장소를 정리하지 못해 기록 삭제를 취소했습니다. 다시 시도해 주세요." }, { status: 502 });
+    }
+    await auth.supabase.from("visit_photos").delete().eq("visit_id", body.id);
+  }
+
+  return NextResponse.json({ ok: true, deletedPhotos: photoPaths.length });
 }
