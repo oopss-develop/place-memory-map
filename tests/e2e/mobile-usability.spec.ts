@@ -134,7 +134,7 @@ test("selected pins have one pulse and the pulse follows the new selection", asy
   await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
 });
 
-test("reduced motion keeps a static selection ring", async ({ page }) => {
+test("reduced motion keeps a static selection image", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(() => {
     localStorage.setItem("place-memory-visits-v2", JSON.stringify([{
@@ -146,6 +146,6 @@ test("reduced motion keeps a static selection ring", async ({ page }) => {
   await page.goto("/");
   await page.locator('[data-visit-id="reduced-pulse"]').click();
   await expect(page.locator(".map-focus-pulse")).toBeVisible();
-  const animationName = await page.locator(".map-focus-pulse").evaluate((element) => getComputedStyle(element, "::before").animationName);
+  const animationName = await page.locator(".map-focus-pulse img").evaluate((element) => getComputedStyle(element).animationName);
   expect(animationName).toBe("none");
 });

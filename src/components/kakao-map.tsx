@@ -51,6 +51,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
   const pulseTarget = selectedVisit?.place ?? pulseLocation;
   const pulseLatitude = pulseTarget?.latitude;
   const pulseLongitude = pulseTarget?.longitude;
+  const pulseMarkerStyle = selectedVisit?.markerStyle;
 
   useEffect(() => {
     if (!apiKey || !ref.current) return;
@@ -82,6 +83,11 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
     const content = document.createElement("span");
     content.className = "map-pin-pulse";
     content.setAttribute("aria-hidden", "true");
+    const image = document.createElement("img");
+    image.src = markerSvgDataUrl(pulseMarkerStyle);
+    image.alt = "";
+    image.setAttribute("aria-hidden", "true");
+    content.append(image);
     const overlay = new window.kakao.maps.CustomOverlay({
       position: new window.kakao.maps.LatLng(pulseLatitude, pulseLongitude),
       content,
@@ -94,7 +100,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
     pulseOverlayRef.current = overlay;
 
     return removePulse;
-  }, [apiKey, pulseLatitude, pulseLongitude, ready]);
+  }, [apiKey, pulseLatitude, pulseLongitude, pulseMarkerStyle, ready]);
 
   useEffect(() => {
     if (!ready || !mapRef.current || !window.kakao) return;
@@ -257,7 +263,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
           <span className="district district-west">종로</span><span className="district district-east">성수</span><span className="district district-south">한강</span>
           {pulseTarget && (() => {
             const position = fallbackMapPosition(pulseTarget.latitude, pulseTarget.longitude);
-            return <span className="map-focus-pulse" aria-hidden="true" style={{ left: `${position.left}%`, top: `${position.top}%` }} />;
+            return <span className="map-focus-pulse" aria-hidden="true" style={{ left: `${position.left}%`, top: `${position.top}%` }}><img src={markerSvgDataUrl(pulseMarkerStyle)} alt="" /></span>;
           })()}
           {visits.map((visit) => {
             const position = fallbackMapPosition(visit.place.latitude, visit.place.longitude);
