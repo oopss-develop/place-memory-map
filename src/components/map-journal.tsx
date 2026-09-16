@@ -9,6 +9,7 @@ import { KakaoMap, type MapAnchor } from "@/components/kakao-map";
 import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
 import { prepareVisitImage } from "@/lib/images";
+import { DEFAULT_MARKER_STYLE, MARKER_STYLE_IDS, markerSvgDataUrl, normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
 import { visitSchema } from "@/lib/schemas";
 import type { DashboardData } from "@/lib/data";
 import type { Group, KakaoPlaceResult, Place, Visit } from "@/types/domain";
@@ -39,6 +40,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [mobileList, setMobileList] = useState(false);
   const [draftPlace, setDraftPlace] = useState<Place | null>(null);
   const [editing, setEditing] = useState<Visit | null>(null);
+  const [markerStyle, setMarkerStyle] = useState<MarkerStyle>(DEFAULT_MARKER_STYLE);
   const [notice, setNotice] = useState(initialData.demoMode ? "서버 저장소를 연결하면 모든 기기에서 같은 기록을 볼 수 있어요." : "");
   const [groupMenu, setGroupMenu] = useState(false);
   const [groupPickerOpen, setGroupPickerOpen] = useState(false);
@@ -61,7 +63,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
         const savedGroups = window.localStorage.getItem(GROUPS_STORAGE_KEY);
         if (saved) {
           const parsed = JSON.parse(saved) as Visit[];
-          if (Array.isArray(parsed)) setVisits(parsed);
+          if (Array.isArray(parsed)) setVisits(parsed.map((visit) => ({ ...visit, markerStyle: normalizeMarkerStyle(visit.markerStyle) })));
         }
         if (savedGroups) {
           const parsedGroups = JSON.parse(savedGroups) as Group[];
@@ -189,9 +191,9 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
   function openForPlace(place: Place) {
     if (dialogRef.current?.open) return;
-    setSelectedId(undefined); setSelectedAnchor(undefined); setNotice(""); setDraftPlace(place); setEditing(null); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
+    setSelectedId(undefined); setSelectedAnchor(undefined); setNotice(""); setDraftPlace(place); setEditing(null); setMarkerStyle(DEFAULT_MARKER_STYLE); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
   }
-  function openEdit(visit: Visit) { setDraftPlace(visit.place); setEditing(visit); dialogRef.current?.showModal(); }
+  function openEdit(visit: Visit) { setDraftPlace(visit.place); setEditing(visit); setMarkerStyle(normalizeMarkerStyle(visit.markerStyle)); dialogRef.current?.showModal(); }
 
   function chooseGroup(groupId: string) {
     setActiveGroupId(groupId);
@@ -245,7 +247,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     const form = new FormData(event.currentTarget);
     const files = form.getAll("photos").filter((item): item is File => item instanceof File && item.size > 0).slice(0, 5);
     const participantIds = initialData.members.filter((member) => form.get(`member-${member.id}`) === "on").map((member) => member.id);
-    const raw = { id: editing?.id, groupId: activeGroup.id, place: { ...draftPlace, name: String(form.get("placeName") ?? draftPlace.name), address: String(form.get("address") ?? draftPlace.address) }, visitedOn: String(form.get("visitedOn")), title: String(form.get("title")), note: String(form.get("note")), rating: Number(form.get("rating")), tags: String(form.get("tags") ?? "").split(",").map((item) => item.trim()).filter(Boolean).slice(0, 8), participantIds, version: editing?.version ?? 1 };
+    const raw = { id: editing?.id, groupId: activeGroup.id, place: { ...draftPlace, name: String(form.get("placeName") ?? draftPlace.name), address: String(form.get("address") ?? draftPlace.address) }, visitedOn: String(form.get("visitedOn")), title: String(form.get("title")), note: String(form.get("note")), rating: Number(form.get("rating")), tags: String(form.get("tags") ?? "").split(",").map((item) => item.trim()).filter(Boolean).slice(0, 8), participantIds, markerStyle: String(form.get("markerStyle") ?? DEFAULT_MARKER_STYLE), version: editing?.version ?? 1 };
     const parsed = visitSchema.safeParse(raw);
     if (!parsed.success) return setNotice(parsed.error.issues[0]?.message ?? "입력을 확인해 주세요.");
 
@@ -268,7 +270,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
         }
       } else if (preparedFiles.length) photoUrls = preparedFiles.map((file) => URL.createObjectURL(file));
 
-      const nextVisit: Visit = { id, groupId: activeGroup.id, place: parsed.data.place as Place, visitedOn: parsed.data.visitedOn, title: parsed.data.title, note: parsed.data.note, rating: parsed.data.rating, tags: parsed.data.tags, participants: initialData.members.filter((member) => participantIds.includes(member.id)), photoUrls, version, updatedBy: initialData.members[0]?.displayName ?? "나" };
+      const nextVisit: Visit = { id, groupId: activeGroup.id, place: parsed.data.place as Place, visitedOn: parsed.data.visitedOn, title: parsed.data.title, note: parsed.data.note, rating: parsed.data.rating, tags: parsed.data.tags, participants: initialData.members.filter((member) => participantIds.includes(member.id)), photoUrls, markerStyle: parsed.data.markerStyle, version, updatedBy: initialData.members[0]?.displayName ?? "나" };
     setVisits((current) => editing ? current.map((visit) => visit.id === editing.id ? nextVisit : visit) : [nextVisit, ...current]);
       setSelectedId(id); setSelectedDateKey(parsed.data.visitedOn); setNotice(editing ? "기록을 고쳤습니다." : "새로운 기억을 지도에 남겼습니다."); dialogRef.current?.close();
     } catch (error) { setNotice(error instanceof Error ? error.message : "기록을 저장하지 못했습니다."); }
@@ -426,7 +428,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
       <dialog ref={dialogRef} className="visit-dialog" onClose={() => { setDraftPlace(null); setEditing(null); }}>
         <form method="dialog" className="dialog-close-form"><button aria-label="창 닫기"><X size={20} /></button></form>
-        {draftPlace && <form className="visit-form" onSubmit={saveVisit}>{pendingAction === "save" && <div className="operation-progress" role="progressbar" aria-label={editing ? "기록 수정 중" : "기록 저장 중"} />}<div className="form-title"><MapPin size={22} /><div><span>{editing ? "기록 고치기" : "새 방문 기록"}</span><h2>{draftPlace.name || "이 위치에 이름을 붙여주세요"}</h2></div></div><div className="form-grid"><label>장소 이름<input name="placeName" defaultValue={draftPlace.name} required /></label><label>방문한 날<input name="visitedOn" type="date" defaultValue={editing?.visitedOn ?? new Date().toISOString().slice(0, 10)} required /></label></div><label>주소 또는 위치 설명<input name="address" defaultValue={draftPlace.address} placeholder="예: 해방촌 골목 안쪽" /></label><label>기록 제목<input name="title" defaultValue={editing?.title} placeholder="그날을 한 문장으로" required /></label><label>무엇을 했나요?<textarea name="note" defaultValue={editing?.note} rows={4} placeholder="먹은 것, 나눈 이야기, 다시 오고 싶은 이유…" /></label><div className="form-grid"><label>별점<select name="rating" defaultValue={editing?.rating ?? 5}>{[5,4,3,2,1].map((value) => <option key={value} value={value}>{"★".repeat(value)} {value}.0</option>)}</select></label><label>태그<input name="tags" defaultValue={editing?.tags.join(", ")} placeholder="데이트, 산책, 맛집" /></label></div><fieldset><legend>함께한 사람</legend><div className="member-checks">{initialData.members.map((member) => <label key={member.id}><input type="checkbox" name={`member-${member.id}`} defaultChecked={editing ? editing.participants.some((person) => person.id === member.id) : true} /><span className="member-avatar">{member.initials}</span><span className="member-name">{member.displayName}</span><Check className="member-checkmark" size={13} strokeWidth={3} aria-hidden="true" /></label>)}</div></fieldset><label className="photo-input"><Camera size={20} /><span><strong>사진 추가</strong><small>최대 5장 · 사진당 약 350KB로 자동 압축</small></span><input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple /></label><div className="form-actions"><button type="button" disabled={Boolean(pendingAction)} onClick={() => dialogRef.current?.close()}>취소</button><button className="primary-button" disabled={Boolean(pendingAction)} type="submit">{pendingAction === "save" ? (editing ? "수정 중…" : "저장 중…") : editing ? "수정 내용 저장" : "지도에 기록 남기기"}</button></div></form>}
+        {draftPlace && <form className="visit-form" onSubmit={saveVisit}>{pendingAction === "save" && <div className="operation-progress" role="progressbar" aria-label={editing ? "기록 수정 중" : "기록 저장 중"} />}<div className="form-title"><MapPin size={22} /><div><span>{editing ? "기록 고치기" : "새 방문 기록"}</span><h2>{draftPlace.name || "이 위치에 이름을 붙여주세요"}</h2></div></div><div className="form-grid"><label>장소 이름<input name="placeName" defaultValue={draftPlace.name} required /></label><label>방문한 날<input name="visitedOn" type="date" defaultValue={editing?.visitedOn ?? new Date().toISOString().slice(0, 10)} required /></label></div><label>주소 또는 위치 설명<input name="address" defaultValue={draftPlace.address} placeholder="예: 해방촌 골목 안쪽" /></label><fieldset className="marker-picker"><legend>지도에 표시할 핀</legend><div>{MARKER_STYLE_IDS.map((style, index) => <label key={style} className={markerStyle === style ? "selected" : undefined} title={`핀 ${index + 1}`}><input type="radio" name="markerStyle" value={style} checked={markerStyle === style} onChange={() => setMarkerStyle(style)} aria-label={`핀 ${index + 1}`} /><img src={markerSvgDataUrl(style)} alt="" /><Check size={14} strokeWidth={3} aria-hidden="true" /></label>)}</div></fieldset><label>기록 제목<input name="title" defaultValue={editing?.title} placeholder="그날을 한 문장으로" required /></label><label>무엇을 했나요?<textarea name="note" defaultValue={editing?.note} rows={4} placeholder="먹은 것, 나눈 이야기, 다시 오고 싶은 이유…" /></label><div className="form-grid"><label>별점<select name="rating" defaultValue={editing?.rating ?? 5}>{[5,4,3,2,1].map((value) => <option key={value} value={value}>{"★".repeat(value)} {value}.0</option>)}</select></label><label>태그<input name="tags" defaultValue={editing?.tags.join(", ")} placeholder="데이트, 산책, 맛집" /></label></div><fieldset><legend>함께한 사람</legend><div className="member-checks">{initialData.members.map((member) => <label key={member.id}><input type="checkbox" name={`member-${member.id}`} defaultChecked={editing ? editing.participants.some((person) => person.id === member.id) : true} /><span className="member-avatar">{member.initials}</span><span className="member-name">{member.displayName}</span><Check className="member-checkmark" size={13} strokeWidth={3} aria-hidden="true" /></label>)}</div></fieldset><label className="photo-input"><Camera size={20} /><span><strong>사진 추가</strong><small>최대 5장 · 사진당 약 350KB로 자동 압축</small></span><input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple /></label><div className="form-actions"><button type="button" disabled={Boolean(pendingAction)} onClick={() => dialogRef.current?.close()}>취소</button><button className="primary-button" disabled={Boolean(pendingAction)} type="submit">{pendingAction === "save" ? (editing ? "수정 중…" : "저장 중…") : editing ? "수정 내용 저장" : "지도에 기록 남기기"}</button></div></form>}
       </dialog>
       <dialog ref={groupDialogRef} className="group-dialog" onClose={() => setNewGroupName("")}>
         <form className="group-create-form" onSubmit={createGroup}>

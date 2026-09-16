@@ -76,3 +76,21 @@ test("multiple visit photos can be browsed", async ({ page }) => {
   await expect(page.getByText("2 / 4")).toBeVisible();
   await expect(page.locator(".sheet-photo img")).toHaveAttribute("src", images[1]);
 });
+
+test("a marker shape can be selected and edited", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "지도에 핀 추가" }).click();
+  await page.locator(".map-canvas").click({ position: { x: 220, y: 180 }, force: true });
+  await expect(page.getByRole("radio", { name: /핀/ })).toHaveCount(5);
+  await page.getByTitle("핀 4").click();
+  await expect(page.getByRole("radio", { name: "핀 4" })).toBeChecked();
+  await page.getByLabel("장소 이름").fill("모양이 다른 핀");
+  await page.getByLabel("기록 제목").fill("네 번째 핀 선택");
+  await page.getByRole("button", { name: "지도에 기록 남기기" }).click();
+
+  const marker = page.locator('[data-visit-id]').filter({ has: page.locator('img') }).first();
+  await expect(marker).toHaveAttribute("data-marker-style", "pin-4");
+  await marker.click();
+  await page.getByRole("button", { name: "기록 고치기" }).click();
+  await expect(page.getByRole("radio", { name: "핀 4" })).toBeChecked();
+});

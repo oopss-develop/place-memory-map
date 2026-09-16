@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { DEFAULT_MARKER_STYLE, MARKER_STYLE_IDS } from "@/lib/marker-styles";
 
 export const placeSchema = z.object({
   provider: z.enum(["kakao", "manual"]),
@@ -20,6 +21,7 @@ export const visitSchema = z.object({
   rating: z.number().int().min(1).max(5),
   tags: z.array(z.string().trim().min(1).max(24)).max(8),
   participantIds: z.array(z.string().uuid()).max(20),
+  markerStyle: z.enum(MARKER_STYLE_IDS).default(DEFAULT_MARKER_STYLE),
   version: z.number().int().positive().default(1),
 });
 

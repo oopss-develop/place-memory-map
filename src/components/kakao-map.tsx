@@ -1,18 +1,12 @@
 "use client";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
 import { useEffect, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
+import { markerSvgDataUrl, normalizeMarkerStyle } from "@/lib/marker-styles";
 import type { Visit } from "@/types/domain";
 
 declare global { interface Window { kakao?: any; } }
-
-function markerImage(color: string, highlighted: boolean) {
-  const width = highlighted ? 46 : 34;
-  const height = highlighted ? 58 : 44;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 40 52"><path d="M20 2C10.6 2 3 9.6 3 19c0 12.8 17 30.8 17 30.8S37 31.8 37 19C37 9.6 29.4 2 20 2Z" fill="${color}" stroke="#fffdf6" stroke-width="2.5"/><circle cx="20" cy="19" r="6" fill="#fffdf6"/></svg>`;
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-}
 
 interface Props {
   visits: Visit[];
@@ -60,11 +54,11 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onAnchorCha
     markersRef.current = visits.map((visit) => {
       const highlighted = highlightedIds.includes(visit.id);
       const selected = selectedId === visit.id;
-      const markerWidth = highlighted ? 46 : 34;
-      const markerHeight = highlighted ? 58 : 44;
+      const markerWidth = highlighted ? 48 : 40;
+      const markerHeight = highlighted ? 58 : 48;
       const imageSize = new window.kakao.maps.Size(markerWidth, markerHeight);
       const image = new window.kakao.maps.MarkerImage(
-        markerImage(highlighted ? "#d84c32" : selected ? "#a93324" : "#4d89ad", highlighted),
+        markerSvgDataUrl(visit.markerStyle, { highlighted, selected }),
         imageSize,
         { offset: new window.kakao.maps.Point(markerWidth / 2, markerHeight) },
       );
@@ -114,7 +108,7 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onAnchorCha
         const visit = visits.find((item) => item.id === selectedId);
         if (!visit) return onAnchorChange();
         const point = mapRef.current.getProjection().containerPointFromCoords(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude));
-        const markerHeight = highlightedIds.includes(visit.id) ? 58 : 44;
+        const markerHeight = highlightedIds.includes(visit.id) ? 58 : 48;
         onAnchorChange({ x: point.x, y: point.y, topY: point.y - markerHeight });
       };
       update();
@@ -160,11 +154,11 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onAnchorCha
         <div className="map-fallback" aria-label="서울 방문 기록 데모 지도">
           <div className="river" /><div className="road road-a" /><div className="road road-b" /><div className="road road-c" />
           <span className="district district-west">종로</span><span className="district district-east">성수</span><span className="district district-south">한강</span>
-          {visits.map((visit, index) => {
+          {visits.map((visit) => {
             const left = 13 + ((visit.place.longitude - 126.91) / 0.18) * 74;
             const top = 10 + ((37.61 - visit.place.latitude) / 0.11) * 74;
             const highlighted = highlightedIds.includes(visit.id);
-            return <button key={visit.id} data-visit-id={visit.id} className={`map-pin ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${Math.max(8, Math.min(88, left))}%`, top: `${Math.max(8, Math.min(84, top))}%` }} onClick={(event) => { event.stopPropagation(); const mapRect = event.currentTarget.closest(".map-canvas")?.getBoundingClientRect(); const markerRect = event.currentTarget.getBoundingClientRect(); onSelect(visit, mapRect ? { x: markerRect.left + markerRect.width / 2 - mapRect.left, y: markerRect.bottom - mapRect.top, topY: markerRect.top - mapRect.top } : undefined); }} aria-label={`${visit.place.name} 기록 보기`}><MapPin size={highlighted ? 36 : 28} fill="currentColor" strokeWidth={1.6} /><span>{index + 1}</span></button>;
+            return <button key={visit.id} data-visit-id={visit.id} data-marker-style={normalizeMarkerStyle(visit.markerStyle)} className={`map-pin ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${Math.max(8, Math.min(88, left))}%`, top: `${Math.max(8, Math.min(84, top))}%` }} onClick={(event) => { event.stopPropagation(); const mapRect = event.currentTarget.closest(".map-canvas")?.getBoundingClientRect(); const markerRect = event.currentTarget.getBoundingClientRect(); onSelect(visit, mapRect ? { x: markerRect.left + markerRect.width / 2 - mapRect.left, y: markerRect.bottom - mapRect.top, topY: markerRect.top - mapRect.top } : undefined); }} aria-label={`${visit.place.name} 기록 보기`}><img src={markerSvgDataUrl(visit.markerStyle, { highlighted, selected: selectedId === visit.id })} alt="" /></button>;
           })}
           {focusLocation && <span className="current-location-dot" aria-label="현재 위치" />}
           <div className="demo-map-note">Kakao Map 키 연결 전 데모 지도</div>

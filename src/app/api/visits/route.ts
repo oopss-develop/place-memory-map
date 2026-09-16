@@ -65,6 +65,7 @@ export async function POST(request: Request) {
       note: input.note,
       rating: input.rating,
       tags: input.tags,
+      marker_style: input.markerStyle,
       created_by: auth.user.id,
       updated_by: auth.user.id,
     })
@@ -101,6 +102,7 @@ export async function PUT(request: Request) {
       note: input.note,
       rating: input.rating,
       tags: input.tags,
+      marker_style: input.markerStyle,
       updated_by: auth.user.id,
       version: input.version + 1,
     })

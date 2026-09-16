@@ -2,6 +2,7 @@ import "server-only";
 import { demoGroups, demoMembers, demoVisits } from "@/lib/demo-data";
 import { isServerPersistenceConfigured } from "@/lib/supabase/config";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
+import { normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
 import type { Group, Profile, Visit } from "@/types/domain";
 
 export interface DashboardData {
@@ -14,7 +15,7 @@ export interface DashboardData {
 interface MembershipRow { role: "owner" | "member"; groups: { id: string; name: string; created_by: string }; }
 interface MemberRow { group_id: string; profiles: { id: string; display_name: string }; }
 interface VisitRow {
-  id: string; group_id: string; visited_on: string; title: string; note: string; rating: number; tags: string[]; version: number;
+  id: string; group_id: string; visited_on: string; title: string; note: string; rating: number; tags: string[]; marker_style: MarkerStyle | null; version: number;
   places: { id: string; provider: "kakao" | "manual"; provider_place_id: string | null; name: string; address: string; category: string; latitude: number | string; longitude: number | string };
   visit_participants: Array<{ profiles: { id: string; display_name: string } }>;
   visit_photos: Array<{ storage_path: string; sort_order: number }>;
@@ -105,6 +106,7 @@ export async function getDashboardData(userId?: string): Promise<DashboardData> 
           initials: p.profiles.display_name.slice(0, 1),
         })),
         photoUrls: signed.filter((url): url is string => Boolean(url)),
+        markerStyle: normalizeMarkerStyle(row.marker_style),
         version: row.version,
         updatedBy: "그룹 멤버",
       } satisfies Visit;

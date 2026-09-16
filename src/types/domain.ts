@@ -1,3 +1,5 @@
+import type { MarkerStyle } from "@/lib/marker-styles";
+
 export type MemberRole = "owner" | "member";
 export type PlaceProvider = "kakao" | "manual";
 
@@ -37,6 +39,7 @@ export interface Visit {
   tags: string[];
   participants: Profile[];
   photoUrls: string[];
+  markerStyle: MarkerStyle;
   version: number;
   deletedAt?: string | null;
   updatedBy: string;
