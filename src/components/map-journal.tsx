@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Camera, Check, ChevronDown, Filter, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Plus, Search, Star, Users, X } from "lucide-react";
 import { KakaoMap, type MapAnchor } from "@/components/kakao-map";
@@ -17,7 +17,8 @@ const formatDate = (date: string) => new Intl.DateTimeFormat("ko-KR", { month: "
 const VISITS_STORAGE_KEY = "place-memory-visits-v2";
 const GROUPS_STORAGE_KEY = "place-memory-groups-v1";
 type PopupPlacement = "right" | "left" | "above" | "below";
-interface PopupPosition { left: number; top: number; placement: PopupPlacement; }
+interface PopupPosition { left: number; top: number; placement: PopupPlacement; tailX: number; tailY: number; tailLength: number; }
+type PopupStyle = CSSProperties & { "--tail-x": string; "--tail-y": string; "--tail-length": string; };
 
 export function MapJournal({ initialData, viewerId, viewerName }: { initialData: DashboardData; viewerId?: string; viewerName?: string }) {
   const router = useRouter();
@@ -94,6 +95,13 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const selected = visits.find((visit) => visit.id === selectedId);
   const mapSummary = groupVisits.length ? `${groupVisits.length}곳의 기록` : "첫 장소를 남겨보세요";
   const canManageActiveGroup = initialData.demoMode ? activeGroup?.ownerId === viewerId : activeGroup?.role === "owner";
+  const sheetStyle: PopupStyle | undefined = popupPosition ? {
+    left: popupPosition.left,
+    top: popupPosition.top,
+    "--tail-x": `${popupPosition.tailX}px`,
+    "--tail-y": `${popupPosition.tailY}px`,
+    "--tail-length": `${popupPosition.tailLength}px`,
+  } : undefined;
 
   const handleAnchorChange = useCallback((anchor?: MapAnchor) => {
     setSelectedAnchor(anchor);
@@ -109,8 +117,8 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       if (!mapStageRef.current || !sheetRef.current) return;
       const stage = mapStageRef.current.getBoundingClientRect();
       const sheet = sheetRef.current.getBoundingClientRect();
-      const gap = 16;
-      const edge = 16;
+      const gap = 34;
+      const edge = 24;
       const canPlaceRight = selectedAnchor.x + sheet.width + gap <= stage.width - edge;
       const canPlaceLeft = selectedAnchor.x - sheet.width - gap >= edge;
       let placement: PopupPlacement;
@@ -133,15 +141,28 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
         left = selectedAnchor.x - sheet.width / 2;
         top = selectedAnchor.y + gap;
       }
+      const clampedLeft = Math.max(edge, Math.min(left, stage.width - sheet.width - edge));
+      const clampedTop = Math.max(edge, Math.min(top, stage.height - sheet.height - edge));
       setPopupPosition({
-        left: Math.max(edge, Math.min(left, stage.width - sheet.width - edge)),
-        top: Math.max(edge, Math.min(top, stage.height - sheet.height - edge)),
+        left: clampedLeft,
+        top: clampedTop,
         placement,
+        tailX: Math.max(24, Math.min(selectedAnchor.x - clampedLeft, sheet.width - 24)),
+        tailY: Math.max(24, Math.min(selectedAnchor.y - clampedTop, sheet.height - 24)),
+        tailLength: placement === "right" ? clampedLeft - selectedAnchor.x + 1
+          : placement === "left" ? selectedAnchor.x - (clampedLeft + sheet.width) + 1
+            : placement === "below" ? clampedTop - selectedAnchor.y + 1
+              : selectedAnchor.y - (clampedTop + sheet.height) + 1,
       });
     };
     updatePosition();
+    const observer = new ResizeObserver(updatePosition);
+    observer.observe(sheetRef.current);
     window.addEventListener("resize", updatePosition);
-    return () => window.removeEventListener("resize", updatePosition);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", updatePosition);
+    };
   }, [selected, selectedAnchor]);
 
   function openForPlace(place: Place) {
@@ -352,7 +373,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
         <KakaoMap visits={groupVisits} selectedId={selectedId} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={(visit, anchor) => { setSelectedId(visit.id); setSelectedAnchor(anchor); }} onAnchorChange={handleAnchorChange} onManualPoint={manualPoint} focusLocation={currentLocation} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => setMobileList(true)} aria-label="기록 목록 열기"><List size={20} /></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
         <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
-        {selected && <article ref={sheetRef} className={`place-sheet ${popupPosition ? "is-positioned" : ""}`} data-placement={popupPosition?.placement} style={popupPosition ? { left: popupPosition.left, top: popupPosition.top } : undefined}>{pendingAction === "delete" && <div className="operation-progress" role="progressbar" aria-label="기록 삭제 중" />}<button className="sheet-close" disabled={Boolean(pendingAction)} onClick={() => { setSelectedId(undefined); setSelectedAnchor(undefined); }} aria-label="상세 닫기"><X size={18} /></button>{selected.photoUrls[0] && <div className="sheet-photo"><img src={selected.photoUrls[0]} alt={`${selected.place.name} 방문 사진`} /><span>방문 사진</span></div>}<div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button disabled={Boolean(pendingAction)} onClick={() => openEdit(selected)}>기록 고치기</button><button className="danger-button" disabled={Boolean(pendingAction)} onClick={() => deleteVisit(selected)}>{pendingAction === "delete" ? "삭제 중…" : "기록 삭제"}</button></div></div></div></article>}
+        {selected && <article ref={sheetRef} className={`place-sheet ${selected.photoUrls[0] ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>{pendingAction === "delete" && <div className="operation-progress" role="progressbar" aria-label="기록 삭제 중" />}<button className="sheet-close" disabled={Boolean(pendingAction)} onClick={() => { setSelectedId(undefined); setSelectedAnchor(undefined); }} aria-label="상세 닫기"><X size={18} /></button>{selected.photoUrls[0] && <div className="sheet-photo"><img src={selected.photoUrls[0]} alt={`${selected.place.name} 방문 사진`} /><span>방문 사진</span></div>}<div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button disabled={Boolean(pendingAction)} onClick={() => openEdit(selected)}>기록 고치기</button><button className="danger-button" disabled={Boolean(pendingAction)} onClick={() => deleteVisit(selected)}>{pendingAction === "delete" ? "삭제 중…" : "기록 삭제"}</button></div></div></div></article>}
         {notice && <button className="notice" onClick={() => setNotice("")} aria-live="polite">{notice}<X size={14} /></button>}
         <nav className="mobile-nav" aria-label="모바일 주요 메뉴"><button className="active" type="button"><MapIcon size={20} />지도</button><button type="button" onClick={() => setMobileList(true)}><List size={20} />기록</button><button type="button" onClick={startManualPin}><Plus size={22} />추가</button><button type="button" onClick={() => { setMobileList(true); setGroupPickerOpen(true); }}><Users size={20} />그룹</button></nav>
       </section>
