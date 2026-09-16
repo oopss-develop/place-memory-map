@@ -10,6 +10,7 @@ import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
 import { prepareVisitImage } from "@/lib/images";
 import { DEFAULT_MARKER_STYLE, MARKER_STYLE_IDS, markerSvgDataUrl, normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
+import { getMemberInitials } from "@/lib/member-initials";
 import { visitSchema } from "@/lib/schemas";
 import type { DashboardData } from "@/lib/data";
 import type { Group, KakaoPlaceResult, Place, Visit } from "@/types/domain";
@@ -29,6 +30,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [storageReady, setStorageReady] = useState(() => !initialData.demoMode);
   const [selectedId, setSelectedId] = useState<string | undefined>();
   const [selectedAnchor, setSelectedAnchor] = useState<MapAnchor>();
+  const [selectionRequest, setSelectionRequest] = useState(0);
   const [popupPosition, setPopupPosition] = useState<PopupPosition>();
   const [pendingAction, setPendingAction] = useState<"save" | "delete">();
   const [query, setQuery] = useState("");
@@ -114,11 +116,12 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     if (!anchor) setPopupPosition(undefined);
   }, []);
 
-  const handleVisitSelect = useCallback((visit: Visit, anchor?: MapAnchor) => {
+  const handleVisitSelect = useCallback((visit: Visit) => {
     setNotice("");
     setPhotoView({ visitId: visit.id, index: 0 });
     setSelectedId(visit.id);
-    setSelectedAnchor(anchor);
+    setSelectedAnchor(undefined);
+    setSelectionRequest((request) => request + 1);
   }, []);
 
   function showPhoto(offset: number) {
@@ -272,7 +275,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
       const nextVisit: Visit = { id, groupId: activeGroup.id, place: parsed.data.place as Place, visitedOn: parsed.data.visitedOn, title: parsed.data.title, note: parsed.data.note, rating: parsed.data.rating, tags: parsed.data.tags, participants: initialData.members.filter((member) => participantIds.includes(member.id)), photoUrls, markerStyle: parsed.data.markerStyle, version, updatedBy: initialData.members[0]?.displayName ?? "나" };
     setVisits((current) => editing ? current.map((visit) => visit.id === editing.id ? nextVisit : visit) : [nextVisit, ...current]);
-      setSelectedId(id); setSelectedDateKey(parsed.data.visitedOn); setNotice(editing ? "기록을 고쳤습니다." : "새로운 기억을 지도에 남겼습니다."); dialogRef.current?.close();
+      setSelectedId(id); setSelectedAnchor(undefined); setSelectionRequest((request) => request + 1); setSelectedDateKey(parsed.data.visitedOn); setNotice(editing ? "기록을 고쳤습니다." : "새로운 기억을 지도에 남겼습니다."); dialogRef.current?.close();
     } catch (error) { setNotice(error instanceof Error ? error.message : "기록을 저장하지 못했습니다."); }
     finally { setPendingAction(undefined); }
   }
@@ -394,16 +397,16 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
           {dateGroups.map(({ date, visits: dateVisits }) => {
             const active = selectedDateKey === date;
             return <section key={date} className={`date-group ${active ? "active" : ""}`}>
-              <button className="date-group-toggle" aria-expanded={active} aria-label={`${formatDate(date)} 방문 기록 ${dateVisits.length}개 ${active ? "접기" : "펼치기"}`} onClick={() => { setSelectedDateKey(active ? undefined : date); if (!active && dateVisits[0]) setSelectedId(dateVisits[0].id); }}><span><CalendarDays size={15} /><time>{formatDate(date)}</time></span><strong>{dateVisits.length}곳 <ChevronDown size={15} /></strong></button>
-              {active && <div className="date-group-items">{dateVisits.map((visit) => <button key={visit.id} className={`record-item ${selectedId === visit.id ? "selected" : ""}`} onClick={() => { setSelectedId(visit.id); setSelectedAnchor(undefined); setMobileList(false); }}><span className="record-index">{String(groupVisits.indexOf(visit) + 1).padStart(2, "0")}</span><div><strong>{visit.place.name}</strong><p>{visit.title}</p><div className="mini-meta"><span><Star size={13} fill="currentColor" /> {visit.rating}.0</span><span><Users size={13} /> {visit.participants.length}</span>{visit.photoUrls.length > 0 && <span><Camera size={13} /> {visit.photoUrls.length}</span>}</div></div></button>)}</div>}
+              <button className="date-group-toggle" aria-expanded={active} aria-label={`${formatDate(date)} 방문 기록 ${dateVisits.length}개 ${active ? "접기" : "펼치기"}`} onClick={() => { setSelectedDateKey(active ? undefined : date); if (!active && dateVisits[0]) handleVisitSelect(dateVisits[0]); }}><span><CalendarDays size={15} /><time>{formatDate(date)}</time></span><strong>{dateVisits.length}곳 <ChevronDown size={15} /></strong></button>
+              {active && <div className="date-group-items">{dateVisits.map((visit) => <button key={visit.id} className={`record-item ${selectedId === visit.id ? "selected" : ""}`} onClick={() => { handleVisitSelect(visit); setMobileList(false); }}><span className="record-index">{String(groupVisits.indexOf(visit) + 1).padStart(2, "0")}</span><div><strong>{visit.place.name}</strong><p>{visit.title}</p><div className="mini-meta"><span><Star size={13} fill="currentColor" /> {visit.rating}.0</span><span><Users size={13} /> {visit.participants.length}</span>{visit.photoUrls.length > 0 && <span><Camera size={13} /> {visit.photoUrls.length}</span>}</div></div></button>)}</div>}
             </section>;
           })}
         </div>
-        <footer className="sidebar-footer"><span className="avatar">{(viewerName ?? initialData.members[0]?.displayName ?? "여행자").slice(0, 1)}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {canManageActiveGroup ? "그룹장" : "멤버"}</span>{canManageActiveGroup && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton />{canManageActiveGroup && <button className="group-menu-delete" type="button" disabled={groups.length <= 1} title={groups.length <= 1 ? "마지막 지도는 삭제할 수 없습니다." : undefined} onClick={deleteGroup}>현재 지도 삭제</button>}{canManageActiveGroup && groups.length <= 1 && <small className="group-menu-hint">마지막 지도는 삭제할 수 없어요.</small>}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
+        <footer className="sidebar-footer"><span className="avatar">{getMemberInitials(viewerName ?? initialData.members[0]?.displayName ?? "여행자")}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {canManageActiveGroup ? "그룹장" : "멤버"}</span>{canManageActiveGroup && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton />{canManageActiveGroup && <button className="group-menu-delete" type="button" disabled={groups.length <= 1} title={groups.length <= 1 ? "마지막 지도는 삭제할 수 없습니다." : undefined} onClick={deleteGroup}>현재 지도 삭제</button>}{canManageActiveGroup && groups.length <= 1 && <small className="group-menu-hint">마지막 지도는 삭제할 수 없어요.</small>}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
       </aside>
 
       <section ref={mapStageRef} className="map-stage">
-        <KakaoMap visits={groupVisits} selectedId={selectedId} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onManualPoint={manualPoint} focusLocation={currentLocation} />
+        <KakaoMap visits={groupVisits} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onManualPoint={manualPoint} focusLocation={currentLocation} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => setMobileList(true)} aria-label="기록 목록 열기"><List size={20} /></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
         <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
         {selected && <article ref={sheetRef} className={`place-sheet ${activePhotoUrl ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>

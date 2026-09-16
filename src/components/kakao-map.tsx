@@ -11,8 +11,9 @@ declare global { interface Window { kakao?: any; } }
 interface Props {
   visits: Visit[];
   selectedId?: string;
+  selectionRequest: number;
   manualMode: boolean;
-  onSelect: (visit: Visit, anchor?: MapAnchor) => void;
+  onSelect: (visit: Visit) => void;
   onAnchorChange?: (anchor?: MapAnchor) => void;
   onManualPoint: (latitude: number, longitude: number) => void;
   focusLocation?: { latitude: number; longitude: number };
@@ -25,7 +26,7 @@ export interface MapAnchor {
   topY?: number;
 }
 
-export function KakaoMap({ visits, selectedId, manualMode, onSelect, onAnchorChange, onManualPoint, focusLocation, highlightedIds = [] }: Props) {
+export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onManualPoint, focusLocation, highlightedIds = [] }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -70,27 +71,54 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onAnchorCha
         zIndex: highlighted ? 3 : selected ? 2 : 1,
       });
       window.kakao.maps.event.addListener(marker, "click", () => {
-        const point = mapRef.current.getProjection().containerPointFromCoords(marker.getPosition());
-        onSelect(visit, { x: point.x, y: point.y, topY: point.y - markerHeight });
+        onSelect(visit);
       });
       return marker;
     });
   }, [ready, visits, onSelect, selectedId, highlightedIds]);
 
   useEffect(() => {
-    if (!ready || !mapRef.current || !window.kakao || !visits.length) return;
+    if (!visits.length) return;
     const visibleVisits = highlightedIds.length
       ? visits.filter((visit) => highlightedIds.includes(visit.id))
       : visits;
     if (!visibleVisits.length) return;
     const selectedVisit = visits.find((visit) => visit.id === selectedId);
     if (selectedVisit) {
+      onAnchorChange?.();
+      if (!apiKey) {
+        const frame = window.requestAnimationFrame(() => {
+          const mapCanvas = ref.current?.parentElement;
+          const marker = mapCanvas?.querySelector(`[data-visit-id="${selectedVisit.id}"]`) as HTMLElement | null;
+          if (!mapCanvas || !marker) return;
+          const mapRect = mapCanvas.getBoundingClientRect();
+          const markerRect = marker.getBoundingClientRect();
+          onAnchorChange?.({ x: markerRect.left + markerRect.width / 2 - mapRect.left, y: markerRect.bottom - mapRect.top, topY: markerRect.top - mapRect.top });
+        });
+        return () => window.cancelAnimationFrame(frame);
+      }
+      if (!ready || !mapRef.current || !window.kakao) return;
+      let completed = false;
+      const reveal = () => {
+        if (completed) return;
+        completed = true;
+        window.kakao.maps.event.removeListener(mapRef.current, "idle", reveal);
+        const point = mapRef.current.getProjection().containerPointFromCoords(new window.kakao.maps.LatLng(selectedVisit.place.latitude, selectedVisit.place.longitude));
+        const markerHeight = highlightedIds.includes(selectedVisit.id) ? 58 : 48;
+        onAnchorChange?.({ x: point.x, y: point.y, topY: point.y - markerHeight });
+      };
+      window.kakao.maps.event.addListener(mapRef.current, "idle", reveal);
       mapRef.current.setCenter(new window.kakao.maps.LatLng(selectedVisit.place.latitude, selectedVisit.place.longitude));
       if (window.innerWidth > 820 && ref.current) {
         mapRef.current.panBy(0, -Math.round(ref.current.clientHeight * 0.32));
       }
-      return;
+      const fallbackTimer = window.setTimeout(reveal, 700);
+      return () => {
+        window.clearTimeout(fallbackTimer);
+        if (!completed) window.kakao.maps.event.removeListener(mapRef.current, "idle", reveal);
+      };
     }
+    if (!ready || !mapRef.current || !window.kakao) return;
     if (visibleVisits.length === 1) {
       const visit = visibleVisits[0];
       mapRef.current.setCenter(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude));
@@ -99,7 +127,7 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onAnchorCha
     const bounds = new window.kakao.maps.LatLngBounds();
     visibleVisits.forEach((visit) => bounds.extend(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude)));
     mapRef.current.setBounds(bounds, 72, 72, 72, 72);
-  }, [ready, visits, selectedId, highlightedIds]);
+  }, [apiKey, highlightedIds, onAnchorChange, ready, selectedId, selectionRequest, visits]);
 
   useEffect(() => {
     if (!selectedId || !onAnchorChange) return;
@@ -111,20 +139,11 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onAnchorCha
         const markerHeight = highlightedIds.includes(visit.id) ? 58 : 48;
         onAnchorChange({ x: point.x, y: point.y, topY: point.y - markerHeight });
       };
-      update();
       const idleHandler = () => update();
       window.kakao.maps.event.addListener(mapRef.current, "idle", idleHandler);
       return () => window.kakao.maps.event.removeListener(mapRef.current, "idle", idleHandler);
     }
-    const frame = window.requestAnimationFrame(() => {
-      const mapCanvas = ref.current?.parentElement;
-      const marker = mapCanvas?.querySelector(`[data-visit-id="${selectedId}"]`) as HTMLElement | null;
-      if (!mapCanvas || !marker) return;
-      const mapRect = mapCanvas.getBoundingClientRect();
-      const markerRect = marker.getBoundingClientRect();
-      onAnchorChange({ x: markerRect.left + markerRect.width / 2 - mapRect.left, y: markerRect.bottom - mapRect.top, topY: markerRect.top - mapRect.top });
-    });
-    return () => window.cancelAnimationFrame(frame);
+    return;
   }, [apiKey, highlightedIds, onAnchorChange, ready, selectedId, visits]);
 
   useEffect(() => {
@@ -158,7 +177,7 @@ export function KakaoMap({ visits, selectedId, manualMode, onSelect, onAnchorCha
             const left = 13 + ((visit.place.longitude - 126.91) / 0.18) * 74;
             const top = 10 + ((37.61 - visit.place.latitude) / 0.11) * 74;
             const highlighted = highlightedIds.includes(visit.id);
-            return <button key={visit.id} data-visit-id={visit.id} data-marker-style={normalizeMarkerStyle(visit.markerStyle)} className={`map-pin ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${Math.max(8, Math.min(88, left))}%`, top: `${Math.max(8, Math.min(84, top))}%` }} onClick={(event) => { event.stopPropagation(); const mapRect = event.currentTarget.closest(".map-canvas")?.getBoundingClientRect(); const markerRect = event.currentTarget.getBoundingClientRect(); onSelect(visit, mapRect ? { x: markerRect.left + markerRect.width / 2 - mapRect.left, y: markerRect.bottom - mapRect.top, topY: markerRect.top - mapRect.top } : undefined); }} aria-label={`${visit.place.name} 기록 보기`}><img src={markerSvgDataUrl(visit.markerStyle, { highlighted, selected: selectedId === visit.id })} alt="" /></button>;
+            return <button key={visit.id} data-visit-id={visit.id} data-marker-style={normalizeMarkerStyle(visit.markerStyle)} className={`map-pin ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${Math.max(8, Math.min(88, left))}%`, top: `${Math.max(8, Math.min(84, top))}%` }} onClick={(event) => { event.stopPropagation(); onSelect(visit); }} aria-label={`${visit.place.name} 기록 보기`}><img src={markerSvgDataUrl(visit.markerStyle, { highlighted, selected: selectedId === visit.id })} alt="" /></button>;
           })}
           {focusLocation && <span className="current-location-dot" aria-label="현재 위치" />}
           <div className="demo-map-note">Kakao Map 키 연결 전 데모 지도</div>

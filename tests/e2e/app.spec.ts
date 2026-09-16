@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("shows an empty map journal", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "우리의 발자국" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "기록" })).toBeVisible();
   await expect(page.getByText("아직 남긴 발자국이 없어요.")).toBeVisible();
   if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
 });
@@ -13,6 +13,7 @@ test("manual pin opens the visit form", async ({ page }) => {
   await page.getByRole("button", { name: "지도에 핀 추가" }).click();
   await page.locator(".map-canvas").click({ position: { x: 220, y: 180 }, force: true });
   await expect(page.getByRole("heading", { name: "이 위치에 이름을 붙여주세요" })).toBeVisible();
+  await expect(page.locator(".member-checks label")).toContainText(["또이교혁", "나박나린", "우박우성", "쥐이은지"]);
 });
 
 test("empty journal guides a first visit from the record list", async ({ page }) => {
@@ -93,4 +94,36 @@ test("a marker shape can be selected and edited", async ({ page }) => {
   await marker.click();
   await page.getByRole("button", { name: "기록 고치기" }).click();
   await expect(page.getByRole("radio", { name: "핀 4" })).toBeChecked();
+});
+
+test("reselecting a record reopens its popup", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("place-memory-visits-v2", JSON.stringify([{
+      id: "repeat-selection-visit",
+      groupId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      place: { id: "repeat-selection-place", provider: "manual", name: "다시 여는 장소", address: "서울", category: "산책", latitude: 37.56, longitude: 126.98 },
+      visitedOn: "2026-09-16",
+      title: "같은 기록 다시 선택",
+      note: "팝업 재선택 테스트",
+      rating: 5,
+      tags: ["산책"],
+      participants: [],
+      photoUrls: [],
+      markerStyle: "pin-1",
+      version: 1,
+      updatedBy: "test",
+    }]));
+    localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true");
+  });
+  await page.goto("/");
+
+  const mobile = (page.viewportSize()?.width ?? 1000) <= 820;
+  if (mobile) await page.getByRole("button", { name: "기록 목록 열기" }).click();
+  await page.getByRole("button", { name: /9월 16일.*방문 기록 1개/ }).click();
+  await page.locator(".record-item", { hasText: "다시 여는 장소" }).click();
+  await expect(page.locator(".place-sheet.is-positioned")).toBeVisible();
+
+  if (mobile) await page.getByRole("button", { name: "기록 목록 열기" }).click();
+  await page.locator(".record-item", { hasText: "다시 여는 장소" }).click();
+  await expect(page.locator(".place-sheet.is-positioned")).toBeVisible();
 });

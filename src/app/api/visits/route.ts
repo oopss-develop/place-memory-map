@@ -15,6 +15,14 @@ async function isGroupMember(supabase: SupabaseClient, groupId: string, userId: 
   return Boolean(data);
 }
 
+function isMarkerStyleMigrationPending(error: { code?: string; message?: string } | null) {
+  return Boolean(error && (
+    error.code === "PGRST204"
+    || error.code === "42703"
+    || error.message?.includes("marker_style")
+  ));
+}
+
 export async function POST(request: Request) {
   const auth = await authClient();
   if (!auth) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
@@ -55,23 +63,30 @@ export async function POST(request: Request) {
     placeId = data.id;
   }
 
-  const { data: visit, error: visitError } = await auth.supabase
+  const visitPayload = {
+    group_id: input.groupId,
+    place_id: placeId,
+    visited_on: input.visitedOn,
+    title: input.title,
+    note: input.note,
+    rating: input.rating,
+    tags: input.tags,
+    created_by: auth.user.id,
+    updated_by: auth.user.id,
+  };
+  let { data: visit, error: visitError } = await auth.supabase
     .from("visits")
-    .insert({
-      group_id: input.groupId,
-      place_id: placeId,
-      visited_on: input.visitedOn,
-      title: input.title,
-      note: input.note,
-      rating: input.rating,
-      tags: input.tags,
-      marker_style: input.markerStyle,
-      created_by: auth.user.id,
-      updated_by: auth.user.id,
-    })
+    .insert({ ...visitPayload, marker_style: input.markerStyle })
     .select("id,version")
     .single();
-  if (visitError) return NextResponse.json({ error: visitError.message }, { status: 400 });
+  if (isMarkerStyleMigrationPending(visitError)) {
+    ({ data: visit, error: visitError } = await auth.supabase
+      .from("visits")
+      .insert(visitPayload)
+      .select("id,version")
+      .single());
+  }
+  if (visitError || !visit) return NextResponse.json({ error: visitError?.message ?? "방문 기록을 저장하지 못했습니다." }, { status: 400 });
 
   if (input.participantIds.length) {
     const { error } = await auth.supabase.from("visit_participants").insert(
@@ -94,23 +109,33 @@ export async function PUT(request: Request) {
   const { data: currentVisit, error: currentVisitError } = await auth.supabase.from("visits").select("group_id").eq("id", input.id).maybeSingle();
   if (currentVisitError || !currentVisit) return NextResponse.json({ error: "방문 기록을 찾지 못했습니다." }, { status: 404 });
   if (!await isGroupMember(auth.supabase, currentVisit.group_id, auth.user.id)) return NextResponse.json({ error: "이 기록을 수정할 권한이 없습니다." }, { status: 403 });
-  const { data, error } = await auth.supabase
+  const updatePayload = {
+    visited_on: input.visitedOn,
+    title: input.title,
+    note: input.note,
+    rating: input.rating,
+    tags: input.tags,
+    updated_by: auth.user.id,
+    version: input.version + 1,
+  };
+  let { data, error } = await auth.supabase
     .from("visits")
-    .update({
-      visited_on: input.visitedOn,
-      title: input.title,
-      note: input.note,
-      rating: input.rating,
-      tags: input.tags,
-      marker_style: input.markerStyle,
-      updated_by: auth.user.id,
-      version: input.version + 1,
-    })
+    .update({ ...updatePayload, marker_style: input.markerStyle })
     .eq("id", input.id)
     .eq("version", input.version)
     .is("deleted_at", null)
     .select("id,version")
     .maybeSingle();
+  if (isMarkerStyleMigrationPending(error)) {
+    ({ data, error } = await auth.supabase
+      .from("visits")
+      .update(updatePayload)
+      .eq("id", input.id)
+      .eq("version", input.version)
+      .is("deleted_at", null)
+      .select("id,version")
+      .maybeSingle());
+  }
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   if (!data) return NextResponse.json({ error: "다른 멤버가 먼저 수정했습니다. 최신 기록을 다시 불러와 주세요." }, { status: 409 });
 

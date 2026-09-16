@@ -1,10 +1,11 @@
 import type { Group, Profile, Visit } from "@/types/domain";
+import { getMemberInitials } from "@/lib/member-initials";
 
 export const demoMembers: Profile[] = [
-  { id: "11111111-1111-4111-8111-111111111111", displayName: "이교혁", initials: "또" },
-  { id: "22222222-2222-4222-8222-222222222222", displayName: "박나린", initials: "나" },
-  { id: "33333333-3333-4333-8333-333333333333", displayName: "박우성", initials: "우" },
-  { id: "44444444-4444-4444-8444-444444444444", displayName: "이은지", initials: "쥐" },
+  { id: "11111111-1111-4111-8111-111111111111", displayName: "이교혁", initials: getMemberInitials("이교혁") },
+  { id: "22222222-2222-4222-8222-222222222222", displayName: "박나린", initials: getMemberInitials("박나린") },
+  { id: "33333333-3333-4333-8333-333333333333", displayName: "박우성", initials: getMemberInitials("박우성") },
+  { id: "44444444-4444-4444-8444-444444444444", displayName: "이은지", initials: getMemberInitials("이은지") },
 ];
 
 export const demoGroups: Group[] = [

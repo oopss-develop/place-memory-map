@@ -260,7 +260,7 @@ button, select { cursor: pointer; }
   .map-topbar { top: 14px; left: 12px; right: 12px; }
   .map-date { display: none; }
   .location-button { margin-left: auto; }
-  .place-sheet { top: auto !important; right: 10px; bottom: 76px; left: 10px !important; width: calc(100% - 20px); max-height: 55dvh; overflow-y: auto; visibility: visible; border-radius: 12px 12px 5px 5px; }
+  .place-sheet { top: auto !important; right: 10px; bottom: 76px; left: 10px !important; width: calc(100% - 20px); max-height: 55dvh; overflow-y: auto; border-radius: 12px 12px 5px 5px; }
   .place-sheet::after { display: none; }
   .sheet-photo { height: 144px; }
   .sheet-photo-nav.previous { left: 54px; }

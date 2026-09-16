@@ -3,6 +3,7 @@ import { demoGroups, demoMembers, demoVisits } from "@/lib/demo-data";
 import { isServerPersistenceConfigured } from "@/lib/supabase/config";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
+import { getMemberInitials } from "@/lib/member-initials";
 import type { Group, Profile, Visit } from "@/types/domain";
 
 export interface DashboardData {
@@ -65,7 +66,7 @@ export async function getDashboardData(userId?: string): Promise<DashboardData> 
     membersById.set(row.profiles.id, {
       id: row.profiles.id,
       displayName: row.profiles.display_name,
-      initials: row.profiles.display_name.slice(0, 1),
+      initials: getMemberInitials(row.profiles.display_name),
     });
   });
   const members = Array.from(membersById.values());
@@ -103,7 +104,7 @@ export async function getDashboardData(userId?: string): Promise<DashboardData> 
         participants: (row.visit_participants ?? []).map((p) => ({
           id: p.profiles.id,
           displayName: p.profiles.display_name,
-          initials: p.profiles.display_name.slice(0, 1),
+          initials: getMemberInitials(p.profiles.display_name),
         })),
         photoUrls: signed.filter((url): url is string => Boolean(url)),
         markerStyle: normalizeMarkerStyle(row.marker_style),
