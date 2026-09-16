@@ -119,27 +119,30 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       const sheet = sheetRef.current.getBoundingClientRect();
       const gap = 34;
       const edge = 24;
+      const anchorTop = selectedAnchor.topY ?? selectedAnchor.y;
+      const anchorCenterY = (anchorTop + selectedAnchor.y) / 2;
+      const canPlaceAbove = anchorTop - sheet.height - gap >= edge;
+      const canPlaceBelow = selectedAnchor.y + sheet.height + gap <= stage.height - edge;
       const canPlaceRight = selectedAnchor.x + sheet.width + gap <= stage.width - edge;
-      const canPlaceLeft = selectedAnchor.x - sheet.width - gap >= edge;
       let placement: PopupPlacement;
       let left: number;
       let top: number;
-      if (canPlaceRight) {
-        placement = "right";
-        left = selectedAnchor.x + gap;
-        top = selectedAnchor.y - sheet.height / 2;
-      } else if (canPlaceLeft) {
-        placement = "left";
-        left = selectedAnchor.x - sheet.width - gap;
-        top = selectedAnchor.y - sheet.height / 2;
-      } else if (selectedAnchor.y - sheet.height - gap >= edge) {
+      if (canPlaceAbove) {
         placement = "above";
         left = selectedAnchor.x - sheet.width / 2;
-        top = selectedAnchor.y - sheet.height - gap;
-      } else {
+        top = anchorTop - sheet.height - gap;
+      } else if (canPlaceBelow) {
         placement = "below";
         left = selectedAnchor.x - sheet.width / 2;
         top = selectedAnchor.y + gap;
+      } else if (canPlaceRight) {
+        placement = "right";
+        left = selectedAnchor.x + gap;
+        top = anchorCenterY - sheet.height / 2;
+      } else {
+        placement = "left";
+        left = selectedAnchor.x - sheet.width - gap;
+        top = anchorCenterY - sheet.height / 2;
       }
       const clampedLeft = Math.max(edge, Math.min(left, stage.width - sheet.width - edge));
       const clampedTop = Math.max(edge, Math.min(top, stage.height - sheet.height - edge));
@@ -148,11 +151,11 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
         top: clampedTop,
         placement,
         tailX: Math.max(24, Math.min(selectedAnchor.x - clampedLeft, sheet.width - 24)),
-        tailY: Math.max(24, Math.min(selectedAnchor.y - clampedTop, sheet.height - 24)),
+        tailY: Math.max(24, Math.min(anchorCenterY - clampedTop, sheet.height - 24)),
         tailLength: placement === "right" ? clampedLeft - selectedAnchor.x + 1
           : placement === "left" ? selectedAnchor.x - (clampedLeft + sheet.width) + 1
             : placement === "below" ? clampedTop - selectedAnchor.y + 1
-              : selectedAnchor.y - (clampedTop + sheet.height) + 1,
+              : anchorTop - (clampedTop + sheet.height) + 1,
       });
     };
     updatePosition();
