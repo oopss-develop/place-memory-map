@@ -56,13 +56,12 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
     markersRef.current = visits.map((visit) => {
       const highlighted = highlightedIds.includes(visit.id);
       const selected = selectedId === visit.id;
-      const markerWidth = highlighted ? 48 : 40;
-      const markerHeight = highlighted ? 58 : 48;
-      const imageSize = new window.kakao.maps.Size(markerWidth, markerHeight);
+      const markerSize = highlighted ? 48 : 44;
+      const imageSize = new window.kakao.maps.Size(markerSize, markerSize);
       const image = new window.kakao.maps.MarkerImage(
         markerSvgDataUrl(visit.markerStyle, { highlighted, selected }),
         imageSize,
-        { offset: new window.kakao.maps.Point(markerWidth / 2, markerHeight) },
+        { offset: new window.kakao.maps.Point(markerSize / 2, markerSize) },
       );
       const marker = new window.kakao.maps.Marker({
         map: mapRef.current,
@@ -105,7 +104,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
         completed = true;
         window.kakao.maps.event.removeListener(mapRef.current, "idle", reveal);
         const point = mapRef.current.getProjection().containerPointFromCoords(new window.kakao.maps.LatLng(selectedVisit.place.latitude, selectedVisit.place.longitude));
-        const markerHeight = highlightedIds.includes(selectedVisit.id) ? 58 : 48;
+        const markerHeight = highlightedIds.includes(selectedVisit.id) ? 48 : 44;
         const mapElement = ref.current;
         if (!mapElement || point.x < 0 || point.x > mapElement.clientWidth || point.y < 0 || point.y > mapElement.clientHeight) {
           onDismissPopup?.();
@@ -155,7 +154,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
         const visit = visits.find((item) => item.id === selectedId);
         if (!visit) return onAnchorChange();
         const point = mapRef.current.getProjection().containerPointFromCoords(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude));
-        const markerHeight = highlightedIds.includes(visit.id) ? 58 : 48;
+        const markerHeight = highlightedIds.includes(visit.id) ? 48 : 44;
         const mapElement = ref.current;
         if (!mapElement || point.x < 0 || point.x > mapElement.clientWidth || point.y < 0 || point.y > mapElement.clientHeight) {
           onDismissPopup?.();
