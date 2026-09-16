@@ -116,6 +116,11 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     if (!anchor) setPopupPosition(undefined);
   }, []);
 
+  const handlePopupDismiss = useCallback(() => {
+    setSelectedAnchor(undefined);
+    setPopupPosition(undefined);
+  }, []);
+
   const handleVisitSelect = useCallback((visit: Visit) => {
     setNotice("");
     setPhotoView({ visitId: visit.id, index: 0 });
@@ -406,7 +411,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       </aside>
 
       <section ref={mapStageRef} className="map-stage">
-        <KakaoMap visits={groupVisits} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onManualPoint={manualPoint} focusLocation={currentLocation} />
+        <KakaoMap visits={groupVisits} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => setMobileList(true)} aria-label="기록 목록 열기"><List size={20} /></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
         <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
         {selected && <article ref={sheetRef} className={`place-sheet ${activePhotoUrl ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>

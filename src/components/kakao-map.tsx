@@ -15,6 +15,7 @@ interface Props {
   manualMode: boolean;
   onSelect: (visit: Visit) => void;
   onAnchorChange?: (anchor?: MapAnchor) => void;
+  onDismissPopup?: () => void;
   onManualPoint: (latitude: number, longitude: number) => void;
   focusLocation?: { latitude: number; longitude: number };
   highlightedIds?: string[];
@@ -26,7 +27,7 @@ export interface MapAnchor {
   topY?: number;
 }
 
-export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onManualPoint, focusLocation, highlightedIds = [] }: Props) {
+export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, highlightedIds = [] }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -105,6 +106,11 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
         window.kakao.maps.event.removeListener(mapRef.current, "idle", reveal);
         const point = mapRef.current.getProjection().containerPointFromCoords(new window.kakao.maps.LatLng(selectedVisit.place.latitude, selectedVisit.place.longitude));
         const markerHeight = highlightedIds.includes(selectedVisit.id) ? 58 : 48;
+        const mapElement = ref.current;
+        if (!mapElement || point.x < 0 || point.x > mapElement.clientWidth || point.y < 0 || point.y > mapElement.clientHeight) {
+          onDismissPopup?.();
+          return;
+        }
         onAnchorChange?.({ x: point.x, y: point.y, topY: point.y - markerHeight });
       };
       window.kakao.maps.event.addListener(mapRef.current, "idle", reveal);
@@ -140,7 +146,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
     const bounds = new window.kakao.maps.LatLngBounds();
     visibleVisits.forEach((visit) => bounds.extend(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude)));
     mapRef.current.setBounds(bounds, 72, 72, 72, 72);
-  }, [apiKey, highlightedIds, onAnchorChange, ready, selectedId, selectionRequest, visits]);
+  }, [apiKey, highlightedIds, onAnchorChange, onDismissPopup, ready, selectedId, selectionRequest, visits]);
 
   useEffect(() => {
     if (!selectedId || !onAnchorChange) return;
@@ -150,6 +156,11 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
         if (!visit) return onAnchorChange();
         const point = mapRef.current.getProjection().containerPointFromCoords(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude));
         const markerHeight = highlightedIds.includes(visit.id) ? 58 : 48;
+        const mapElement = ref.current;
+        if (!mapElement || point.x < 0 || point.x > mapElement.clientWidth || point.y < 0 || point.y > mapElement.clientHeight) {
+          onDismissPopup?.();
+          return;
+        }
         onAnchorChange({ x: point.x, y: point.y, topY: point.y - markerHeight });
       };
       const idleHandler = () => update();
@@ -157,7 +168,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
       return () => window.kakao.maps.event.removeListener(mapRef.current, "idle", idleHandler);
     }
     return;
-  }, [apiKey, highlightedIds, onAnchorChange, ready, selectedId, visits]);
+  }, [apiKey, highlightedIds, onAnchorChange, onDismissPopup, ready, selectedId, visits]);
 
   useEffect(() => {
     if (!ready || !mapRef.current || !window.kakao || !manualMode) return;
