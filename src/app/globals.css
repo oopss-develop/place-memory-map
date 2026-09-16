@@ -151,10 +151,16 @@ button, select { cursor: pointer; }
 .add-pin-button:hover, .add-pin-button.active { background: var(--vermilion-dark); }
 .pinning-hint { position: absolute; z-index: 4; top: 78px; left: 50%; display: flex; align-items: center; gap: 7px; padding: 8px 12px; border-radius: 7px; color: var(--white); background: var(--ink); font-size: 13px; transform: translateX(-50%); }
 
-.place-sheet { position: absolute; z-index: 6; right: 22px; bottom: 88px; width: min(390px, calc(100% - 44px)); overflow: hidden; border: 1px solid #98917d; border-radius: 11px; background: var(--white); box-shadow: 0 22px 55px rgba(36,39,31,.26); animation: sheet-in .32s cubic-bezier(.2,.8,.2,1); }
-@keyframes sheet-in { from { opacity: .4; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+.place-sheet { position: absolute; z-index: 6; top: 0; left: 0; width: min(390px, calc(100% - 44px)); overflow: visible; visibility: hidden; border: 1px solid #98917d; border-radius: 11px; background: var(--white); box-shadow: 0 22px 55px rgba(36,39,31,.26); animation: bubble-in .22s cubic-bezier(.2,.8,.2,1); }
+.place-sheet.is-positioned { visibility: visible; }
+@keyframes bubble-in { from { opacity: .3; transform: translateY(5px) scale(.98); } to { opacity: 1; transform: none; } }
+.place-sheet::after { position: absolute; width: 10px; height: 18px; content: ""; background: var(--white); }
+.place-sheet[data-placement="right"]::after { top: calc(50% - 9px); left: -9px; clip-path: polygon(100% 0, 100% 100%, 0 50%); }
+.place-sheet[data-placement="left"]::after { top: calc(50% - 9px); right: -9px; clip-path: polygon(0 0, 0 100%, 100% 50%); }
+.place-sheet[data-placement="above"]::after { bottom: -9px; left: calc(50% - 9px); width: 18px; height: 10px; clip-path: polygon(0 0, 100% 0, 50% 100%); }
+.place-sheet[data-placement="below"]::after { top: -9px; left: calc(50% - 9px); width: 18px; height: 10px; clip-path: polygon(0 100%, 100% 100%, 50% 0); }
 .sheet-close { position: absolute; z-index: 2; top: 10px; right: 10px; display: grid; width: 32px; height: 32px; place-items: center; border: 0; border-radius: 50%; background: rgba(255,253,246,.9); }
-.sheet-photo { position: relative; height: 145px; overflow: hidden; background: var(--paper-deep); }
+.sheet-photo { position: relative; height: 145px; overflow: hidden; border-radius: 10px 10px 0 0; background: var(--paper-deep); }
 .sheet-photo img { width: 100%; height: 100%; object-fit: cover; }
 .sheet-photo span { position: absolute; bottom: 7px; left: 9px; padding: 2px 6px; color: var(--white); background: rgba(22,45,56,.82); font-size: 10px; }
 .sheet-content { padding: 18px 20px 17px; }
@@ -218,7 +224,8 @@ button, select { cursor: pointer; }
   .map-topbar { top: 14px; left: 12px; right: 12px; }
   .map-date { display: none; }
   .location-button { margin-left: auto; }
-  .place-sheet { right: 10px; bottom: 76px; width: calc(100% - 20px); max-height: 55dvh; overflow-y: auto; border-radius: 12px 12px 5px 5px; }
+  .place-sheet { top: auto !important; right: 10px; bottom: 76px; left: 10px !important; width: calc(100% - 20px); max-height: 55dvh; overflow-y: auto; visibility: visible; border-radius: 12px 12px 5px 5px; }
+  .place-sheet::after { display: none; }
   .sheet-photo { height: 118px; }
   .add-pin-button { right: 14px; bottom: 82px; width: 48px; padding: 0; justify-content: center; border-radius: 50%; }
   .add-pin-button span { display: none; }
