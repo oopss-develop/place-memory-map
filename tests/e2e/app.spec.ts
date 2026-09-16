@@ -20,7 +20,7 @@ test("empty journal guides a first visit from the record list", async ({ page })
   const firstVisit = page.getByRole("button", { name: "지도에서 첫 장소 추가" });
   if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
   await firstVisit.click();
-  await expect(page.getByText("지도에서 방문한 위치를 한 번 눌러주세요.")).toBeVisible();
+  await expect(page.getByText("기록할 위치를 지도에서 선택하세요")).toBeVisible();
 });
 
 test("group owner can delete an additional map", async ({ page }) => {

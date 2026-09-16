@@ -194,7 +194,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     setSelectedId(undefined);
     setSelectedAnchor(undefined);
     setMobileList(false);
-    setNotice("지도에서 방문한 위치를 한 번 눌러주세요.");
+    setNotice("");
   }
 
   async function searchPlaces(event: React.FormEvent) {
