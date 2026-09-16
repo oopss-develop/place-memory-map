@@ -51,6 +51,25 @@ components:
 
 # Design System: Place Memory Map
 
+## Sidebar system (September 16 revision)
+
+The navigation sidebar uses Noto Sans KR throughout, including map names,
+record titles, dates and the account area. This supersedes the sidebar-specific
+serif, numbered index and notebook-rule treatments described below.
+
+- Heading: 18px / 700; item and control: 15px / 600; metadata: 13px / 400–600.
+- Line height: 1.5. Numerals in metadata use tabular figures.
+- Shared gutters: 24px desktop, 20px mobile; section spacing: 20–24px.
+- Search and map picker: 48px overall height; filters: 40px minimum.
+- Records show a 36px thumbnail of their selected map pin, not a sequence number.
+- Selection uses a theme-aware filled background and one-pixel outline.
+- Dividers and hover surfaces use theme variables. Date icons remain upright.
+- The account footer anchors the sidebar; its menu layers above the search box.
+- Long names wrap; record subtitles truncate; counts never shrink.
+
+The sidebar is an operational list, with a flat surface and no decorative
+vertical notebook rule. Serif remains available for memory detail content.
+
 ## Overview
 
 **Creative North Star: "The Working Travel Field Notebook"**

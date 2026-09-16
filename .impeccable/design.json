@@ -3,6 +3,17 @@
   "generatedAt": "2026-09-15T00:00:00+09:00",
   "title": "Design System: Place Memory Map",
   "extensions": {
+    "sidebar": {
+      "fontFamily": "var(--font-sans), sans-serif",
+      "heading": { "fontSize": "18px", "fontWeight": 700 },
+      "item": { "fontSize": "15px", "fontWeight": 600 },
+      "metadata": { "fontSize": "13px", "fontWeight": 400 },
+      "lineHeight": 1.5,
+      "desktopGutter": "24px",
+      "mobileGutter": "20px",
+      "recordMarkerSize": "36px",
+      "selection": "paper-deep background with 1px olive outline"
+    },
     "colorMeta": {
       "primary": { "role": "primary", "displayName": "Travel Pin Vermilion", "canonical": "#d84c32", "tonalRamp": ["#43140d", "#6d2117", "#963021", "#bd3e2b", "#d84c32", "#e77d69", "#f2b4a7", "#fbe9e4"] },
       "paper": { "role": "neutral", "displayName": "Notebook Paper", "canonical": "#f4efdf", "tonalRamp": ["#28251c", "#494335", "#6f6652", "#958a70", "#b9ad90", "#d8ceb5", "#f4efdf", "#fffdf6"] },
