@@ -31,6 +31,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const lastSelectedIdRef = useRef<string | undefined>(undefined);
   const [ready, setReady] = useState(false);
   const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_JS_KEY;
 
@@ -79,6 +80,9 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
 
   useEffect(() => {
     if (!visits.length) return;
+    const previousSelectedId = lastSelectedIdRef.current;
+    const wasSelected = Boolean(previousSelectedId && visits.some((visit) => visit.id === previousSelectedId));
+    lastSelectedIdRef.current = selectedId;
     const visibleVisits = highlightedIds.length
       ? visits.filter((visit) => highlightedIds.includes(visit.id))
       : visits;
@@ -136,6 +140,9 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
         if (!completed) window.kakao.maps.event.removeListener(mapRef.current, "idle", reveal);
       };
     }
+    // Closing the detail sheet should leave the map where the sheet interaction
+    // positioned it. Re-fitting bounds here jumps back to the pre-selection view.
+    if (!selectedId && wasSelected) return;
     if (!ready || !mapRef.current || !window.kakao) return;
     if (visibleVisits.length === 1) {
       const visit = visibleVisits[0];
