@@ -82,9 +82,9 @@ test("a marker shape can be selected and edited", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "지도에 핀 추가" }).click();
   await page.locator(".map-canvas").click({ position: { x: 220, y: 180 }, force: true });
-  await expect(page.getByRole("radio", { name: /핀/ })).toHaveCount(5);
-  await page.getByTitle("핀 4").click();
-  await expect(page.getByRole("radio", { name: "핀 4" })).toBeChecked();
+  await expect(page.getByRole("radio", { name: /핀/ })).toHaveCount(40);
+  await page.getByTitle("핀 4", { exact: true }).click();
+  await expect(page.getByRole("radio", { name: "핀 4", exact: true })).toBeChecked();
   await page.getByLabel("장소 이름").fill("모양이 다른 핀");
   await page.getByLabel("기록 제목").fill("네 번째 핀 선택");
   await page.getByRole("button", { name: "지도에 기록 남기기" }).click();
@@ -93,7 +93,35 @@ test("a marker shape can be selected and edited", async ({ page }) => {
   await expect(marker).toHaveAttribute("data-marker-style", "pin-4");
   await marker.click();
   await page.getByRole("button", { name: "기록 고치기" }).click();
-  await expect(page.getByRole("radio", { name: "핀 4" })).toBeChecked();
+  await expect(page.getByRole("radio", { name: "핀 4", exact: true })).toBeChecked();
+});
+
+test("mobile visit popup stays within the viewport", async ({ page }) => {
+  test.skip((page.viewportSize()?.width ?? 1000) > 820, "mobile only");
+  await page.addInitScript(() => {
+    localStorage.setItem("place-memory-visits-v2", JSON.stringify([{
+      id: "narrow-popup-visit",
+      groupId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      place: { id: "narrow-popup-place", provider: "manual", name: "아주아주아주아주아주아주긴장소이름입니다", address: "전라남도 무안군 무안읍 면성2길 61 아주 긴 주소 설명", category: "음식점 > 한식", latitude: 37.56, longitude: 126.98 },
+      visitedOn: "2026-09-16",
+      title: "긴 제목도 화면을 넘어가지 않아야 합니다",
+      note: "긴 메모가 모바일에서 자연스럽게 줄바꿈되어야 합니다.",
+      rating: 5,
+      tags: ["맛집", "테스트"],
+      participants: [],
+      photoUrls: [],
+      markerStyle: "pin-1",
+      version: 1,
+      updatedBy: "test",
+    }]));
+    localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true");
+  });
+  await page.goto("/");
+  await page.locator('[data-visit-id="narrow-popup-visit"]').click();
+  await expect(page.locator(".place-sheet.is-positioned")).toBeVisible();
+  const dimensions = await page.evaluate(() => ({ documentWidth: document.documentElement.scrollWidth, viewportWidth: window.innerWidth, sheetWidth: (document.querySelector(".place-sheet") as HTMLElement)?.scrollWidth, sheetClientWidth: (document.querySelector(".place-sheet") as HTMLElement)?.clientWidth }));
+  expect(dimensions.documentWidth).toBeLessThanOrEqual(dimensions.viewportWidth);
+  expect(dimensions.sheetWidth).toBeLessThanOrEqual(dimensions.sheetClientWidth);
 });
 
 test("reselecting a record reopens its popup", async ({ page }) => {
