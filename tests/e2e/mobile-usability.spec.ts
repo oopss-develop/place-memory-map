@@ -19,7 +19,10 @@ test("selecting a place search result opens its visit form at that place", async
   await page.getByRole("button", { name: /목포 테스트 장소/ }).click();
   await expect(page.getByRole("dialog", { name: "새 방문 기록" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "목포 테스트 장소" })).toBeVisible();
+  await expect(page.locator(".map-focus-pulse")).toBeVisible();
   expect(await page.getByLabel("장소 이름", { exact: true }).getAttribute("value")).toBe("목포 테스트 장소");
+  await page.getByRole("button", { name: "창 닫기" }).click();
+  await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
 });
 
 test("search opens a focused modal drawer and offers manual placement after failure", async ({ page }) => {
@@ -103,4 +106,46 @@ test("landscape list and account menu remain scrollable", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("data-font", "nanum-square");
   await page.getByRole("button", { name: "목록 닫기" }).click();
   await expect(page.locator(".journal-sidebar")).toBeHidden();
+});
+
+test("selected pins have one pulse and the pulse follows the new selection", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("place-memory-visits-v2", JSON.stringify([
+      {
+        id: "pulse-first", groupId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        place: { id: "pulse-place-first", provider: "manual", name: "첫 번째 파동 장소", address: "서울", category: "산책", latitude: 37.56, longitude: 126.98 },
+        visitedOn: "2026-09-16", title: "첫 번째 기록", note: "첫 번째 메모", rating: 5, tags: [], participants: [], photoUrls: [], markerStyle: "black-1", version: 1, updatedBy: "test",
+      },
+      {
+        id: "pulse-second", groupId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+        place: { id: "pulse-place-second", provider: "manual", name: "두 번째 파동 장소", address: "서울", category: "카페", latitude: 37.58, longitude: 127.03 },
+        visitedOn: "2026-09-15", title: "두 번째 기록", note: "두 번째 메모", rating: 4, tags: [], participants: [], photoUrls: [], markerStyle: "color-4", version: 1, updatedBy: "test",
+      },
+    ]));
+  });
+  await page.goto("/");
+  await page.locator('[data-visit-id="pulse-first"]').click();
+  await expect(page.locator('[data-visit-id="pulse-first"].selected')).toBeVisible();
+  await expect(page.locator(".map-focus-pulse")).toHaveCount(1);
+  await page.locator('[data-visit-id="pulse-second"]').click();
+  await expect(page.locator('[data-visit-id="pulse-second"].selected')).toBeVisible();
+  await expect(page.locator(".map-focus-pulse")).toHaveCount(1);
+  await page.getByRole("button", { name: "상세 닫기" }).click();
+  await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
+});
+
+test("reduced motion keeps a static selection ring", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.addInitScript(() => {
+    localStorage.setItem("place-memory-visits-v2", JSON.stringify([{
+      id: "reduced-pulse", groupId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      place: { id: "reduced-pulse-place", provider: "manual", name: "정적인 파동 장소", address: "서울", category: "공원", latitude: 37.56, longitude: 126.98 },
+      visitedOn: "2026-09-16", title: "모션 감소 기록", note: "접근성 테스트", rating: 5, tags: [], participants: [], photoUrls: [], markerStyle: "black-1", version: 1, updatedBy: "test",
+    }]));
+  });
+  await page.goto("/");
+  await page.locator('[data-visit-id="reduced-pulse"]').click();
+  await expect(page.locator(".map-focus-pulse")).toBeVisible();
+  const animationName = await page.locator(".map-focus-pulse").evaluate((element) => getComputedStyle(element, "::before").animationName);
+  expect(animationName).toBe("none");
 });

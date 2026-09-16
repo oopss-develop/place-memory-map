@@ -19,6 +19,7 @@ interface Props {
   onManualPoint: (latitude: number, longitude: number) => void;
   focusLocation?: { latitude: number; longitude: number };
   mapFocus?: { latitude: number; longitude: number };
+  pulseLocation?: { latitude: number; longitude: number };
   highlightedIds?: string[];
 }
 
@@ -30,14 +31,26 @@ export interface MapAnchor {
 
 // Kakao Maps uses level 1 for its maximum zoom; level 3 is two steps wider.
 const SEARCH_FOCUS_LEVEL = 3;
+const FALLBACK_MAP_BOUNDS = { minLatitude: 37.5, maxLatitude: 37.61, minLongitude: 126.91, maxLongitude: 127.09 };
 
-export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, highlightedIds = [] }: Props) {
+function fallbackMapPosition(latitude: number, longitude: number) {
+  const left = 13 + ((longitude - FALLBACK_MAP_BOUNDS.minLongitude) / (FALLBACK_MAP_BOUNDS.maxLongitude - FALLBACK_MAP_BOUNDS.minLongitude)) * 74;
+  const top = 10 + ((FALLBACK_MAP_BOUNDS.maxLatitude - latitude) / (FALLBACK_MAP_BOUNDS.maxLatitude - FALLBACK_MAP_BOUNDS.minLatitude)) * 74;
+  return { left: Math.max(8, Math.min(88, left)), top: Math.max(8, Math.min(84, top)) };
+}
+
+export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, pulseLocation, highlightedIds = [] }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const pulseOverlayRef = useRef<any>(null);
   const lastSelectedIdRef = useRef<string | undefined>(undefined);
   const [ready, setReady] = useState(false);
   const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_JS_KEY;
+  const selectedVisit = visits.find((visit) => visit.id === selectedId);
+  const pulseTarget = selectedVisit?.place ?? pulseLocation;
+  const pulseLatitude = pulseTarget?.latitude;
+  const pulseLongitude = pulseTarget?.longitude;
 
   useEffect(() => {
     if (!apiKey || !ref.current) return;
@@ -54,6 +67,34 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
     document.head.appendChild(script);
     return () => { script.onload = null; };
   }, [apiKey]);
+
+  useEffect(() => {
+    const removePulse = () => {
+      pulseOverlayRef.current?.setMap(null);
+      pulseOverlayRef.current = null;
+    };
+
+    if (!apiKey || !ready || !mapRef.current || !window.kakao || pulseLatitude === undefined || pulseLongitude === undefined) {
+      removePulse();
+      return;
+    }
+
+    const content = document.createElement("span");
+    content.className = "map-pin-pulse";
+    content.setAttribute("aria-hidden", "true");
+    const overlay = new window.kakao.maps.CustomOverlay({
+      position: new window.kakao.maps.LatLng(pulseLatitude, pulseLongitude),
+      content,
+      xAnchor: 0.5,
+      yAnchor: 1,
+      zIndex: 1,
+      clickable: false,
+    });
+    overlay.setMap(mapRef.current);
+    pulseOverlayRef.current = overlay;
+
+    return removePulse;
+  }, [apiKey, pulseLatitude, pulseLongitude, ready]);
 
   useEffect(() => {
     if (!ready || !mapRef.current || !window.kakao) return;
@@ -214,11 +255,14 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
         <div className="map-fallback" aria-label="서울 방문 기록 데모 지도">
           <div className="river" /><div className="road road-a" /><div className="road road-b" /><div className="road road-c" />
           <span className="district district-west">종로</span><span className="district district-east">성수</span><span className="district district-south">한강</span>
+          {pulseTarget && (() => {
+            const position = fallbackMapPosition(pulseTarget.latitude, pulseTarget.longitude);
+            return <span className="map-focus-pulse" aria-hidden="true" style={{ left: `${position.left}%`, top: `${position.top}%` }} />;
+          })()}
           {visits.map((visit) => {
-            const left = 13 + ((visit.place.longitude - 126.91) / 0.18) * 74;
-            const top = 10 + ((37.61 - visit.place.latitude) / 0.11) * 74;
+            const position = fallbackMapPosition(visit.place.latitude, visit.place.longitude);
             const highlighted = highlightedIds.includes(visit.id);
-            return <button key={visit.id} data-visit-id={visit.id} data-marker-style={normalizeMarkerStyle(visit.markerStyle)} className={`map-pin ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${Math.max(8, Math.min(88, left))}%`, top: `${Math.max(8, Math.min(84, top))}%` }} onClick={(event) => { event.stopPropagation(); onSelect(visit); }} aria-label={`${visit.place.name} 기록 보기`}><img src={markerSvgDataUrl(visit.markerStyle, { highlighted, selected: selectedId === visit.id })} alt="" /></button>;
+            return <button key={visit.id} data-visit-id={visit.id} data-marker-style={normalizeMarkerStyle(visit.markerStyle)} className={`map-pin ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${position.left}%`, top: `${position.top}%` }} onClick={(event) => { event.stopPropagation(); onSelect(visit); }} aria-label={`${visit.place.name} 기록 보기`}><img src={markerSvgDataUrl(visit.markerStyle, { highlighted, selected: selectedId === visit.id })} alt="" /></button>;
           })}
           {focusLocation && <span className="current-location-dot" aria-label="현재 위치" />}
           <div className="demo-map-note">Kakao Map 키 연결 전 데모 지도</div>

@@ -60,6 +60,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [inviteLink, setInviteLink] = useState("");
   const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number }>();
   const [mapFocus, setMapFocus] = useState<{ latitude: number; longitude: number }>();
+  const [pulseLocation, setPulseLocation] = useState<{ latitude: number; longitude: number }>();
   const [selectedDateKey, setSelectedDateKey] = useState<string | undefined>();
   const [photoView, setPhotoView] = useState<{ visitId: string; index: number }>({ visitId: "", index: 0 });
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -199,6 +200,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const handleVisitSelect = useCallback((visit: Visit) => {
     setNotice("");
     setMapFocus(undefined);
+    setPulseLocation(undefined);
     setSheetExpanded(false);
     setPhotoView({ visitId: visit.id, index: 0 });
     setSelectedId(visit.id);
@@ -289,7 +291,9 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
   function openForPlace(place: Place) {
     if (dialogRef.current?.open) return;
-    setMapFocus({ latitude: place.latitude, longitude: place.longitude });
+    const location = { latitude: place.latitude, longitude: place.longitude };
+    setMapFocus(location);
+    setPulseLocation(location);
     setMobileList(false);
     setFormError("");
     setSelectedId(undefined); setSelectedAnchor(undefined); setNotice(""); setDraftPlace(place); setEditing(null); setMarkerStyle(DEFAULT_MARKER_STYLE); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
@@ -298,6 +302,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
   function chooseGroup(groupId: string) {
     setMapFocus(undefined);
+    setPulseLocation(undefined);
     setActiveGroupId(groupId);
     setTag("전체");
     setSelectedId(undefined);
@@ -308,6 +313,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
   function startManualPin() {
     setMapFocus(undefined);
+    setPulseLocation(undefined);
     setManualMode(true);
     setSelectedId(undefined);
     setSelectedAnchor(undefined);
@@ -336,6 +342,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     if (dialogRef.current?.open) return;
     setSelectedId(undefined);
     setSelectedAnchor(undefined);
+    setPulseLocation(undefined);
     setNotice("");
     setFormError("");
     setDraftPlace({ id: crypto.randomUUID(), provider: "manual", name: "", address: "", category: "직접 지정", latitude, longitude });
@@ -386,6 +393,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     if (pendingAction || !window.confirm(`“${visit.place.name}” 방문 기록을 삭제할까요?`)) return;
     setPendingAction("delete");
     setMapFocus(undefined);
+    setPulseLocation(undefined);
     try {
       if (!initialData.demoMode) {
         const response = await fetch("/api/visits", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: visit.id, version: visit.version }) });
@@ -510,7 +518,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       </aside>
 
       <section ref={mapStageRef} className="map-stage" inert={isMobile && mobileList}>
-        <KakaoMap visits={groupVisits} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} mapFocus={mapFocus} />
+        <KakaoMap visits={groupVisits} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} mapFocus={mapFocus} pulseLocation={pulseLocation} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => openMobileList()} aria-label="기록 목록 열기" aria-controls="journal-sidebar" aria-expanded={mobileList}><List size={20} /></button><button className="mobile-search-button" onClick={() => openMobileList("search")}><Search size={18} /><span>장소 검색</span></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
         <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
         {selected && <article ref={sheetRef} aria-label={`${selected.place.name} 방문 기록`} className={`place-sheet ${activePhotoUrl ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""} ${sheetExpanded ? "is-expanded" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>
@@ -543,7 +551,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
       <InstallAppButton autoPrompt suppressAutoPrompt={Boolean(selected || draftPlace || manualMode || mobileList)} />
 
-      <dialog ref={dialogRef} className="visit-dialog" aria-label={editing ? "기록 고치기" : "새 방문 기록"} onCancel={(event) => { if (pendingAction) event.preventDefault(); }} onClose={() => { setDraftPlace(null); setEditing(null); setFormError(""); }}>
+      <dialog ref={dialogRef} className="visit-dialog" aria-label={editing ? "기록 고치기" : "새 방문 기록"} onCancel={(event) => { if (pendingAction) event.preventDefault(); }} onClose={() => { setDraftPlace(null); setEditing(null); setFormError(""); setPulseLocation(undefined); }}>
         <form method="dialog" className="dialog-close-form"><button disabled={Boolean(pendingAction)} aria-label="창 닫기"><X size={20} /></button></form>
         {formError && <p className="visit-form-error" role="alert">{formError}</p>}
         {draftPlace && <form className="visit-form" onSubmit={saveVisit}>{pendingAction === "save" && <div className="operation-progress" role="progressbar" aria-label={editing ? "기록 수정 중" : "기록 저장 중"} />}<div className="form-title"><MapPin size={22} /><div><span>{editing ? "기록 고치기" : "새 방문 기록"}</span><h2>{draftPlace.name || "이 위치에 이름을 붙여주세요"}</h2></div></div><div className="form-grid"><label>장소 이름<input name="placeName" defaultValue={draftPlace.name} required /></label><label>방문한 날<input name="visitedOn" type="date" defaultValue={editing?.visitedOn ?? new Date().toISOString().slice(0, 10)} required /></label></div><label>주소 또는 위치 설명<input name="address" defaultValue={draftPlace.address} placeholder="예: 해방촌 골목 안쪽" /></label><fieldset className="marker-picker"><legend>지도에 표시할 핀</legend><div>{MARKER_STYLE_IDS.map((style, index) => <label key={style} className={markerStyle === style ? "selected" : undefined} title={`핀 ${index + 1}`}><input type="radio" name="markerStyle" value={style} checked={markerStyle === style} onChange={() => setMarkerStyle(style)} aria-label={`핀 ${index + 1}`} /><img src={markerSvgDataUrl(style)} alt="" /><Check size={14} strokeWidth={3} aria-hidden="true" /></label>)}</div></fieldset><label>기록 제목<input name="title" defaultValue={editing?.title} placeholder="그날을 한 문장으로" required /></label><label>무엇을 했나요?<textarea name="note" defaultValue={editing?.note} rows={4} placeholder="먹은 것, 나눈 이야기, 다시 오고 싶은 이유…" /></label><div className="form-grid"><label>별점<select name="rating" defaultValue={editing?.rating ?? 5}>{[5,4,3,2,1].map((value) => <option key={value} value={value}>{"★".repeat(value)} {value}.0</option>)}</select></label><label>태그<input name="tags" defaultValue={editing?.tags.join(", ")} placeholder="데이트, 산책, 맛집" /></label></div><fieldset><legend>함께한 사람</legend><div className="member-checks">{initialData.members.map((member) => <label key={member.id}><input type="checkbox" name={`member-${member.id}`} defaultChecked={editing ? editing.participants.some((person) => person.id === member.id) : true} /><span className="member-avatar">{member.initials}</span><span className="member-name">{member.displayName}</span><Check className="member-checkmark" size={13} strokeWidth={3} aria-hidden="true" /></label>)}</div></fieldset><label className="photo-input"><Camera size={20} /><span><strong>사진 추가</strong><small>최대 5장 · 사진당 약 350KB로 자동 압축</small></span><input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif" multiple /></label><div className="form-actions"><button type="button" disabled={Boolean(pendingAction)} onClick={() => dialogRef.current?.close()}>취소</button><button className="primary-button" disabled={Boolean(pendingAction)} type="submit">{pendingAction === "save" ? (editing ? "수정 중…" : "저장 중…") : editing ? "수정 내용 저장" : "지도에 기록 남기기"}</button></div></form>}

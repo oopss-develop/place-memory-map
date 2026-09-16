@@ -267,6 +267,10 @@ button, select { cursor: pointer; }
 .map-pin img { display: block; width: 100%; height: 100%; }
 .map-pin:hover, .map-pin.selected { transform: translate(-50%, -100%) scale(1.16); }
 .map-pin.highlighted:not(.selected) { transform: translate(-50%, -100%) scale(1.1); }
+.map-pin-pulse { display: block; width: 72px; height: 72px; box-sizing: border-box; border: 2px solid color-mix(in srgb, var(--vermilion) 72%, transparent); border-radius: 50%; pointer-events: none; transform-origin: 50% 100%; animation: map-pin-pulse 1.8s ease-out infinite; }
+.map-focus-pulse { position: absolute; z-index: 1; width: 72px; height: 72px; pointer-events: none; transform: translate(-50%, -100%); }
+.map-focus-pulse::before { content: ""; position: absolute; inset: 0; box-sizing: border-box; border: 2px solid color-mix(in srgb, var(--vermilion) 72%, transparent); border-radius: 50%; transform-origin: 50% 100%; animation: map-pin-pulse 1.8s ease-out infinite; }
+@keyframes map-pin-pulse { 0% { opacity: .72; transform: scale(.45); } 70%, 100% { opacity: 0; transform: scale(1.35); } }
 .map-pin-overlay { width: 30px; height: 38px; padding: 0; border: 0; color: #4d89ad; background: transparent; cursor: pointer; transform: translateY(2px); transition: color .18s ease, transform .18s ease; }
 .map-pin-overlay svg { display: block; width: 100%; height: 100%; }
 .map-pin-overlay:hover, .map-pin-overlay.selected { color: var(--vermilion-dark); transform: translateY(0) scale(1.14); }
@@ -480,4 +484,6 @@ button, select { cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .map-pin-pulse { animation: none; opacity: .42; transform: none; }
+  .map-focus-pulse::before { animation: none; opacity: .42; transform: none; }
 }
