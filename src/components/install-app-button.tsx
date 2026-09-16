@@ -18,7 +18,7 @@ interface NavigatorWithStandalone extends Navigator {
 
 const isIosDevice = () => typeof navigator !== "undefined" && (/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
 
-export function InstallAppButton({ autoPrompt = false }: { autoPrompt?: boolean }) {
+export function InstallAppButton({ autoPrompt = false, suppressAutoPrompt = false }: { autoPrompt?: boolean; suppressAutoPrompt?: boolean }) {
   const [deferredPrompt, setDeferredPrompt] = useState<InstallPromptEvent | null>(() => sharedInstallPrompt);
   const [showIosHelp, setShowIosHelp] = useState(false);
   const [isIos] = useState(isIosDevice);
@@ -35,7 +35,7 @@ export function InstallAppButton({ autoPrompt = false }: { autoPrompt?: boolean 
       sharedInstallPrompt = event as InstallPromptEvent;
       setDeferredPrompt(sharedInstallPrompt);
       window.dispatchEvent(new Event(INSTALL_READY_EVENT));
-      if (autoPrompt && mobile && !standalone && !dismissed) setShowPrompt(true);
+      if (autoPrompt && !suppressAutoPrompt && mobile && !standalone && !dismissed) setShowPrompt(true);
     };
     const syncPrompt = () => setDeferredPrompt(sharedInstallPrompt);
     const installedHandler = () => {
@@ -50,7 +50,7 @@ export function InstallAppButton({ autoPrompt = false }: { autoPrompt?: boolean 
     window.addEventListener(INSTALL_READY_EVENT, syncPrompt);
     window.addEventListener("appinstalled", installedHandler);
     const timer = window.setTimeout(() => {
-      if (autoPrompt && mobile && ios && !standalone && !dismissed) setShowPrompt(true);
+      if (autoPrompt && !suppressAutoPrompt && mobile && ios && !standalone && !dismissed) setShowPrompt(true);
     }, 900);
     return () => {
       window.removeEventListener("beforeinstallprompt", promptHandler);
@@ -58,7 +58,13 @@ export function InstallAppButton({ autoPrompt = false }: { autoPrompt?: boolean 
       window.removeEventListener("appinstalled", installedHandler);
       window.clearTimeout(timer);
     };
-  }, [autoPrompt]);
+  }, [autoPrompt, suppressAutoPrompt]);
+
+  useEffect(() => {
+    if (!suppressAutoPrompt) return;
+    const frame = window.requestAnimationFrame(() => setShowPrompt(false));
+    return () => window.cancelAnimationFrame(frame);
+  }, [suppressAutoPrompt]);
 
   function dismissPrompt() {
     setShowPrompt(false);
@@ -77,7 +83,7 @@ export function InstallAppButton({ autoPrompt = false }: { autoPrompt?: boolean 
   }
 
   if (autoPrompt) {
-    if (!showPrompt || (!deferredPrompt && !isIos)) return null;
+    if (suppressAutoPrompt || !showPrompt || (!deferredPrompt && !isIos)) return null;
     return (
       <section className="install-prompt" role="dialog" aria-modal="false" aria-labelledby="install-prompt-title">
         <button className="install-prompt-close" type="button" onClick={dismissPrompt} aria-label="앱 설치 안내 닫기"><X size={19} /></button>

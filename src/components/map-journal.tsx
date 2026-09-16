@@ -108,6 +108,12 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     if (!anchor) setPopupPosition(undefined);
   }, []);
 
+  const handleVisitSelect = useCallback((visit: Visit, anchor?: MapAnchor) => {
+    setNotice("");
+    setSelectedId(visit.id);
+    setSelectedAnchor(anchor);
+  }, []);
+
   useLayoutEffect(() => {
     if (!selected || !selectedAnchor || !mapStageRef.current || !sheetRef.current) {
       setPopupPosition(undefined);
@@ -169,7 +175,8 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   }, [selected, selectedAnchor]);
 
   function openForPlace(place: Place) {
-    setDraftPlace(place); setEditing(null); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
+    if (dialogRef.current?.open) return;
+    setSelectedId(undefined); setSelectedAnchor(undefined); setNotice(""); setDraftPlace(place); setEditing(null); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
   }
   function openEdit(visit: Visit) { setDraftPlace(visit.place); setEditing(visit); dialogRef.current?.showModal(); }
 
@@ -207,9 +214,17 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     } finally { setSearching(false); }
   }
 
-  function manualPoint(latitude: number, longitude: number) {
-    openForPlace({ id: crypto.randomUUID(), provider: "manual", name: "", address: "", category: "직접 지정", latitude, longitude });
-  }
+  const manualPoint = useCallback((latitude: number, longitude: number) => {
+    if (dialogRef.current?.open) return;
+    setSelectedId(undefined);
+    setSelectedAnchor(undefined);
+    setNotice("");
+    setDraftPlace({ id: crypto.randomUUID(), provider: "manual", name: "", address: "", category: "직접 지정", latitude, longitude });
+    setEditing(null);
+    setManualMode(false);
+    setSearchResults([]);
+    dialogRef.current?.showModal();
+  }, []);
 
   async function saveVisit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -373,7 +388,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       </aside>
 
       <section ref={mapStageRef} className="map-stage">
-        <KakaoMap visits={groupVisits} selectedId={selectedId} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={(visit, anchor) => { setSelectedId(visit.id); setSelectedAnchor(anchor); }} onAnchorChange={handleAnchorChange} onManualPoint={manualPoint} focusLocation={currentLocation} />
+        <KakaoMap visits={groupVisits} selectedId={selectedId} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onManualPoint={manualPoint} focusLocation={currentLocation} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => setMobileList(true)} aria-label="기록 목록 열기"><List size={20} /></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
         <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
         {selected && <article ref={sheetRef} className={`place-sheet ${selected.photoUrls[0] ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>{pendingAction === "delete" && <div className="operation-progress" role="progressbar" aria-label="기록 삭제 중" />}<button className="sheet-close" disabled={Boolean(pendingAction)} onClick={() => { setSelectedId(undefined); setSelectedAnchor(undefined); }} aria-label="상세 닫기"><X size={18} /></button>{selected.photoUrls[0] && <div className="sheet-photo"><img src={selected.photoUrls[0]} alt={`${selected.place.name} 방문 사진`} /><span>방문 사진</span></div>}<div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button disabled={Boolean(pendingAction)} onClick={() => openEdit(selected)}>기록 고치기</button><button className="danger-button" disabled={Boolean(pendingAction)} onClick={() => deleteVisit(selected)}>{pendingAction === "delete" ? "삭제 중…" : "기록 삭제"}</button></div></div></div></article>}
@@ -381,7 +396,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
         <nav className="mobile-nav" aria-label="모바일 주요 메뉴"><button className="active" type="button"><MapIcon size={20} />지도</button><button type="button" onClick={() => setMobileList(true)}><List size={20} />기록</button><button type="button" onClick={startManualPin}><Plus size={22} />추가</button><button type="button" onClick={() => { setMobileList(true); setGroupPickerOpen(true); }}><Users size={20} />그룹</button></nav>
       </section>
 
-      <InstallAppButton autoPrompt />
+      <InstallAppButton autoPrompt suppressAutoPrompt={Boolean(selected || draftPlace || manualMode || mobileList)} />
 
       <dialog ref={dialogRef} className="visit-dialog" onClose={() => { setDraftPlace(null); setEditing(null); }}>
         <form method="dialog" className="dialog-close-form"><button aria-label="창 닫기"><X size={20} /></button></form>
