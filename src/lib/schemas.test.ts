@@ -15,8 +15,8 @@ const validVisit = {
 
 describe("visitSchema", () => {
   it("accepts a complete manual-pin visit", () => expect(visitSchema.safeParse(validVisit).success).toBe(true));
-  it("uses the first marker when none is selected", () => expect(visitSchema.parse(validVisit).markerStyle).toBe("pin-1"));
-  it("accepts a supported marker", () => expect(visitSchema.parse({ ...validVisit, markerStyle: "pin-4" }).markerStyle).toBe("pin-4"));
+  it("uses the black marker by default", () => expect(visitSchema.parse(validVisit).markerStyle).toBe("black-1"));
+  it("accepts a supported marker", () => expect(visitSchema.parse({ ...validVisit, markerStyle: "color-4" }).markerStyle).toBe("color-4"));
   it("rejects an unknown marker", () => expect(visitSchema.safeParse({ ...validVisit, markerStyle: "unknown" }).success).toBe(false));
   it("rejects more than five rating points", () => expect(visitSchema.safeParse({ ...validVisit, rating: 6 }).success).toBe(false));
   it("rejects more than eight tags", () => expect(visitSchema.safeParse({ ...validVisit, tags: Array.from({ length: 9 }, (_, index) => `tag-${index}`) }).success).toBe(false));
