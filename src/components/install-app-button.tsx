@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Download, MapPin, Share, X } from "lucide-react";
+import { Download, Share, X } from "lucide-react";
 
 interface InstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -87,7 +87,7 @@ export function InstallAppButton({ autoPrompt = false, suppressAutoPrompt = fals
     return (
       <section className="install-prompt" role="dialog" aria-modal="false" aria-labelledby="install-prompt-title">
         <button className="install-prompt-close" type="button" onClick={dismissPrompt} aria-label="앱 설치 안내 닫기"><X size={19} /></button>
-        <div className="install-prompt-icon" aria-hidden="true"><MapPin size={25} fill="currentColor" /></div>
+        <div className="install-prompt-icon" aria-hidden="true"><img src="/map-pins/color-16.png" alt="" /></div>
         <div className="install-prompt-copy">
           <h2 id="install-prompt-title">앱으로 설치할까요?</h2>
           <p>앱처럼 바로 열고, 함께 남긴 장소를 더 빠르게 확인할 수 있어요.</p>
