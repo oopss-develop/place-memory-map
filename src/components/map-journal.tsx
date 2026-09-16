@@ -59,6 +59,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [newGroupName, setNewGroupName] = useState("");
   const [inviteLink, setInviteLink] = useState("");
   const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number }>();
+  const [mapFocus, setMapFocus] = useState<{ latitude: number; longitude: number }>();
   const [selectedDateKey, setSelectedDateKey] = useState<string | undefined>();
   const [photoView, setPhotoView] = useState<{ visitId: string; index: number }>({ visitId: "", index: 0 });
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -197,6 +198,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
   const handleVisitSelect = useCallback((visit: Visit) => {
     setNotice("");
+    setMapFocus(undefined);
     setSheetExpanded(false);
     setPhotoView({ visitId: visit.id, index: 0 });
     setSelectedId(visit.id);
@@ -287,6 +289,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
   function openForPlace(place: Place) {
     if (dialogRef.current?.open) return;
+    setMapFocus({ latitude: place.latitude, longitude: place.longitude });
     setMobileList(false);
     setFormError("");
     setSelectedId(undefined); setSelectedAnchor(undefined); setNotice(""); setDraftPlace(place); setEditing(null); setMarkerStyle(DEFAULT_MARKER_STYLE); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
@@ -294,6 +297,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   function openEdit(visit: Visit) { setFormError(""); setDraftPlace(visit.place); setEditing(visit); setMarkerStyle(normalizeMarkerStyle(visit.markerStyle)); dialogRef.current?.showModal(); }
 
   function chooseGroup(groupId: string) {
+    setMapFocus(undefined);
     setActiveGroupId(groupId);
     setTag("전체");
     setSelectedId(undefined);
@@ -303,6 +307,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   }
 
   function startManualPin() {
+    setMapFocus(undefined);
     setManualMode(true);
     setSelectedId(undefined);
     setSelectedAnchor(undefined);
@@ -380,6 +385,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   async function deleteVisit(visit: Visit) {
     if (pendingAction || !window.confirm(`“${visit.place.name}” 방문 기록을 삭제할까요?`)) return;
     setPendingAction("delete");
+    setMapFocus(undefined);
     try {
       if (!initialData.demoMode) {
         const response = await fetch("/api/visits", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: visit.id, version: visit.version }) });
@@ -504,7 +510,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       </aside>
 
       <section ref={mapStageRef} className="map-stage" inert={isMobile && mobileList}>
-        <KakaoMap visits={groupVisits} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} />
+        <KakaoMap visits={groupVisits} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} mapFocus={mapFocus} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => openMobileList()} aria-label="기록 목록 열기" aria-controls="journal-sidebar" aria-expanded={mobileList}><List size={20} /></button><button className="mobile-search-button" onClick={() => openMobileList("search")}><Search size={18} /><span>장소 검색</span></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
         <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
         {selected && <article ref={sheetRef} aria-label={`${selected.place.name} 방문 기록`} className={`place-sheet ${activePhotoUrl ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""} ${sheetExpanded ? "is-expanded" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>

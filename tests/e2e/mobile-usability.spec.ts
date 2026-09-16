@@ -5,6 +5,23 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true"));
 });
 
+test("selecting a place search result opens its visit form at that place", async ({ page }) => {
+  await page.route("**/api/places/search?*", (route) => route.fulfill({
+    status: 200, contentType: "application/json", body: JSON.stringify({ results: [{
+      id: "kakao-place-1", placeName: "목포 테스트 장소", addressName: "전라남도 목포시", roadAddressName: "전라남도 목포시 해안로", categoryName: "관광명소", latitude: 34.79, longitude: 126.38,
+    }] }),
+  }));
+  await page.goto("/");
+  await page.getByRole("button", { name: "장소 검색", exact: true }).click();
+  const search = page.getByRole("searchbox", { name: "장소 검색" });
+  await search.fill("목포");
+  await search.press("Enter");
+  await page.getByRole("button", { name: /목포 테스트 장소/ }).click();
+  await expect(page.getByRole("dialog", { name: "새 방문 기록" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "목포 테스트 장소" })).toBeVisible();
+  expect(await page.getByLabel("장소 이름", { exact: true }).getAttribute("value")).toBe("목포 테스트 장소");
+});
+
 test("search opens a focused modal drawer and offers manual placement after failure", async ({ page }) => {
   await page.route("**/api/places/search?*", (route) => route.fulfill({
     status: 503, contentType: "application/json", body: JSON.stringify({ error: "검색 연결을 확인해 주세요." }),

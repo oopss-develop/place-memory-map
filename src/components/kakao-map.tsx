@@ -18,6 +18,7 @@ interface Props {
   onDismissPopup?: () => void;
   onManualPoint: (latitude: number, longitude: number) => void;
   focusLocation?: { latitude: number; longitude: number };
+  mapFocus?: { latitude: number; longitude: number };
   highlightedIds?: string[];
 }
 
@@ -27,7 +28,7 @@ export interface MapAnchor {
   topY?: number;
 }
 
-export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, highlightedIds = [] }: Props) {
+export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, highlightedIds = [] }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -83,6 +84,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
     const previousSelectedId = lastSelectedIdRef.current;
     const wasSelected = Boolean(previousSelectedId && visits.some((visit) => visit.id === previousSelectedId));
     lastSelectedIdRef.current = selectedId;
+    if (mapFocus) return;
     const visibleVisits = highlightedIds.length
       ? visits.filter((visit) => highlightedIds.includes(visit.id))
       : visits;
@@ -152,7 +154,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
     const bounds = new window.kakao.maps.LatLngBounds();
     visibleVisits.forEach((visit) => bounds.extend(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude)));
     mapRef.current.setBounds(bounds, 72, 72, 72, 72);
-  }, [apiKey, highlightedIds, onAnchorChange, onDismissPopup, ready, selectedId, selectionRequest, visits]);
+  }, [apiKey, highlightedIds, mapFocus, onAnchorChange, onDismissPopup, ready, selectedId, selectionRequest, visits]);
 
   useEffect(() => {
     if (!selectedId || !onAnchorChange) return;
@@ -187,6 +189,11 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
     if (!focusLocation || !ready || !mapRef.current || !window.kakao) return;
     mapRef.current.panTo(new window.kakao.maps.LatLng(focusLocation.latitude, focusLocation.longitude));
   }, [focusLocation, ready]);
+
+  useEffect(() => {
+    if (!mapFocus || !ready || !mapRef.current || !window.kakao) return;
+    mapRef.current.panTo(new window.kakao.maps.LatLng(mapFocus.latitude, mapFocus.longitude));
+  }, [mapFocus, ready]);
 
   function fallbackClick(event: React.MouseEvent<HTMLDivElement>) {
     if (!manualMode) return;
