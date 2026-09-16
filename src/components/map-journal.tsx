@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, Camera, Check, ChevronDown, Filter, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Plus, Search, Star, Users, X } from "lucide-react";
+import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Plus, Search, Star, Users, X } from "lucide-react";
 import { KakaoMap, type MapAnchor } from "@/components/kakao-map";
 import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
@@ -46,10 +46,12 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [inviteLink, setInviteLink] = useState("");
   const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number }>();
   const [selectedDateKey, setSelectedDateKey] = useState<string | undefined>();
+  const [photoView, setPhotoView] = useState<{ visitId: string; index: number }>({ visitId: "", index: 0 });
   const dialogRef = useRef<HTMLDialogElement>(null);
   const groupDialogRef = useRef<HTMLDialogElement>(null);
   const mapStageRef = useRef<HTMLElement>(null);
   const sheetRef = useRef<HTMLElement>(null);
+  const photoTouchStartX = useRef<number | null>(null);
 
   useEffect(() => {
     if (!initialData.demoMode) return;
@@ -93,6 +95,8 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const highlightedIds = useMemo(() => dateGroups.find((group) => group.date === selectedDateKey)?.visits.map((visit) => visit.id) ?? [], [dateGroups, selectedDateKey]);
   const allTags = useMemo(() => ["전체", ...Array.from(new Set(visits.flatMap((visit) => visit.tags))).slice(0, 4)], [visits]);
   const selected = visits.find((visit) => visit.id === selectedId);
+  const activePhotoIndex = selected && photoView.visitId === selected.id ? Math.min(photoView.index, Math.max(0, selected.photoUrls.length - 1)) : 0;
+  const activePhotoUrl = selected?.photoUrls[activePhotoIndex];
   const mapSummary = groupVisits.length ? `${groupVisits.length}곳의 기록` : "첫 장소를 남겨보세요";
   const canManageActiveGroup = initialData.demoMode ? activeGroup?.ownerId === viewerId : activeGroup?.role === "owner";
   const sheetStyle: PopupStyle | undefined = popupPosition ? {
@@ -110,9 +114,18 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
   const handleVisitSelect = useCallback((visit: Visit, anchor?: MapAnchor) => {
     setNotice("");
+    setPhotoView({ visitId: visit.id, index: 0 });
     setSelectedId(visit.id);
     setSelectedAnchor(anchor);
   }, []);
+
+  function showPhoto(offset: number) {
+    if (!selected || selected.photoUrls.length < 2) return;
+    setPhotoView((current) => {
+      const index = current.visitId === selected.id ? current.index : 0;
+      return { visitId: selected.id, index: (index + offset + selected.photoUrls.length) % selected.photoUrls.length };
+    });
+  }
 
   useLayoutEffect(() => {
     if (!selected || !selectedAnchor || !mapStageRef.current || !sheetRef.current) {
@@ -391,7 +404,20 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
         <KakaoMap visits={groupVisits} selectedId={selectedId} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onManualPoint={manualPoint} focusLocation={currentLocation} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => setMobileList(true)} aria-label="기록 목록 열기"><List size={20} /></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
         <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
-        {selected && <article ref={sheetRef} className={`place-sheet ${selected.photoUrls[0] ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>{pendingAction === "delete" && <div className="operation-progress" role="progressbar" aria-label="기록 삭제 중" />}<button className="sheet-close" disabled={Boolean(pendingAction)} onClick={() => { setSelectedId(undefined); setSelectedAnchor(undefined); }} aria-label="상세 닫기"><X size={18} /></button>{selected.photoUrls[0] && <div className="sheet-photo"><img src={selected.photoUrls[0]} alt={`${selected.place.name} 방문 사진`} /><span>방문 사진</span></div>}<div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button disabled={Boolean(pendingAction)} onClick={() => openEdit(selected)}>기록 고치기</button><button className="danger-button" disabled={Boolean(pendingAction)} onClick={() => deleteVisit(selected)}>{pendingAction === "delete" ? "삭제 중…" : "기록 삭제"}</button></div></div></div></article>}
+        {selected && <article ref={sheetRef} className={`place-sheet ${activePhotoUrl ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>
+          {pendingAction === "delete" && <div className="operation-progress" role="progressbar" aria-label="기록 삭제 중" />}
+          <button className="sheet-close" disabled={Boolean(pendingAction)} onClick={() => { setPhotoView({ visitId: "", index: 0 }); setSelectedId(undefined); setSelectedAnchor(undefined); }} aria-label="상세 닫기"><X size={18} /></button>
+          {activePhotoUrl && <div className="sheet-photo" onTouchStart={(event) => { photoTouchStartX.current = event.touches[0]?.clientX ?? null; }} onTouchEnd={(event) => { const start = photoTouchStartX.current; const end = event.changedTouches[0]?.clientX; photoTouchStartX.current = null; if (start === null || end === undefined || Math.abs(start - end) < 42) return; showPhoto(start > end ? 1 : -1); }}>
+            <img src={activePhotoUrl} alt={`${selected.place.name} 방문 사진 ${activePhotoIndex + 1}/${selected.photoUrls.length}`} draggable={false} />
+            <span className="sheet-photo-label">방문 사진</span>
+            {selected.photoUrls.length > 1 && <>
+              <button className="sheet-photo-nav previous" type="button" onClick={() => showPhoto(-1)} aria-label="이전 사진"><ChevronLeft size={21} /></button>
+              <button className="sheet-photo-nav next" type="button" onClick={() => showPhoto(1)} aria-label="다음 사진"><ChevronRight size={21} /></button>
+              <span className="sheet-photo-count" aria-live="polite">{activePhotoIndex + 1} / {selected.photoUrls.length}</span>
+            </>}
+          </div>}
+          <div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button disabled={Boolean(pendingAction)} onClick={() => openEdit(selected)}>기록 고치기</button><button className="danger-button" disabled={Boolean(pendingAction)} onClick={() => deleteVisit(selected)}>{pendingAction === "delete" ? "삭제 중…" : "기록 삭제"}</button></div></div></div>
+        </article>}
         {notice && <button className="notice" onClick={() => setNotice("")} aria-live="polite">{notice}<X size={14} /></button>}
         <nav className="mobile-nav" aria-label="모바일 주요 메뉴"><button className="active" type="button"><MapIcon size={20} />지도</button><button type="button" onClick={() => setMobileList(true)}><List size={20} />기록</button><button type="button" onClick={startManualPin}><Plus size={22} />추가</button><button type="button" onClick={() => { setMobileList(true); setGroupPickerOpen(true); }}><Users size={20} />그룹</button></nav>
       </section>

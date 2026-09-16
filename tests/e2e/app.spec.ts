@@ -49,3 +49,29 @@ test("a member cannot delete a map created by someone else", async ({ page }) =>
   await expect(page.getByRole("button", { name: "현재 지도 삭제" })).toHaveCount(0);
   await expect(page.getByText("구성원 4명 · 멤버")).toBeVisible();
 });
+
+test("multiple visit photos can be browsed", async ({ page }) => {
+  await page.addInitScript(() => {
+    const image = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23697855'/%3E%3C/svg%3E";
+    localStorage.setItem("place-memory-visits-v2", JSON.stringify([{
+      id: "gallery-visit",
+      groupId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+      place: { id: "gallery-place", provider: "manual", name: "사진 기록", address: "서울", category: "여행", latitude: 37.51, longitude: 127.01 },
+      visitedOn: "2026-09-16",
+      title: "네 장의 추억",
+      note: "사진 갤러리 테스트",
+      rating: 5,
+      tags: ["사진"],
+      participants: [],
+      photoUrls: [image, image, image, image],
+      version: 1,
+      updatedBy: "test",
+    }]));
+    localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true");
+  });
+  await page.goto("/");
+  await page.locator('[data-visit-id="gallery-visit"]').click();
+  await expect(page.getByText("1 / 4")).toBeVisible();
+  await page.getByRole("button", { name: "다음 사진" }).click();
+  await expect(page.getByText("2 / 4")).toBeVisible();
+});

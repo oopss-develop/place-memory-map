@@ -165,7 +165,13 @@ button, select { cursor: pointer; }
 .sheet-close { position: absolute; z-index: 2; top: 14px; right: 14px; display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--ink); background: rgba(255,253,246,.94); }.sheet-close:hover { background: var(--paper-deep); }.sheet-close:disabled { cursor: wait; opacity: .6; }
 .sheet-photo { position: relative; height: 168px; overflow: hidden; border-radius: 11px 11px 0 0; background: var(--paper-deep); }
 .sheet-photo img { width: 100%; height: 100%; object-fit: cover; }
-.sheet-photo span { position: absolute; bottom: 10px; left: 12px; padding: 3px 7px; color: var(--white); background: rgba(22,45,56,.82); font-size: 10px; }
+.sheet-photo-label, .sheet-photo-count { position: absolute; bottom: 10px; padding: 4px 8px; border-radius: 5px; color: var(--white); background: rgba(22,45,56,.82); font-size: 10px; font-weight: 700; }
+.sheet-photo-label { left: 12px; }
+.sheet-photo-count { right: 12px; min-width: 42px; text-align: center; font-variant-numeric: tabular-nums; }
+.sheet-photo-nav { position: absolute; z-index: 1; top: 50%; display: grid; width: 40px; height: 40px; padding: 0; place-items: center; border: 0; border-radius: 50%; color: var(--ink); background: rgba(255,253,246,.92); box-shadow: 0 5px 15px rgba(28,37,35,.2); transform: translateY(-50%); }
+.sheet-photo-nav:hover { background: var(--white); }
+.sheet-photo-nav.previous { left: 10px; }
+.sheet-photo-nav.next { right: 10px; }
 .sheet-content { padding: 26px 28px 24px; }
 .sheet-date { display: flex; justify-content: space-between; gap: 14px; padding-right: 48px; color: var(--olive); font-size: 11px; font-weight: 800; }
 .place-sheet.has-photo .sheet-date { padding-right: 0; }
@@ -247,7 +253,9 @@ button, select { cursor: pointer; }
   .location-button { margin-left: auto; }
   .place-sheet { top: auto !important; right: 10px; bottom: 76px; left: 10px !important; width: calc(100% - 20px); max-height: 55dvh; overflow-y: auto; visibility: visible; border-radius: 12px 12px 5px 5px; }
   .place-sheet::after { display: none; }
-  .sheet-photo { height: 118px; }
+  .sheet-photo { height: 144px; }
+  .sheet-photo-nav.previous { left: 54px; }
+  .sheet-photo-nav.next { right: 54px; }
   .add-pin-button { right: 14px; bottom: 82px; width: 48px; padding: 0; justify-content: center; border-radius: 50%; }
   .add-pin-button span { display: none; }
   .place-sheet ~ .add-pin-button { display: none; }
