@@ -168,3 +168,29 @@ test("theme choice is applied and remembered", async ({ page }) => {
   await page.reload();
   await expect(page.locator(".journal-app")).toHaveAttribute("data-theme", "dark");
 });
+
+test("font preference loads the font, survives reload and remains independent of theme", async ({ page }) => {
+  await page.goto("/");
+  const mobile = (page.viewportSize()?.width ?? 1000) <= 820;
+  if (mobile) await page.getByRole("button", { name: "기록 목록 열기" }).click();
+  await page.getByRole("button", { name: "그룹 메뉴" }).click();
+  await page.getByRole("button", { name: /글꼴 선택/ }).click();
+  await page.getByRole("radio", { name: /나눔스퀘어/ }).check();
+  await expect(page.locator("html")).toHaveAttribute("data-font", "nanum-square");
+  const fontLoaded = await page.evaluate(async () => (await document.fonts.load('400 15px "NanumSquare"', '오늘의 기억')).length > 0);
+  expect(fontLoaded).toBe(true);
+  await expect(page.locator(".record-heading h1")).toHaveCSS("font-family", /NanumSquare/);
+  await page.getByRole("button", { name: /글꼴 선택/ }).click();
+  await page.getByRole("button", { name: /테마 선택/ }).click();
+  await page.getByRole("radio", { name: /다크/ }).click();
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-font", "nanum-square");
+  await expect(page.locator(".journal-app")).toHaveAttribute("data-theme", "dark");
+  if (mobile) await page.getByRole("button", { name: "기록 목록 열기" }).click();
+  await page.getByRole("button", { name: "그룹 메뉴" }).click();
+  await page.getByRole("button", { name: /글꼴 선택/ }).click();
+  await page.getByRole("radio", { name: /노토 산스/ }).check();
+  await expect(page.locator("html")).toHaveAttribute("data-font", "noto");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-font", "noto");
+});

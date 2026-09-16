@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@font-face { font-family: "NanumSquare"; src: url("/fonts/nanum-square/NanumSquareR.woff") format("woff"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "NanumSquare"; src: url("/fonts/nanum-square/NanumSquareB.woff") format("woff"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "NanumSquare"; src: url("/fonts/nanum-square/NanumSquareEB.woff") format("woff"); font-weight: 800; font-style: normal; font-display: swap; }
+
+html { --font-sans: var(--font-noto), sans-serif; --font-serif: var(--font-sans); }
+html[data-font="nanum-square"] { --font-sans: "NanumSquare", var(--font-noto), sans-serif; }
+html[data-font="gowun"] { --font-sans: var(--font-gowun), serif; }
+html[data-font="system"] { --font-sans: system-ui, sans-serif; }
+
 :root {
   --paper: #f4efdf;
   --paper-deep: #e9e0c8;
@@ -145,6 +154,19 @@ button, select { cursor: pointer; }
 .theme-toggle { display: flex !important; align-items: center; gap: 7px; margin: 4px 0 1px !important; padding: 7px 0 !important; color: var(--ink-muted) !important; background: transparent !important; text-align: left; }
 .theme-toggle svg:last-child { margin-left: auto; transition: transform .18s ease; }
 .theme-toggle[aria-expanded="true"] svg:last-child { transform: rotate(180deg); }
+.font-toggle > span { margin-left: auto; font-size: 12px; font-weight: 400; }
+.font-toggle svg:last-child { margin-left: 0; }
+.font-picker { min-width: 0; margin: 0; padding: 6px 0; border: 0; border-block: 1px solid var(--line); }
+.font-option { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 16px; align-items: center; gap: 8px; margin-block: 4px; padding: 10px; border: 1px solid transparent; border-radius: 7px; cursor: pointer; }
+.font-option:hover, .font-option.active { border-color: var(--line); background: var(--paper-deep); }
+.font-option:has(input:focus-visible) { outline: 2px solid var(--olive); outline-offset: 1px; }
+.font-option input { position: absolute; width: 1px; height: 1px; padding: 0; opacity: 0; }
+.font-option > span { display: flex; flex-direction: column; gap: 3px; }
+.font-option strong { color: var(--ink); font-size: 14px; font-weight: 700; }
+.font-option small { color: var(--ink-muted); font-size: 12px; }
+.sidebar-footer .font-option .font-preview { margin-top: 3px; color: var(--ink); font-size: 14px; }
+.font-option > svg { color: var(--olive); }
+.font-picker p { margin: 8px 4px; color: var(--ink-muted); font-size: 12px; }
 .theme-picker { display: grid; gap: 4px; padding: 4px 0 6px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .theme-option { display: grid !important; grid-template-columns: 20px 1fr auto; align-items: center; gap: 8px; width: 100%; margin: 0 !important; padding: 6px !important; border: 1px solid transparent !important; color: var(--ink) !important; background: transparent !important; text-align: left; }
 .theme-option:hover, .theme-option:focus-visible, .theme-option.active { border-color: var(--line) !important; background: var(--paper-deep) !important; }

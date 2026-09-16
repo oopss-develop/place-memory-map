@@ -3,6 +3,12 @@
   "generatedAt": "2026-09-15T00:00:00+09:00",
   "title": "Design System: Place Memory Map",
   "extensions": {
+    "fontPreference": {
+      "default": "noto",
+      "options": ["noto", "nanum-square", "gowun", "system"],
+      "storageKey": "place-memory-font-v1",
+      "scope": "all app typography; independent of color theme"
+    },
     "sidebar": {
       "fontFamily": "var(--font-sans), sans-serif",
       "heading": { "fontSize": "18px", "fontWeight": 700 },

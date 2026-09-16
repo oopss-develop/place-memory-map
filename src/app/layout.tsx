@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { Gowun_Batang, Noto_Sans_KR } from "next/font/google";
 import { PwaRegistration } from "@/components/pwa-registration";
+import { FontPreference } from "@/components/font-preference";
 import "./globals.css";
 
 const sans = Noto_Sans_KR({
-  variable: "--font-sans",
+  variable: "--font-noto",
   subsets: ["latin"],
   display: "swap",
 });
 
 const serif = Gowun_Batang({
-  variable: "--font-serif",
+  variable: "--font-gowun",
   subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
@@ -30,7 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ko"
       className={`${sans.variable} ${serif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col"><PwaRegistration />{children}</body>
+      <body className="min-h-full flex flex-col"><FontPreference><PwaRegistration />{children}</FontPreference></body>
     </html>
   );
 }

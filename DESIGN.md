@@ -53,6 +53,16 @@ components:
 
 ## Sidebar system (September 16 revision)
 
+### User-selectable font
+
+The account menu provides four independent font preferences: Noto Sans KR
+(default), NanumSquare, Gowun Batang, and system-ui. Each option previews its
+own typeface. The choice applies throughout the app via the `--font-sans` and
+`--font-serif` aliases, including controls and memory details, and persists in
+local storage per browser/device. Color themes do not change this choice.
+Typography sizes, weights, and spacing below remain consistent across fonts.
+NanumSquare's original 400/700/800 WOFF files are self-hosted with attribution.
+
 The navigation sidebar uses Noto Sans KR throughout, including map names,
 record titles, dates and the account area. This supersedes the sidebar-specific
 serif, numbered index and notebook-rule treatments described below.
