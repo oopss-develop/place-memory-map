@@ -4,13 +4,14 @@
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
-import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Plus, Search, Star, Users, X } from "lucide-react";
+import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Palette, Plus, Search, Star, Users, X } from "lucide-react";
 import { KakaoMap, type MapAnchor } from "@/components/kakao-map";
 import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
 import { prepareVisitImage } from "@/lib/images";
 import { DEFAULT_MARKER_STYLE, MARKER_STYLE_IDS, markerSvgDataUrl, normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
 import { getMemberInitials } from "@/lib/member-initials";
+import { DEFAULT_THEME, normalizeTheme, THEME_OPTIONS, type ThemeId } from "@/lib/themes";
 import { visitSchema } from "@/lib/schemas";
 import type { DashboardData } from "@/lib/data";
 import type { Group, KakaoPlaceResult, Place, Visit } from "@/types/domain";
@@ -18,6 +19,7 @@ import type { Group, KakaoPlaceResult, Place, Visit } from "@/types/domain";
 const formatDate = (date: string) => new Intl.DateTimeFormat("ko-KR", { month: "short", day: "numeric", weekday: "short" }).format(new Date(`${date}T12:00:00`));
 const VISITS_STORAGE_KEY = "place-memory-visits-v2";
 const GROUPS_STORAGE_KEY = "place-memory-groups-v1";
+const THEME_STORAGE_KEY = "place-memory-theme-v1";
 type PopupPlacement = "right" | "left" | "above" | "below";
 interface PopupPosition { left: number; top: number; placement: PopupPlacement; tailX: number; tailY: number; tailLength: number; }
 type PopupStyle = CSSProperties & { "--tail-x": string; "--tail-y": string; "--tail-length": string; };
@@ -45,6 +47,9 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [markerStyle, setMarkerStyle] = useState<MarkerStyle>(DEFAULT_MARKER_STYLE);
   const [notice, setNotice] = useState(initialData.demoMode ? "서버 저장소를 연결하면 모든 기기에서 같은 기록을 볼 수 있어요." : "");
   const [groupMenu, setGroupMenu] = useState(false);
+  const [theme, setTheme] = useState<ThemeId>(DEFAULT_THEME);
+  const [themePickerOpen, setThemePickerOpen] = useState(false);
+  const [themeLoaded, setThemeLoaded] = useState(false);
   const [groupPickerOpen, setGroupPickerOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
   const [inviteLink, setInviteLink] = useState("");
@@ -56,6 +61,19 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const mapStageRef = useRef<HTMLElement>(null);
   const sheetRef = useRef<HTMLElement>(null);
   const photoTouchStartX = useRef<number | null>(null);
+
+  useEffect(() => {
+    try {
+      setTheme(normalizeTheme(window.localStorage.getItem(THEME_STORAGE_KEY)));
+    } finally {
+      setThemeLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!themeLoaded) return;
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme, themeLoaded]);
 
   useEffect(() => {
     if (!initialData.demoMode) return;
@@ -390,7 +408,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   if (!groups.length) return <GroupOnboarding />;
 
   return (
-    <main className="journal-app">
+    <main className="journal-app" data-theme={theme}>
       <aside className={`journal-sidebar ${mobileList ? "mobile-open" : ""}`}>
         <header className="sidebar-header"><div className="wordmark"><span className="wordmark-pin"><MapPin size={17} fill="currentColor" /></span><span>PLACE<br />MEMORY MAP</span></div><button className="icon-button mobile-close" onClick={() => setMobileList(false)} aria-label="목록 닫기"><X size={20} /></button></header>
         <div className="group-row"><label id="group-label">함께 보는 지도</label><div className="group-picker"><button className="group-picker-trigger" type="button" aria-labelledby="group-label" aria-haspopup="listbox" aria-expanded={groupPickerOpen} onClick={() => setGroupPickerOpen((value) => !value)}><span>{activeGroup?.name ?? "지도 선택"}</span><ChevronDown size={17} /></button>{groupPickerOpen && <div className="group-picker-menu" role="listbox" aria-label="함께 보는 지도 선택">{groups.filter((group) => group.id !== activeGroupId).map((group) => <button key={group.id} className="group-picker-option" type="button" role="option" aria-selected={false} onClick={() => chooseGroup(group.id)}>{group.name}<span>{group.memberCount}명</span></button>)}<button className="group-picker-add" type="button" onClick={openCreateGroup}><Plus size={15} />함께 보는 지도 추가</button></div>}</div><span>{activeGroup?.memberCount ?? 0}명</span></div>
@@ -407,7 +425,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
             </section>;
           })}
         </div>
-        <footer className="sidebar-footer"><span className="avatar">{getMemberInitials(viewerName ?? initialData.members[0]?.displayName ?? "여행자")}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {canManageActiveGroup ? "그룹장" : "멤버"}</span>{canManageActiveGroup && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton />{canManageActiveGroup && <button className="group-menu-delete" type="button" disabled={groups.length <= 1} title={groups.length <= 1 ? "마지막 지도는 삭제할 수 없습니다." : undefined} onClick={deleteGroup}>현재 지도 삭제</button>}{canManageActiveGroup && groups.length <= 1 && <small className="group-menu-hint">마지막 지도는 삭제할 수 없어요.</small>}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
+        <footer className="sidebar-footer"><span className="avatar">{getMemberInitials(viewerName ?? initialData.members[0]?.displayName ?? "여행자")}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {canManageActiveGroup ? "그룹장" : "멤버"}</span><button className="theme-toggle" type="button" aria-expanded={themePickerOpen} onClick={() => setThemePickerOpen((value) => !value)}><Palette size={15} />테마 선택<ChevronDown size={14} /></button>{themePickerOpen && <div className="theme-picker" role="radiogroup" aria-label="테마 선택">{THEME_OPTIONS.map((option) => <button key={option.id} className={`theme-option ${theme === option.id ? "active" : ""}`} type="button" role="radio" aria-checked={theme === option.id} onClick={() => { setTheme(option.id); setThemePickerOpen(false); }}><span className="theme-swatch" style={{ background: option.swatch }} /><span><strong>{option.label}</strong><small>{option.description}</small></span>{theme === option.id && <Check size={14} aria-hidden="true" />}</button>)}</div>}{canManageActiveGroup && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton />{canManageActiveGroup && <button className="group-menu-delete" type="button" disabled={groups.length <= 1} title={groups.length <= 1 ? "마지막 지도는 삭제할 수 없습니다." : undefined} onClick={deleteGroup}>현재 지도 삭제</button>}{canManageActiveGroup && groups.length <= 1 && <small className="group-menu-hint">마지막 지도는 삭제할 수 없어요.</small>}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
       </aside>
 
       <section ref={mapStageRef} className="map-stage">

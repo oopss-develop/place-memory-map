@@ -127,3 +127,14 @@ test("reselecting a record reopens its popup", async ({ page }) => {
   await page.locator(".record-item", { hasText: "다시 여는 장소" }).click();
   await expect(page.locator(".place-sheet.is-positioned")).toBeVisible();
 });
+
+test("theme choice is applied and remembered", async ({ page }) => {
+  await page.goto("/");
+  if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
+  await page.getByRole("button", { name: "그룹 메뉴" }).click();
+  await page.getByRole("button", { name: /테마 선택/ }).click();
+  await page.getByRole("radio", { name: /다크/ }).click();
+  await expect(page.locator(".journal-app")).toHaveAttribute("data-theme", "dark");
+  await page.reload();
+  await expect(page.locator(".journal-app")).toHaveAttribute("data-theme", "dark");
+});
