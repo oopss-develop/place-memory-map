@@ -36,7 +36,7 @@ async function ensureSharedDefaultGroup(supabase: AdminClient, identities: Await
   const { data: existing, error: existingError } = await supabase
     .from("groups")
     .select("id")
-    .eq("name", "우리 넷의 지도")
+    .eq("name", "또나우쥐")
     .eq("created_by", owner.userId)
     .maybeSingle();
   if (existingError) throw existingError;
@@ -45,7 +45,7 @@ async function ensureSharedDefaultGroup(supabase: AdminClient, identities: Await
   if (!groupId) {
     const { data: created, error: createError } = await supabase
       .from("groups")
-      .insert({ name: "우리 넷의 지도", created_by: owner.userId })
+      .insert({ name: "또나우쥐", created_by: owner.userId })
       .select("id")
       .single();
     if (createError) throw createError;

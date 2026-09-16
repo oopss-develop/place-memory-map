@@ -8,7 +8,7 @@ export const demoMembers: Profile[] = [
 ];
 
 export const demoGroups: Group[] = [
-  { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", name: "우리 넷의 지도", role: "owner", memberCount: 4, ownerId: "access-또" },
+  { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", name: "또나우쥐", role: "owner", memberCount: 4, ownerId: "access-또" },
 ];
 
 // 샘플 방문 기록은 비워 둡니다. 첫 기록은 사용자가 직접 추가합니다.
