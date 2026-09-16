@@ -1,4 +1,7 @@
 alter table public.visits
+  add column if not exists marker_style text not null default 'black-1';
+
+alter table public.visits
   alter column marker_style set default 'black-1';
 
 update public.visits
