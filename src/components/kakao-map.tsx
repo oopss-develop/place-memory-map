@@ -28,6 +28,9 @@ export interface MapAnchor {
   topY?: number;
 }
 
+// Kakao Maps uses level 1 for its maximum zoom; level 3 is two steps wider.
+const SEARCH_FOCUS_LEVEL = 3;
+
 export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, highlightedIds = [] }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -192,6 +195,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
 
   useEffect(() => {
     if (!mapFocus || !ready || !mapRef.current || !window.kakao) return;
+    mapRef.current.setLevel(SEARCH_FOCUS_LEVEL);
     mapRef.current.panTo(new window.kakao.maps.LatLng(mapFocus.latitude, mapFocus.longitude));
   }, [mapFocus, ready]);
 
