@@ -31,32 +31,6 @@ async function ensureAccessProfiles(supabase: AdminClient) {
   return identities;
 }
 
-async function ensureSharedDefaultGroup(supabase: AdminClient, identities: Awaited<ReturnType<typeof ensureAccessProfiles>>) {
-  const owner = identities.find((identity) => identity.id === "access-또") ?? identities[0];
-  const { data: existing, error: existingError } = await supabase
-    .from("groups")
-    .select("id")
-    .eq("name", "또나우쥐")
-    .eq("created_by", owner.userId)
-    .maybeSingle();
-  if (existingError) throw existingError;
-
-  let groupId = existing?.id;
-  if (!groupId) {
-    const { data: created, error: createError } = await supabase
-      .from("groups")
-      .insert({ name: "또나우쥐", created_by: owner.userId })
-      .select("id")
-      .single();
-    if (createError) throw createError;
-    groupId = created.id;
-  }
-  const { error: membershipError } = await supabase.from("group_members").upsert(
-    identities.map((identity) => ({ group_id: groupId, user_id: identity.userId, role: identity.userId === owner.userId ? "owner" : "member" })),
-  );
-  if (membershipError) throw membershipError;
-}
-
 export async function getAccessWorkspaceUser() {
   if (!isServerPersistenceConfigured()) return null;
   const member = await getAccessMemberFromCookies();
@@ -64,7 +38,6 @@ export async function getAccessWorkspaceUser() {
 
   const supabase = createSupabaseAdminClient();
   const identities = await ensureAccessProfiles(supabase);
-  await ensureSharedDefaultGroup(supabase, identities);
   const identity = identities.find((item) => item.email === member.email);
   if (!identity) throw new Error("간편 로그인 사용자를 찾지 못했습니다.");
   return { supabase, userId: identity.userId, member, identities };
