@@ -108,12 +108,25 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
         onAnchorChange?.({ x: point.x, y: point.y, topY: point.y - markerHeight });
       };
       window.kakao.maps.event.addListener(mapRef.current, "idle", reveal);
-      mapRef.current.setCenter(new window.kakao.maps.LatLng(selectedVisit.place.latitude, selectedVisit.place.longitude));
+      const markerPosition = new window.kakao.maps.LatLng(selectedVisit.place.latitude, selectedVisit.place.longitude);
+      const projection = mapRef.current.getProjection();
+      const markerPoint = projection.pointFromCoords(markerPosition);
+      let targetCenter = markerPosition;
       if (window.innerWidth > 820 && ref.current) {
-        mapRef.current.panBy(0, -Math.round(ref.current.clientHeight * 0.32));
+        targetCenter = projection.coordsFromPoint(new window.kakao.maps.Point(
+          markerPoint.x,
+          markerPoint.y - Math.round(ref.current.clientHeight * 0.32),
+        ));
       }
+      const currentCenterPoint = projection.pointFromCoords(mapRef.current.getCenter());
+      const targetCenterPoint = projection.pointFromCoords(targetCenter);
+      const alreadySettled = Math.abs(currentCenterPoint.x - targetCenterPoint.x) < 1
+        && Math.abs(currentCenterPoint.y - targetCenterPoint.y) < 1;
+      const revealFrame = alreadySettled ? window.requestAnimationFrame(reveal) : undefined;
+      if (!alreadySettled) mapRef.current.panTo(targetCenter);
       const fallbackTimer = window.setTimeout(reveal, 700);
       return () => {
+        if (revealFrame !== undefined) window.cancelAnimationFrame(revealFrame);
         window.clearTimeout(fallbackTimer);
         if (!completed) window.kakao.maps.event.removeListener(mapRef.current, "idle", reveal);
       };
