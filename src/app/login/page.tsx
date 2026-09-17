@@ -6,7 +6,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <main className="login-page">
       <section className="login-notebook">
-        <div className="brand-mark"><img src="/map-pins/color-16.png" alt="" /><span>PLACE MEMORY MAP</span></div>
+        <div className="brand-mark"><img src="/map-pins/yellow-sparkle-round.png" alt="" /><span>PLACE MEMORY MAP</span></div>
         <div className="login-copy">
           <h1>함께 간 곳은<br />함께 기억해요.</h1>
           <p>우리만 볼 수 있는 지도에 방문한 장소와 그날의 이야기를 차곡차곡 남겨보세요.</p>
