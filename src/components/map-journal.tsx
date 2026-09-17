@@ -28,10 +28,20 @@ const VISITS_STORAGE_KEY = "place-memory-visits-v2";
 const GROUPS_STORAGE_KEY = "place-memory-groups-v1";
 const THEME_STORAGE_KEY = "place-memory-theme-v1";
 const MAP_PROVIDER_STORAGE_KEY = "place-memory-map-provider-v1";
+const DATA_SYNC_INTERVAL_MS = 10_000;
 type MapProvider = "kakao" | "osm";
 type PopupPlacement = "right" | "left" | "above" | "below";
 interface PopupPosition { left: number; top: number; placement: PopupPlacement; tailX: number; tailY: number; tailLength: number; }
 type PopupStyle = CSSProperties & { "--tail-x": string; "--tail-y": string; "--tail-length": string; };
+
+const visitRevision = (items: Visit[]) => items
+  .map((visit) => `${visit.id}:${visit.version}:${visit.photoUrls.length}`)
+  .sort()
+  .join("|");
+const groupRevision = (items: Group[]) => items
+  .map((group) => `${group.id}:${group.name}:${group.role}:${group.memberCount}`)
+  .sort()
+  .join("|");
 
 export function MapJournal({ initialData, viewerId, viewerName }: { initialData: DashboardData; viewerId?: string; viewerName?: string }) {
   const router = useRouter();
@@ -82,11 +92,22 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const groupMenuRef = useRef<HTMLDivElement>(null);
   const sidebarOpener = useRef<HTMLElement | null>(null);
   const photoTouchStartX = useRef<number | null>(null);
+  const visitsRef = useRef(visits);
+  const groupsRef = useRef(groups);
+  const lastSyncRequestAtRef = useRef(0);
 
   const closeGroupMenu = useCallback(() => {
     setGroupMenu(false);
     setThemePickerOpen(false);
   }, []);
+
+  const requestDataSync = useCallback(() => {
+    if (initialData.demoMode || document.visibilityState === "hidden" || !navigator.onLine) return;
+    const now = Date.now();
+    if (now - lastSyncRequestAtRef.current < 1_500) return;
+    lastSyncRequestAtRef.current = now;
+    router.refresh();
+  }, [initialData.demoMode, router]);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 820px)");
@@ -102,6 +123,43 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     const restore = window.setTimeout(() => setMapProvider(saved), 0);
     return () => window.clearTimeout(restore);
   }, []);
+
+  useEffect(() => {
+    visitsRef.current = visits;
+  }, [visits]);
+
+  useEffect(() => {
+    groupsRef.current = groups;
+  }, [groups]);
+
+  useEffect(() => {
+    if (initialData.demoMode) return;
+    const visitsChanged = visitRevision(visitsRef.current) !== visitRevision(initialData.visits);
+    const groupsChanged = groupRevision(groupsRef.current) !== groupRevision(initialData.groups);
+    if (visitsChanged) setVisits(initialData.visits);
+    if (groupsChanged) {
+      setGroups(initialData.groups);
+      setActiveGroupId((current) => initialData.groups.some((group) => group.id === current) ? current : initialData.groups[0]?.id ?? "");
+    }
+    if (visitsChanged || groupsChanged) setNotice("다른 멤버의 변경사항을 지도에 반영했습니다.");
+  }, [initialData.demoMode, initialData.groups, initialData.visits]);
+
+  useEffect(() => {
+    if (initialData.demoMode) return;
+    const interval = window.setInterval(requestDataSync, DATA_SYNC_INTERVAL_MS);
+    const syncWhenVisible = () => {
+      if (document.visibilityState === "visible") requestDataSync();
+    };
+    window.addEventListener("focus", requestDataSync);
+    window.addEventListener("online", requestDataSync);
+    document.addEventListener("visibilitychange", syncWhenVisible);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", requestDataSync);
+      window.removeEventListener("online", requestDataSync);
+      document.removeEventListener("visibilitychange", syncWhenVisible);
+    };
+  }, [initialData.demoMode, requestDataSync]);
 
   useEffect(() => {
     if (!isMobile || !mobileList) return;
