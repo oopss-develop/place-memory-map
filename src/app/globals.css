@@ -279,9 +279,7 @@ button, select { cursor: pointer; }
 .map-pin.selected img, .map-marker-bounce-overlay img { position: relative; z-index: 1; animation: map-pin-bounce 1.35s linear infinite; will-change: transform; }
 .map-marker-bounce-overlay { position: relative; display: block; pointer-events: none; filter: drop-shadow(0 4px 4px rgba(53,39,28,.25)); }
 .map-marker-bounce-overlay img { display: block; width: 100%; height: 100%; transform-origin: 50% 100%; }
-.map-pin.selected::before, .map-pin.selected::after, .map-marker-bounce-overlay::before, .map-marker-bounce-overlay::after { position: absolute; z-index: 0; bottom: -5px; left: 50%; content: ""; border: 2px solid rgba(22,45,56,.68); border-radius: 50%; opacity: 0; filter: drop-shadow(0 1px 1px rgba(255,255,255,.9)); transform: translateX(-50%) scale(.18); animation: map-pin-impact-ring 1.35s linear infinite; pointer-events: none; }
-.map-pin.selected::before, .map-marker-bounce-overlay::before { width: 34px; height: 10px; }
-.map-pin.selected::after, .map-marker-bounce-overlay::after { width: 54px; height: 16px; border-color: rgba(216,76,50,.52); animation-delay: .035s; }
+.map-pin.selected::before, .map-marker-bounce-overlay::before { position: absolute; z-index: 0; bottom: -5px; left: 50%; content: ""; width: 42px; height: 12px; border: 2px solid rgba(22,45,56,.72); border-radius: 50%; opacity: 0; filter: drop-shadow(0 1px 1px rgba(255,255,255,.9)); transform: translateX(-50%) scale(.18); animation: map-pin-impact-ring 1.35s linear infinite; pointer-events: none; }
 @keyframes map-pin-bounce {
   0%, 10%, 46%, 68%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
   6% { transform: translateY(1px) scaleX(1.08) scaleY(.9); }
@@ -526,5 +524,5 @@ button, select { cursor: pointer; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .map-pin.selected { transform: translate(-50%, -100%) scale(1.16); }
   .map-pin.selected img, .map-marker-bounce-overlay img { animation: none; transform: none; }
-  .map-pin.selected::before, .map-pin.selected::after, .map-marker-bounce-overlay::before, .map-marker-bounce-overlay::after { display: none; }
+  .map-pin.selected::before, .map-marker-bounce-overlay::before { display: none; }
 }
