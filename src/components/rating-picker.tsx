@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import { SquareSparkIcon } from "@/components/square-spark-icon";
 
 const STAR_VALUES = Array.from({ length: 5 }, (_, index) => index + 1);
 const PARTICLE_COLORS = [
@@ -30,14 +31,6 @@ function normalizeRating(value: number) {
 function variedValue(seed: number) {
   const value = Math.sin(seed * 12.9898) * 43758.5453;
   return value - Math.floor(value);
-}
-
-function SquareSpark({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 1.5C12.8 7.8 16.2 11.2 22.5 12C16.2 12.8 12.8 16.2 12 22.5C11.2 16.2 7.8 12.8 1.5 12C7.8 11.2 11.2 7.8 12 1.5Z" />
-    </svg>
-  );
 }
 
 export function RatingPicker({ defaultValue = 5 }: { defaultValue?: number }) {
@@ -147,13 +140,13 @@ export function RatingPicker({ defaultValue = 5 }: { defaultValue?: number }) {
               onPointerDown={(event) => { choose(ratingFromPointer(event, star)); event.currentTarget.parentElement?.focus(); }}
             >
               <span className="rating-star-icon" aria-hidden="true">
-                <SquareSpark className="rating-star-empty" />
-                <span className="rating-star-fill" style={{ "--rating-fill": `${fill * 100}%` } as CSSProperties}><SquareSpark /></span>
+                <SquareSparkIcon className="rating-star-empty" />
+                <span className="rating-star-fill" style={{ "--rating-fill": `${fill * 100}%` } as CSSProperties}><SquareSparkIcon /></span>
               </span>
               <span aria-hidden="true">{star}</span>
               {effects.filter((effect) => effect.star === star).map((effect) => effect.kind === "particle"
-                ? <span key={effect.id} className="rating-particle" style={{ "--effect-x": `${effect.x}px`, "--effect-y": `${effect.y}px`, "--effect-rotation": `${effect.rotation}deg`, "--effect-size": `${effect.size}px`, animationDelay: `${effect.delay}ms`, color: effect.color } as CSSProperties} aria-hidden="true"><SquareSpark /></span>
-                : <span key={effect.id} className={`rating-fall-fragment ${effect.half}`} style={{ "--effect-x": `${effect.x}px`, "--effect-y": `${effect.y}px`, "--effect-rotation": `${effect.rotation}deg`, animationDelay: `${effect.delay}ms`, color: effect.color } as CSSProperties} aria-hidden="true"><SquareSpark /></span>)}
+                ? <span key={effect.id} className="rating-particle" style={{ "--effect-x": `${effect.x}px`, "--effect-y": `${effect.y}px`, "--effect-rotation": `${effect.rotation}deg`, "--effect-size": `${effect.size}px`, animationDelay: `${effect.delay}ms`, color: effect.color } as CSSProperties} aria-hidden="true"><SquareSparkIcon /></span>
+                : <span key={effect.id} className={`rating-fall-fragment ${effect.half}`} style={{ "--effect-x": `${effect.x}px`, "--effect-y": `${effect.y}px`, "--effect-rotation": `${effect.rotation}deg`, animationDelay: `${effect.delay}ms`, color: effect.color } as CSSProperties} aria-hidden="true"><SquareSparkIcon /></span>)}
             </span>
           );
         })}

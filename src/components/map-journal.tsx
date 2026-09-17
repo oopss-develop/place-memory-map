@@ -5,12 +5,13 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { flushSync } from "react-dom";
 import { useRouter } from "next/navigation";
-import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, Globe2, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Palette, Plus, Search, Star, Users, X } from "lucide-react";
+import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, Globe2, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Palette, Plus, Search, Users, X } from "lucide-react";
 import { KakaoMap, type MapAnchor } from "@/components/kakao-map";
 import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
 import { FontPicker } from "@/components/font-preference";
 import { RatingPicker } from "@/components/rating-picker";
+import { SquareSparkIcon } from "@/components/square-spark-icon";
 import { prepareVisitImage } from "@/lib/images";
 import { DEFAULT_MARKER_STYLE, MARKER_PICKER_STYLE_IDS as MARKER_STYLE_IDS, markerSvgDataUrl, normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
 
@@ -540,7 +541,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
             const active = selectedDateKey === date;
             return <section key={date} className={`date-group ${active ? "active" : ""}`}>
               <button className="date-group-toggle" aria-expanded={active} aria-label={`${formatDate(date)} 방문 기록 ${dateVisits.length}개 ${active ? "접기" : "펼치기"}`} onClick={() => { setSelectedDateKey(active ? undefined : date); if (!active && dateVisits[0]) handleVisitSelect(dateVisits[0]); }}><span><CalendarDays size={15} /><time>{formatDate(date)}</time>{dateVisits.some((visit) => visit.isPlanned) && <em>방문 예정</em>}</span><strong>{dateVisits.length}곳 <ChevronDown size={15} /></strong></button>
-              {active && <div className="date-group-items">{dateVisits.map((visit) => <button key={visit.id} className={`record-item ${visit.isPlanned ? "planned" : ""} ${selectedId === visit.id ? "selected" : ""}`} aria-pressed={selectedId === visit.id} onClick={() => { handleVisitSelect(visit); setMobileList(false); }}><img className="record-marker" src={markerSvgData(visit.markerStyle)} alt="" /><div><strong>{visit.place.name}</strong><p>{visit.title}</p><div className="mini-meta"><span><Star size={13} fill="currentColor" /> {formatRating(visit.rating)}</span><span><Users size={13} /> {visit.participants.length}</span>{visit.photoUrls.length > 0 && <span><Camera size={13} /> {visit.photoUrls.length}</span>}{visit.isPlanned && <span className="planned-label">방문 예정</span>}</div></div></button>)}</div>}
+              {active && <div className="date-group-items">{dateVisits.map((visit) => <button key={visit.id} className={`record-item ${visit.isPlanned ? "planned" : ""} ${selectedId === visit.id ? "selected" : ""}`} aria-pressed={selectedId === visit.id} onClick={() => { handleVisitSelect(visit); setMobileList(false); }}><img className="record-marker" src={markerSvgData(visit.markerStyle)} alt="" /><div><strong>{visit.place.name}</strong><p>{visit.title}</p><div className="mini-meta"><span className="rating-summary" aria-label={`별점 ${formatRating(visit.rating)}점`}><SquareSparkIcon className="rating-square-spark" /> {formatRating(visit.rating)}</span><span><Users size={13} /> {visit.participants.length}</span>{visit.photoUrls.length > 0 && <span><Camera size={13} /> {visit.photoUrls.length}</span>}{visit.isPlanned && <span className="planned-label">방문 예정</span>}</div></div></button>)}</div>}
             </section>;
           })}
         </div>
@@ -568,7 +569,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
               <span className="sheet-photo-count" aria-live="polite">{activePhotoIndex + 1} / {selected.photoUrls.length}</span>
             </>}
           </div>}
-          <div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button disabled={Boolean(pendingAction)} onClick={() => openEdit(selected)}>기록 고치기</button><button className="danger-button" disabled={Boolean(pendingAction)} onClick={() => deleteVisit(selected)}>{pendingAction === "delete" ? "삭제 중…" : "기록 삭제"}</button></div></div></div>
+          <div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><div className="sheet-rating" aria-label={`별점 ${formatRating(selected.rating)}점, 5점 만점`}><SquareSparkIcon className="rating-square-spark" /><strong>{formatRating(selected.rating)}</strong><span>/5.0</span></div><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button disabled={Boolean(pendingAction)} onClick={() => openEdit(selected)}>기록 고치기</button><button className="danger-button" disabled={Boolean(pendingAction)} onClick={() => deleteVisit(selected)}>{pendingAction === "delete" ? "삭제 중…" : "기록 삭제"}</button></div></div></div>
           </div>
         </article>}
         {notice && <button className="notice" onClick={() => setNotice("")} aria-live="polite">{notice}<X size={14} /></button>}

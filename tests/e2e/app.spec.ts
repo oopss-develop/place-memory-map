@@ -83,7 +83,12 @@ test("multiple visit photos can be browsed", async ({ page }) => {
     localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true");
   }, images);
   await page.goto("/");
-  await page.locator('[data-visit-id="gallery-visit"]').click();
+  if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
+  await page.locator(".date-group-toggle").click();
+  await expect(page.locator(".record-item .rating-square-spark")).toHaveCount(1);
+  await page.locator(".record-item").click();
+  await expect(page.locator(".sheet-rating .rating-square-spark")).toBeVisible();
+  await expect(page.locator(".sheet-rating")).toContainText("5.0/5.0");
   await expect(page.getByText("1 / 4")).toBeVisible();
   await page.getByRole("button", { name: "다음 사진" }).click();
   await expect(page.getByText("2 / 4")).toBeVisible();

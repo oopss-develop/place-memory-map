@@ -245,6 +245,7 @@ button, select { cursor: pointer; }
 .record-item.selected::after { display: none; }
 .mini-meta { flex-wrap: wrap; gap: 12px; color: var(--ink-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
 .mini-meta span:first-child { color: var(--ink-muted); }
+.rating-summary .rating-square-spark { width: 15px; height: 15px; flex: 0 0 15px; color: var(--rating-gold); fill: currentColor; stroke: var(--rating-gold-deep); stroke-width: 1.1; filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--rating-gold-deep) 24%, transparent)); }
 .planned-label { color: var(--vermilion-dark); font-weight: 700; }
 .record-item.planned { background: color-mix(in srgb, var(--vermilion) 5%, transparent); }
 .record-item.planned:hover, .record-item.planned.selected { background: color-mix(in srgb, var(--vermilion) 10%, var(--surface)); }
@@ -366,8 +367,12 @@ button, select { cursor: pointer; }
 .place-sheet.has-photo .sheet-date { padding-right: 0; }
 .sheet-date span:last-child { text-align: right; }
 .sheet-content h2 { min-width: 0; margin: 10px 0 5px; overflow-wrap: anywhere; font-family: var(--font-serif), serif; font-size: 26px; line-height: 1.25; }
-.sheet-address { display: flex; min-width: 0; align-items: flex-start; gap: 5px; margin: 0 0 24px; overflow-wrap: anywhere; color: var(--ink-muted); font-size: 12px; line-height: 1.55; }
+.sheet-address { display: flex; min-width: 0; align-items: flex-start; gap: 5px; margin: 0 0 10px; overflow-wrap: anywhere; color: var(--ink-muted); font-size: 12px; line-height: 1.55; }
 .sheet-address svg { flex: 0 0 auto; margin-top: 2px; }
+.sheet-rating { display: flex; align-items: center; gap: 4px; width: fit-content; margin: 0 0 20px; color: var(--ink); font-size: 13px; font-variant-numeric: tabular-nums; line-height: 1; }
+.sheet-rating .rating-square-spark { width: 18px; height: 18px; flex: 0 0 18px; margin-right: 2px; color: var(--rating-gold); fill: currentColor; stroke: var(--rating-gold-deep); stroke-width: 1.1; filter: drop-shadow(0 2px 2px color-mix(in srgb, var(--rating-gold-deep) 24%, transparent)); }
+.sheet-rating strong { font-size: 15px; font-weight: 800; }
+.sheet-rating span { color: var(--ink-muted); font-size: 11px; font-weight: 600; }
 .sheet-content h3 { min-width: 0; margin: 0 0 9px; overflow-wrap: anywhere; font-size: 15px; }
 .sheet-note { min-width: 0; margin: 0; overflow-wrap: anywhere; color: #435157; font-family: var(--font-serif), serif; font-size: 15px; line-height: 1.7; }
 .sheet-tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 16px; color: var(--olive); font-size: 12px; }
