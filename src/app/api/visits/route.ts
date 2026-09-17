@@ -67,6 +67,7 @@ export async function POST(request: Request) {
     group_id: input.groupId,
     place_id: placeId,
     visited_on: input.visitedOn,
+    is_planned: input.isPlanned,
     title: input.title,
     note: input.note,
     rating: input.rating,
@@ -111,6 +112,7 @@ export async function PUT(request: Request) {
   if (!await isGroupMember(auth.supabase, currentVisit.group_id, auth.user.id)) return NextResponse.json({ error: "이 기록을 수정할 권한이 없습니다." }, { status: 403 });
   const updatePayload = {
     visited_on: input.visitedOn,
+    is_planned: input.isPlanned,
     title: input.title,
     note: input.note,
     rating: input.rating,

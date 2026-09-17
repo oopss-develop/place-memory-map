@@ -16,6 +16,7 @@ export const visitSchema = z.object({
   groupId: z.string().uuid(),
   place: placeSchema,
   visitedOn: z.string().date(),
+  isPlanned: z.boolean().default(false),
   title: z.string().trim().min(1, "기록 제목을 입력해 주세요.").max(120),
   note: z.string().trim().max(3000).default(""),
   rating: z.number().int().min(1).max(5),

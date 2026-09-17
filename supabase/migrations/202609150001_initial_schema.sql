@@ -59,6 +59,7 @@ create table public.visits (
   group_id uuid not null references public.groups(id) on delete cascade,
   place_id uuid not null references public.places(id),
   visited_on date not null,
+  is_planned boolean not null default false,
   title text not null check (char_length(title) between 1 and 120),
   note text not null default '' check (char_length(note) <= 3000),
   rating smallint not null check (rating between 1 and 5),

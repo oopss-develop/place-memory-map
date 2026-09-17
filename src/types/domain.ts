@@ -33,6 +33,7 @@ export interface Visit {
   groupId: string;
   place: Place;
   visitedOn: string;
+  isPlanned: boolean;
   title: string;
   note: string;
   rating: number;

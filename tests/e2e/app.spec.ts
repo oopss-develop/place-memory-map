@@ -193,3 +193,22 @@ test("font preference loads the font, survives reload and remains independent of
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-font", "noto");
 });
+
+test("planned visit filter shows only planned records", async ({ page }) => {
+  await page.addInitScript(() => {
+    localStorage.setItem("place-memory-visits-v2", JSON.stringify([
+      { id: "planned-visit", groupId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", place: { id: "planned-place", provider: "manual", name: "방문 예정 장소", address: "서울", category: "카페", latitude: 37.56, longitude: 126.98 }, visitedOn: "2026-09-20", isPlanned: true, title: "다음 주에 가기", note: "", rating: 5, tags: ["약속"], participants: [], photoUrls: [], markerStyle: "black-1", version: 1, updatedBy: "test" },
+      { id: "completed-visit", groupId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", place: { id: "completed-place", provider: "manual", name: "이미 다녀온 장소", address: "서울", category: "식당", latitude: 37.57, longitude: 126.99 }, visitedOn: "2026-09-20", isPlanned: false, title: "지난 기록", note: "", rating: 4, tags: ["추억"], participants: [], photoUrls: [], markerStyle: "black-2", version: 1, updatedBy: "test" },
+    ]));
+    localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true");
+  });
+  await page.goto("/");
+  if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
+  await expect(page.getByRole("button", { name: "방문 예정", exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "방문 예정", exact: true }).click();
+  await expect(page.getByText("1개의 방문 기록")).toBeVisible();
+  await page.getByRole("button", { name: /방문 기록 1개/ }).click();
+  await expect(page.locator(".record-item")).toHaveCount(1);
+  await expect(page.locator(".record-item")).toContainText("방문 예정 장소");
+  await expect(page.locator(".record-item")).not.toContainText("이미 다녀온 장소");
+});

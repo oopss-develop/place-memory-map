@@ -16,7 +16,7 @@ export interface DashboardData {
 interface MembershipRow { role: "owner" | "member"; groups: { id: string; name: string; created_by: string }; }
 interface MemberRow { group_id: string; profiles: { id: string; display_name: string }; }
 interface VisitRow {
-  id: string; group_id: string; visited_on: string; title: string; note: string; rating: number; tags: string[]; marker_style: MarkerStyle | null; version: number;
+  id: string; group_id: string; visited_on: string; is_planned: boolean | null; title: string; note: string; rating: number; tags: string[]; marker_style: MarkerStyle | null; version: number;
   places: { id: string; provider: "kakao" | "manual"; provider_place_id: string | null; name: string; address: string; category: string; latitude: number | string; longitude: number | string };
   visit_participants: Array<{ profiles: { id: string; display_name: string } }>;
   visit_photos: Array<{ storage_path: string; sort_order: number }>;
@@ -97,6 +97,7 @@ export async function getDashboardData(userId?: string): Promise<DashboardData> 
           longitude: Number(row.places.longitude),
         },
         visitedOn: row.visited_on,
+        isPlanned: row.is_planned ?? false,
         title: row.title,
         note: row.note ?? "",
         rating: row.rating,
