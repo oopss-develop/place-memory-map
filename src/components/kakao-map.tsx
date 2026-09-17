@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 import { markerSvgDataUrl, normalizeMarkerStyle } from "@/lib/marker-styles";
 import type { Visit } from "@/types/domain";
+import { OpenStreetMap } from "@/components/osm-map";
 
 declare global { interface Window { kakao?: any; } }
 
@@ -39,6 +40,10 @@ function fallbackMapPosition(latitude: number, longitude: number) {
   return { left: Math.max(8, Math.min(88, left)), top: Math.max(8, Math.min(84, top)) };
 }
 
+function isKoreanCoordinate(latitude: number, longitude: number) {
+  return latitude >= 32 && latitude <= 39.5 && longitude >= 124 && longitude <= 132;
+}
+
 export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, pulseLocation, highlightedIds = [] }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -54,6 +59,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
   const pulseLatitude = pulseTarget?.latitude;
   const pulseLongitude = pulseTarget?.longitude;
   const pulseMarkerStyle = selectedVisit?.markerStyle;
+  const hasOverseasVisit = visits.some((visit) => !isKoreanCoordinate(visit.place.latitude, visit.place.longitude));
 
   useEffect(() => {
     if (!apiKey || !ref.current) return;
@@ -332,6 +338,10 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
     const x = (event.clientX - rect.left) / rect.width;
     const y = (event.clientY - rect.top) / rect.height;
     onManualPoint(37.61 - y * 0.11, 126.91 + x * 0.18);
+  }
+
+  if (hasOverseasVisit) {
+    return <OpenStreetMap visits={visits} selectedId={selectedId} manualMode={manualMode} onSelect={onSelect} onAnchorChange={onAnchorChange} onDismissPopup={onDismissPopup} onManualPoint={onManualPoint} focusLocation={focusLocation} mapFocus={mapFocus} highlightedIds={highlightedIds} />;
   }
 
   return (

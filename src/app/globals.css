@@ -265,7 +265,12 @@ button, select { cursor: pointer; }
 }
 
 .map-stage { position: relative; min-width: 0; overflow: hidden; background: #d9d8c8; }
-.map-canvas, .kakao-map, .map-fallback { position: absolute; inset: 0; }
+.map-canvas, .kakao-map, .map-fallback, .osm-map { position: absolute; inset: 0; }
+.osm-map { z-index: 0; background: #e8eee7; }
+.osm-map .leaflet-control-zoom { margin-bottom: 76px; margin-left: 14px; }
+.osm-pin-icon { background: transparent; border: 0; }
+.osm-pin-icon img { display: block; width: 44px; height: 44px; }
+.osm-map-note { position: absolute; z-index: 401; right: 8px; bottom: 8px; padding: 3px 6px; border-radius: 4px; color: #435157; background: rgba(255,253,246,.86); font-size: 10px; pointer-events: none; }
 .map-canvas.is-pinning { cursor: crosshair; }
 .map-fallback { overflow: hidden; background-color: #dfe2d2; background-image: linear-gradient(28deg, transparent 48%, rgba(255,255,255,.48) 49%, rgba(255,255,255,.48) 51%, transparent 52%), linear-gradient(112deg, transparent 48%, rgba(116,125,101,.16) 49%, rgba(116,125,101,.16) 51%, transparent 52%); background-size: 180px 160px, 230px 220px; }
 .river { position: absolute; top: 55%; left: -5%; width: 110%; height: 14%; border: solid rgba(255,255,255,.75); border-width: 2px 0; background: #a9c9ce; transform: rotate(-5deg); }
