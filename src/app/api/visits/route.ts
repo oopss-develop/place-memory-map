@@ -23,6 +23,17 @@ function isMarkerStyleMigrationPending(error: { code?: string; message?: string 
   ));
 }
 
+function visitWriteError(error: { code?: string; message?: string } | null, fallback: string) {
+  if (error && (
+    error.code === "22P02"
+    || (error.message?.includes("smallint") && error.message.includes("rating"))
+    || error.message?.includes('invalid input syntax for type smallint')
+  )) {
+    return "0.5 단위 별점을 저장하려면 데이터베이스 업데이트가 필요합니다. 최신 Supabase 마이그레이션을 적용해 주세요.";
+  }
+  return error?.message ?? fallback;
+}
+
 export async function POST(request: Request) {
   const auth = await authClient();
   if (!auth) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
@@ -87,7 +98,7 @@ export async function POST(request: Request) {
       .select("id,version")
       .single());
   }
-  if (visitError || !visit) return NextResponse.json({ error: visitError?.message ?? "방문 기록을 저장하지 못했습니다." }, { status: 400 });
+  if (visitError || !visit) return NextResponse.json({ error: visitWriteError(visitError, "방문 기록을 저장하지 못했습니다.") }, { status: 400 });
 
   if (input.participantIds.length) {
     const { error } = await auth.supabase.from("visit_participants").insert(
@@ -138,7 +149,7 @@ export async function PUT(request: Request) {
       .select("id,version")
       .maybeSingle());
   }
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) return NextResponse.json({ error: visitWriteError(error, "방문 기록을 수정하지 못했습니다.") }, { status: 400 });
   if (!data) return NextResponse.json({ error: "다른 멤버가 먼저 수정했습니다. 최신 기록을 다시 불러와 주세요." }, { status: 409 });
 
   await auth.supabase.from("visit_participants").delete().eq("visit_id", input.id);
