@@ -127,11 +127,11 @@ test("selected pins bounce and the animation follows the new selection", async (
   await page.locator('[data-visit-id="pulse-first"]').click();
   await expect(page.locator('[data-visit-id="pulse-first"].selected')).toBeVisible();
   await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
-  await expect(page.locator('[data-visit-id="pulse-first"].selected')).toHaveCSS("animation-name", "map-pin-bounce");
+  await expect(page.locator('[data-visit-id="pulse-first"].selected img')).toHaveCSS("animation-name", "map-pin-bounce");
   await page.locator('[data-visit-id="pulse-second"]').click();
   await expect(page.locator('[data-visit-id="pulse-second"].selected')).toBeVisible();
   await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
-  await expect(page.locator('[data-visit-id="pulse-second"].selected')).toHaveCSS("animation-name", "map-pin-bounce");
+  await expect(page.locator('[data-visit-id="pulse-second"].selected img')).toHaveCSS("animation-name", "map-pin-bounce");
   await page.getByRole("button", { name: "상세 닫기" }).click();
   await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
 });
@@ -148,10 +148,10 @@ test("reduced motion keeps the selected pin static", async ({ page }) => {
   await page.goto("/");
   await page.locator('[data-visit-id="reduced-pulse"]').click();
   await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
-  const pinStyle = await page.locator('[data-visit-id="reduced-pulse"].selected').evaluate((element) => {
+  const pinStyle = await page.locator('[data-visit-id="reduced-pulse"].selected img').evaluate((element) => {
     const style = getComputedStyle(element);
     return { animationName: style.animationName, transform: style.transform };
   });
   expect(pinStyle.animationName).toBe("none");
-  expect(pinStyle.transform).toContain("matrix");
+  expect(pinStyle.transform).toBe("none");
 });

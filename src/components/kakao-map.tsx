@@ -44,6 +44,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const pulseOverlayRef = useRef<any>(null);
+  const bounceOverlayRef = useRef<any>(null);
   const lastSelectedIdRef = useRef<string | undefined>(undefined);
   const [ready, setReady] = useState(false);
   const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_JS_KEY;
@@ -134,28 +135,47 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
   }, [ready, visits, onSelect, selectedId, highlightedIds]);
 
   useEffect(() => {
-    if (!ready || !selectedId || !mapRef.current || !window.kakao || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const removeBounce = () => {
+      bounceOverlayRef.current?.setMap(null);
+      bounceOverlayRef.current = null;
+    };
+
+    if (!ready || !selectedId || !mapRef.current || !window.kakao || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      removeBounce();
+      return;
+    }
     const visitIndex = visits.findIndex((visit) => visit.id === selectedId);
     const selectedMarker = visitIndex >= 0 ? markersRef.current[visitIndex] : undefined;
     const selectedVisit = visits[visitIndex];
     if (!selectedMarker || !selectedVisit) return;
 
-    const baseLatitude = selectedVisit.place.latitude;
-    const baseLongitude = selectedVisit.place.longitude;
-    const startedAt = performance.now();
-    let frame = 0;
-    const bounce = (now: number) => {
-      const progress = ((now - startedAt) % 1200) / 1200;
-      const lift = Math.max(0, Math.sin(progress * Math.PI * 2)) ** 3 * 0.000035;
-      selectedMarker.setPosition(new window.kakao.maps.LatLng(baseLatitude + lift, baseLongitude));
-      frame = requestAnimationFrame(bounce);
-    };
-    frame = requestAnimationFrame(bounce);
+    const markerSize = highlightedIds.includes(selectedVisit.id) ? 48 : 44;
+    const content = document.createElement("span");
+    content.className = "map-marker-bounce-overlay";
+    content.style.width = `${markerSize}px`;
+    content.style.height = `${markerSize}px`;
+    content.setAttribute("aria-hidden", "true");
+    const image = document.createElement("img");
+    image.src = markerSvgDataUrl(selectedVisit.markerStyle, { highlighted: highlightedIds.includes(selectedVisit.id), selected: true });
+    image.alt = "";
+    content.append(image);
+    const overlay = new window.kakao.maps.CustomOverlay({
+      position: new window.kakao.maps.LatLng(selectedVisit.place.latitude, selectedVisit.place.longitude),
+      content,
+      xAnchor: 0.5,
+      yAnchor: 1,
+      zIndex: 4,
+      clickable: false,
+    });
+    selectedMarker.setOpacity(0);
+    overlay.setMap(mapRef.current);
+    bounceOverlayRef.current = overlay;
+
     return () => {
-      cancelAnimationFrame(frame);
-      selectedMarker.setPosition(new window.kakao.maps.LatLng(baseLatitude, baseLongitude));
+      removeBounce();
+      selectedMarker.setOpacity(1);
     };
-  }, [ready, selectedId, visits]);
+  }, [highlightedIds, ready, selectedId, visits]);
 
   useEffect(() => {
     if (!visits.length) return;
