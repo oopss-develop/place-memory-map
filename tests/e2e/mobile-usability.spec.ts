@@ -149,6 +149,8 @@ test("selected pins bounce and the animation follows the new selection", async (
   await expect(page.locator('[data-visit-id="pulse-first"].selected')).toBeVisible();
   await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
   await expect(page.locator('[data-visit-id="pulse-first"].selected img')).toHaveCSS("animation-name", "map-pin-bounce");
+  const impactAnimation = await page.locator('[data-visit-id="pulse-first"].selected').evaluate((element) => getComputedStyle(element, "::before").animationName);
+  expect(impactAnimation).toBe("map-pin-impact-ring");
   await page.locator('[data-visit-id="pulse-second"]').click();
   await expect(page.locator('[data-visit-id="pulse-second"].selected')).toBeVisible();
   await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
@@ -175,4 +177,6 @@ test("reduced motion keeps the selected pin static", async ({ page }) => {
   });
   expect(pinStyle.animationName).toBe("none");
   expect(pinStyle.transform).toBe("none");
+  const impactDisplay = await page.locator('[data-visit-id="reduced-pulse"].selected').evaluate((element) => getComputedStyle(element, "::before").display);
+  expect(impactDisplay).toBe("none");
 });

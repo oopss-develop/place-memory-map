@@ -275,9 +275,13 @@ button, select { cursor: pointer; }
 .map-pin { position: absolute; z-index: 2; width: 48px; height: 48px; padding: 0; border: 0; background: transparent; filter: drop-shadow(0 4px 4px rgba(53,39,28,.25)); transform: translate(-50%, -100%); transition: transform .2s cubic-bezier(.2,.8,.2,1); }
 .map-pin img { display: block; width: 100%; height: 100%; transform-origin: 50% 100%; }
 .map-pin:hover, .map-pin.selected { transform: translate(-50%, -100%) scale(1.16); }
-.map-pin.selected img, .map-marker-bounce-overlay img { animation: map-pin-bounce 1.35s linear infinite; will-change: transform; }
+.map-pin.selected, .map-marker-bounce-overlay { isolation: isolate; overflow: visible; }
+.map-pin.selected img, .map-marker-bounce-overlay img { position: relative; z-index: 1; animation: map-pin-bounce 1.35s linear infinite; will-change: transform; }
 .map-marker-bounce-overlay { position: relative; display: block; pointer-events: none; filter: drop-shadow(0 4px 4px rgba(53,39,28,.25)); }
 .map-marker-bounce-overlay img { display: block; width: 100%; height: 100%; transform-origin: 50% 100%; }
+.map-pin.selected::before, .map-pin.selected::after, .map-marker-bounce-overlay::before, .map-marker-bounce-overlay::after { position: absolute; z-index: 0; bottom: -4px; left: 50%; content: ""; border: 1.5px solid rgba(22,45,56,.34); border-radius: 50%; opacity: 0; transform: translateX(-50%) scale(.2); animation: map-pin-impact-ring 1.35s linear infinite; pointer-events: none; }
+.map-pin.selected::before, .map-marker-bounce-overlay::before { width: 27px; height: 8px; }
+.map-pin.selected::after, .map-marker-bounce-overlay::after { width: 41px; height: 12px; border-color: rgba(22,45,56,.2); }
 @keyframes map-pin-bounce {
   0%, 10%, 46%, 68%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
   6% { transform: translateY(1px) scaleX(1.08) scaleY(.9); }
@@ -288,6 +292,13 @@ button, select { cursor: pointer; }
   54% { transform: translateY(-1px) scaleX(.99) scaleY(1.02); animation-timing-function: cubic-bezier(.2,.7,.35,1); }
   60% { transform: translateY(-5px) scaleX(.99) scaleY(1.01); animation-timing-function: cubic-bezier(.55,.06,.68,.19); }
   66% { transform: translateY(0) scaleX(1.03) scaleY(.96); }
+}
+@keyframes map-pin-impact-ring {
+  0%, 45%, 63%, 79%, 100% { opacity: 0; transform: translateX(-50%) scale(.2); }
+  48% { opacity: .48; transform: translateX(-50%) scale(.35); }
+  61% { opacity: 0; transform: translateX(-50%) scale(1.35); }
+  66% { opacity: .28; transform: translateX(-50%) scale(.3); }
+  77% { opacity: 0; transform: translateX(-50%) scale(.9); }
 }
 .map-pin.highlighted:not(.selected) { transform: translate(-50%, -100%) scale(1.1); }
 /* Disabled ripple feedback; selected pins now use the bounce animation above. */
@@ -513,4 +524,5 @@ button, select { cursor: pointer; }
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .map-pin.selected { transform: translate(-50%, -100%) scale(1.16); }
   .map-pin.selected img, .map-marker-bounce-overlay img { animation: none; transform: none; }
+  .map-pin.selected::before, .map-pin.selected::after, .map-marker-bounce-overlay::before, .map-marker-bounce-overlay::after { display: none; }
 }
