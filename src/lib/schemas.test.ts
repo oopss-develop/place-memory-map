@@ -18,7 +18,7 @@ describe("visitSchema", () => {
   it("uses the black marker by default", () => expect(visitSchema.parse(validVisit).markerStyle).toBe("black-1"));
   it("marks new visits as completed by default", () => expect(visitSchema.parse(validVisit).isPlanned).toBe(false));
   it("accepts a planned visit", () => expect(visitSchema.parse({ ...validVisit, isPlanned: true }).isPlanned).toBe(true));
-  it("accepts a supported marker", () => expect(visitSchema.parse({ ...validVisit, markerStyle: "color-4" }).markerStyle).toBe("color-4"));
+  it("accepts a supported marker", () => expect(visitSchema.parse({ ...validVisit, markerStyle: "round-gamepad-black" }).markerStyle).toBe("round-gamepad-black"));
   it("rejects an unknown marker", () => expect(visitSchema.safeParse({ ...validVisit, markerStyle: "unknown" }).success).toBe(false));
   it("rejects more than five rating points", () => expect(visitSchema.safeParse({ ...validVisit, rating: 6 }).success).toBe(false));
   it("rejects more than eight tags", () => expect(visitSchema.safeParse({ ...validVisit, tags: Array.from({ length: 9 }, (_, index) => `tag-${index}`) }).success).toBe(false));

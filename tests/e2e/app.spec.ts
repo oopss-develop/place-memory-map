@@ -81,18 +81,18 @@ test("a marker shape can be selected and edited", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "지도에 핀 추가" }).click();
   await page.locator(".map-canvas").click({ position: { x: 220, y: 180 }, force: true });
-  await expect(page.getByRole("radio", { name: /핀/ })).toHaveCount(32);
-  await page.getByTitle("핀 4", { exact: true }).click();
-  await expect(page.getByRole("radio", { name: "핀 4", exact: true })).toBeChecked();
+  await expect(page.getByRole("radio", { name: /핀/ })).toHaveCount(44);
+  await page.getByTitle("핀 44", { exact: true }).click();
+  await expect(page.getByRole("radio", { name: "핀 44", exact: true })).toBeChecked();
   await page.getByLabel("장소 이름").fill("모양이 다른 핀");
   await page.getByLabel("기록 제목").fill("네 번째 핀 선택");
   await page.getByRole("button", { name: "지도에 기록 남기기" }).click();
 
   const marker = page.locator('[data-visit-id]').filter({ has: page.locator('img') }).first();
-  await expect(marker).toHaveAttribute("data-marker-style", "color-4");
+  await expect(marker).toHaveAttribute("data-marker-style", "round-gamepad-black");
   await marker.click();
   await page.getByRole("button", { name: "기록 고치기" }).click();
-  await expect(page.getByRole("radio", { name: "핀 4", exact: true })).toBeChecked();
+  await expect(page.getByRole("radio", { name: "핀 44", exact: true })).toBeChecked();
 });
 
 test("mobile visit popup stays within the viewport", async ({ page }) => {
