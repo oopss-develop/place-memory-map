@@ -100,7 +100,9 @@ test("a marker shape can be selected and edited", async ({ page }) => {
   const rating = page.getByRole("slider", { name: "별점 선택" });
   await page.locator(".rating-star").nth(3).click({ position: { x: 4, y: 20 } });
   await expect(rating).toHaveAttribute("aria-valuenow", "3.5");
+  await expect(page.locator(".rating-fall-fragment")).toHaveCount(3);
   await rating.press("End");
+  await expect(page.locator(".rating-particle")).toHaveCount(9);
   await rating.press("ArrowLeft");
   await expect(rating).toHaveAttribute("aria-valuenow", "4.5");
   await page.getByLabel("장소 이름").fill("모양이 다른 핀");

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-17T13:30:00+09:00",
+  "generatedAt": "2026-09-17T16:30:00+09:00",
   "title": "Design System: Place Memory Map",
   "extensions": {
     "fontPreference": {
@@ -31,7 +31,9 @@
       "primary": { "role": "primary", "displayName": "Travel Pin Vermilion", "canonical": "#d84c32", "tonalRamp": ["#43140d", "#6d2117", "#963021", "#bd3e2b", "#d84c32", "#e77d69", "#f2b4a7", "#fbe9e4"] },
       "paper": { "role": "neutral", "displayName": "Notebook Paper", "canonical": "#f4efdf", "tonalRamp": ["#28251c", "#494335", "#6f6652", "#958a70", "#b9ad90", "#d8ceb5", "#f4efdf", "#fffdf6"] },
       "ink": { "role": "neutral", "displayName": "Blue-Black Ink", "canonical": "#162d38", "tonalRamp": ["#081116", "#10232b", "#193943", "#2b515d", "#52717a", "#819ca3", "#b7c8cb", "#edf4f3"] },
-      "olive": { "role": "secondary", "displayName": "Field Olive", "canonical": "#69784d", "tonalRamp": ["#19200e", "#303d1d", "#4a5a31", "#69784d", "#8e9a71", "#b4bea0", "#d9dfce", "#f3f5ed"] }
+      "olive": { "role": "secondary", "displayName": "Field Olive", "canonical": "#69784d", "tonalRamp": ["#19200e", "#303d1d", "#4a5a31", "#69784d", "#8e9a71", "#b4bea0", "#d9dfce", "#f3f5ed"] },
+      "rating-gold": { "role": "tertiary", "displayName": "Rating Spark Gold", "canonical": "#ffc400", "tonalRamp": ["#4a3800", "#735700", "#9d7800", "#c89a00", "#ffc400", "#ffd84f", "#ffeb9c", "#fff8dd"] },
+      "rating-gold-deep": { "role": "tertiary", "displayName": "Rating Spark Outline", "canonical": "#d89a00", "tonalRamp": ["#3e2b00", "#654600", "#8d6300", "#b57f00", "#d89a00", "#e9bb4f", "#f4d997", "#fff4d5"] }
     },
     "typographyMeta": {
       "display": { "displayName": "Memory Serif", "purpose": "Place names, memory prose, and rare first-use display statements." },

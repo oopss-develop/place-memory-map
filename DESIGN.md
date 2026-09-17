@@ -11,6 +11,8 @@ colors:
   olive: "#69784d"
   rule: "#c8c0a9"
   sheet: "#fffdf6"
+  rating-gold: "#ffc400"
+  rating-gold-deep: "#d89a00"
 typography:
   display:
     fontFamily: "var(--font-serif), serif"
@@ -128,6 +130,7 @@ The palette is warm, muted, and functional, with one decisive vermilion action c
 ### Secondary
 
 - **Field Olive:** Filters, dates, categories, and quiet utility metadata.
+- **Rating Spark Gold:** A bright, celebratory accent reserved for rating stars and their feedback particles.
 
 ### Neutral
 

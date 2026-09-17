@@ -1,11 +1,35 @@
 "use client";
 
-import { useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 
 const STAR_VALUES = Array.from({ length: 5 }, (_, index) => index + 1);
+const PARTICLE_COLORS = [
+  "var(--rating-gold)",
+  "color-mix(in srgb, var(--rating-gold) 76%, var(--white))",
+  "color-mix(in srgb, var(--rating-gold) 46%, var(--white))",
+  "var(--white)",
+];
+
+type RatingEffect = {
+  id: number;
+  kind: "particle" | "fall";
+  star: number;
+  half?: "left" | "right";
+  x: number;
+  y: number;
+  rotation: number;
+  delay: number;
+  size: number;
+  color: string;
+};
 
 function normalizeRating(value: number) {
   return Math.min(5, Math.max(0.5, Math.round(value * 2) / 2));
+}
+
+function variedValue(seed: number) {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
 }
 
 function SquareSpark({ className }: { className?: string }) {
@@ -19,10 +43,67 @@ function SquareSpark({ className }: { className?: string }) {
 export function RatingPicker({ defaultValue = 5 }: { defaultValue?: number }) {
   const [rating, setRating] = useState(() => normalizeRating(defaultValue));
   const [preview, setPreview] = useState<number | null>(null);
+  const [effects, setEffects] = useState<RatingEffect[]>([]);
+  const effectId = useRef(0);
+  const cleanupTimers = useRef<number[]>([]);
   const visibleRating = preview ?? rating;
 
+  useEffect(() => () => cleanupTimers.current.forEach((timer) => window.clearTimeout(timer)), []);
+
+  function playEffects(nextRating: number) {
+    const created: RatingEffect[] = [];
+    if (nextRating > rating) {
+      const star = Math.ceil(nextRating);
+      for (let index = 0; index < 9; index += 1) {
+        const id = effectId.current += 1;
+        const angle = variedValue(id * 3) * Math.PI * 2;
+        const distance = 14 + variedValue(id * 5) * 16;
+        created.push({
+          id,
+          kind: "particle",
+          star,
+          x: Math.cos(angle) * distance,
+          y: Math.sin(angle) * distance - 6,
+          rotation: Math.round(variedValue(id * 7) * 180),
+          delay: Math.round(variedValue(id * 11) * 70),
+          size: 3 + Math.round(variedValue(id * 13) * 3),
+          color: PARTICLE_COLORS[Math.floor(variedValue(id * 17) * PARTICLE_COLORS.length)],
+        });
+      }
+    } else if (nextRating < rating) {
+      let removedValue = rating;
+      let order = 0;
+      while (removedValue > nextRating) {
+        const id = effectId.current += 1;
+        created.push({
+          id,
+          kind: "fall",
+          star: Math.ceil(removedValue),
+          half: Number.isInteger(removedValue) ? "right" : "left",
+          x: -11 + variedValue(id * 19) * 22,
+          y: 40 + variedValue(id * 23) * 14,
+          rotation: -45 + variedValue(id * 29) * 90,
+          delay: order * 38 + Math.round(variedValue(id * 31) * 24),
+          size: 22,
+          color: "var(--rating-gold)",
+        });
+        removedValue -= 0.5;
+        order += 1;
+      }
+    }
+    if (!created.length) return;
+    const ids = new Set(created.map((effect) => effect.id));
+    setEffects((current) => [...current, ...created]);
+    cleanupTimers.current.push(window.setTimeout(() => {
+      setEffects((current) => current.filter((effect) => !ids.has(effect.id)));
+    }, 760));
+  }
+
   function choose(value: number) {
-    setRating(normalizeRating(value));
+    const nextRating = normalizeRating(value);
+    if (nextRating === rating) return setPreview(null);
+    playEffects(nextRating);
+    setRating(nextRating);
     setPreview(null);
   }
 
@@ -72,6 +153,9 @@ export function RatingPicker({ defaultValue = 5 }: { defaultValue?: number }) {
                 <span className="rating-star-fill" style={{ "--rating-fill": `${fill * 100}%` } as CSSProperties}><SquareSpark /></span>
               </span>
               <span aria-hidden="true">{star}</span>
+              {effects.filter((effect) => effect.star === star).map((effect) => effect.kind === "particle"
+                ? <span key={effect.id} className="rating-particle" style={{ "--effect-x": `${effect.x}px`, "--effect-y": `${effect.y}px`, "--effect-rotation": `${effect.rotation}deg`, "--effect-size": `${effect.size}px`, animationDelay: `${effect.delay}ms`, color: effect.color } as CSSProperties} aria-hidden="true" />
+                : <span key={effect.id} className={`rating-fall-fragment ${effect.half}`} style={{ "--effect-x": `${effect.x}px`, "--effect-y": `${effect.y}px`, "--effect-rotation": `${effect.rotation}deg`, animationDelay: `${effect.delay}ms`, color: effect.color } as CSSProperties} aria-hidden="true"><SquareSpark /></span>)}
             </span>
           );
         })}
