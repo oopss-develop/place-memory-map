@@ -5,13 +5,6 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getAccessMemberFromCookies } from "@/lib/access-auth";
 
 export async function GET(request: Request) {
-  if (!process.env.KAKAO_REST_API_KEY) {
-    return NextResponse.json(
-      { error: "장소 검색 키가 아직 연결되지 않았습니다." },
-      { status: 503 },
-    );
-  }
-
   const accessMember = await getAccessMemberFromCookies();
   if (isSupabaseConfigured() && !accessMember) {
     const supabase = await createSupabaseServerClient();
@@ -23,6 +16,41 @@ export async function GET(request: Request) {
   const parsed = placeSearchSchema.safeParse(Object.fromEntries(url.searchParams));
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
+  }
+
+  if (parsed.data.map === "osm") {
+    const nominatimUrl = new URL("https://nominatim.openstreetmap.org/search");
+    nominatimUrl.searchParams.set("q", parsed.data.q);
+    nominatimUrl.searchParams.set("format", "jsonv2");
+    nominatimUrl.searchParams.set("addressdetails", "1");
+    nominatimUrl.searchParams.set("limit", "10");
+    nominatimUrl.searchParams.set("accept-language", "ko");
+    const response = await fetch(nominatimUrl, {
+      headers: {
+        "User-Agent": `PlaceMemoryMap/1.0 (${new URL(request.url).origin})`,
+        "Accept-Language": "ko,en;q=0.8",
+      },
+      next: { revalidate: 86400 },
+    });
+    if (!response.ok) {
+      return NextResponse.json({ error: response.status === 429 ? "해외 장소 검색 요청이 많습니다. 잠시 후 다시 시도해 주세요." : "해외 장소 검색에 잠시 문제가 생겼습니다." }, { status: response.status === 429 ? 429 : 502 });
+    }
+    const payload: Array<{ place_id: number; name?: string; display_name: string; lat: string; lon: string; type?: string }> = await response.json();
+    return NextResponse.json({
+      results: payload.map((item) => ({
+        id: `osm-${item.place_id}`,
+        placeName: item.name || item.display_name.split(",")[0] || "해외 장소",
+        addressName: item.display_name,
+        roadAddressName: item.display_name,
+        categoryName: item.type || "해외 장소",
+        latitude: Number(item.lat),
+        longitude: Number(item.lon),
+      })),
+    });
+  }
+
+  if (!process.env.KAKAO_REST_API_KEY) {
+    return NextResponse.json({ error: "장소 검색 키가 아직 연결되지 않았습니다." }, { status: 503 });
   }
 
   const kakaoUrl = new URL("https://dapi.kakao.com/v2/local/search/keyword.json");

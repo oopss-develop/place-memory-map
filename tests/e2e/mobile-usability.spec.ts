@@ -46,6 +46,30 @@ test("selecting a place search result opens its visit form at that place", async
   await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
 });
 
+test("overseas map switch uses global search and keeps the selected coordinates", async ({ page }) => {
+  let requestedUrl = "";
+  await page.route("**/api/places/search?*", (route) => {
+    requestedUrl = route.request().url();
+    return route.fulfill({
+      status: 200, contentType: "application/json", body: JSON.stringify({ results: [{
+        id: "osm-1", placeName: "에펠탑", addressName: "Paris, France", roadAddressName: "5 Avenue Anatole France, Paris", categoryName: "관광명소", latitude: 48.8584, longitude: 2.2945,
+      }] }),
+    });
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "해외" }).click();
+  await expect(page.locator(".osm-map")).toBeVisible();
+  await page.getByRole("button", { name: "장소 검색", exact: true }).click();
+  const search = page.getByRole("searchbox", { name: "장소 검색" });
+  await expect(search).toHaveAttribute("placeholder", "도시, 명소, 주소로 해외 검색");
+  await search.fill("에펠탑");
+  await search.press("Enter");
+  expect(requestedUrl).toContain("map=osm");
+  await page.getByRole("button", { name: /에펠탑/ }).click();
+  await expect(page.getByRole("heading", { name: "에펠탑" })).toBeVisible();
+  await expect(page.getByLabel("주소 또는 위치 설명")).toHaveValue("5 Avenue Anatole France, Paris");
+});
+
 test("search opens a focused modal drawer and offers manual placement after failure", async ({ page }) => {
   await page.route("**/api/places/search?*", (route) => route.fulfill({
     status: 503, contentType: "application/json", body: JSON.stringify({ error: "검색 연결을 확인해 주세요." }),

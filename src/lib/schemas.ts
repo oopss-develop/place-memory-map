@@ -28,6 +28,7 @@ export const visitSchema = z.object({
 
 export const placeSearchSchema = z.object({
   q: z.string().trim().min(2, "두 글자 이상 입력해 주세요.").max(80),
+  map: z.enum(["kakao", "osm"]).default("kakao"),
   latitude: z.coerce.number().min(-90).max(90).optional(),
   longitude: z.coerce.number().min(-180).max(180).optional(),
 });

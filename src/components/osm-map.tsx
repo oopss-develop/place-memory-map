@@ -1,7 +1,7 @@
 "use client";
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
-import { useEffect, useRef } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useRef, useState } from "react";
 import { markerSvgDataUrl } from "@/lib/marker-styles";
 import type { Visit } from "@/types/domain";
 import type { MapAnchor } from "@/components/kakao-map";
@@ -49,28 +49,36 @@ export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnch
   const elementRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markerLayerRef = useRef<any>(null);
+  const [ready, setReady] = useState(false);
+  const stateRef = useRef({ visits, selectedId, manualMode, onAnchorChange, onDismissPopup, onManualPoint });
+
+  useEffect(() => {
+    stateRef.current = { visits, selectedId, manualMode, onAnchorChange, onDismissPopup, onManualPoint };
+  }, [manualMode, onAnchorChange, onDismissPopup, onManualPoint, selectedId, visits]);
 
   useEffect(() => {
     let disposed = false;
     loadLeaflet().then((L) => {
       if (disposed || !elementRef.current || mapRef.current) return;
-      const map = L.map(elementRef.current, { zoomControl: false, attributionControl: true }).setView([36.5, 127.8], 5);
+      const map = L.map(elementRef.current, { zoomControl: false, attributionControl: true }).setView([20, 0], 2);
       L.control.zoom({ position: "bottomleft" }).addTo(map);
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap contributors" }).addTo(map);
       markerLayerRef.current = L.layerGroup().addTo(map);
-      map.on("click", (event: any) => { if (manualMode) onManualPoint(event.latlng.lat, event.latlng.lng); });
+      map.on("click", (event: any) => { if (stateRef.current.manualMode) stateRef.current.onManualPoint(event.latlng.lat, event.latlng.lng); });
       map.on("moveend zoomend", () => {
-        if (!selectedId || !onAnchorChange) return;
-        const visit = visits.find((item) => item.id === selectedId);
-        if (!visit) return onAnchorChange();
+        const current = stateRef.current;
+        if (!current.selectedId || !current.onAnchorChange) return;
+        const visit = current.visits.find((item) => item.id === current.selectedId);
+        if (!visit) return current.onAnchorChange();
         const point = map.latLngToContainerPoint([visit.place.latitude, visit.place.longitude]);
-        if (point.x < 0 || point.x > elementRef.current!.clientWidth || point.y < 0 || point.y > elementRef.current!.clientHeight) return onDismissPopup?.();
-        onAnchorChange({ x: point.x, y: point.y, topY: point.y - 44 });
+        if (point.x < 0 || point.x > elementRef.current!.clientWidth || point.y < 0 || point.y > elementRef.current!.clientHeight) return current.onDismissPopup?.();
+        current.onAnchorChange({ x: point.x, y: point.y, topY: point.y - 44 });
       });
       mapRef.current = map;
+      setReady(true);
     }).catch(() => undefined);
     return () => { disposed = true; mapRef.current?.remove(); mapRef.current = null; };
-  }, [onAnchorChange, onDismissPopup, onManualPoint, selectedId, visits, manualMode]);
+  }, []);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -79,10 +87,15 @@ export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnch
     markerLayerRef.current.clearLayers();
     visits.forEach((visit) => {
       const highlighted = highlightedIds.includes(visit.id);
-      const icon = L.divIcon({ className: "osm-pin-icon", html: `<img src="${markerSvgDataUrl(visit.markerStyle, { highlighted, selected: selectedId === visit.id })}" alt="" />`, iconSize: [44, 44], iconAnchor: [22, 44] });
+      const selected = selectedId === visit.id;
+      const icon = L.divIcon({ className: `osm-pin-icon${selected ? " selected" : ""}`, html: `<img src="${markerSvgDataUrl(visit.markerStyle, { highlighted, selected })}" alt="" />`, iconSize: [44, 44], iconAnchor: [22, 44] });
       L.marker([visit.place.latitude, visit.place.longitude], { icon, zIndexOffset: selectedId === visit.id ? 100 : 0 }).on("click", (event: any) => { L.DomEvent.stopPropagation(event); onSelect(visit); }).addTo(markerLayerRef.current);
     });
-  }, [highlightedIds, onSelect, selectedId, visits]);
+    if (!selectedId && !mapFocus && visits.length) {
+      const bounds = L.latLngBounds(visits.map((visit) => [visit.place.latitude, visit.place.longitude]));
+      map.fitBounds(bounds, { padding: [56, 56], maxZoom: 12 });
+    }
+  }, [highlightedIds, mapFocus, onSelect, ready, selectedId, visits]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -93,7 +106,7 @@ export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnch
       const visit = visits.find((item) => item.id === selectedId);
       if (visit) map.panTo([visit.place.latitude, visit.place.longitude]);
     }
-  }, [focusLocation, mapFocus, selectedId, visits]);
+  }, [focusLocation, mapFocus, ready, selectedId, visits]);
 
   return <div className={`map-canvas ${manualMode ? "is-pinning" : ""}`}><div ref={elementRef} className="osm-map" aria-label="해외 OpenStreetMap 지도" /><div className="osm-map-note">© OpenStreetMap contributors</div>{manualMode && <div className="pinning-hint">지도에서 기록할 위치를 선택하세요</div>}</div>;
 }

@@ -5,7 +5,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { flushSync } from "react-dom";
 import { useRouter } from "next/navigation";
-import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Palette, Plus, Search, Star, Users, X } from "lucide-react";
+import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, Globe2, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Palette, Plus, Search, Star, Users, X } from "lucide-react";
 import { KakaoMap, type MapAnchor } from "@/components/kakao-map";
 import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
@@ -24,6 +24,8 @@ const formatDate = (date: string) => new Intl.DateTimeFormat("ko-KR", { month: "
 const VISITS_STORAGE_KEY = "place-memory-visits-v2";
 const GROUPS_STORAGE_KEY = "place-memory-groups-v1";
 const THEME_STORAGE_KEY = "place-memory-theme-v1";
+const MAP_PROVIDER_STORAGE_KEY = "place-memory-map-provider-v1";
+type MapProvider = "kakao" | "osm";
 type PopupPlacement = "right" | "left" | "above" | "below";
 interface PopupPosition { left: number; top: number; placement: PopupPlacement; tailX: number; tailY: number; tailLength: number; }
 type PopupStyle = CSSProperties & { "--tail-x": string; "--tail-y": string; "--tail-length": string; };
@@ -44,6 +46,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [searchMessage, setSearchMessage] = useState("");
   const [searching, setSearching] = useState(false);
   const [manualMode, setManualMode] = useState(false);
+  const [mapProvider, setMapProvider] = useState<MapProvider>("kakao");
   const [tag, setTag] = useState("전체");
   const [mobileList, setMobileList] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -80,6 +83,13 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     update();
     media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
+  }, []);
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem(MAP_PROVIDER_STORAGE_KEY);
+    if (saved !== "kakao" && saved !== "osm") return;
+    const restore = window.setTimeout(() => setMapProvider(saved), 0);
+    return () => window.clearTimeout(restore);
   }, []);
 
   useEffect(() => {
@@ -328,7 +338,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     if (query.trim().length < 2) return setSearchMessage("두 글자 이상 입력해 주세요.");
     setSearching(true); setSearchMessage("");
     try {
-      const response = await fetch(`/api/places/search?q=${encodeURIComponent(query.trim())}`);
+      const response = await fetch(`/api/places/search?q=${encodeURIComponent(query.trim())}&map=${mapProvider}`);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
       setSearchResults(data.results);
@@ -338,6 +348,20 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       setSearchResults(local);
       setSearchMessage(local.length ? "현재 기록에서 찾았습니다." : error instanceof Error ? error.message : "장소를 찾지 못했습니다.");
     } finally { setSearching(false); }
+  }
+
+  function changeMapProvider(nextProvider: MapProvider) {
+    if (nextProvider === mapProvider) return;
+    setMapProvider(nextProvider);
+    window.localStorage.setItem(MAP_PROVIDER_STORAGE_KEY, nextProvider);
+    setSelectedId(undefined);
+    setSelectedAnchor(undefined);
+    setMapFocus(undefined);
+    setPulseLocation(undefined);
+    setManualMode(false);
+    setSearchResults([]);
+    setSearchMessage("");
+    setNotice(nextProvider === "osm" ? "해외 지도로 전환했습니다. 장소를 검색하거나 지도를 눌러 기록하세요." : "국내 지도로 전환했습니다.");
   }
 
   const manualPoint = useCallback((latitude: number, longitude: number) => {
@@ -503,7 +527,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       <aside ref={sidebarRef} id="journal-sidebar" className={`journal-sidebar ${mobileList ? "mobile-open" : ""}`} inert={isMobile && !mobileList} role={isMobile && mobileList ? "dialog" : undefined} aria-modal={isMobile && mobileList ? true : undefined} aria-label="기록 목록과 장소 검색">
         <header className="sidebar-header"><div className="wordmark"><span className="wordmark-pin"><img src="/map-pins/color-16.png" alt="" /></span><span>PLACE<br />MEMORY MAP</span></div><button className="icon-button mobile-close" onClick={() => setMobileList(false)} aria-label="목록 닫기"><X size={20} /></button></header>
         <div className="group-row"><label id="group-label">함께 보는 지도</label><div className="group-picker"><button className="group-picker-trigger" type="button" aria-labelledby="group-label" aria-haspopup="listbox" aria-expanded={groupPickerOpen} onClick={() => setGroupPickerOpen((value) => !value)}><span>{activeGroup?.name ?? "지도 선택"}</span><ChevronDown size={17} /></button>{groupPickerOpen && <div className="group-picker-menu" role="listbox" aria-label="함께 보는 지도 선택">{groups.filter((group) => group.id !== activeGroupId).map((group) => <button key={group.id} className="group-picker-option" type="button" role="option" aria-selected={false} onClick={() => chooseGroup(group.id)}>{group.name}<span>{visits.filter((visit) => visit.groupId === group.id).length}건</span></button>)}<button className="group-picker-add" type="button" onClick={openCreateGroup}><Plus size={15} />함께 보는 지도 추가</button></div>}</div></div>
-        <div className="search-area"><form className="place-search" role="search" onSubmit={searchPlaces}><Search size={19} aria-hidden="true" /><input ref={searchInputRef} type="search" enterKeyHint="search" value={query} onChange={(event) => { setQuery(event.target.value); setSearchResults([]); setSearchMessage(""); }} placeholder="장소 이름으로 찾기" aria-label="장소 검색" autoComplete="off" /><button type="submit" disabled={searching}>{searching ? "찾는 중" : "찾기"}</button></form>{(searchResults.length > 0 || searchMessage) && <div className="search-popover" aria-live="polite">{searchResults.map((result) => <button key={result.id} type="button" onClick={() => openForPlace({ id: crypto.randomUUID(), provider: "kakao", providerPlaceId: result.id, name: result.placeName, address: result.roadAddressName || result.addressName, category: result.categoryName, latitude: result.latitude, longitude: result.longitude })}><strong>{result.placeName}</strong><span>{result.roadAddressName || result.addressName}</span></button>)}{searchMessage && <p>{searchMessage}</p>}<button className="search-manual" type="button" onClick={startManualPin}>찾는 장소가 없나요? 지도에서 직접 선택</button></div>}</div>
+        <div className="search-area"><form className="place-search" role="search" onSubmit={searchPlaces}><Search size={19} aria-hidden="true" /><input ref={searchInputRef} type="search" enterKeyHint="search" value={query} onChange={(event) => { setQuery(event.target.value); setSearchResults([]); setSearchMessage(""); }} placeholder={mapProvider === "osm" ? "도시, 명소, 주소로 해외 검색" : "장소 이름으로 국내 검색"} aria-label="장소 검색" autoComplete="off" /><button type="submit" disabled={searching}>{searching ? "찾는 중" : "찾기"}</button></form>{(searchResults.length > 0 || searchMessage) && <div className="search-popover" aria-live="polite">{searchResults.map((result) => <button key={result.id} type="button" onClick={() => openForPlace({ id: crypto.randomUUID(), provider: mapProvider === "osm" ? "manual" : "kakao", providerPlaceId: result.id, name: result.placeName, address: result.roadAddressName || result.addressName, category: result.categoryName, latitude: result.latitude, longitude: result.longitude })}><strong>{result.placeName}</strong><span>{result.roadAddressName || result.addressName}</span></button>)}{searchMessage && <p>{searchMessage}</p>}<button className="search-manual" type="button" onClick={startManualPin}>찾는 장소가 없나요? 지도에서 직접 선택</button></div>}</div>
         <div className="filter-row" aria-label="기록 필터"><Filter size={15} />{allTags.map((item) => <button key={item} type="button" className={tag === item ? "active" : ""} aria-pressed={tag === item} onClick={() => setTag(item)}>{item}</button>)}</div>
         <div className="record-heading"><div><h1>기록</h1><p>{groupVisits.length}개의 방문 기록</p></div></div>
         <div className="record-list">
@@ -520,8 +544,9 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       </aside>
 
       <section ref={mapStageRef} className="map-stage" inert={isMobile && mobileList}>
-        <KakaoMap visits={groupVisits} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} mapFocus={mapFocus} pulseLocation={pulseLocation} />
+        <KakaoMap visits={groupVisits} mapProvider={mapProvider} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} mapFocus={mapFocus} pulseLocation={pulseLocation} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => openMobileList()} aria-label="기록 목록 열기" aria-controls="journal-sidebar" aria-expanded={mobileList}><List size={20} /></button><button className="mobile-search-button" onClick={() => openMobileList("search")}><Search size={18} /><span>장소 검색</span></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
+        <div className="map-provider-switch" role="group" aria-label="지도 선택"><button type="button" className={mapProvider === "kakao" ? "active" : ""} aria-pressed={mapProvider === "kakao"} onClick={() => changeMapProvider("kakao")}><MapIcon size={15} />국내</button><button type="button" className={mapProvider === "osm" ? "active" : ""} aria-pressed={mapProvider === "osm"} onClick={() => changeMapProvider("osm")}><Globe2 size={15} />해외</button></div>
         <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
         {selected && <article ref={sheetRef} aria-label={`${selected.place.name} 방문 기록`} className={`place-sheet ${activePhotoUrl ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""} ${sheetExpanded ? "is-expanded" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>
           {pendingAction === "delete" && <div className="operation-progress" role="progressbar" aria-label="기록 삭제 중" />}
