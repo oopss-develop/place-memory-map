@@ -5,6 +5,16 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true"));
 });
 
+test("KakaoTalk in-app browser guides users to Chrome for installation", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "userAgent", { configurable: true, get: () => "Mozilla/5.0 (Linux; Android 15) KAKAOTALK 26.0.0" });
+    localStorage.removeItem("place-memory-kakao-install-prompt-dismissed-v1");
+  });
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "외부 브라우저에서 설치해 주세요" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Chrome에서 열기" })).toBeVisible();
+});
+
 test("selecting a place search result opens its visit form at that place", async ({ page }) => {
   await page.route("**/api/places/search?*", (route) => route.fulfill({
     status: 200, contentType: "application/json", body: JSON.stringify({ results: [{
