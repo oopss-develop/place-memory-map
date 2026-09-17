@@ -221,11 +221,21 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
       const projection = mapRef.current.getProjection();
       const markerPoint = projection.pointFromCoords(markerPosition);
       let targetCenter = markerPosition;
-      if (window.innerWidth > 820 && ref.current) {
-        targetCenter = projection.coordsFromPoint(new window.kakao.maps.Point(
-          markerPoint.x,
-          markerPoint.y - Math.round(ref.current.clientHeight * 0.32),
-        ));
+      if (ref.current) {
+        const mapHeight = ref.current.clientHeight;
+        if (window.innerWidth <= 820) {
+          const visibleMarkerY = Math.max(132, Math.min(Math.round(mapHeight * 0.28), 250));
+          const centerOffset = Math.round(mapHeight / 2 - visibleMarkerY);
+          targetCenter = projection.coordsFromPoint(new window.kakao.maps.Point(
+            markerPoint.x,
+            markerPoint.y + centerOffset,
+          ));
+        } else {
+          targetCenter = projection.coordsFromPoint(new window.kakao.maps.Point(
+            markerPoint.x,
+            markerPoint.y - Math.round(mapHeight * 0.32),
+          ));
+        }
       }
       const currentCenterPoint = projection.pointFromCoords(mapRef.current.getCenter());
       const targetCenterPoint = projection.pointFromCoords(targetCenter);

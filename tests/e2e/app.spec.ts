@@ -118,9 +118,14 @@ test("mobile visit popup stays within the viewport", async ({ page }) => {
   await page.goto("/");
   await page.locator('[data-visit-id="narrow-popup-visit"]').click();
   await expect(page.locator(".place-sheet.is-positioned")).toBeVisible();
-  const dimensions = await page.evaluate(() => ({ documentWidth: document.documentElement.scrollWidth, viewportWidth: window.innerWidth, sheetWidth: (document.querySelector(".place-sheet") as HTMLElement)?.scrollWidth, sheetClientWidth: (document.querySelector(".place-sheet") as HTMLElement)?.clientWidth }));
+  const dimensions = await page.evaluate(() => {
+    const sheet = document.querySelector(".place-sheet") as HTMLElement;
+    const marker = document.querySelector('[data-visit-id="narrow-popup-visit"]') as HTMLElement;
+    return { documentWidth: document.documentElement.scrollWidth, viewportWidth: window.innerWidth, sheetWidth: sheet?.scrollWidth, sheetClientWidth: sheet?.clientWidth, sheetTop: sheet?.getBoundingClientRect().top, markerBottom: marker?.getBoundingClientRect().bottom };
+  });
   expect(dimensions.documentWidth).toBeLessThanOrEqual(dimensions.viewportWidth);
   expect(dimensions.sheetWidth).toBeLessThanOrEqual(dimensions.sheetClientWidth);
+  expect(dimensions.markerBottom).toBeLessThan(dimensions.sheetTop - 24);
 });
 
 test("reselecting a record reopens its popup", async ({ page }) => {

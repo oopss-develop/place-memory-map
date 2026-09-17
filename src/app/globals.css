@@ -446,6 +446,7 @@ button, select { cursor: pointer; }
   .place-sheet { top: auto !important; right: 10px; bottom: calc(var(--mobile-nav-height) + 10px); left: 10px !important; display: flex; flex-direction: column; width: calc(100% - 20px); max-width: calc(100% - 20px); max-height: min(55dvh, calc(100dvh - var(--mobile-nav-height) - env(safe-area-inset-top, 0px) - 76px)); overflow: hidden; border-radius: 12px; }
   .place-sheet.is-expanded { height: calc(100dvh - var(--mobile-nav-height) - env(safe-area-inset-top, 0px) - 76px); max-height: none; }
   .place-sheet::after { display: none; }
+  .map-stage:has(.place-sheet) .map-fallback .map-pin.selected { top: clamp(132px, 28%, 250px) !important; }
   .sheet-toolbar { position: static; display: flex; flex-shrink: 0; justify-content: space-between; align-items: center; gap: 8px; padding: 4px 8px 4px 12px; border-bottom: 1px solid var(--line); background: var(--surface); }
   .sheet-expand { display: flex; min-height: 44px; align-items: center; gap: 6px; padding: 0 8px; border: 0; background: transparent; color: var(--ink-muted); font-size: 13px; font-weight: 700; }
   .sheet-expand svg { transform: rotate(180deg); }
