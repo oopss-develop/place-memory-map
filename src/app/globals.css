@@ -353,8 +353,7 @@ button, select { cursor: pointer; }
 .sheet-close { position: absolute; z-index: 2; top: 14px; right: 14px; display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--line); border-radius: 50%; color: var(--ink); background: var(--surface-alpha); }.sheet-close:hover { background: var(--paper-deep); }.sheet-close:disabled { cursor: wait; opacity: .6; }
 .sheet-photo { position: relative; height: 168px; overflow: hidden; border-radius: 11px 11px 0 0; background: var(--paper-deep); touch-action: pan-y; }
 .sheet-photo img { width: 100%; height: 100%; object-fit: cover; animation: photo-in .18s ease-out; }
-.sheet-photo-label, .sheet-photo-count { position: absolute; bottom: 10px; padding: 4px 8px; border-radius: 5px; color: var(--white); background: rgba(22,45,56,.82); font-size: 10px; font-weight: 700; }
-.sheet-photo-label { left: 12px; }
+.sheet-photo-count { position: absolute; bottom: 10px; padding: 4px 8px; border-radius: 5px; color: var(--white); background: rgba(22,45,56,.82); font-size: 10px; font-weight: 700; }
 .sheet-photo-count { right: 12px; min-width: 42px; text-align: center; font-variant-numeric: tabular-nums; }
 .sheet-photo-nav { position: absolute; z-index: 1; top: 50%; display: grid; width: 40px; height: 40px; padding: 0; place-items: center; border: 0; border-radius: 50%; color: var(--ink); background: var(--surface-alpha); box-shadow: 0 5px 15px rgba(28,37,35,.2); transform: translateY(-50%); }
 .sheet-photo-nav:hover { background: var(--surface); }

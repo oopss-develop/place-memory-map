@@ -89,6 +89,7 @@ test("multiple visit photos can be browsed", async ({ page }) => {
   await page.locator(".record-item").click();
   await expect(page.locator(".sheet-rating .rating-square-spark")).toBeVisible();
   await expect(page.locator(".sheet-rating")).toContainText("5.0/5.0");
+  await expect(page.getByText("방문 사진", { exact: true })).toHaveCount(0);
   await expect(page.getByRole("button", { name: "수정", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "삭제", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "기록 고치기" })).toHaveCount(0);
