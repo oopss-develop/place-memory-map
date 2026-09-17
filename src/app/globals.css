@@ -279,7 +279,7 @@ button, select { cursor: pointer; }
 .map-pin.selected img, .map-marker-bounce-overlay img { position: relative; z-index: 1; animation: map-pin-bounce 1.35s linear infinite; will-change: transform; }
 .map-marker-bounce-overlay { position: relative; display: block; pointer-events: none; filter: drop-shadow(0 4px 4px rgba(53,39,28,.25)); }
 .map-marker-bounce-overlay img { display: block; width: 100%; height: 100%; transform-origin: 50% 100%; }
-.map-pin.selected::before, .map-marker-bounce-overlay::before { position: absolute; z-index: 0; bottom: -5px; left: 50%; content: ""; width: 42px; height: 12px; border: 2px solid rgba(22,45,56,.72); border-radius: 50%; opacity: 0; filter: drop-shadow(0 1px 1px rgba(255,255,255,.9)); transform: translateX(-50%) scale(.18); animation: map-pin-impact-ring 1.35s linear infinite; pointer-events: none; }
+.map-pin.selected::before, .map-marker-bounce-overlay::before { position: absolute; z-index: 0; bottom: -5px; left: 50%; content: ""; width: 42px; height: 12px; border: 2px solid rgba(22,45,56,.46); border-radius: 50%; opacity: 0; filter: drop-shadow(0 1px 1px rgba(255,255,255,.55)); transform: translateX(-50%) scale(.18); animation: map-pin-impact-ring 1.35s linear infinite; pointer-events: none; }
 @keyframes map-pin-bounce {
   0%, 10%, 46%, 68%, 100% { transform: translateY(0) scaleX(1) scaleY(1); }
   6% { transform: translateY(1px) scaleX(1.08) scaleY(.9); }
@@ -293,11 +293,11 @@ button, select { cursor: pointer; }
 }
 @keyframes map-pin-impact-ring {
   0%, 44%, 64%, 84%, 100% { opacity: 0; transform: translateX(-50%) scale(.18); }
-  48% { opacity: .82; transform: translateX(-50%) scale(.34); }
-  54% { opacity: .66; transform: translateX(-50%) scale(.78); }
+  48% { opacity: .56; transform: translateX(-50%) scale(.34); }
+  54% { opacity: .44; transform: translateX(-50%) scale(.78); }
   63% { opacity: 0; transform: translateX(-50%) scale(1.45); }
-  67% { opacity: .52; transform: translateX(-50%) scale(.28); }
-  73% { opacity: .38; transform: translateX(-50%) scale(.62); }
+  67% { opacity: .36; transform: translateX(-50%) scale(.28); }
+  73% { opacity: .25; transform: translateX(-50%) scale(.62); }
   82% { opacity: 0; transform: translateX(-50%) scale(1.02); }
 }
 .map-pin.highlighted:not(.selected) { transform: translate(-50%, -100%) scale(1.1); }
