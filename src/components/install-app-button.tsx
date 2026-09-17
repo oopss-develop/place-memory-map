@@ -31,7 +31,6 @@ export function InstallAppButton({ autoPrompt = false, suppressAutoPrompt = fals
 
   useEffect(() => {
     const mobile = window.matchMedia("(max-width: 820px)").matches;
-    const ios = isIosDevice();
     const kakao = isKakaoInAppBrowser();
     const standalone = window.matchMedia("(display-mode: standalone)").matches || Boolean((navigator as NavigatorWithStandalone).standalone);
     const dismissedKey = kakao ? KAKAO_INSTALL_DISMISSED_KEY : INSTALL_DISMISSED_KEY;
@@ -57,7 +56,7 @@ export function InstallAppButton({ autoPrompt = false, suppressAutoPrompt = fals
     window.addEventListener(INSTALL_READY_EVENT, syncPrompt);
     window.addEventListener("appinstalled", installedHandler);
     const timer = window.setTimeout(() => {
-      if (autoPrompt && !suppressAutoPrompt && mobile && (ios || kakao) && !standalone && !dismissed) setShowPrompt(true);
+      if (autoPrompt && !suppressAutoPrompt && mobile && !standalone && !dismissed) setShowPrompt(true);
     }, 900);
     return () => {
       window.removeEventListener("beforeinstallprompt", promptHandler);
@@ -101,23 +100,25 @@ export function InstallAppButton({ autoPrompt = false, suppressAutoPrompt = fals
   }
 
   if (autoPrompt) {
-    if (suppressAutoPrompt || !showPrompt || (!deferredPrompt && !isIos && !isKakao)) return null;
+    if (suppressAutoPrompt || !showPrompt) return null;
     return (
       <section className="install-prompt" role="dialog" aria-modal="false" aria-labelledby="install-prompt-title">
         <button className="install-prompt-close" type="button" onClick={dismissPrompt} aria-label="앱 설치 안내 닫기"><X size={19} /></button>
         <div className="install-prompt-icon" aria-hidden="true"><img src="/app-icon-192.png?v=2" alt="" /></div>
         <div className="install-prompt-copy">
-          <h2 id="install-prompt-title">{isKakao ? "외부 브라우저에서 설치해 주세요" : "앱으로 설치할까요?"}</h2>
-          <p>{isKakao ? "카카오톡 안에서는 앱 설치가 지원되지 않아요. 브라우저로 열면 바로 설치할 수 있어요." : "앱처럼 바로 열고, 함께 남긴 장소를 더 빠르게 확인할 수 있어요."}</p>
-          {showIosHelp && <p className="install-prompt-ios">{isKakao ? <><ExternalLink size={16} />카카오톡 오른쪽 위 메뉴에서 <strong>‘다른 브라우저로 열기’</strong>를 선택하세요.</> : <><Share size={16} />브라우저의 공유 버튼을 누른 뒤 <strong>‘홈 화면에 추가’</strong>를 선택하세요.</>}</p>}
+          <h2 id="install-prompt-title">{isKakao ? "외부 브라우저에서 설치해 주세요" : "앱으로 설치해서 사용해 보세요"}</h2>
+          <p>{isKakao ? "카카오톡 안에서는 앱 설치가 지원되지 않아요. 브라우저로 열면 바로 설치할 수 있어요." : "홈 화면에서 앱처럼 바로 열고, 함께 남긴 장소를 더 빠르게 확인할 수 있어요."}</p>
+          {showIosHelp && <p className="install-prompt-ios">{isKakao ? <><ExternalLink size={16} />카카오톡 오른쪽 위 메뉴에서 <strong>‘다른 브라우저로 열기’</strong>를 선택하세요.</> : isIos ? <><Share size={16} />브라우저의 공유 버튼을 누른 뒤 <strong>‘홈 화면에 추가’</strong>를 선택하세요.</> : <><Download size={16} />브라우저 오른쪽 위 메뉴에서 <strong>‘앱 설치’</strong> 또는 <strong>‘홈 화면에 추가’</strong>를 선택하세요.</>}</p>}
         </div>
         <div className="install-prompt-actions">
           <button type="button" className="install-prompt-later" onClick={dismissPrompt}>나중에</button>
           {isKakao
             ? <button type="button" className="install-prompt-primary" onClick={openExternalBrowser}><ExternalLink size={17} />{isAndroid ? "Chrome에서 열기" : "여는 방법 보기"}</button>
+            : deferredPrompt
+            ? <button type="button" className="install-prompt-primary" onClick={install}><Download size={17} />지금 설치</button>
             : isIos
             ? <button type="button" className="install-prompt-primary" onClick={() => setShowIosHelp(true)}><Share size={17} />설치 방법 보기</button>
-            : <button type="button" className="install-prompt-primary" onClick={install}><Download size={17} />지금 설치</button>}
+            : <button type="button" className="install-prompt-primary" onClick={() => setShowIosHelp(true)}><Download size={17} />설치 방법 보기</button>}
         </div>
       </section>
     );

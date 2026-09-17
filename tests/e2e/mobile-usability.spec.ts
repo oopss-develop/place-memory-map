@@ -15,6 +15,17 @@ test("KakaoTalk in-app browser guides users to Chrome for installation", async (
   await expect(page.getByRole("button", { name: "Chrome에서 열기" })).toBeVisible();
 });
 
+test("mobile browsers show installation guidance without a native prompt", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "userAgent", { configurable: true, get: () => "Mozilla/5.0 (Linux; Android 15) AppleWebKit/537.36 Chrome/140.0 Mobile Safari/537.36" });
+    localStorage.removeItem("place-memory-install-prompt-dismissed-v1");
+  });
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "앱으로 설치해서 사용해 보세요" })).toBeVisible();
+  await page.getByRole("button", { name: "설치 방법 보기" }).click();
+  await expect(page.getByText(/앱 설치.*홈 화면에 추가/)).toBeVisible();
+});
+
 test("selecting a place search result opens its visit form at that place", async ({ page }) => {
   await page.route("**/api/places/search?*", (route) => route.fulfill({
     status: 200, contentType: "application/json", body: JSON.stringify({ results: [{
