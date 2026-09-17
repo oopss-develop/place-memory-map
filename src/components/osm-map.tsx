@@ -16,6 +16,7 @@ interface Props {
   onManualPoint: (latitude: number, longitude: number) => void;
   focusLocation?: { latitude: number; longitude: number };
   mapFocus?: { latitude: number; longitude: number };
+  maxZoomRequest?: { latitude: number; longitude: number; request: number };
   highlightedIds?: string[];
 }
 
@@ -45,7 +46,7 @@ function loadLeaflet() {
   return leafletPromise;
 }
 
-export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, highlightedIds = [] }: Props) {
+export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, highlightedIds = [] }: Props) {
   const elementRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markerLayerRef = useRef<any>(null);
@@ -108,5 +109,15 @@ export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnch
     }
   }, [focusLocation, mapFocus, ready, selectedId, visits]);
 
-  return <div className={`map-canvas ${manualMode ? "is-pinning" : ""}`}><div ref={elementRef} className="osm-map" aria-label="해외 OpenStreetMap 지도" /><div className="osm-map-note">© OpenStreetMap contributors</div>{manualMode && <div className="pinning-hint">지도에서 기록할 위치를 선택하세요</div>}</div>;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !maxZoomRequest) return;
+    map.setView(
+      [maxZoomRequest.latitude, maxZoomRequest.longitude],
+      map.getMaxZoom(),
+      { animate: true },
+    );
+  }, [maxZoomRequest, ready]);
+
+  return <div className={`map-canvas ${manualMode ? "is-pinning" : ""}`} data-zoom-mode={maxZoomRequest ? "max" : undefined}><div ref={elementRef} className="osm-map" aria-label="해외 OpenStreetMap 지도" /><div className="osm-map-note">© OpenStreetMap contributors</div>{manualMode && <div className="pinning-hint">지도에서 기록할 위치를 선택하세요</div>}</div>;
 }

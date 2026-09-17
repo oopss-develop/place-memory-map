@@ -21,6 +21,7 @@ interface Props {
   onManualPoint: (latitude: number, longitude: number) => void;
   focusLocation?: { latitude: number; longitude: number };
   mapFocus?: { latitude: number; longitude: number };
+  maxZoomRequest?: { latitude: number; longitude: number; request: number };
   pulseLocation?: { latitude: number; longitude: number };
   highlightedIds?: string[];
 }
@@ -41,7 +42,7 @@ function fallbackMapPosition(latitude: number, longitude: number) {
   return { left: Math.max(8, Math.min(88, left)), top: Math.max(8, Math.min(84, top)) };
 }
 
-export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, pulseLocation, highlightedIds = [] }: Props) {
+export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, pulseLocation, highlightedIds = [] }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -328,6 +329,13 @@ export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, ma
     mapRef.current.panTo(new window.kakao.maps.LatLng(mapFocus.latitude, mapFocus.longitude));
   }, [mapFocus, ready]);
 
+  useEffect(() => {
+    if (!maxZoomRequest || !ready || !mapRef.current || !window.kakao) return;
+    const target = new window.kakao.maps.LatLng(maxZoomRequest.latitude, maxZoomRequest.longitude);
+    mapRef.current.setLevel(1);
+    mapRef.current.panTo(target);
+  }, [maxZoomRequest, ready]);
+
   function fallbackClick(event: React.MouseEvent<HTMLDivElement>) {
     if (!manualMode) return;
     const rect = event.currentTarget.getBoundingClientRect();
@@ -337,11 +345,11 @@ export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, ma
   }
 
   if (mapProvider === "osm") {
-    return <OpenStreetMap visits={visits} selectedId={selectedId} manualMode={manualMode} onSelect={onSelect} onAnchorChange={onAnchorChange} onDismissPopup={onDismissPopup} onManualPoint={onManualPoint} focusLocation={focusLocation} mapFocus={mapFocus} highlightedIds={highlightedIds} />;
+    return <OpenStreetMap visits={visits} selectedId={selectedId} manualMode={manualMode} onSelect={onSelect} onAnchorChange={onAnchorChange} onDismissPopup={onDismissPopup} onManualPoint={onManualPoint} focusLocation={focusLocation} mapFocus={mapFocus} maxZoomRequest={maxZoomRequest} highlightedIds={highlightedIds} />;
   }
 
   return (
-    <div className={`map-canvas ${manualMode ? "is-pinning" : ""}`} onClick={!apiKey ? fallbackClick : undefined}>
+    <div className={`map-canvas ${manualMode ? "is-pinning" : ""}`} data-zoom-mode={maxZoomRequest ? "max" : undefined} onClick={!apiKey ? fallbackClick : undefined}>
       <div ref={ref} className="kakao-map" />
       {!apiKey && (
         <div className="map-fallback" aria-label="서울 방문 기록 데모 지도">

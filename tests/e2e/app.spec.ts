@@ -89,6 +89,12 @@ test("multiple visit photos can be browsed", async ({ page }) => {
   await page.locator(".record-item").click();
   await expect(page.locator(".sheet-rating .rating-square-spark")).toBeVisible();
   await expect(page.locator(".sheet-rating")).toContainText("5.0/5.0");
+  await expect(page.getByRole("button", { name: "수정", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "삭제", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "기록 고치기" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "기록 삭제" })).toHaveCount(0);
+  await page.getByRole("button", { name: "선택 위치 최대 확대" }).click();
+  await expect(page.locator(".map-canvas")).toHaveAttribute("data-zoom-mode", "max");
   await expect(page.getByText("1 / 4")).toBeVisible();
   await page.getByRole("button", { name: "다음 사진" }).click();
   await expect(page.getByText("2 / 4")).toBeVisible();
@@ -120,7 +126,7 @@ test("a marker shape can be selected and edited", async ({ page }) => {
   const marker = page.locator('[data-visit-id]').filter({ has: page.locator('img') }).first();
   await expect(marker).toHaveAttribute("data-marker-style", "round-gamepad-black");
   await marker.click();
-  await page.getByRole("button", { name: "기록 고치기" }).click();
+  await page.getByRole("button", { name: "수정", exact: true }).click();
   await expect(page.getByRole("radio", { name: "핀 44", exact: true })).toBeChecked();
   await expect(page.getByRole("slider", { name: "별점 선택" })).toHaveAttribute("aria-valuenow", "4.5");
 });

@@ -5,7 +5,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { flushSync } from "react-dom";
 import { useRouter } from "next/navigation";
-import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, Globe2, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Palette, Plus, Search, Users, X } from "lucide-react";
+import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, Globe2, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Palette, Plus, Search, Users, X, ZoomIn } from "lucide-react";
 import { KakaoMap, type MapAnchor } from "@/components/kakao-map";
 import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
@@ -68,6 +68,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [inviteLink, setInviteLink] = useState("");
   const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number }>();
   const [mapFocus, setMapFocus] = useState<{ latitude: number; longitude: number }>();
+  const [maxZoomRequest, setMaxZoomRequest] = useState<{ latitude: number; longitude: number; request: number }>();
   const [pulseLocation, setPulseLocation] = useState<{ latitude: number; longitude: number }>();
   const [selectedDateKey, setSelectedDateKey] = useState<string | undefined>();
   const [photoView, setPhotoView] = useState<{ visitId: string; index: number }>({ visitId: "", index: 0 });
@@ -316,6 +317,9 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     setSelectedId(undefined); setSelectedAnchor(undefined); setNotice(""); setDraftPlace(place); setEditing(null); setMarkerStyle(DEFAULT_MARKER_STYLE); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
   }
   function openEdit(visit: Visit) { setFormError(""); setDraftPlace(visit.place); setEditing(visit); setMarkerStyle(normalizeMarkerStyle(visit.markerStyle)); dialogRef.current?.showModal(); }
+  function zoomToVisit(visit: Visit) {
+    setMaxZoomRequest((current) => ({ latitude: visit.place.latitude, longitude: visit.place.longitude, request: (current?.request ?? 0) + 1 }));
+  }
 
   function chooseGroup(groupId: string) {
     setMapFocus(undefined);
@@ -362,6 +366,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     setSelectedId(undefined);
     setSelectedAnchor(undefined);
     setMapFocus(undefined);
+    setMaxZoomRequest(undefined);
     setPulseLocation(undefined);
     setManualMode(false);
     setSearchResults([]);
@@ -549,7 +554,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       </aside>
 
       <section ref={mapStageRef} className="map-stage" inert={isMobile && mobileList}>
-        <KakaoMap key={mapProvider} visits={groupVisits} mapProvider={mapProvider} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} mapFocus={mapFocus} pulseLocation={pulseLocation} />
+        <KakaoMap key={mapProvider} visits={groupVisits} mapProvider={mapProvider} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} mapFocus={mapFocus} maxZoomRequest={maxZoomRequest} pulseLocation={pulseLocation} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => openMobileList()} aria-label="기록 목록 열기" aria-controls="journal-sidebar" aria-expanded={mobileList}><List size={20} /></button><button className="mobile-search-button" onClick={() => openMobileList("search")}><Search size={18} /><span>장소 검색</span></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
         <div className="map-provider-switch" role="group" aria-label="지도 선택"><button type="button" className={mapProvider === "kakao" ? "active" : ""} aria-pressed={mapProvider === "kakao"} onClick={() => changeMapProvider("kakao")}><MapIcon size={15} />국내</button><button type="button" className={mapProvider === "osm" ? "active" : ""} aria-pressed={mapProvider === "osm"} onClick={() => changeMapProvider("osm")}><Globe2 size={15} />해외</button></div>
         <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
@@ -569,7 +574,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
               <span className="sheet-photo-count" aria-live="polite">{activePhotoIndex + 1} / {selected.photoUrls.length}</span>
             </>}
           </div>}
-          <div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><div className="sheet-rating" aria-label={`별점 ${formatRating(selected.rating)}점, 5점 만점`}><SquareSparkIcon className="rating-square-spark" /><strong>{formatRating(selected.rating)}</strong><span>/5.0</span></div><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button disabled={Boolean(pendingAction)} onClick={() => openEdit(selected)}>기록 고치기</button><button className="danger-button" disabled={Boolean(pendingAction)} onClick={() => deleteVisit(selected)}>{pendingAction === "delete" ? "삭제 중…" : "기록 삭제"}</button></div></div></div>
+          <div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><div className="sheet-rating" aria-label={`별점 ${formatRating(selected.rating)}점, 5점 만점`}><SquareSparkIcon className="rating-square-spark" /><strong>{formatRating(selected.rating)}</strong><span>/5.0</span></div><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button className="zoom-button" type="button" disabled={Boolean(pendingAction)} onClick={() => zoomToVisit(selected)} aria-label="선택 위치 최대 확대"><ZoomIn size={14} />최대 확대</button><button disabled={Boolean(pendingAction)} onClick={() => openEdit(selected)}>수정</button><button className="danger-button" disabled={Boolean(pendingAction)} onClick={() => deleteVisit(selected)}>{pendingAction === "delete" ? "삭제 중…" : "삭제"}</button></div></div></div>
           </div>
         </article>}
         {notice && <button className="notice" onClick={() => setNotice("")} aria-live="polite">{notice}<X size={14} /></button>}
