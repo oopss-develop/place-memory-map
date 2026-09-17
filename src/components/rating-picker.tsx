@@ -54,19 +54,17 @@ export function RatingPicker({ defaultValue = 5 }: { defaultValue?: number }) {
     const created: RatingEffect[] = [];
     if (nextRating > rating) {
       const star = Math.ceil(nextRating);
-      for (let index = 0; index < 9; index += 1) {
+      for (let index = 0; index < 7; index += 1) {
         const id = effectId.current += 1;
-        const angle = variedValue(id * 3) * Math.PI * 2;
-        const distance = 14 + variedValue(id * 5) * 16;
         created.push({
           id,
           kind: "particle",
           star,
-          x: Math.cos(angle) * distance,
-          y: Math.sin(angle) * distance - 6,
-          rotation: Math.round(variedValue(id * 7) * 180),
-          delay: Math.round(variedValue(id * 11) * 70),
-          size: 3 + Math.round(variedValue(id * 13) * 3),
+          x: -24 + variedValue(id * 3) * 48,
+          y: -28 - variedValue(id * 5) * 24,
+          rotation: -32 + Math.round(variedValue(id * 7) * 64),
+          delay: Math.round(variedValue(id * 11) * 110),
+          size: 7 + Math.round(variedValue(id * 13) * 5),
           color: PARTICLE_COLORS[Math.floor(variedValue(id * 17) * PARTICLE_COLORS.length)],
         });
       }
@@ -96,7 +94,7 @@ export function RatingPicker({ defaultValue = 5 }: { defaultValue?: number }) {
     setEffects((current) => [...current, ...created]);
     cleanupTimers.current.push(window.setTimeout(() => {
       setEffects((current) => current.filter((effect) => !ids.has(effect.id)));
-    }, 760));
+    }, 900));
   }
 
   function choose(value: number) {
@@ -154,7 +152,7 @@ export function RatingPicker({ defaultValue = 5 }: { defaultValue?: number }) {
               </span>
               <span aria-hidden="true">{star}</span>
               {effects.filter((effect) => effect.star === star).map((effect) => effect.kind === "particle"
-                ? <span key={effect.id} className="rating-particle" style={{ "--effect-x": `${effect.x}px`, "--effect-y": `${effect.y}px`, "--effect-rotation": `${effect.rotation}deg`, "--effect-size": `${effect.size}px`, animationDelay: `${effect.delay}ms`, color: effect.color } as CSSProperties} aria-hidden="true" />
+                ? <span key={effect.id} className="rating-particle" style={{ "--effect-x": `${effect.x}px`, "--effect-y": `${effect.y}px`, "--effect-rotation": `${effect.rotation}deg`, "--effect-size": `${effect.size}px`, animationDelay: `${effect.delay}ms`, color: effect.color } as CSSProperties} aria-hidden="true"><SquareSpark /></span>
                 : <span key={effect.id} className={`rating-fall-fragment ${effect.half}`} style={{ "--effect-x": `${effect.x}px`, "--effect-y": `${effect.y}px`, "--effect-rotation": `${effect.rotation}deg`, animationDelay: `${effect.delay}ms`, color: effect.color } as CSSProperties} aria-hidden="true"><SquareSpark /></span>)}
             </span>
           );
