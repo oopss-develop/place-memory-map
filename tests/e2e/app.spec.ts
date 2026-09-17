@@ -7,6 +7,19 @@ test("shows an empty map journal", async ({ page }) => {
   await expect(page.getByText("아직 남긴 발자국이 없어요.")).toBeVisible();
 });
 
+test("mobile search opens with account submenus closed", async ({ page }) => {
+  test.skip((page.viewportSize()?.width ?? 1000) > 820, "mobile only");
+  await page.addInitScript(() => localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true"));
+  await page.goto("/");
+  await page.getByRole("button", { name: "기록 목록 열기" }).click();
+  await page.getByRole("button", { name: "그룹 메뉴" }).click();
+  await expect(page.locator(".group-menu")).toBeVisible();
+  await page.getByRole("button", { name: "목록 닫기" }).click();
+  await page.getByRole("button", { name: "장소 검색" }).click();
+  await expect(page.locator(".group-menu")).toHaveCount(0);
+  await expect(page.getByRole("searchbox", { name: "장소 검색" })).toBeFocused();
+});
+
 test("manual pin opens the visit form", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "지도에 핀 추가" }).click();

@@ -124,6 +124,8 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     // Focus during the tap so mobile keyboards can open with the search field.
     flushSync(() => {
       setManualMode(false);
+      setGroupMenu(false);
+      setThemePickerOpen(false);
       setGroupPickerOpen(entry === "groups");
       setMobileList(true);
     });
