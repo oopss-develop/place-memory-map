@@ -19,7 +19,7 @@ export const visitSchema = z.object({
   isPlanned: z.boolean().default(false),
   title: z.string().trim().min(1, "기록 제목을 입력해 주세요.").max(120),
   note: z.string().trim().max(3000).default(""),
-  rating: z.number().int().min(1).max(5),
+  rating: z.number().int().min(1).max(10),
   tags: z.array(z.string().trim().min(1).max(24)).max(8),
   participantIds: z.array(z.string().uuid()).max(20),
   markerStyle: z.enum(MARKER_STYLE_IDS).default(DEFAULT_MARKER_STYLE),
