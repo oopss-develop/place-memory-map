@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-15T00:00:00+09:00",
+  "generatedAt": "2026-09-17T13:30:00+09:00",
   "title": "Design System: Place Memory Map",
   "extensions": {
     "fontPreference": {
@@ -19,6 +19,13 @@
       "mobileGutter": "20px",
       "recordMarkerSize": "36px",
       "selection": "paper-deep background with 1px olive outline"
+    },
+    "markerPicker": {
+      "columns": 4,
+      "gap": "8px",
+      "tileHeight": "64px",
+      "maxHeight": "236px",
+      "selection": "vermilion outline with paper-deep background"
     },
     "colorMeta": {
       "primary": { "role": "primary", "displayName": "Travel Pin Vermilion", "canonical": "#d84c32", "tonalRamp": ["#43140d", "#6d2117", "#963021", "#bd3e2b", "#d84c32", "#e77d69", "#f2b4a7", "#fbe9e4"] },
@@ -74,6 +81,14 @@
       "description": "The primary memory object layered over the map.",
       "html": "<article class=\"ds-visit\"><time>8월 23일 (일)</time><h2>서촌 작은 식탁</h2><p>비 오기 전, 늦은 점심</p></article>",
       "css": ".ds-visit{width:320px;padding:18px 20px;border:1px solid #98917d;border-radius:11px;background:#fffdf6;color:#162d38;box-shadow:0 22px 55px rgba(36,39,31,.26)}.ds-visit time{color:#69784d;font-size:11px;font-weight:800}.ds-visit h2{margin:5px 0 8px;font-family:var(--font-serif),serif;font-size:25px;line-height:1.25}.ds-visit p{margin:0;color:#435157;font-family:var(--font-serif),serif;line-height:1.7}.ds-visit:focus-within{outline:3px solid #e39447;outline-offset:3px}"
+    },
+    {
+      "name": "Map Pin Picker",
+      "kind": "custom",
+      "refersTo": "marker-picker",
+      "description": "A four-column grid for choosing a visible map pin style.",
+      "html": "<fieldset class=\"ds-marker-picker\"><legend>지도에 표시할 핀</legend><div><button type=\"button\" aria-pressed=\"true\"><img src=\"/map-pins/food-coral-square.png\" alt=\"\" /></button></div></fieldset>",
+      "css": ".ds-marker-picker{border:0;padding:0}.ds-marker-picker>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-height:236px;overflow-y:auto}.ds-marker-picker button{display:grid;place-items:center;height:64px;border:2px solid transparent;border-radius:12px;background:#fffdf6}.ds-marker-picker button:hover{background:#e9e0c8}.ds-marker-picker button[aria-pressed=\"true\"]{border-color:#d84c32;background:#e9e0c8}.ds-marker-picker img{width:42px;height:42px;object-fit:contain}"
     },
     {
       "name": "Mobile Navigation",
