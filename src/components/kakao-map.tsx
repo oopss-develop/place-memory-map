@@ -43,6 +43,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const clustererRef = useRef<any>(null);
   const pulseOverlayRef = useRef<any>(null);
   const bounceOverlayRef = useRef<any>(null);
   const lastSelectedIdRef = useRef<string | undefined>(undefined);
@@ -59,11 +60,30 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
     const boot = () => window.kakao?.maps.load(() => {
       if (!ref.current) return;
       mapRef.current = new window.kakao.maps.Map(ref.current, { center: new window.kakao.maps.LatLng(37.5665, 126.978), level: 8 });
+      if (window.kakao.maps.MarkerClusterer) {
+        clustererRef.current = new window.kakao.maps.MarkerClusterer({
+          map: mapRef.current,
+          averageCenter: true,
+          minLevel: 6,
+          disableClickZoom: false,
+          styles: [{
+            width: "44px",
+            height: "44px",
+            lineHeight: "44px",
+            borderRadius: "50%",
+            color: "#fffdf6",
+            background: "#162d38",
+            textAlign: "center",
+            fontWeight: "800",
+            boxShadow: "0 4px 10px rgba(22,45,56,.25)",
+          }],
+        });
+      }
       setReady(true);
     });
     if (window.kakao?.maps) { boot(); return; }
     const script = document.createElement("script");
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false&libraries=clusterer`;
     script.async = true;
     script.onload = boot;
     document.head.appendChild(script);
@@ -110,6 +130,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
   useEffect(() => {
     if (!ready || !mapRef.current || !window.kakao) return;
     markersRef.current.forEach((marker) => marker.setMap(null));
+    clustererRef.current?.clear();
     markersRef.current = visits.map((visit) => {
       const highlighted = highlightedIds.includes(visit.id);
       const selected = selectedId === visit.id;
@@ -121,7 +142,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
         { offset: new window.kakao.maps.Point(markerSize / 2, markerSize) },
       );
       const marker = new window.kakao.maps.Marker({
-        map: mapRef.current,
+        map: clustererRef.current ? null : mapRef.current,
         position: new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude),
         image,
         clickable: true,
@@ -132,6 +153,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
       });
       return marker;
     });
+    clustererRef.current?.addMarkers(markersRef.current);
   }, [ready, visits, onSelect, selectedId, highlightedIds]);
 
   useEffect(() => {
