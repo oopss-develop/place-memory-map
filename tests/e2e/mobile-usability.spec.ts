@@ -19,7 +19,7 @@ test("selecting a place search result opens its visit form at that place", async
   await page.getByRole("button", { name: /목포 테스트 장소/ }).click();
   await expect(page.getByRole("dialog", { name: "새 방문 기록" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "목포 테스트 장소" })).toBeVisible();
-  await expect(page.locator(".map-focus-pulse")).toBeVisible();
+  await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
   expect(await page.getByLabel("장소 이름", { exact: true }).getAttribute("value")).toBe("목포 테스트 장소");
   await page.getByRole("button", { name: "창 닫기" }).click();
   await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
@@ -108,7 +108,7 @@ test("landscape list and account menu remain scrollable", async ({ page }) => {
   await expect(page.locator(".journal-sidebar")).toBeHidden();
 });
 
-test("selected pins have one pulse and the pulse follows the new selection", async ({ page }) => {
+test("selected pins bounce and the animation follows the new selection", async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem("place-memory-visits-v2", JSON.stringify([
       {
@@ -126,15 +126,17 @@ test("selected pins have one pulse and the pulse follows the new selection", asy
   await page.goto("/");
   await page.locator('[data-visit-id="pulse-first"]').click();
   await expect(page.locator('[data-visit-id="pulse-first"].selected')).toBeVisible();
-  await expect(page.locator(".map-focus-pulse")).toHaveCount(1);
+  await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
+  await expect(page.locator('[data-visit-id="pulse-first"].selected')).toHaveCSS("animation-name", "map-pin-bounce");
   await page.locator('[data-visit-id="pulse-second"]').click();
   await expect(page.locator('[data-visit-id="pulse-second"].selected')).toBeVisible();
-  await expect(page.locator(".map-focus-pulse")).toHaveCount(1);
+  await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
+  await expect(page.locator('[data-visit-id="pulse-second"].selected')).toHaveCSS("animation-name", "map-pin-bounce");
   await page.getByRole("button", { name: "상세 닫기" }).click();
   await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
 });
 
-test("reduced motion keeps a static selection image", async ({ page }) => {
+test("reduced motion keeps the selected pin static", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.addInitScript(() => {
     localStorage.setItem("place-memory-visits-v2", JSON.stringify([{
@@ -145,11 +147,11 @@ test("reduced motion keeps a static selection image", async ({ page }) => {
   });
   await page.goto("/");
   await page.locator('[data-visit-id="reduced-pulse"]').click();
-  await expect(page.locator(".map-focus-pulse")).toBeVisible();
-  const imageStyle = await page.locator(".map-focus-pulse img").evaluate((element) => {
+  await expect(page.locator(".map-focus-pulse")).toHaveCount(0);
+  const pinStyle = await page.locator('[data-visit-id="reduced-pulse"].selected').evaluate((element) => {
     const style = getComputedStyle(element);
-    return { animationName: style.animationName, transformOrigin: style.transformOrigin };
+    return { animationName: style.animationName, transform: style.transform };
   });
-  expect(imageStyle.animationName).toBe("none");
-  expect(imageStyle.transformOrigin).toBe("24px 24px");
+  expect(pinStyle.animationName).toBe("none");
+  expect(pinStyle.transform).toContain("matrix");
 });

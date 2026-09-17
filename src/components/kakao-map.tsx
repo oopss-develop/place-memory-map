@@ -70,6 +70,9 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
   }, [apiKey]);
 
   useEffect(() => {
+    // 선택 핀의 파동 효과는 잠시 비활성화합니다. 선택된 핀 자체의 바운스만 사용합니다.
+    return;
+    /*
     const removePulse = () => {
       pulseOverlayRef.current?.setMap(null);
       pulseOverlayRef.current = null;
@@ -100,6 +103,7 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
     pulseOverlayRef.current = overlay;
 
     return removePulse;
+    */
   }, [apiKey, pulseLatitude, pulseLongitude, pulseMarkerStyle, ready]);
 
   useEffect(() => {
@@ -128,6 +132,30 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
       return marker;
     });
   }, [ready, visits, onSelect, selectedId, highlightedIds]);
+
+  useEffect(() => {
+    if (!ready || !selectedId || !mapRef.current || !window.kakao || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const visitIndex = visits.findIndex((visit) => visit.id === selectedId);
+    const selectedMarker = visitIndex >= 0 ? markersRef.current[visitIndex] : undefined;
+    const selectedVisit = visits[visitIndex];
+    if (!selectedMarker || !selectedVisit) return;
+
+    const baseLatitude = selectedVisit.place.latitude;
+    const baseLongitude = selectedVisit.place.longitude;
+    const startedAt = performance.now();
+    let frame = 0;
+    const bounce = (now: number) => {
+      const progress = ((now - startedAt) % 1200) / 1200;
+      const lift = Math.max(0, Math.sin(progress * Math.PI * 2)) ** 3 * 0.000035;
+      selectedMarker.setPosition(new window.kakao.maps.LatLng(baseLatitude + lift, baseLongitude));
+      frame = requestAnimationFrame(bounce);
+    };
+    frame = requestAnimationFrame(bounce);
+    return () => {
+      cancelAnimationFrame(frame);
+      selectedMarker.setPosition(new window.kakao.maps.LatLng(baseLatitude, baseLongitude));
+    };
+  }, [ready, selectedId, visits]);
 
   useEffect(() => {
     if (!visits.length) return;
@@ -261,10 +289,11 @@ export function KakaoMap({ visits, selectedId, selectionRequest, manualMode, onS
         <div className="map-fallback" aria-label="서울 방문 기록 데모 지도">
           <div className="river" /><div className="road road-a" /><div className="road road-b" /><div className="road road-c" />
           <span className="district district-west">종로</span><span className="district district-east">성수</span><span className="district district-south">한강</span>
-          {pulseTarget && (() => {
+          {/* Disabled ripple feedback; the selected pin now bounces in place. */}
+          {/* {pulseTarget && (() => {
             const position = fallbackMapPosition(pulseTarget.latitude, pulseTarget.longitude);
             return <span className="map-focus-pulse" aria-hidden="true" style={{ left: `${position.left}%`, top: `${position.top}%` }}><img src={markerSvgDataUrl(pulseMarkerStyle)} alt="" /></span>;
-          })()}
+          })()} */}
           {visits.map((visit) => {
             const position = fallbackMapPosition(visit.place.latitude, visit.place.longitude);
             const highlighted = highlightedIds.includes(visit.id);

@@ -275,11 +275,22 @@ button, select { cursor: pointer; }
 .map-pin { position: absolute; z-index: 2; width: 48px; height: 48px; padding: 0; border: 0; background: transparent; filter: drop-shadow(0 4px 4px rgba(53,39,28,.25)); transform: translate(-50%, -100%); transition: transform .2s cubic-bezier(.2,.8,.2,1); }
 .map-pin img { display: block; width: 100%; height: 100%; }
 .map-pin:hover, .map-pin.selected { transform: translate(-50%, -100%) scale(1.16); }
+.map-pin.selected { animation: map-pin-bounce 1.2s ease-in-out infinite; }
+@keyframes map-pin-bounce {
+  0%, 100% { transform: translate(-50%, -100%) scale(1.16); }
+  14% { transform: translate(-50%, calc(-100% - 7px)) scale(1.16); }
+  28% { transform: translate(-50%, -100%) scale(1.16); }
+  40% { transform: translate(-50%, calc(-100% - 3px)) scale(1.16); }
+  52% { transform: translate(-50%, -100%) scale(1.16); }
+}
 .map-pin.highlighted:not(.selected) { transform: translate(-50%, -100%) scale(1.1); }
+/* Disabled ripple feedback; selected pins now use the bounce animation above. */
+/*
 .map-pin-pulse { position: relative; display: block; width: 72px; height: 72px; pointer-events: none; }
 .map-focus-pulse { position: absolute; z-index: 1; width: 72px; height: 72px; pointer-events: none; transform: translate(-50%, -100%); }
 .map-pin-pulse img, .map-focus-pulse img { position: absolute; left: 50%; bottom: 0; display: block; width: 48px; height: 48px; opacity: .62; transform: translateX(-50%) scale(.72); transform-origin: 50% 50%; animation: map-pin-image-pulse 1.8s ease-out infinite; }
 @keyframes map-pin-image-pulse { 0% { opacity: .62; transform: translateX(-50%) scale(.72); } 70%, 100% { opacity: 0; transform: translateX(-50%) scale(1.48); } }
+*/
 .map-pin-overlay { width: 30px; height: 38px; padding: 0; border: 0; color: #4d89ad; background: transparent; cursor: pointer; transform: translateY(2px); transition: color .18s ease, transform .18s ease; }
 .map-pin-overlay svg { display: block; width: 100%; height: 100%; }
 .map-pin-overlay:hover, .map-pin-overlay.selected { color: var(--vermilion-dark); transform: translateY(0) scale(1.14); }
@@ -493,5 +504,5 @@ button, select { cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .map-pin-pulse img, .map-focus-pulse img { animation: none; opacity: .42; transform: translateX(-50%) scale(1); }
+  .map-pin.selected { animation: none; transform: translate(-50%, -100%) scale(1.16); }
 }
