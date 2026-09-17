@@ -78,8 +78,15 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const sheetRef = useRef<HTMLElement>(null);
   const sidebarRef = useRef<HTMLElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const groupMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const groupMenuRef = useRef<HTMLDivElement>(null);
   const sidebarOpener = useRef<HTMLElement | null>(null);
   const photoTouchStartX = useRef<number | null>(null);
+
+  const closeGroupMenu = useCallback(() => {
+    setGroupMenu(false);
+    setThemePickerOpen(false);
+  }, []);
 
   useEffect(() => {
     const media = window.matchMedia("(max-width: 820px)");
@@ -122,6 +129,35 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       if (!visitDialog?.open && !groupDialog?.open && previousFocus instanceof HTMLElement) previousFocus.focus();
     };
   }, [isMobile, mobileList]);
+
+  useEffect(() => {
+    if (!groupMenu) return;
+
+    const isInsideGroupMenu = (target: EventTarget | null) => (
+      target instanceof Node
+      && (groupMenuButtonRef.current?.contains(target) || groupMenuRef.current?.contains(target))
+    );
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!isInsideGroupMenu(event.target)) closeGroupMenu();
+    };
+    const handleFocusIn = (event: FocusEvent) => {
+      if (!isInsideGroupMenu(event.target)) closeGroupMenu();
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      closeGroupMenu();
+      groupMenuButtonRef.current?.focus();
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown, true);
+    document.addEventListener("focusin", handleFocusIn, true);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+      document.removeEventListener("focusin", handleFocusIn, true);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [closeGroupMenu, groupMenu]);
 
   function openMobileList(entry: "records" | "search" | "groups" = "records") {
     sidebarOpener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -533,7 +569,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
   return (
     <main className="journal-app" data-theme={theme}>
-      {mobileList && <div className="sidebar-backdrop" aria-hidden="true" onClick={() => setMobileList(false)} />}
+      {mobileList && <div className="sidebar-backdrop" aria-hidden="true" onClick={() => { setMobileList(false); closeGroupMenu(); }} />}
       <aside ref={sidebarRef} id="journal-sidebar" className={`journal-sidebar ${mobileList ? "mobile-open" : ""}`} inert={isMobile && !mobileList} role={isMobile && mobileList ? "dialog" : undefined} aria-modal={isMobile && mobileList ? true : undefined} aria-label="기록 목록과 장소 검색">
         <header className="sidebar-header"><div className="wordmark"><span className="wordmark-pin"><img src="/map-pins/sparkle-yellow-round.png" alt="" /></span><span>PLACE<br />MEMORY MAP</span></div><button className="icon-button mobile-close" onClick={() => setMobileList(false)} aria-label="목록 닫기"><X size={20} /></button></header>
         <div className="group-row"><label id="group-label">함께 보는 지도</label><div className="group-picker"><button className="group-picker-trigger" type="button" aria-labelledby="group-label" aria-haspopup="listbox" aria-expanded={groupPickerOpen} onClick={() => setGroupPickerOpen((value) => !value)}><span>{activeGroup?.name ?? "지도 선택"}</span><ChevronDown size={17} /></button>{groupPickerOpen && <div className="group-picker-menu" role="listbox" aria-label="함께 보는 지도 선택">{groups.filter((group) => group.id !== activeGroupId).map((group) => <button key={group.id} className="group-picker-option" type="button" role="option" aria-selected={false} onClick={() => chooseGroup(group.id)}>{group.name}<span>{visits.filter((visit) => visit.groupId === group.id).length}건</span></button>)}<button className="group-picker-add" type="button" onClick={openCreateGroup}><Plus size={15} />함께 보는 지도 추가</button></div>}</div></div>
@@ -550,10 +586,10 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
             </section>;
           })}
         </div>
-        <footer className="sidebar-footer"><span className="avatar">{getMemberInitials(viewerName ?? initialData.members[0]?.displayName ?? "여행자")}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button className="icon-button" aria-label="그룹 메뉴" onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {canManageActiveGroup ? "그룹장" : "멤버"}</span><button className="theme-toggle" type="button" aria-expanded={themePickerOpen} onClick={() => setThemePickerOpen((value) => !value)}><Palette size={15} />테마 선택<ChevronDown size={14} /></button>{themePickerOpen && <div className="theme-picker" role="radiogroup" aria-label="테마 선택">{THEME_OPTIONS.map((option) => <button key={option.id} className={`theme-option ${theme === option.id ? "active" : ""}`} type="button" role="radio" aria-checked={theme === option.id} onClick={() => { setTheme(option.id); setThemePickerOpen(false); }}><span className="theme-swatch" style={{ background: option.swatch }} /><span><strong>{option.label}</strong><small>{option.description}</small></span>{theme === option.id && <Check size={14} aria-hidden="true" />}</button>)}</div>}<FontPicker />{canManageActiveGroup && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton />{canManageActiveGroup && <button className="group-menu-delete" type="button" disabled={groups.length <= 1} title={groups.length <= 1 ? "마지막 지도는 삭제할 수 없습니다." : undefined} onClick={deleteGroup}>현재 지도 삭제</button>}{canManageActiveGroup && groups.length <= 1 && <small className="group-menu-hint">마지막 지도는 삭제할 수 없어요.</small>}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
+        <footer className="sidebar-footer"><span className="avatar">{getMemberInitials(viewerName ?? initialData.members[0]?.displayName ?? "여행자")}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button ref={groupMenuButtonRef} className="icon-button" type="button" aria-label="그룹 메뉴" aria-controls="group-menu" aria-expanded={groupMenu} onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div ref={groupMenuRef} id="group-menu" className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {canManageActiveGroup ? "그룹장" : "멤버"}</span><button className="theme-toggle" type="button" aria-expanded={themePickerOpen} onClick={() => setThemePickerOpen((value) => !value)}><Palette size={15} />테마 선택<ChevronDown size={14} /></button>{themePickerOpen && <div className="theme-picker" role="radiogroup" aria-label="테마 선택">{THEME_OPTIONS.map((option) => <button key={option.id} className={`theme-option ${theme === option.id ? "active" : ""}`} type="button" role="radio" aria-checked={theme === option.id} onClick={() => { setTheme(option.id); setThemePickerOpen(false); }}><span className="theme-swatch" style={{ background: option.swatch }} /><span><strong>{option.label}</strong><small>{option.description}</small></span>{theme === option.id && <Check size={14} aria-hidden="true" />}</button>)}</div>}<FontPicker />{canManageActiveGroup && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton />{canManageActiveGroup && <button className="group-menu-delete" type="button" disabled={groups.length <= 1} title={groups.length <= 1 ? "마지막 지도는 삭제할 수 없습니다." : undefined} onClick={deleteGroup}>현재 지도 삭제</button>}{canManageActiveGroup && groups.length <= 1 && <small className="group-menu-hint">마지막 지도는 삭제할 수 없어요.</small>}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
       </aside>
 
-      <section ref={mapStageRef} className="map-stage" inert={isMobile && mobileList}>
+      <section ref={mapStageRef} className="map-stage" inert={isMobile && mobileList} onPointerDown={closeGroupMenu}>
         <KakaoMap key={mapProvider} visits={groupVisits} mapProvider={mapProvider} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} mapFocus={mapFocus} maxZoomRequest={maxZoomRequest} pulseLocation={pulseLocation} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => openMobileList()} aria-label="기록 목록 열기" aria-controls="journal-sidebar" aria-expanded={mobileList}><List size={20} /></button><button className="mobile-search-button" onClick={() => openMobileList("search")}><Search size={18} /><span>장소 검색</span></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
         <div className="map-provider-switch" role="group" aria-label="지도 선택"><button type="button" className={mapProvider === "kakao" ? "active" : ""} aria-pressed={mapProvider === "kakao"} onClick={() => changeMapProvider("kakao")}><MapIcon size={15} />국내</button><button type="button" className={mapProvider === "osm" ? "active" : ""} aria-pressed={mapProvider === "osm"} onClick={() => changeMapProvider("osm")}><Globe2 size={15} />해외</button></div>

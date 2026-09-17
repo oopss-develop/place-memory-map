@@ -20,6 +20,28 @@ test("mobile search opens with account submenus closed", async ({ page }) => {
   await expect(page.getByRole("searchbox", { name: "장소 검색" })).toBeFocused();
 });
 
+test("account menu closes when interaction leaves it", async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true"));
+  await page.goto("/");
+  const mobile = (page.viewportSize()?.width ?? 1000) <= 820;
+  if (mobile) await page.getByRole("button", { name: "기록 목록 열기" }).click();
+
+  const menuButton = page.getByRole("button", { name: "그룹 메뉴" });
+  await menuButton.click();
+  await page.getByRole("button", { name: "테마 선택" }).click();
+  await expect(page.locator(".group-menu")).toBeVisible();
+
+  await page.getByRole("searchbox", { name: "장소 검색" }).focus();
+  await expect(page.locator(".group-menu")).toHaveCount(0);
+  await expect(menuButton).toHaveAttribute("aria-expanded", "false");
+
+  await menuButton.click();
+  await expect(page.locator(".group-menu")).toBeVisible();
+  if (mobile) await page.getByRole("button", { name: "목록 닫기" }).click();
+  else await page.locator(".map-canvas").click({ position: { x: 500, y: 300 }, force: true });
+  await expect(page.locator(".group-menu")).toHaveCount(0);
+});
+
 test("manual pin opens the visit form", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "지도에 핀 추가" }).click();
