@@ -46,20 +46,26 @@ export function RatingPicker({ defaultValue = 5 }: { defaultValue?: number }) {
   function playEffects(nextRating: number) {
     const created: RatingEffect[] = [];
     if (nextRating > rating) {
-      const star = Math.ceil(nextRating);
-      for (let index = 0; index < 7; index += 1) {
-        const id = effectId.current += 1;
-        created.push({
-          id,
-          kind: "particle",
-          star,
-          x: -24 + variedValue(id * 3) * 48,
-          y: -28 - variedValue(id * 5) * 24,
-          rotation: -32 + Math.round(variedValue(id * 7) * 64),
-          delay: Math.round(variedValue(id * 11) * 110),
-          size: 7 + Math.round(variedValue(id * 13) * 5),
-          color: PARTICLE_COLORS[Math.floor(variedValue(id * 17) * PARTICLE_COLORS.length)],
-        });
+      let addedValue = rating + 0.5;
+      let order = 0;
+      while (addedValue <= nextRating) {
+        const star = Math.ceil(addedValue);
+        for (let index = 0; index < 4; index += 1) {
+          const id = effectId.current += 1;
+          created.push({
+            id,
+            kind: "particle",
+            star,
+            x: -20 + variedValue(id * 3) * 40,
+            y: -26 - variedValue(id * 5) * 20,
+            rotation: -32 + Math.round(variedValue(id * 7) * 64),
+            delay: order * 58 + Math.round(variedValue(id * 11) * 54),
+            size: 7 + Math.round(variedValue(id * 13) * 5),
+            color: PARTICLE_COLORS[Math.floor(variedValue(id * 17) * PARTICLE_COLORS.length)],
+          });
+        }
+        addedValue += 0.5;
+        order += 1;
       }
     } else if (nextRating < rating) {
       let removedValue = rating;
@@ -85,9 +91,10 @@ export function RatingPicker({ defaultValue = 5 }: { defaultValue?: number }) {
     if (!created.length) return;
     const ids = new Set(created.map((effect) => effect.id));
     setEffects((current) => [...current, ...created]);
+    const cleanupDelay = Math.max(...created.map((effect) => effect.delay)) + 700;
     cleanupTimers.current.push(window.setTimeout(() => {
       setEffects((current) => current.filter((effect) => !ids.has(effect.id)));
-    }, 900));
+    }, cleanupDelay));
   }
 
   function choose(value: number) {

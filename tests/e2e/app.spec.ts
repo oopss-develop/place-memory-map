@@ -107,8 +107,10 @@ test("a marker shape can be selected and edited", async ({ page }) => {
   await expect(rating).toHaveAttribute("aria-valuenow", "3.5");
   await expect(page.locator(".rating-fall-fragment")).toHaveCount(3);
   await rating.press("End");
-  await expect(page.locator(".rating-particle")).toHaveCount(7);
-  await expect(page.locator(".rating-particle svg")).toHaveCount(7);
+  await expect(page.locator(".rating-particle")).toHaveCount(12);
+  await expect(page.locator(".rating-particle svg")).toHaveCount(12);
+  await expect(page.locator(".rating-star").nth(3).locator(".rating-particle")).toHaveCount(4);
+  await expect(page.locator(".rating-star").nth(4).locator(".rating-particle")).toHaveCount(8);
   await rating.press("ArrowLeft");
   await expect(rating).toHaveAttribute("aria-valuenow", "4.5");
   await page.getByLabel("장소 이름").fill("모양이 다른 핀");
