@@ -15,6 +15,7 @@ import { prepareVisitImage } from "@/lib/images";
 import { DEFAULT_MARKER_STYLE, MARKER_PICKER_STYLE_IDS as MARKER_STYLE_IDS, markerSvgDataUrl, normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
 
 const markerSvgData = markerSvgDataUrl;
+const formatRating = (rating: number) => rating.toFixed(1);
 import { getMemberInitials } from "@/lib/member-initials";
 import { DEFAULT_THEME, normalizeTheme, THEME_OPTIONS, type ThemeId } from "@/lib/themes";
 import { visitSchema } from "@/lib/schemas";
@@ -539,7 +540,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
             const active = selectedDateKey === date;
             return <section key={date} className={`date-group ${active ? "active" : ""}`}>
               <button className="date-group-toggle" aria-expanded={active} aria-label={`${formatDate(date)} 방문 기록 ${dateVisits.length}개 ${active ? "접기" : "펼치기"}`} onClick={() => { setSelectedDateKey(active ? undefined : date); if (!active && dateVisits[0]) handleVisitSelect(dateVisits[0]); }}><span><CalendarDays size={15} /><time>{formatDate(date)}</time>{dateVisits.some((visit) => visit.isPlanned) && <em>방문 예정</em>}</span><strong>{dateVisits.length}곳 <ChevronDown size={15} /></strong></button>
-              {active && <div className="date-group-items">{dateVisits.map((visit) => <button key={visit.id} className={`record-item ${visit.isPlanned ? "planned" : ""} ${selectedId === visit.id ? "selected" : ""}`} aria-pressed={selectedId === visit.id} onClick={() => { handleVisitSelect(visit); setMobileList(false); }}><img className="record-marker" src={markerSvgData(visit.markerStyle)} alt="" /><div><strong>{visit.place.name}</strong><p>{visit.title}</p><div className="mini-meta"><span><Star size={13} fill="currentColor" /> {visit.rating}.0</span><span><Users size={13} /> {visit.participants.length}</span>{visit.photoUrls.length > 0 && <span><Camera size={13} /> {visit.photoUrls.length}</span>}{visit.isPlanned && <span className="planned-label">방문 예정</span>}</div></div></button>)}</div>}
+              {active && <div className="date-group-items">{dateVisits.map((visit) => <button key={visit.id} className={`record-item ${visit.isPlanned ? "planned" : ""} ${selectedId === visit.id ? "selected" : ""}`} aria-pressed={selectedId === visit.id} onClick={() => { handleVisitSelect(visit); setMobileList(false); }}><img className="record-marker" src={markerSvgData(visit.markerStyle)} alt="" /><div><strong>{visit.place.name}</strong><p>{visit.title}</p><div className="mini-meta"><span><Star size={13} fill="currentColor" /> {formatRating(visit.rating)}</span><span><Users size={13} /> {visit.participants.length}</span>{visit.photoUrls.length > 0 && <span><Camera size={13} /> {visit.photoUrls.length}</span>}{visit.isPlanned && <span className="planned-label">방문 예정</span>}</div></div></button>)}</div>}
             </section>;
           })}
         </div>

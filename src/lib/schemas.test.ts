@@ -20,8 +20,9 @@ describe("visitSchema", () => {
   it("accepts a planned visit", () => expect(visitSchema.parse({ ...validVisit, isPlanned: true }).isPlanned).toBe(true));
   it("accepts a supported marker", () => expect(visitSchema.parse({ ...validVisit, markerStyle: "round-gamepad-black" }).markerStyle).toBe("round-gamepad-black"));
   it("rejects an unknown marker", () => expect(visitSchema.safeParse({ ...validVisit, markerStyle: "unknown" }).success).toBe(false));
-  it("accepts up to ten rating points", () => expect(visitSchema.safeParse({ ...validVisit, rating: 10 }).success).toBe(true));
-  it("rejects more than ten rating points", () => expect(visitSchema.safeParse({ ...validVisit, rating: 11 }).success).toBe(false));
+  it("accepts half-point ratings", () => expect(visitSchema.safeParse({ ...validVisit, rating: 4.5 }).success).toBe(true));
+  it("rejects ratings above five", () => expect(visitSchema.safeParse({ ...validVisit, rating: 5.5 }).success).toBe(false));
+  it("rejects ratings outside half-point steps", () => expect(visitSchema.safeParse({ ...validVisit, rating: 4.25 }).success).toBe(false));
   it("rejects more than eight tags", () => expect(visitSchema.safeParse({ ...validVisit, tags: Array.from({ length: 9 }, (_, index) => `tag-${index}`) }).success).toBe(false));
 });
 

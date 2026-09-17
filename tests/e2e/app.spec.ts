@@ -97,8 +97,12 @@ test("a marker shape can be selected and edited", async ({ page }) => {
   await expect(page.getByRole("radio", { name: /핀/ })).toHaveCount(44);
   await page.getByTitle("핀 44", { exact: true }).click();
   await expect(page.getByRole("radio", { name: "핀 44", exact: true })).toBeChecked();
-  await page.getByRole("radio", { name: "10점", exact: true }).click();
-  await expect(page.getByRole("radio", { name: "10점", exact: true })).toBeChecked();
+  const rating = page.getByRole("slider", { name: "별점 선택" });
+  await page.locator(".rating-star").nth(3).click({ position: { x: 4, y: 20 } });
+  await expect(rating).toHaveAttribute("aria-valuenow", "3.5");
+  await rating.press("End");
+  await rating.press("ArrowLeft");
+  await expect(rating).toHaveAttribute("aria-valuenow", "4.5");
   await page.getByLabel("장소 이름").fill("모양이 다른 핀");
   await page.getByLabel("기록 제목").fill("네 번째 핀 선택");
   await page.getByRole("button", { name: "지도에 기록 남기기" }).click();
@@ -108,7 +112,7 @@ test("a marker shape can be selected and edited", async ({ page }) => {
   await marker.click();
   await page.getByRole("button", { name: "기록 고치기" }).click();
   await expect(page.getByRole("radio", { name: "핀 44", exact: true })).toBeChecked();
-  await expect(page.getByRole("radio", { name: "10점", exact: true })).toBeChecked();
+  await expect(page.getByRole("slider", { name: "별점 선택" })).toHaveAttribute("aria-valuenow", "4.5");
 });
 
 test("mobile visit popup stays within the viewport", async ({ page }) => {
