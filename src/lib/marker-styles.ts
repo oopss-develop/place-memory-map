@@ -8,6 +8,21 @@ export const MARKER_STYLE_IDS = [
 ] as const;
 export type MarkerStyle = (typeof MARKER_STYLE_IDS)[number];
 
+// Keep the picker grouped by icon, then color, then shape.
+export const MARKER_PICKER_STYLE_IDS: MarkerStyle[] = [
+  "color-1", "color-9", "black-1", "black-9",
+  "color-2", "color-10", "black-2", "black-10",
+  "color-3", "color-11", "black-3", "black-11",
+  "color-4", "color-12", "black-4", "black-12",
+  "color-5", "color-13", "black-5", "black-13",
+  "color-6", "color-14", "black-6", "black-14",
+  "color-7", "color-15", "black-7", "black-15",
+  "color-8", "color-16", "black-8", "black-16",
+  "square-cat-color", "round-cat-color", "square-cat-black", "round-cat-black",
+  "square-plane-color", "round-plane-color", "square-plane-black", "round-plane-black",
+  "square-gamepad-color", "round-gamepad-color", "square-gamepad-black", "round-gamepad-black",
+];
+
 export const DEFAULT_MARKER_STYLE: MarkerStyle = "black-1";
 
 const MARKER_STYLE_FILES: Record<MarkerStyle, string> = {

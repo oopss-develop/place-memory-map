@@ -11,7 +11,7 @@ import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
 import { FontPicker } from "@/components/font-preference";
 import { prepareVisitImage } from "@/lib/images";
-import { DEFAULT_MARKER_STYLE, MARKER_STYLE_IDS, markerSvgDataUrl, normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
+import { DEFAULT_MARKER_STYLE, MARKER_PICKER_STYLE_IDS as MARKER_STYLE_IDS, markerSvgDataUrl, normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
 
 const markerSvgData = markerSvgDataUrl;
 import { getMemberInitials } from "@/lib/member-initials";
