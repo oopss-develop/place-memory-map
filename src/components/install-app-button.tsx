@@ -30,7 +30,6 @@ export function InstallAppButton({ autoPrompt = false, suppressAutoPrompt = fals
   const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
-    const mobile = window.matchMedia("(max-width: 820px)").matches;
     const kakao = isKakaoInAppBrowser();
     const standalone = window.matchMedia("(display-mode: standalone)").matches || Boolean((navigator as NavigatorWithStandalone).standalone);
     const dismissedKey = kakao ? KAKAO_INSTALL_DISMISSED_KEY : INSTALL_DISMISSED_KEY;
@@ -41,7 +40,7 @@ export function InstallAppButton({ autoPrompt = false, suppressAutoPrompt = fals
       sharedInstallPrompt = event as InstallPromptEvent;
       setDeferredPrompt(sharedInstallPrompt);
       window.dispatchEvent(new Event(INSTALL_READY_EVENT));
-      if (autoPrompt && !suppressAutoPrompt && mobile && !standalone && !dismissed) setShowPrompt(true);
+      if (autoPrompt && !suppressAutoPrompt && !standalone && !dismissed) setShowPrompt(true);
     };
     const syncPrompt = () => setDeferredPrompt(sharedInstallPrompt);
     const installedHandler = () => {
@@ -56,7 +55,7 @@ export function InstallAppButton({ autoPrompt = false, suppressAutoPrompt = fals
     window.addEventListener(INSTALL_READY_EVENT, syncPrompt);
     window.addEventListener("appinstalled", installedHandler);
     const timer = window.setTimeout(() => {
-      if (autoPrompt && !suppressAutoPrompt && mobile && !standalone && !dismissed) setShowPrompt(true);
+      if (autoPrompt && !suppressAutoPrompt && !standalone && !dismissed) setShowPrompt(true);
     }, 900);
     return () => {
       window.removeEventListener("beforeinstallprompt", promptHandler);
