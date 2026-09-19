@@ -5,6 +5,10 @@ export interface AllowedMember {
   displayName: string;
 }
 
+export interface AllowedMemberCredential extends AllowedMember {
+  keyword: string;
+}
+
 function normalizeEmail(email: string) {
   return email.trim().toLocaleLowerCase("en-US");
 }
@@ -38,6 +42,24 @@ export function getAllowedMember(email: string | null | undefined) {
   if (!email) return null;
   const normalized = normalizeEmail(email);
   return getAllowedMembers().find((member) => member.email === normalized) ?? null;
+}
+
+export function getAllowedMemberCredential(email: string | null | undefined, keyword: string | null | undefined) {
+  if (!email || !keyword) return null;
+
+  try {
+    const value: unknown = JSON.parse(process.env.ALLOWED_MEMBER_KEYS_JSON ?? "");
+    if (!Array.isArray(value)) return null;
+
+    return value.find((item): item is { email: string; keyword: string; displayName?: string } => (
+      Boolean(item) && typeof item === "object" &&
+      "email" in item && typeof item.email === "string" &&
+      "keyword" in item && typeof item.keyword === "string" &&
+      normalizeEmail(item.email) === normalizeEmail(email) && item.keyword === keyword
+    )) ?? null;
+  } catch {
+    return null;
+  }
 }
 
 export function safeNextPath(value: string | null | undefined) {
