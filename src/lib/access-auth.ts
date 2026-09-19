@@ -1,23 +1,45 @@
-import { cookies } from "next/headers";
+import "server-only";
 
-export const ACCESS_COOKIE = "place-memory-access";
-
-export const accessMembers = {
-  또: { id: "access-또", email: "place-memory-map-ggyo@users.invalid", displayName: "이교혁", initials: "또" },
-  나: { id: "access-나", email: "place-memory-map-narin@users.invalid", displayName: "박나린", initials: "나" },
-  우: { id: "access-우", email: "place-memory-map-woosung@users.invalid", displayName: "박우성", initials: "우" },
-  쥐: { id: "access-쥐", email: "place-memory-map-eunji@users.invalid", displayName: "이은지", initials: "쥐" },
-} as const;
-
-export type AccessCode = keyof typeof accessMembers;
-export type AccessMember = (typeof accessMembers)[AccessCode];
-
-export function getAccessMember(code: string | undefined): AccessMember | null {
-  if (!code || !Object.hasOwn(accessMembers, code)) return null;
-  return accessMembers[code as AccessCode];
+export interface AllowedMember {
+  email: string;
+  displayName: string;
 }
 
-export async function getAccessMemberFromCookies(): Promise<AccessMember | null> {
-  const cookieStore = await cookies();
-  return getAccessMember(cookieStore.get(ACCESS_COOKIE)?.value);
+function normalizeEmail(email: string) {
+  return email.trim().toLocaleLowerCase("en-US");
+}
+
+export function parseAllowedMembers(raw = ""): AllowedMember[] {
+  if (!raw.trim()) return [];
+
+  try {
+    const value: unknown = JSON.parse(raw);
+    if (!Array.isArray(value)) return [];
+
+    const members = value.flatMap((item) => {
+      if (!item || typeof item !== "object") return [];
+      const email = "email" in item && typeof item.email === "string" ? normalizeEmail(item.email) : "";
+      const displayName = "displayName" in item && typeof item.displayName === "string" ? item.displayName.trim() : "";
+      if (!email || !displayName || !email.includes("@")) return [];
+      return [{ email, displayName }];
+    });
+
+    return Array.from(new Map(members.map((member) => [member.email, member])).values());
+  } catch {
+    return [];
+  }
+}
+
+export function getAllowedMembers() {
+  return parseAllowedMembers(process.env.ALLOWED_MEMBERS_JSON);
+}
+
+export function getAllowedMember(email: string | null | undefined) {
+  if (!email) return null;
+  const normalized = normalizeEmail(email);
+  return getAllowedMembers().find((member) => member.email === normalized) ?? null;
+}
+
+export function safeNextPath(value: string | null | undefined) {
+  return value?.startsWith("/") && !value.startsWith("//") ? value : "/";
 }

@@ -10,20 +10,10 @@ export async function POST(request: Request) {
   const workspace = await getAccessWorkspaceUser();
   if (!workspace) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
 
-  const { data: group, error: groupError } = await workspace.supabase
-    .from("groups")
-    .insert({ name: parsed.data.name, created_by: workspace.userId })
-    .select("id,name,created_by")
-    .single();
-  if (groupError) return NextResponse.json({ error: "지도를 만들지 못했습니다." }, { status: 400 });
+  const { data: groupId, error: createError } = await workspace.supabase.rpc("create_group", { group_name: parsed.data.name });
+  if (createError || !groupId) return NextResponse.json({ error: "지도를 만들지 못했습니다." }, { status: 400 });
+  const { data: group, error: groupError } = await workspace.supabase.from("groups").select("id,name,created_by").eq("id", groupId).single();
+  if (groupError || !group) return NextResponse.json({ error: "만든 지도를 불러오지 못했습니다." }, { status: 500 });
 
-  const { error: memberError } = await workspace.supabase.from("group_members").insert(
-    workspace.identities.map((identity) => ({ group_id: group.id, user_id: identity.userId, role: identity.userId === workspace.userId ? "owner" : "member" })),
-  );
-  if (memberError) {
-    await workspace.supabase.from("groups").delete().eq("id", group.id);
-    return NextResponse.json({ error: "지도 구성원을 추가하지 못했습니다." }, { status: 400 });
-  }
-
-  return NextResponse.json({ group: { id: group.id, name: group.name, role: "owner", memberCount: workspace.identities.length, ownerId: group.created_by } }, { status: 201 });
+  return NextResponse.json({ group: { id: group.id, name: group.name, role: "owner", memberCount: 1, ownerId: group.created_by } }, { status: 201 });
 }

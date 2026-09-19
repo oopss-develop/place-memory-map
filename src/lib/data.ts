@@ -1,7 +1,6 @@
 import "server-only";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { demoGroups, demoMembers, demoVisits } from "@/lib/demo-data";
-import { isServerPersistenceConfigured } from "@/lib/supabase/config";
-import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
 import { getMemberInitials } from "@/lib/member-initials";
 import type { Group, Profile, Visit } from "@/types/domain";
@@ -22,12 +21,11 @@ interface VisitRow {
   visit_photos: Array<{ storage_path: string; sort_order: number }>;
 }
 
-export async function getDashboardData(userId?: string): Promise<DashboardData> {
-  if (!isServerPersistenceConfigured() || !userId) {
+export async function getDashboardData(supabase?: SupabaseClient, userId?: string): Promise<DashboardData> {
+  if (!supabase || !userId) {
     return { groups: demoGroups, members: demoMembers, visits: demoVisits, demoMode: true };
   }
 
-  const supabase = createSupabaseAdminClient();
   const { data: memberships, error: membershipError } = await supabase
     .from("group_members")
     .select("role, groups(id,name,created_by), profiles(id,display_name)")

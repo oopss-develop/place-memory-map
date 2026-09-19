@@ -1,5 +1,13 @@
 import { expect, test } from "@playwright/test";
 
+test("login uses the four-member email allowlist", async ({ page }) => {
+  await page.goto("/login");
+  await expect(page.getByLabel("등록된 이메일")).toHaveAttribute("type", "email");
+  await expect(page.getByRole("button", { name: "로그인 링크 받기" })).toBeVisible();
+  await expect(page.getByText("처음 쓰는 기기에서만 메일 인증이 필요해요.")).toBeVisible();
+  await expect(page.getByLabel("우리만의 입장 코드")).toHaveCount(0);
+});
+
 test("shows an empty map journal", async ({ page }) => {
   await page.goto("/");
   if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
