@@ -36,7 +36,7 @@ export function parseAllowedMembers(raw = ""): AllowedMember[] {
 
 export function getAllowedMembers() {
   const configuredMembers = parseAllowedMembers(process.env.ALLOWED_MEMBERS_JSON);
-  if (configuredMembers.length) return configuredMembers;
+  if (configuredMembers.length === 4) return configuredMembers;
 
   try {
     const value: unknown = JSON.parse(process.env.ALLOWED_MEMBER_KEYS_JSON ?? "");
