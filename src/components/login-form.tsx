@@ -39,7 +39,7 @@ export function LoginForm({ next = "/", initialMessage = "" }: { next?: string; 
       </div>
       <label htmlFor="member-keyword">키워드</label>
       <div className="input-with-icon">
-        <input id="member-keyword" name="member-keyword" type="password" placeholder="등록된 키워드" autoComplete="current-password" aria-describedby="login-message" maxLength={100} disabled={pending} required />
+        <input id="member-keyword" name="member-keyword" type="text" placeholder="등록된 키워드" autoComplete="off" aria-describedby="login-message" maxLength={100} disabled={pending} required />
       </div>
       <button className="primary-button" type="submit" disabled={pending || sent}>
         {pending ? "로그인 중…" : sent ? "로그인 완료" : "로그인"}<Send size={18} aria-hidden="true" />
