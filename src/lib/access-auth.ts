@@ -35,7 +35,16 @@ export function parseAllowedMembers(raw = ""): AllowedMember[] {
 }
 
 export function getAllowedMembers() {
-  return parseAllowedMembers(process.env.ALLOWED_MEMBERS_JSON);
+  const configuredMembers = parseAllowedMembers(process.env.ALLOWED_MEMBERS_JSON);
+  if (configuredMembers.length) return configuredMembers;
+
+  try {
+    const value: unknown = JSON.parse(process.env.ALLOWED_MEMBER_KEYS_JSON ?? "");
+    if (!Array.isArray(value)) return [];
+    return parseAllowedMembers(JSON.stringify(value));
+  } catch {
+    return [];
+  }
 }
 
 export function getAllowedMember(email: string | null | undefined) {
