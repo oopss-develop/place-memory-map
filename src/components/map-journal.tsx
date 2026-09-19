@@ -618,8 +618,12 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     setNotice("현재 위치를 찾고 있습니다…");
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => { setCurrentLocation({ latitude: coords.latitude, longitude: coords.longitude }); setNotice("현재 위치로 지도를 옮겼습니다."); },
-      () => setNotice("위치 권한을 확인한 뒤 다시 시도해 주세요."),
-      { enableHighAccuracy: true, timeout: 10000 },
+      (error) => {
+        if (error.code === error.PERMISSION_DENIED) return setNotice("브라우저의 위치 권한이 차단되어 있어요. 사이트 설정에서 위치를 허용한 뒤 다시 눌러 주세요.");
+        if (error.code === error.POSITION_UNAVAILABLE) return setNotice("현재 위치를 확인하지 못했어요. GPS나 네트워크를 켜고 다시 시도해 주세요.");
+        setNotice("위치를 찾는 데 시간이 걸리고 있어요. 잠시 후 다시 시도해 주세요.");
+      },
+      { enableHighAccuracy: true, maximumAge: 30000, timeout: 15000 },
     );
   }
 
