@@ -320,6 +320,7 @@ export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, ma
 
   useEffect(() => {
     if (!focusLocation || !ready || !mapRef.current || !window.kakao) return;
+    mapRef.current.setLevel(SEARCH_FOCUS_LEVEL);
     mapRef.current.panTo(new window.kakao.maps.LatLng(focusLocation.latitude, focusLocation.longitude));
   }, [focusLocation, ready]);
 

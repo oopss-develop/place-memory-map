@@ -102,7 +102,10 @@ export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnch
     const map = mapRef.current;
     if (!map) return;
     const target = mapFocus ?? focusLocation;
-    if (target) map.panTo([target.latitude, target.longitude]);
+    if (target) {
+      const zoom = mapFocus ? map.getZoom() : Math.max(map.getMinZoom(), map.getMaxZoom() - 2);
+      map.setView([target.latitude, target.longitude], zoom, { animate: true });
+    }
     if (selectedId) {
       const visit = visits.find((item) => item.id === selectedId);
       if (visit) map.panTo([visit.place.latitude, visit.place.longitude]);
