@@ -15,15 +15,15 @@ async function isGroupMember(supabase: SupabaseClient, groupId: string, userId: 
   return Boolean(data);
 }
 
-function isMarkerStyleMigrationPending(error: { code?: string; message?: string } | null) {
-  return Boolean(error && (
+function visitWriteError(error: { code?: string; message?: string } | null, fallback: string) {
+  if (error && (
     error.code === "PGRST204"
     || error.code === "42703"
-    || error.message?.includes("marker_style")
-  ));
-}
-
-function visitWriteError(error: { code?: string; message?: string } | null, fallback: string) {
+    || (error.code === "23514" && error.message?.includes("marker_style"))
+    || error.message?.includes("visits_marker_style_check")
+  )) {
+    return "새 맵핀을 저장하려면 Supabase에 최신 marker_style 마이그레이션을 적용해 주세요.";
+  }
   if (error && (
     error.code === "22P02"
     || (error.message?.includes("smallint") && error.message.includes("rating"))
@@ -86,18 +86,11 @@ export async function POST(request: Request) {
     created_by: auth.user.id,
     updated_by: auth.user.id,
   };
-  let { data: visit, error: visitError } = await auth.supabase
+  const { data: visit, error: visitError } = await auth.supabase
     .from("visits")
     .insert({ ...visitPayload, marker_style: input.markerStyle })
     .select("id,version")
     .single();
-  if (isMarkerStyleMigrationPending(visitError)) {
-    ({ data: visit, error: visitError } = await auth.supabase
-      .from("visits")
-      .insert(visitPayload)
-      .select("id,version")
-      .single());
-  }
   if (visitError || !visit) return NextResponse.json({ error: visitWriteError(visitError, "방문 기록을 저장하지 못했습니다.") }, { status: 400 });
 
   if (input.participantIds.length) {
@@ -131,7 +124,7 @@ export async function PUT(request: Request) {
     updated_by: auth.user.id,
     version: input.version + 1,
   };
-  let { data, error } = await auth.supabase
+  const { data, error } = await auth.supabase
     .from("visits")
     .update({ ...updatePayload, marker_style: input.markerStyle })
     .eq("id", input.id)
@@ -139,16 +132,6 @@ export async function PUT(request: Request) {
     .is("deleted_at", null)
     .select("id,version")
     .maybeSingle();
-  if (isMarkerStyleMigrationPending(error)) {
-    ({ data, error } = await auth.supabase
-      .from("visits")
-      .update(updatePayload)
-      .eq("id", input.id)
-      .eq("version", input.version)
-      .is("deleted_at", null)
-      .select("id,version")
-      .maybeSingle());
-  }
   if (error) return NextResponse.json({ error: visitWriteError(error, "방문 기록을 수정하지 못했습니다.") }, { status: 400 });
   if (!data) return NextResponse.json({ error: "다른 멤버가 먼저 수정했습니다. 최신 기록을 다시 불러와 주세요." }, { status: 409 });
 
