@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { MARKER_PICKER_STYLE_IDS, markerSvgDataUrl } from "@/lib/marker-styles";
 import { placeSearchSchema, visitSchema } from "@/lib/schemas";
 
 const validVisit = {
@@ -15,10 +16,15 @@ const validVisit = {
 
 describe("visitSchema", () => {
   it("accepts a complete manual-pin visit", () => expect(visitSchema.safeParse(validVisit).success).toBe(true));
-  it("uses the black marker by default", () => expect(visitSchema.parse(validVisit).markerStyle).toBe("black-1"));
+  it("uses a round black marker by default", () => expect(visitSchema.parse(validVisit).markerStyle).toBe("black-9"));
   it("marks new visits as completed by default", () => expect(visitSchema.parse(validVisit).isPlanned).toBe(false));
   it("accepts a planned visit", () => expect(visitSchema.parse({ ...validVisit, isPlanned: true }).isPlanned).toBe(true));
   it("accepts a supported marker", () => expect(visitSchema.parse({ ...validVisit, markerStyle: "round-gamepad-black" }).markerStyle).toBe("round-gamepad-black"));
+  it("shows only round pins in the picker", () => {
+    expect(MARKER_PICKER_STYLE_IDS).toHaveLength(38);
+    expect(MARKER_PICKER_STYLE_IDS.every((style) => markerSvgDataUrl(style).endsWith("-round.png"))).toBe(true);
+  });
+  it("still accepts previously saved square pins", () => expect(visitSchema.parse({ ...validVisit, markerStyle: "square-camp-color" }).markerStyle).toBe("square-camp-color"));
   it("rejects an unknown marker", () => expect(visitSchema.safeParse({ ...validVisit, markerStyle: "unknown" }).success).toBe(false));
   it("accepts half-point ratings", () => expect(visitSchema.safeParse({ ...validVisit, rating: 4.5 }).success).toBe(true));
   it("rejects ratings above five", () => expect(visitSchema.safeParse({ ...validVisit, rating: 5.5 }).success).toBe(false));

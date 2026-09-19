@@ -16,30 +16,21 @@ export const MARKER_STYLE_IDS = [
 ] as const;
 export type MarkerStyle = (typeof MARKER_STYLE_IDS)[number];
 
-// Keep the picker grouped by icon, then color, then shape.
+// Show only round pins in the picker; square IDs remain valid for existing visits.
 export const MARKER_PICKER_STYLE_IDS: MarkerStyle[] = [
-  "color-1", "color-9", "black-1", "black-9",
-  "color-2", "color-10", "black-2", "black-10",
-  "color-3", "color-11", "black-3", "black-11",
-  "color-4", "color-12", "black-4", "black-12",
-  "color-5", "color-13", "black-5", "black-13",
-  "color-6", "color-14", "black-6", "black-14",
-  "color-7", "color-15", "black-7", "black-15",
-  "color-8", "color-16", "black-8", "black-16",
-  "square-cat-color", "round-cat-color", "square-cat-black", "round-cat-black",
-  "square-plane-color", "round-plane-color", "square-plane-black", "round-plane-black",
-  "square-gamepad-color", "round-gamepad-color", "square-gamepad-black", "round-gamepad-black",
-  "square-camp-color", "round-camp-color", "square-camp-black", "round-camp-black",
-  "square-museum-color", "round-museum-color", "square-museum-black", "round-museum-black",
-  "square-night-color", "round-night-color", "square-night-black", "round-night-black",
-  "square-car-color", "round-car-color", "square-car-black", "round-car-black",
-  "square-forest-color", "round-forest-color", "square-forest-black", "round-forest-black",
-  "square-mountain-color", "round-mountain-color", "square-mountain-black", "round-mountain-black",
-  "square-water-color", "round-water-color", "square-water-black", "round-water-black",
-  "square-park-color", "round-park-color", "square-park-black", "round-park-black",
+  "color-9", "black-9", "color-10", "black-10",
+  "color-11", "black-11", "color-12", "black-12",
+  "color-13", "black-13", "color-14", "black-14",
+  "color-15", "black-15", "color-16", "black-16",
+  "round-cat-color", "round-cat-black", "round-plane-color", "round-plane-black",
+  "round-gamepad-color", "round-gamepad-black", "round-camp-color", "round-camp-black",
+  "round-museum-color", "round-museum-black", "round-night-color", "round-night-black",
+  "round-car-color", "round-car-black", "round-forest-color", "round-forest-black",
+  "round-mountain-color", "round-mountain-black", "round-water-color", "round-water-black",
+  "round-park-color", "round-park-black",
 ];
 
-export const DEFAULT_MARKER_STYLE: MarkerStyle = "black-1";
+export const DEFAULT_MARKER_STYLE: MarkerStyle = "black-9";
 
 const MARKER_STYLE_FILES: Record<MarkerStyle, string> = {
   "color-1": "food-coral-square.png",
