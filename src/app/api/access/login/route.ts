@@ -39,6 +39,11 @@ export async function POST(request: Request) {
     userId = data.user.id;
   }
 
+  const { error: profileError } = await admin
+    .from("profiles")
+    .upsert({ id: userId, display_name: member.displayName }, { onConflict: "id" });
+  if (profileError) return NextResponse.json({ error: "사용자 이름을 저장하지 못했습니다." }, { status: 502 });
+
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword({
     email: member.email,
