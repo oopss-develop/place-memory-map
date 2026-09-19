@@ -67,6 +67,7 @@ export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, ma
         clustererRef.current = new window.kakao.maps.MarkerClusterer({
           map: mapRef.current,
           averageCenter: true,
+          gridSize: 32,
           minLevel: 6,
           disableClickZoom: false,
           styles: [{
