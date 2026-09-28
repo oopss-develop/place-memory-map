@@ -1,8 +1,14 @@
 -- Apply after 202609190001. Safe to run as one transaction in SQL Editor.
 begin;
 
-alter table public.places add constraint places_id_group_unique unique (id, group_id);
-create table public.trips (
+do $$ begin
+  if not exists (select 1 from pg_catalog.pg_constraint
+    where conname = 'places_id_group_unique' and conrelid = 'public.places'::regclass)
+    and pg_catalog.to_regclass('public.places_id_group_unique') is null then
+    alter table public.places add constraint places_id_group_unique unique (id, group_id);
+  end if;
+end $$;
+create table if not exists public.trips (
   id uuid primary key default gen_random_uuid(),
   group_id uuid not null references public.groups(id) on delete cascade,
   name text not null check (char_length(btrim(name)) between 1 and 120),
@@ -17,7 +23,7 @@ create table public.trips (
   deleted_at timestamptz,
   unique (id, group_id)
 );
-create table public.schedule_items (
+create table if not exists public.schedule_items (
   id uuid primary key default gen_random_uuid(),
   group_id uuid not null references public.groups(id) on delete cascade,
   trip_id uuid not null,
@@ -36,11 +42,11 @@ create table public.schedule_items (
   foreign key (trip_id, group_id) references public.trips(id, group_id) on delete cascade,
   foreign key (place_id, group_id) references public.places(id, group_id)
 );
-create index trips_group_dates_idx on public.trips(group_id, start_date) where deleted_at is null;
-create index schedule_trip_time_idx on public.schedule_items(trip_id, starts_at) where deleted_at is null;
-create index schedule_place_idx on public.schedule_items(place_id, group_id);
+create index if not exists trips_group_dates_idx on public.trips(group_id, start_date) where deleted_at is null;
+create index if not exists schedule_trip_time_idx on public.schedule_items(trip_id, starts_at) where deleted_at is null;
+create index if not exists schedule_place_idx on public.schedule_items(place_id, group_id);
 
-create function private.validate_trip() returns trigger
+create or replace function private.validate_trip() returns trigger
 language plpgsql set search_path = '' as $$
 begin
   if not exists(select 1 from pg_catalog.pg_timezone_names where name = new.time_zone) then
@@ -60,10 +66,11 @@ begin
   new.updated_at := now();
   return new;
 end $$;
+drop trigger if exists trips_validate on public.trips;
 create trigger trips_validate before insert or update on public.trips
   for each row execute function private.validate_trip();
 
-create function private.validate_schedule_item() returns trigger
+create or replace function private.validate_schedule_item() returns trigger
 language plpgsql set search_path = '' as $$
 declare parent public.trips;
 begin
@@ -83,13 +90,16 @@ begin
   new.updated_at := now();
   return new;
 end $$;
+drop trigger if exists schedule_items_validate on public.schedule_items;
 create trigger schedule_items_validate before insert or update on public.schedule_items
   for each row execute function private.validate_schedule_item();
 
 alter table public.trips enable row level security;
 alter table public.schedule_items enable row level security;
+drop policy if exists trips_read on public.trips;
 create policy trips_read on public.trips for select to authenticated
   using (deleted_at is null and private.is_group_member(group_id));
+drop policy if exists schedule_items_read on public.schedule_items;
 create policy schedule_items_read on public.schedule_items for select to authenticated
   using (deleted_at is null and private.is_group_member(group_id)
     and exists(select 1 from public.trips t where t.id = trip_id and t.deleted_at is null));
@@ -98,7 +108,7 @@ grant select on public.trips, public.schedule_items to authenticated;
 
 -- Only these RPCs can write. Never trust caller-supplied authors or group IDs
 -- for updates, and never grant these functions to anonymous callers.
-create function public.save_trip(payload jsonb) returns public.trips
+create or replace function public.save_trip(payload jsonb) returns public.trips
 language plpgsql security definer set search_path = '' as $$
 declare result public.trips; caller uuid := auth.uid(); target uuid := (payload->>'id')::uuid;
 begin
@@ -126,7 +136,7 @@ begin
   return result;
 end $$;
 
-create function public.delete_trip(target_id uuid, expected_version integer) returns void
+create or replace function public.delete_trip(target_id uuid, expected_version integer) returns void
 language plpgsql security definer set search_path = '' as $$
 declare parent public.trips; caller uuid := auth.uid();
 begin
@@ -142,7 +152,7 @@ begin
   update public.trips set deleted_at = now(), updated_by = caller, version = version + 1 where id = target_id;
 end $$;
 
-create function public.save_schedule_item(target_trip_id uuid, payload jsonb) returns uuid
+create or replace function public.save_schedule_item(target_trip_id uuid, payload jsonb) returns uuid
 language plpgsql security definer set search_path = '' as $$
 declare parent public.trips; previous public.schedule_items; caller uuid := auth.uid();
   target uuid := (payload->>'id')::uuid; location_id uuid := (payload->'place'->>'id')::uuid;
@@ -193,7 +203,7 @@ begin
   return target;
 end $$;
 
-create function public.delete_schedule_item(target_trip_id uuid, target_id uuid, expected_version integer) returns void
+create or replace function public.delete_schedule_item(target_trip_id uuid, target_id uuid, expected_version integer) returns void
 language plpgsql security definer set search_path = '' as $$
 declare parent public.trips; caller uuid := auth.uid();
 begin

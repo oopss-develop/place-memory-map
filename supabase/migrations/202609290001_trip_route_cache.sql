@@ -2,7 +2,7 @@ begin;
 
 -- The route is generated only after an explicit user action. Cache keys cover
 -- the trip, date, map provider, and ordered location sequence.
-create table public.trip_route_cache (
+create table if not exists public.trip_route_cache (
   trip_id uuid not null references public.trips(id) on delete cascade,
   route_date date not null,
   provider text not null check (provider in ('kakao', 'osm')),
@@ -17,6 +17,7 @@ create table public.trip_route_cache (
 );
 
 alter table public.trip_route_cache enable row level security;
+drop policy if exists trip_route_cache_read on public.trip_route_cache;
 create policy trip_route_cache_read on public.trip_route_cache for select to authenticated
   using (exists (
     select 1 from public.trips t
@@ -25,9 +26,10 @@ create policy trip_route_cache_read on public.trip_route_cache for select to aut
 revoke all on public.trip_route_cache from public, anon, authenticated;
 grant select on public.trip_route_cache to authenticated;
 
+drop function if exists public.save_trip_route(uuid, date, text, text, text, jsonb, integer, integer);
 create function public.save_trip_route(
   target_trip_id uuid,
-  route_date date,
+  p_route_date date,
   route_provider text,
   route_signature text,
   route_kind text,
@@ -42,7 +44,7 @@ begin
   if not found or caller is null or not private.is_group_member(parent.group_id, caller) then
     raise exception '여행을 찾을 수 없거나 권한이 없습니다.' using errcode = '42501';
   end if;
-  if route_date < parent.start_date or route_date > parent.end_date then
+  if p_route_date < parent.start_date or p_route_date > parent.end_date then
     raise exception '여행 기간 밖의 날짜입니다.' using errcode = '22023';
   end if;
   if route_provider not in ('kakao', 'osm') or route_signature !~ '^[0-9a-f]{64}$'
@@ -62,7 +64,7 @@ begin
     raise exception '경로 정보가 올바르지 않습니다.' using errcode = '22023';
   end if;
   insert into public.trip_route_cache(trip_id, route_date, provider, signature, route_kind, route_points, distance_meters, duration_seconds, created_by)
-  values (target_trip_id, route_date, route_provider, route_signature, route_kind, route_points, distance_meters, duration_seconds, caller)
+  values (target_trip_id, p_route_date, route_provider, route_signature, route_kind, route_points, distance_meters, duration_seconds, caller)
   on conflict (trip_id, route_date, provider, signature) do update set
     route_kind = excluded.route_kind,
     route_points = excluded.route_points,
