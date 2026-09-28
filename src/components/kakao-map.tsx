@@ -36,6 +36,7 @@ export interface MapAnchor {
 // Kakao Maps uses level 1 for its maximum zoom; level 3 is two steps wider.
 const SEARCH_FOCUS_LEVEL = 3;
 const FALLBACK_MAP_BOUNDS = { minLatitude: 37.5, maxLatitude: 37.61, minLongitude: 126.91, maxLongitude: 127.09 };
+const EMPTY_HIGHLIGHTED_IDS: string[] = [];
 
 function fallbackMapPosition(latitude: number, longitude: number) {
   const left = 13 + ((longitude - FALLBACK_MAP_BOUNDS.minLongitude) / (FALLBACK_MAP_BOUNDS.maxLongitude - FALLBACK_MAP_BOUNDS.minLongitude)) * 74;
@@ -43,7 +44,7 @@ function fallbackMapPosition(latitude: number, longitude: number) {
   return { left: Math.max(8, Math.min(88, left)), top: Math.max(8, Math.min(84, top)) };
 }
 
-export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, pulseLocation, highlightedIds = [] }: Props<T>) {
+export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, pulseLocation, highlightedIds = EMPTY_HIGHLIGHTED_IDS }: Props<T>) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);

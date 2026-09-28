@@ -24,6 +24,7 @@ interface Props<T extends MapPoint> {
 declare global { interface Window { L?: any; } }
 
 let leafletPromise: Promise<any> | undefined;
+const EMPTY_HIGHLIGHTED_IDS: string[] = [];
 
 function loadLeaflet() {
   if (window.L) return Promise.resolve(window.L);
@@ -47,7 +48,7 @@ function loadLeaflet() {
   return leafletPromise;
 }
 
-export function OpenStreetMap<T extends MapPoint>({ visits, selectedId, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, highlightedIds = [] }: Props<T>) {
+export function OpenStreetMap<T extends MapPoint>({ visits, selectedId, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, highlightedIds = EMPTY_HIGHLIGHTED_IDS }: Props<T>) {
   const elementRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markerLayerRef = useRef<any>(null);
