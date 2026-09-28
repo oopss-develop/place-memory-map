@@ -53,6 +53,9 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
   const pulseOverlayRef = useRef<any>(null);
   const bounceOverlayRef = useRef<any>(null);
   const lastSelectedIdRef = useRef<string | undefined>(undefined);
+  const lastSelectionRequestRef = useRef(selectionRequest);
+  const lastViewportMapRef = useRef<any>(null);
+  const lastBoundsSignatureRef = useRef("");
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_JS_KEY;
@@ -224,16 +227,31 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
 
   useEffect(() => {
     if (!visits.length) return;
+    const mapChanged = Boolean(mapRef.current && lastViewportMapRef.current !== mapRef.current);
+    if (mapChanged) {
+      lastViewportMapRef.current = mapRef.current;
+      lastBoundsSignatureRef.current = "";
+    }
     const previousSelectedId = lastSelectedIdRef.current;
     const wasSelected = Boolean(previousSelectedId && visits.some((visit) => visit.id === previousSelectedId));
-    lastSelectedIdRef.current = selectedId;
-    if (mapFocus) return;
+    const selectionChanged = previousSelectedId !== selectedId
+      || lastSelectionRequestRef.current !== selectionRequest
+      || mapChanged;
+    if (mapFocus) {
+      lastSelectedIdRef.current = selectedId;
+      lastSelectionRequestRef.current = selectionRequest;
+      return;
+    }
     const visibleVisits = highlightedIds.length
       ? visits.filter((visit) => highlightedIds.includes(visit.id))
       : visits;
     if (!visibleVisits.length) return;
     const selectedVisit = visits.find((visit) => visit.id === selectedId);
     if (selectedVisit) {
+      if (!selectionChanged) return;
+      if (apiKey && (!ready || !mapRef.current || !window.kakao)) return;
+      lastSelectedIdRef.current = selectedId;
+      lastSelectionRequestRef.current = selectionRequest;
       onAnchorChange?.();
       if (!apiKey) {
         const frame = window.requestAnimationFrame(() => {
@@ -246,7 +264,6 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
         });
         return () => window.cancelAnimationFrame(frame);
       }
-      if (!ready || !mapRef.current || !window.kakao) return;
       let completed = false;
       const reveal = () => {
         if (completed) return;
@@ -295,18 +312,27 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
         if (!completed) window.kakao.maps.event.removeListener(mapRef.current, "idle", reveal);
       };
     }
+    lastSelectedIdRef.current = selectedId;
+    lastSelectionRequestRef.current = selectionRequest;
     // Closing the detail sheet should leave the map where the sheet interaction
     // positioned it. Re-fitting bounds here jumps back to the pre-selection view.
     if (!selectedId && wasSelected) return;
+    const boundsSignature = visibleVisits
+      .map((visit) => `${visit.id}:${visit.place.latitude},${visit.place.longitude}`)
+      .sort()
+      .join("|");
+    if (boundsSignature === lastBoundsSignatureRef.current) return;
     if (!ready || !mapRef.current || !window.kakao) return;
     if (visibleVisits.length === 1) {
       const visit = visibleVisits[0];
       mapRef.current.setCenter(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude));
+      lastBoundsSignatureRef.current = boundsSignature;
       return;
     }
     const bounds = new window.kakao.maps.LatLngBounds();
     visibleVisits.forEach((visit) => bounds.extend(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude)));
     mapRef.current.setBounds(bounds, 72, 72, 72, 72);
+    lastBoundsSignatureRef.current = boundsSignature;
   }, [apiKey, highlightedIds, mapFocus, onAnchorChange, onDismissPopup, ready, selectedId, selectionRequest, visits]);
 
   useEffect(() => {
