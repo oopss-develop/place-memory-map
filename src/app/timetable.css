@@ -104,7 +104,7 @@
   .planner-header { min-height: 64px; flex: 0 0 64px; gap: 14px; padding: 8px 20px; }
   .planner-header h1 { font-size: 20px; margin-right: 8px; }
   .planner-back { min-height: 38px !important; padding: 6px 10px !important; }
-  .planner-group, .planner-trip-choice { display: flex; flex-direction: row !important; align-items: center; gap: 9px; width: min(235px, 17vw); max-width: none; min-width: 175px; white-space: nowrap; }
+  .planner-group, .planner-trip-choice { display: flex; flex-direction: row !important; align-items: center; gap: 0; width: clamp(170px, 19vw, 260px); max-width: none; min-width: 0; font-size: 0; white-space: nowrap; }
   .planner-group select, .planner-trip-choice select { width: 100%; min-height: 38px; }
   .planner-trip-name { display: block; width: min(220px, 16vw); min-width: 155px; overflow: hidden; text-overflow: ellipsis; font-weight: 700; }
   .planner-trip-name small { display: block; overflow: hidden; font-size: 11px; font-weight: 400; color: var(--ink-muted); text-overflow: ellipsis; }
@@ -136,7 +136,7 @@
 @media (min-width: 821px) and (max-width: 1259px) {
   .planner-workspace { grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr); }
   .planner-header { gap: 8px; padding-inline: 12px; }
-  .planner-group, .planner-trip-choice { min-width: 145px; }
+  .planner-group, .planner-trip-choice { width: clamp(160px, 19vw, 230px); min-width: 0; }
   .planner-header h1 { font-size: 18px; margin-right: 0; }
   .planner-datebar { padding-inline: 12px; }
 }
