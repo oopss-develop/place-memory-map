@@ -100,7 +100,7 @@ export async function POST(request: Request) {
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  return NextResponse.json({ id: visit.id, version: visit.version }, { status: 201 });
+  return NextResponse.json({ id: visit.id, version: visit.version, placeId }, { status: 201 });
 }
 
 export async function PUT(request: Request) {
@@ -111,7 +111,7 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: parsed.success ? "기록 ID가 필요합니다." : parsed.error.issues[0]?.message }, { status: 400 });
   }
   const input = parsed.data;
-  const { data: currentVisit, error: currentVisitError } = await auth.supabase.from("visits").select("group_id").eq("id", input.id).maybeSingle();
+  const { data: currentVisit, error: currentVisitError } = await auth.supabase.from("visits").select("group_id,place_id").eq("id", input.id).maybeSingle();
   if (currentVisitError || !currentVisit) return NextResponse.json({ error: "방문 기록을 찾지 못했습니다." }, { status: 404 });
   if (!await isGroupMember(auth.supabase, currentVisit.group_id, auth.user.id)) return NextResponse.json({ error: "이 기록을 수정할 권한이 없습니다." }, { status: 403 });
   const updatePayload = {
@@ -141,7 +141,7 @@ export async function PUT(request: Request) {
       input.participantIds.map((userId) => ({ visit_id: input.id, user_id: userId })),
     );
   }
-  return NextResponse.json(data);
+  return NextResponse.json({ ...data, placeId: currentVisit.place_id });
 }
 
 export async function DELETE(request: Request) {

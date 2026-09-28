@@ -1,11 +1,11 @@
 import { expect, test } from "@playwright/test";
 
-test("login uses the four-member email allowlist", async ({ page }) => {
+test("login uses the four-member email and keyword allowlist", async ({ page }) => {
   await page.goto("/login");
   await expect(page.getByLabel("등록된 이메일")).toHaveAttribute("type", "email");
-  await expect(page.getByRole("button", { name: "로그인 링크 받기" })).toBeVisible();
-  await expect(page.getByText("처음 쓰는 기기에서만 메일 인증이 필요해요.")).toBeVisible();
-  await expect(page.getByLabel("우리만의 입장 코드")).toHaveCount(0);
+  await expect(page.getByLabel("키워드")).toBeVisible();
+  await expect(page.getByRole("button", { name: "로그인", exact: true })).toBeVisible();
+  await expect(page.getByText("등록된 이메일과 키워드를 입력해 주세요.")).toBeVisible();
 });
 
 test("shows an empty map journal", async ({ page }) => {
@@ -136,9 +136,9 @@ test("a marker shape can be selected and edited", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "지도에 핀 추가" }).click();
   await page.locator(".map-canvas").click({ position: { x: 220, y: 180 }, force: true });
-  await expect(page.getByRole("radio", { name: /핀/ })).toHaveCount(44);
-  await page.getByTitle("핀 44", { exact: true }).click();
-  await expect(page.getByRole("radio", { name: "핀 44", exact: true })).toBeChecked();
+  await expect(page.getByRole("radio", { name: /핀/ })).toHaveCount(38);
+  await page.getByTitle("핀 22", { exact: true }).click();
+  await expect(page.getByRole("radio", { name: "핀 22", exact: true })).toBeChecked();
   const rating = page.getByRole("slider", { name: "별점 선택" });
   await page.locator(".rating-star").nth(3).click({ position: { x: 4, y: 20 } });
   await expect(rating).toHaveAttribute("aria-valuenow", "3.5");
@@ -158,7 +158,7 @@ test("a marker shape can be selected and edited", async ({ page }) => {
   await expect(marker).toHaveAttribute("data-marker-style", "round-gamepad-black");
   await marker.click();
   await page.getByRole("button", { name: "수정", exact: true }).click();
-  await expect(page.getByRole("radio", { name: "핀 44", exact: true })).toBeChecked();
+  await expect(page.getByRole("radio", { name: "핀 22", exact: true })).toBeChecked();
   await expect(page.getByRole("slider", { name: "별점 선택" })).toHaveAttribute("aria-valuenow", "4.5");
 });
 

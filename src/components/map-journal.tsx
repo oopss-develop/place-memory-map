@@ -7,6 +7,7 @@ import { flushSync } from "react-dom";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, Globe2, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Palette, Plus, Search, Users, X, ZoomIn } from "lucide-react";
 import { KakaoMap, type MapAnchor } from "@/components/kakao-map";
+import { TripPlanner } from "@/components/trip-planner";
 import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
 import { FontPicker } from "@/components/font-preference";
@@ -48,6 +49,8 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [groups, setGroups] = useState(initialData.groups);
   const [activeGroupId, setActiveGroupId] = useState(initialData.groups[0]?.id ?? "");
   const [visits, setVisits] = useState(initialData.visits);
+  const [plannerOpen, setPlannerOpen] = useState(false);
+  const [plannerVisit, setPlannerVisit] = useState<Visit>();
   const [storageReady, setStorageReady] = useState(() => !initialData.demoMode);
   const [selectedId, setSelectedId] = useState<string | undefined>();
   const [selectedAnchor, setSelectedAnchor] = useState<MapAnchor>();
@@ -493,7 +496,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     const parsed = visitSchema.safeParse(raw);
     if (!parsed.success) return setFormError(parsed.error.issues[0]?.message ?? "입력을 확인해 주세요.");
 
-    let id = editing?.id ?? crypto.randomUUID(); let version = editing?.version ?? 1; let photoUrls = editing?.photoUrls ?? [];
+    let placeId = draftPlace.id; let id = editing?.id ?? crypto.randomUUID(); let version = editing?.version ?? 1; let photoUrls = editing?.photoUrls ?? [];
     setPendingAction("save");
     try {
       const preparedFiles = files.length ? await Promise.all(files.map(prepareVisitImage)) : [];
@@ -501,7 +504,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
         const response = await fetch("/api/visits", { method: editing ? "PUT" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(parsed.data) });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error);
-        id = data.id; version = data.version;
+        id = data.id; version = data.version; placeId = data.placeId ?? placeId;
         if (preparedFiles.length) {
           const photoData = new FormData();
           preparedFiles.forEach((file) => photoData.append("photos", file, file.name));
@@ -512,7 +515,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
         }
       } else if (preparedFiles.length) photoUrls = preparedFiles.map((file) => URL.createObjectURL(file));
 
-      const nextVisit: Visit = { id, groupId: activeGroup.id, place: parsed.data.place as Place, visitedOn: parsed.data.visitedOn, isPlanned: parsed.data.isPlanned, title: parsed.data.title, note: parsed.data.note, rating: parsed.data.rating, tags: parsed.data.tags, participants: initialData.members.filter((member) => participantIds.includes(member.id)), photoUrls, markerStyle: parsed.data.markerStyle, version, updatedBy: initialData.members[0]?.displayName ?? "나" };
+      const nextVisit: Visit = { id, groupId: activeGroup.id, place: { ...parsed.data.place, id: placeId }, visitedOn: parsed.data.visitedOn, isPlanned: parsed.data.isPlanned, title: parsed.data.title, note: parsed.data.note, rating: parsed.data.rating, tags: parsed.data.tags, participants: initialData.members.filter((member) => participantIds.includes(member.id)), photoUrls, markerStyle: parsed.data.markerStyle, version, updatedBy: initialData.members[0]?.displayName ?? "나" };
     setVisits((current) => editing ? current.map((visit) => visit.id === editing.id ? nextVisit : visit) : [nextVisit, ...current]);
       setSelectedId(id); setSelectedAnchor(undefined); setSelectionRequest((request) => request + 1); setSelectedDateKey(parsed.data.visitedOn); setNotice(editing ? "기록을 고쳤습니다." : "새로운 기억을 지도에 남겼습니다."); dialogRef.current?.close();
     } catch (error) { setFormError(error instanceof Error ? error.message : "기록을 저장하지 못했습니다."); }
@@ -629,13 +632,15 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
   if (!groups.length) return <GroupOnboarding />;
 
+  if (plannerOpen) return <main className="journal-app planner-app" data-theme={theme}><TripPlanner key={activeGroupId} groupId={activeGroupId} groups={groups} visits={visits} demo={initialData.demoMode} initialVisit={plannerVisit?.groupId === activeGroupId ? plannerVisit : undefined} onGroup={chooseGroup} onClose={() => { setPlannerOpen(false); setPlannerVisit(undefined); }} /></main>;
+
   return (
     <main className="journal-app" data-theme={theme}>
       {mobileList && <div className="sidebar-backdrop" aria-hidden="true" onClick={() => { setMobileList(false); closeGroupMenu(); }} />}
       <aside ref={sidebarRef} id="journal-sidebar" className={`journal-sidebar ${mobileList ? "mobile-open" : ""}`} inert={isMobile && !mobileList} role={isMobile && mobileList ? "dialog" : undefined} aria-modal={isMobile && mobileList ? true : undefined} aria-label="기록 목록과 장소 검색">
         <header className="sidebar-header"><div className="wordmark"><span className="wordmark-pin"><img src="/map-pins/sparkle-yellow-round.png" alt="" /></span><span>PLACE<br />MEMORY MAP</span></div><button className="icon-button mobile-close" onClick={() => setMobileList(false)} aria-label="목록 닫기"><X size={20} /></button></header>
         <div className="group-row"><label id="group-label">함께 보는 지도</label><div className="group-picker"><button className="group-picker-trigger" type="button" aria-labelledby="group-label" aria-haspopup="listbox" aria-expanded={groupPickerOpen} onClick={() => setGroupPickerOpen((value) => !value)}><span>{activeGroup?.name ?? "지도 선택"}</span><ChevronDown size={17} /></button>{groupPickerOpen && <div className="group-picker-menu" role="listbox" aria-label="함께 보는 지도 선택">{groups.filter((group) => group.id !== activeGroupId).map((group) => <button key={group.id} className="group-picker-option" type="button" role="option" aria-selected={false} onClick={() => chooseGroup(group.id)}>{group.name}<span>{visits.filter((visit) => visit.groupId === group.id).length}건</span></button>)}<button className="group-picker-add" type="button" onClick={openCreateGroup}><Plus size={15} />함께 보는 지도 추가</button></div>}</div></div>
-        <div className="search-area"><form className="place-search" role="search" onSubmit={searchPlaces}><Search size={19} aria-hidden="true" /><input ref={searchInputRef} type="search" enterKeyHint="search" value={query} onChange={(event) => { setQuery(event.target.value); setSearchResults([]); setSearchMessage(""); }} placeholder={mapProvider === "osm" ? "도시, 명소, 주소로 해외 검색" : "장소 이름으로 국내 검색"} aria-label="장소 검색" autoComplete="off" /><button type="submit" disabled={searching}>{searching ? "찾는 중" : "찾기"}</button></form>{(searchResults.length > 0 || searchMessage) && <div className="search-popover" aria-live="polite">{searchResults.map((result) => <button key={result.id} type="button" onClick={() => openForPlace({ id: crypto.randomUUID(), provider: mapProvider === "osm" ? "manual" : "kakao", providerPlaceId: result.id, name: result.placeName, address: result.roadAddressName || result.addressName, category: result.categoryName, latitude: result.latitude, longitude: result.longitude })}><strong>{result.placeName}</strong><span>{result.roadAddressName || result.addressName}</span></button>)}{searchMessage && <p>{searchMessage}</p>}<button className="search-manual" type="button" onClick={startManualPin}>찾는 장소가 없나요? 지도에서 직접 선택</button></div>}</div>
+        <nav className="journal-view-switch" aria-label="지도 보기 방식"><button aria-pressed="true">기록</button><button onClick={() => { setPlannerVisit(undefined); setPlannerOpen(true); setMobileList(false); }}>여행 계획</button></nav><div className="search-area"><form className="place-search" role="search" onSubmit={searchPlaces}><Search size={19} aria-hidden="true" /><input ref={searchInputRef} type="search" enterKeyHint="search" value={query} onChange={(event) => { setQuery(event.target.value); setSearchResults([]); setSearchMessage(""); }} placeholder={mapProvider === "osm" ? "도시, 명소, 주소로 해외 검색" : "장소 이름으로 국내 검색"} aria-label="장소 검색" autoComplete="off" /><button type="submit" disabled={searching}>{searching ? "찾는 중" : "찾기"}</button></form>{(searchResults.length > 0 || searchMessage) && <div className="search-popover" aria-live="polite">{searchResults.map((result) => <button key={result.id} type="button" onClick={() => openForPlace({ id: crypto.randomUUID(), provider: mapProvider === "osm" ? "manual" : "kakao", providerPlaceId: result.id, name: result.placeName, address: result.roadAddressName || result.addressName, category: result.categoryName, latitude: result.latitude, longitude: result.longitude })}><strong>{result.placeName}</strong><span>{result.roadAddressName || result.addressName}</span></button>)}{searchMessage && <p>{searchMessage}</p>}<button className="search-manual" type="button" onClick={startManualPin}>찾는 장소가 없나요? 지도에서 직접 선택</button></div>}</div>
         <div className="filter-row" aria-label="기록 필터"><Filter size={15} />{allTags.map((item) => <button key={item} type="button" className={tag === item ? "active" : ""} aria-pressed={tag === item} onClick={() => setTag(item)}>{item}</button>)}</div>
         <div className="record-heading"><div><h1>기록</h1><p>{groupVisits.length}개의 방문 기록</p></div></div>
         <div className="record-list">
@@ -671,14 +676,14 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
               <span className="sheet-photo-count" aria-live="polite">{activePhotoIndex + 1} / {selected.photoUrls.length}</span>
             </>}
           </div>}
-          <div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><div className="sheet-rating" aria-label={`별점 ${formatRating(selected.rating)}점, 5점 만점`}><SquareSparkIcon className="rating-square-spark" /><strong>{formatRating(selected.rating)}</strong><span>/5.0</span></div><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button className="zoom-button" type="button" disabled={Boolean(pendingAction)} onClick={() => zoomToVisit(selected)} aria-label="선택 위치 최대 확대"><ZoomIn size={14} />최대 확대</button><button disabled={Boolean(pendingAction)} onClick={() => openEdit(selected)}>수정</button><button className="danger-button" disabled={Boolean(pendingAction)} onClick={() => deleteVisit(selected)}>{pendingAction === "delete" ? "삭제 중…" : "삭제"}</button></div></div></div>
+          <div className="sheet-content"><div className="sheet-date"><span>{formatDate(selected.visitedOn)}</span><span>{selected.place.category}</span></div><h2>{selected.place.name}</h2><p className="sheet-address"><MapPin size={15} />{selected.place.address || "직접 지정한 위치"}</p><div className="sheet-rating" aria-label={`별점 ${formatRating(selected.rating)}점, 5점 만점`}><SquareSparkIcon className="rating-square-spark" /><strong>{formatRating(selected.rating)}</strong><span>/5.0</span></div><h3>{selected.title}</h3><p className="sheet-note">{selected.note}</p><div className="sheet-tags">{selected.tags.map((item) => <span key={item}>#{item}</span>)}</div><div className="sheet-footer"><div className="participants">{selected.participants.map((person) => <span key={person.id} title={person.displayName}>{person.initials}</span>)}<small>함께</small></div><div className="sheet-actions"><button onClick={() => { setPlannerVisit(selected); setPlannerOpen(true); setMobileList(false); }}>여행 일정에 넣기</button><button className="zoom-button" type="button" disabled={Boolean(pendingAction)} onClick={() => zoomToVisit(selected)} aria-label="선택 위치 최대 확대"><ZoomIn size={14} />최대 확대</button><button disabled={Boolean(pendingAction)} onClick={() => openEdit(selected)}>수정</button><button className="danger-button" disabled={Boolean(pendingAction)} onClick={() => deleteVisit(selected)}>{pendingAction === "delete" ? "삭제 중…" : "삭제"}</button></div></div></div>
           </div>
         </article>}
         {notice && <button className="notice" onClick={() => setNotice("")} aria-live="polite">{notice}<X size={14} /></button>}
         <nav className="mobile-nav" aria-label="모바일 주요 메뉴">
           <button className={!mobileList && !manualMode ? "active" : ""} aria-current={!mobileList && !manualMode ? "page" : undefined} type="button" onClick={() => { setMobileList(false); setManualMode(false); setSelectedId(undefined); setSelectedAnchor(undefined); }}><MapIcon size={21} />지도</button>
           <button type="button" onClick={() => openMobileList()}><List size={21} />기록</button>
-          <button className={manualMode ? "active" : ""} aria-pressed={manualMode} type="button" onClick={() => manualMode ? setManualMode(false) : startManualPin()}>{manualMode ? <X size={23} /> : <Plus size={23} />}{manualMode ? "추가 취소" : "추가"}</button>
+          <button type="button" onClick={() => { setPlannerVisit(undefined); setPlannerOpen(true); setMobileList(false); }}><CalendarDays size={21} />여행 계획</button><button className={manualMode ? "active" : ""} aria-pressed={manualMode} type="button" onClick={() => manualMode ? setManualMode(false) : startManualPin()}>{manualMode ? <X size={23} /> : <Plus size={23} />}{manualMode ? "추가 취소" : "추가"}</button>
           <button type="button" onClick={() => openMobileList("groups")}><Users size={21} />그룹</button>
         </nav>
       </section>

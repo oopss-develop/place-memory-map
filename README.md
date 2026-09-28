@@ -30,6 +30,41 @@ Vercel 프로젝트에 Git 저장소를 연결하고 `.env.example`의 값을 �
 
 새로 추가된 맵핀 모양을 저장하려면 Supabase SQL Editor에서 `202609190001_expand_visit_marker_styles.sql`도 실행해야 합니다. Vercel 재배포나 브라우저 캐시 삭제만으로는 DB의 기존 맵핀 제한 규칙이 바뀌지 않습니다.
 
+### 여행 시간표 DB 적용
+
+1. 기존 마이그레이션이 `202609190001`까지 적용되었는지 확인합니다.
+2. `supabase/migrations/202609280001_trip_timetables.sql` 전체를 Supabase **SQL Editor**에서 한 번 실행합니다. 파일은 `begin` / `commit`으로 묶여 있으며 실패하면 전체가 롤백됩니다. CLI를 사용하는 프로젝트는 `supabase db push`로 미적용 마이그레이션을 적용합니다. SQL Editor로 직접 적용한 파일은 CLI 배포와 혼용할 때 마이그레이션 이력도 맞춰야 합니다.
+3. 아래 확인 쿼리를 실행한 다음 새 앱을 배포합니다. 새로운 테이블과 RPC를 추가하므로 기존 방문 기록은 변환하거나 삭제하지 않습니다.
+
+```sql
+select to_regclass('public.trips') as trips,
+       to_regclass('public.schedule_items') as schedule_items;
+
+select tablename, policyname, cmd
+from pg_policies
+where schemaname = 'public' and tablename in ('trips', 'schedule_items');
+-- trips_read / schedule_items_read, SELECT 정책이어야 합니다.
+
+select has_table_privilege('authenticated', 'public.trips', 'SELECT') as can_read,
+       has_table_privilege('authenticated', 'public.trips', 'INSERT') as direct_insert,
+       has_table_privilege('authenticated', 'public.schedule_items', 'UPDATE') as direct_update,
+       has_function_privilege('authenticated', 'public.save_schedule_item(uuid,jsonb)', 'EXECUTE') as can_save,
+       has_function_privilege('anon', 'public.save_trip(jsonb)', 'EXECUTE') as anon_save;
+-- true, false, false, true, false
+```
+
+테스트 DB에서는 `supabase start` → `supabase db reset` → `supabase test db`로 `supabase/tests/timetables.sql`을 포함한 테스트를 실행합니다. **`db reset`은 로컬 테스트 DB 전용이며 운영 DB에 사용하지 않습니다.** 테스트용 사용자와 기록은 트랜잭션 종료 시 롤백됩니다.
+
+새 API는 `/api/trips`와 `/api/trips/[tripId]/items`입니다. 읽기는 RLS, 쓰기는 인증·멤버십·버전을 확인하는 전용 RPC로 처리합니다. 새 장소와 일정은 함께 저장되거나 함께 롤백됩니다. 여행과 일정의 소속 지도는 복합 외래키로 일치시킵니다. 여행 기간 수정과 일정 저장은 같은 여행 행을 먼저 잠급니다. 충돌은 HTTP 409, 미적용 마이그레이션은 HTTP 503으로 안내합니다.
+
+여행 시간대는 IANA 이름을 사용하며 기본은 `Asia/Seoul`입니다. 일정의 시작·종료는 `timestamp without time zone`으로 저장되는 **여행 현지 날짜·시각**입니다. UTC로 변환하지 않으며 시간대를 수정해도 입력 시각은 바뀌지 않습니다. 마지막 날짜의 다음 날 00:00까지 일정을 종료할 수 있습니다.
+
+그룹 멤버는 여행과 일정을 함께 편집합니다. 서버 모드에서는 화면 활성화·온라인 복귀와 10초 간격으로 동기화합니다. 원본 방문 기록을 일정에 넣어도 원본 날짜·사진·방문 예정 여부는 바뀌지 않습니다. 여행과 일정 삭제는 소프트 삭제이며, 원본 방문 기록과 장소를 지우지 않습니다. 복구 UI와 자동 방문 완료 전환은 이번 버전에 포함하지 않습니다.
+
+데모 모드는 지도별 `place-memory-trips-v1:<groupId>` 로컬 저장소를 사용하며 다른 기기와 공유하지 않습니다. PC에서는 날짜별 열과 지도, 모바일에서는 하루 시간표와 지도 탭을 사용합니다. 구간 생성·이동·길이 조절은 15분 단위이며 모바일은 400ms 길게 눌러 드래그합니다. 짧은 일정은 제목을 표시하고 상세 선택 후 날짜·시간 입력으로 길이를 조절할 수 있습니다. 지도 로딩 실패 시 장소 목록과 좌표 입력으로 계속 작업할 수 있습니다.
+
+앱 롤백이 필요하면 이전 앱 버전을 배포하고 추가 테이블은 유지합니다. 데이터를 가진 테이블을 삭제하는 롤백 SQL은 제공하지 않습니다. 운영 DB 적용·Vercel 배포는 로컬 코드 검증과 별개로 확인해야 합니다.
+
 ### 네 명의 이메일 등록
 
 1. Vercel 프로젝트의 **Settings → Environment Variables**에서 `ALLOWED_MEMBERS_JSON`을 추가하고 위 JSON 형식으로 네 사람을 입력합니다. Production, Preview, Development에 필요한 범위를 선택한 뒤 재배포합니다.

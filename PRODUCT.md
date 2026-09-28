@@ -20,7 +20,7 @@ Place Memory Map turns shared place visits into a private, editable map journal.
 
 ## Positioning
 
-The durable unit is a revisitable place with a shared visit history, not an itinerary, public review, or social post.
+The durable unit is a revisitable place with a shared visit history. Separate shared trip timetables reuse these places to plan future visits without changing the original memories.
 
 ## Operating Context
 
@@ -35,7 +35,10 @@ Members switch between private groups, search Korean businesses through Kakao, a
 - Places may have multiple visits. Deletion is recoverable for 30 days.
 - Korea-first Kakao place search; overseas places use manual pins in v1.
 - Personal, non-commercial use within Vercel, Supabase, Kakao, and Brevo free tiers.
-- Itineraries, comments, public sharing, route finding, and overseas business search are out of scope.
+- Each shared map supports multiple named trips with date ranges and IANA time zones. Members plan local-clock schedule items through time brushing, moving, resizing, place search, existing records, or manual coordinates.
+- Desktop presents timetable and map together; mobile switches between a day timetable and a map. Schedule pins show time and order, with shared-location selection, overlap layout, and overnight segments.
+- Travel schedules preserve source visit history and use membership-protected database writes with conflict detection. Demo schedules are browser-local.
+- Comments, public sharing, route finding, automatic travel-time calculation, notifications, and reservation integrations are out of scope.
 
 ## Brand Commitments
 

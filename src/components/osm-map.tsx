@@ -3,14 +3,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import { markerSvgDataUrl } from "@/lib/marker-styles";
-import type { Visit } from "@/types/domain";
+import type { MapPoint } from "@/types/domain";
 import type { MapAnchor } from "@/components/kakao-map";
+import { MapOfflineFallback } from "@/components/map-offline-fallback";
 
-interface Props {
-  visits: Visit[];
+interface Props<T extends MapPoint> {
+  visits: T[];
   selectedId?: string;
   manualMode: boolean;
-  onSelect: (visit: Visit) => void;
+  onSelect: (visit: T) => void;
   onAnchorChange?: (anchor?: MapAnchor) => void;
   onDismissPopup?: () => void;
   onManualPoint: (latitude: number, longitude: number) => void;
@@ -46,11 +47,12 @@ function loadLeaflet() {
   return leafletPromise;
 }
 
-export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, highlightedIds = [] }: Props) {
+export function OpenStreetMap<T extends MapPoint>({ visits, selectedId, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, highlightedIds = [] }: Props<T>) {
   const elementRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markerLayerRef = useRef<any>(null);
   const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
   const stateRef = useRef({ visits, selectedId, manualMode, onAnchorChange, onDismissPopup, onManualPoint });
 
   useEffect(() => {
@@ -59,6 +61,7 @@ export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnch
 
   useEffect(() => {
     let disposed = false;
+    const timeout = window.setTimeout(() => { if (!disposed) setFailed(true); }, 12000);
     loadLeaflet().then((L) => {
       if (disposed || !elementRef.current || mapRef.current) return;
       const map = L.map(elementRef.current, { zoomControl: false, attributionControl: true }).setView([20, 0], 2);
@@ -77,8 +80,9 @@ export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnch
       });
       mapRef.current = map;
       setReady(true);
-    }).catch(() => undefined);
-    return () => { disposed = true; mapRef.current?.remove(); mapRef.current = null; };
+      setFailed(false); clearTimeout(timeout);
+    }).catch(() => { if (!disposed) setFailed(true); leafletPromise = undefined; clearTimeout(timeout); });
+    return () => { disposed = true; clearTimeout(timeout); mapRef.current?.remove(); mapRef.current = null; };
   }, []);
 
   useEffect(() => {
@@ -89,7 +93,11 @@ export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnch
     visits.forEach((visit) => {
       const highlighted = highlightedIds.includes(visit.id);
       const selected = selectedId === visit.id;
-      const icon = L.divIcon({ className: `osm-pin-icon${selected ? " selected" : ""}`, html: `<img src="${markerSvgDataUrl(visit.markerStyle, { highlighted, selected })}" alt="" />`, iconSize: [44, 44], iconAnchor: [22, 44] });
+      const content = document.createElement("div");
+      const image = document.createElement("img");
+      image.src = markerSvgDataUrl(visit.markerStyle, { highlighted, selected }); image.alt = ""; content.append(image);
+      if (visit.pinLabel) { const label = document.createElement("span"); label.className = "schedule-pin-label"; label.textContent = visit.pinLabel; content.append(label); }
+      const icon = L.divIcon({ className: `osm-pin-icon${selected ? " selected" : ""}`, html: content, iconSize: [44, 44], iconAnchor: [22, 44] });
       L.marker([visit.place.latitude, visit.place.longitude], { icon, zIndexOffset: selectedId === visit.id ? 100 : 0 }).on("click", (event: any) => { L.DomEvent.stopPropagation(event); onSelect(visit); }).addTo(markerLayerRef.current);
     });
     if (!selectedId && !mapFocus && visits.length) {
@@ -122,5 +130,5 @@ export function OpenStreetMap({ visits, selectedId, manualMode, onSelect, onAnch
     );
   }, [maxZoomRequest, ready]);
 
-  return <div className={`map-canvas ${manualMode ? "is-pinning" : ""}`} data-zoom-mode={maxZoomRequest ? "max" : undefined}><div ref={elementRef} className="osm-map" aria-label="해외 OpenStreetMap 지도" /><div className="osm-map-note">© OpenStreetMap contributors</div>{manualMode && <div className="pinning-hint">지도에서 기록할 위치를 선택하세요</div>}</div>;
+  return <div className={`map-canvas ${manualMode ? "is-pinning" : ""}`} data-zoom-mode={maxZoomRequest ? "max" : undefined}><div ref={elementRef} className="osm-map" aria-label="해외 OpenStreetMap 지도" />{failed && <MapOfflineFallback visits={visits} manualMode={manualMode} onSelect={onSelect} onManualPoint={onManualPoint} />}<div className="osm-map-note">© OpenStreetMap contributors</div>{manualMode && <div className="pinning-hint">지도에서 기록할 위치를 선택하세요</div>}</div>;
 }

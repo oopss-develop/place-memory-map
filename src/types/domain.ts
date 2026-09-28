@@ -55,3 +55,33 @@ export interface KakaoPlaceResult {
   latitude: number;
   longitude: number;
 }
+
+export interface Trip {
+  id: string;
+  groupId: string;
+  name: string;
+  startDate: string;
+  endDate: string;
+  timeZone: string;
+  version: number;
+}
+
+export interface ScheduleItem {
+  id: string;
+  groupId: string;
+  tripId: string;
+  place: Place;
+  startsAt: string;
+  endsAt: string;
+  title: string;
+  note: string;
+  markerStyle: MarkerStyle;
+  version: number;
+}
+
+export interface MapPoint {
+  id: string;
+  place: Place;
+  markerStyle: MarkerStyle;
+  pinLabel?: string;
+}

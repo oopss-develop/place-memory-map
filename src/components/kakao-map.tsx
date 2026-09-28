@@ -4,18 +4,19 @@
 import { useEffect, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 import { markerSvgDataUrl, normalizeMarkerStyle } from "@/lib/marker-styles";
-import type { Visit } from "@/types/domain";
+import type { MapPoint } from "@/types/domain";
 import { OpenStreetMap } from "@/components/osm-map";
+import { MapOfflineFallback } from "@/components/map-offline-fallback";
 
 declare global { interface Window { kakao?: any; } }
 
-interface Props {
-  visits: Visit[];
+interface Props<T extends MapPoint> {
+  visits: T[];
   mapProvider: "kakao" | "osm";
   selectedId?: string;
   selectionRequest: number;
   manualMode: boolean;
-  onSelect: (visit: Visit) => void;
+  onSelect: (visit: T) => void;
   onAnchorChange?: (anchor?: MapAnchor) => void;
   onDismissPopup?: () => void;
   onManualPoint: (latitude: number, longitude: number) => void;
@@ -42,15 +43,17 @@ function fallbackMapPosition(latitude: number, longitude: number) {
   return { left: Math.max(8, Math.min(88, left)), top: Math.max(8, Math.min(84, top)) };
 }
 
-export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, pulseLocation, highlightedIds = [] }: Props) {
+export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, pulseLocation, highlightedIds = [] }: Props<T>) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const labelsRef = useRef<any[]>([]);
   const clustererRef = useRef<any>(null);
   const pulseOverlayRef = useRef<any>(null);
   const bounceOverlayRef = useRef<any>(null);
   const lastSelectedIdRef = useRef<string | undefined>(undefined);
   const [ready, setReady] = useState(false);
+  const [failed, setFailed] = useState(false);
   const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_JS_KEY;
   const selectedVisit = visits.find((visit) => visit.id === selectedId);
   const pulseTarget = selectedVisit?.place ?? pulseLocation;
@@ -59,7 +62,8 @@ export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, ma
   const pulseMarkerStyle = selectedVisit?.markerStyle;
 
   useEffect(() => {
-    if (!apiKey || !ref.current) return;
+    if (!apiKey || !ref.current || mapProvider === "osm") return;
+    const timeout = window.setTimeout(() => setFailed(true), 12000);
     const boot = () => window.kakao?.maps.load(() => {
       if (!ref.current) return;
       mapRef.current = new window.kakao.maps.Map(ref.current, { center: new window.kakao.maps.LatLng(37.5665, 126.978), level: 8 });
@@ -85,15 +89,18 @@ export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, ma
         });
       }
       setReady(true);
+      setFailed(false);
+      clearTimeout(timeout);
     });
-    if (window.kakao?.maps) { boot(); return; }
+    if (window.kakao?.maps) { boot(); return () => clearTimeout(timeout); }
     const script = document.createElement("script");
     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false&libraries=clusterer`;
     script.async = true;
     script.onload = boot;
+    script.onerror = () => { clearTimeout(timeout); setFailed(true); };
     document.head.appendChild(script);
-    return () => { script.onload = null; };
-  }, [apiKey]);
+    return () => { clearTimeout(timeout); script.onload = null; script.onerror = null; };
+  }, [apiKey, mapProvider]);
 
   useEffect(() => {
     // 선택 핀의 파동 효과는 잠시 비활성화합니다. 선택된 핀 자체의 바운스만 사용합니다.
@@ -135,6 +142,8 @@ export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, ma
   useEffect(() => {
     if (!ready || !mapRef.current || !window.kakao) return;
     markersRef.current.forEach((marker) => marker.setMap(null));
+    labelsRef.current.forEach((label) => label.setMap(null));
+    labelsRef.current = [];
     clustererRef.current?.clear();
     markersRef.current = visits.map((visit) => {
       const highlighted = highlightedIds.includes(visit.id);
@@ -156,6 +165,14 @@ export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, ma
       window.kakao.maps.event.addListener(marker, "click", () => {
         onSelect(visit);
       });
+      if (visit.pinLabel) {
+        const label = document.createElement("button");
+        label.className = "schedule-pin-label";
+        label.textContent = visit.pinLabel;
+        label.setAttribute("aria-label", `${visit.place.name} ${visit.pinLabel}`);
+        label.onclick = () => onSelect(visit);
+        labelsRef.current.push(new window.kakao.maps.CustomOverlay({ map: mapRef.current, position: marker.getPosition(), content: label, yAnchor: 0, zIndex: 5 }));
+      }
       return marker;
     });
     clustererRef.current?.addMarkers(markersRef.current);
@@ -353,7 +370,7 @@ export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, ma
 
   return (
     <div className={`map-canvas ${manualMode ? "is-pinning" : ""}`} data-zoom-mode={maxZoomRequest ? "max" : undefined} onClick={!apiKey ? fallbackClick : undefined}>
-      <div ref={ref} className="kakao-map" />
+      <div ref={ref} className="kakao-map" />{failed && <MapOfflineFallback visits={visits} manualMode={manualMode} onSelect={onSelect} onManualPoint={onManualPoint} />}
       {!apiKey && (
         <div className="map-fallback" aria-label="서울 방문 기록 데모 지도">
           <div className="river" /><div className="road road-a" /><div className="road road-b" /><div className="road road-c" />
@@ -366,7 +383,7 @@ export function KakaoMap({ visits, mapProvider, selectedId, selectionRequest, ma
           {visits.map((visit) => {
             const position = fallbackMapPosition(visit.place.latitude, visit.place.longitude);
             const highlighted = highlightedIds.includes(visit.id);
-            return <button key={visit.id} data-visit-id={visit.id} data-marker-style={normalizeMarkerStyle(visit.markerStyle)} className={`map-pin ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${position.left}%`, top: `${position.top}%` }} onClick={(event) => { event.stopPropagation(); onSelect(visit); }} aria-label={`${visit.place.name} 기록 보기`}><img src={markerSvgDataUrl(visit.markerStyle, { highlighted, selected: selectedId === visit.id })} alt="" /></button>;
+            return <button key={visit.id} data-visit-id={visit.id} data-marker-style={normalizeMarkerStyle(visit.markerStyle)} className={`map-pin ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${position.left}%`, top: `${position.top}%` }} onClick={(event) => { event.stopPropagation(); onSelect(visit); }} aria-label={`${visit.place.name} ${visit.pinLabel ?? "기록 보기"}`}><img src={markerSvgDataUrl(visit.markerStyle, { highlighted, selected: selectedId === visit.id })} alt="" />{visit.pinLabel && <span className="schedule-pin-label">{visit.pinLabel}</span>}</button>;
           })}
           {focusLocation && <span className="current-location-dot" aria-label="현재 위치" />}
           <div className="demo-map-note">Kakao Map 키 연결 전 데모 지도</div>
