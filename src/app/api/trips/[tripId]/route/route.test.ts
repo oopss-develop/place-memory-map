@@ -61,7 +61,7 @@ describe("trip route cache API", () => {
     expect(response.status).toBe(200);
     expect(mocks.fetch).toHaveBeenCalledTimes(1);
     expect(mocks.fetch.mock.calls[0][0]).toContain("apis-navi.kakaomobility.com/v1/waypoints/directions");
-    expect(mocks.rpc).toHaveBeenCalledWith("save_trip_route", expect.objectContaining({ route_kind: "road", distance_meters: 12000, duration_seconds: 900 }));
+    expect(mocks.rpc).toHaveBeenCalledWith("save_trip_route", expect.objectContaining({ p_route_date: "2026-10-03", route_kind: "road", distance_meters: 12000, duration_seconds: 900 }));
   });
 
   it("requires authentication before any database or route service access", async () => {

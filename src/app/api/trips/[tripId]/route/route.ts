@@ -140,7 +140,7 @@ async function calculate(request: Request, context: Context) {
 
     const { data: saved, error } = await auth.supabase.rpc("save_trip_route", {
       target_trip_id: tripId.data,
-      route_date: parsed.data.date,
+      p_route_date: parsed.data.date,
       route_provider: parsed.data.provider,
       route_signature: signature,
       route_kind: route.kind,
