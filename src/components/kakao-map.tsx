@@ -168,7 +168,7 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
           ? new window.kakao.maps.MarkerImage(tripMarkerDataUrl(visit.pinNumber, selected), imageSize, { offset: new window.kakao.maps.Point(markerSize / 2, markerSize) })
           : image,
         clickable: true,
-        zIndex: highlighted ? 3 : selected ? 2 : 1,
+        zIndex: selected ? 5 : highlighted ? 4 : 3,
       });
       window.kakao.maps.event.addListener(marker, "click", () => {
         onSelect(visit);
@@ -194,8 +194,8 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
     const routeColor = styles.getPropertyValue("--vermilion").trim() || "#d84c32";
     const surfaceColor = styles.getPropertyValue("--surface").trim() || "#fffdf6";
     const path = route.points.map((point) => new window.kakao.maps.LatLng(point.latitude, point.longitude));
-    const casing = new window.kakao.maps.Polyline({ map: mapRef.current, path, strokeWeight: 10, strokeColor: surfaceColor, strokeOpacity: 0.95, strokeStyle: "solid", zIndex: 1 });
-    const line = new window.kakao.maps.Polyline({ map: mapRef.current, path, strokeWeight: 5, strokeColor: routeColor, strokeOpacity: 0.96, strokeStyle: route.kind === "road" ? "solid" : "dash", endArrow: true, zIndex: 2 });
+    const casing = new window.kakao.maps.Polyline({ map: mapRef.current, path, strokeWeight: 10, strokeColor: surfaceColor, strokeOpacity: 0.95, strokeStyle: "solid", zIndex: 0 });
+    const line = new window.kakao.maps.Polyline({ map: mapRef.current, path, strokeWeight: 5, strokeColor: routeColor, strokeOpacity: 0.96, strokeStyle: route.kind === "road" ? "solid" : "dash", endArrow: true, zIndex: 1 });
     routeLinesRef.current = [casing, line];
     return () => {
       casing.setMap(null);
@@ -218,6 +218,12 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
     const selectedMarker = visitIndex >= 0 ? markersRef.current[visitIndex] : undefined;
     const selectedVisit = visits[visitIndex];
     if (!selectedMarker || !selectedVisit) return;
+    // Numbered timetable pins are already rendered with a selected state.
+    // A second CustomOverlay here can look like another pin at the same stop.
+    if (selectedVisit.pinNumber) {
+      removeBounce();
+      return;
+    }
 
     const markerSize = selectedVisit.pinNumber || highlightedIds.includes(selectedVisit.id) ? 48 : 44;
     const content = document.createElement("span");
@@ -236,7 +242,7 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
       content,
       xAnchor: 0.5,
       yAnchor: 1,
-      zIndex: 4,
+      zIndex: 6,
       clickable: false,
     });
     selectedMarker.setOpacity(0);
