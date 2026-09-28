@@ -7,7 +7,7 @@ import { TimetableGrid } from "@/components/timetable-grid";
 import { addMinutes, daySegments, scheduleSchema, tripDates, tripSchema } from "@/lib/timetable";
 import { tripRequest, useTripStore } from "@/lib/use-trip-store";
 import { DEFAULT_MARKER_STYLE, normalizeMarkerStyle } from "@/lib/marker-styles";
-import type { Group, KakaoPlaceResult, MapPoint, Place, ScheduleItem, Trip, Visit } from "@/types/domain";
+import type { Group, KakaoPlaceResult, MapPoint, Place, ScheduleItem, Trip, TripRoute, Visit } from "@/types/domain";
 
 interface Draft { id?: string; version: number; startsAt: string; endsAt: string; title: string; note: string; place?: Place; newPlace: boolean; markerStyle: ScheduleItem["markerStyle"] }
 const zoneOptions = ["Asia/Seoul", "Asia/Tokyo", "Asia/Shanghai", "Asia/Taipei", "Asia/Bangkok", "Asia/Singapore", "Asia/Dubai", "Europe/Paris", "Europe/London", "Europe/Rome", "America/New_York", "America/Los_Angeles", "Pacific/Honolulu", "Australia/Sydney"];
@@ -35,6 +35,9 @@ export function TripPlanner({ groupId, groups, visits, demo, initialVisit, onGro
   const searchEpoch = useRef(0);
   const [manual, setManual] = useState(false);
   const [carryVisit, setCarryVisit] = useState(initialVisit);
+  const [savedRoute, setSavedRoute] = useState<{ key: string; route: TripRoute }>();
+  const [routeBusy, setRouteBusy] = useState(false);
+  const [routeFeedback, setRouteFeedback] = useState<{ key: string; notice: string }>();
   const itemDialog = useRef<HTMLDialogElement>(null);
   const tripDialog = useRef<HTMLDialogElement>(null);
   const items = useMemo(() => store.items.filter((item) => item.tripId === trip?.id), [store.items, trip?.id]);
@@ -53,6 +56,9 @@ export function TripPlanner({ groupId, groups, visits, demo, initialVisit, onGro
   }, [items, date]);
   const selectedPin = pins.find((pin) => pin.items.some((item) => item.id === selectedId));
   const [pinChoices, setPinChoices] = useState<string[]>([]);
+  const routeKey = `${trip?.id ?? ""}|${date}|${provider}|${pins.map((pin) => `${pin.items.map((item) => item.id).sort().join(",")}@${pin.place.latitude.toFixed(6)},${pin.place.longitude.toFixed(6)}`).join("|")}`;
+  const visibleRoute = savedRoute?.key === routeKey ? savedRoute.route : null;
+  const routeNotice = routeFeedback?.key === routeKey ? routeFeedback.notice : "";
 
   useEffect(() => { if (draft && !manual && !itemDialog.current?.open) itemDialog.current?.showModal(); }, [draft, manual]);
   useEffect(() => { if (tripDraft && !tripDialog.current?.open) tripDialog.current?.showModal(); }, [tripDraft]);
@@ -116,6 +122,53 @@ export function TripPlanner({ groupId, groups, visits, demo, initialVisit, onGro
     return () => window.clearTimeout(timeout);
   }, [message]);
 
+  useEffect(() => {
+    if (!trip || pins.length < 2) return;
+    let cancelled = false;
+    const key = routeKey;
+    if (demo) {
+      let frame = 0;
+      try {
+        const cached = localStorage.getItem(`place-memory-trip-route:${key}`);
+        const route = cached ? JSON.parse(cached) as TripRoute : null;
+        if (route) frame = window.requestAnimationFrame(() => { if (!cancelled) setSavedRoute({ key, route }); });
+      } catch { /* A malformed local demo cache is ignored. */ }
+      return () => { cancelled = true; if (frame) window.cancelAnimationFrame(frame); };
+    }
+    fetch(`/api/trips/${trip.id}/route?date=${encodeURIComponent(date)}&provider=${provider}`)
+      .then(async (response) => response.ok ? response.json() as Promise<{ route?: TripRoute | null }> : null)
+      .then((data) => { if (!cancelled && data?.route) setSavedRoute({ key, route: data.route }); })
+      .catch(() => undefined);
+    return () => { cancelled = true; };
+  }, [date, demo, pins.length, provider, routeKey, trip]);
+
+  async function showRoute() {
+    if (!trip || pins.length < 2 || routeBusy) return;
+    const key = routeKey;
+    setRouteBusy(true);
+    setRouteFeedback({ key, notice: "" });
+    try {
+      if (demo) {
+        const route: TripRoute = { kind: "straight", points: pins.map((pin) => ({ latitude: pin.place.latitude, longitude: pin.place.longitude })) };
+        localStorage.setItem(`place-memory-trip-route:${key}`, JSON.stringify(route));
+        setSavedRoute({ key, route });
+        setRouteFeedback({ key, notice: "데모 지도에서는 장소 순서대로 연결해요." });
+        return;
+      }
+      const response = await fetch(`/api/trips/${trip.id}/route`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date, provider }),
+      });
+      const data = await response.json() as { route?: TripRoute; notice?: string; error?: string };
+      if (!response.ok || !data.route) throw new Error(data.error || "동선을 불러오지 못했습니다.");
+      setSavedRoute({ key, route: data.route });
+      setRouteFeedback({ key, notice: data.notice || "" });
+    } catch (error) {
+      setRouteFeedback({ key, notice: (error as Error).message });
+    } finally { setRouteBusy(false); }
+  }
+
   return <section className={`trip-planner ${manual ? "is-manual" : ""}`} aria-label="여행 계획">
     <header className="planner-header">
       <button className="planner-back" onClick={onClose} disabled={store.busy}><ArrowLeft size={18} />기록</button>
@@ -135,10 +188,10 @@ export function TripPlanner({ groupId, groups, visits, demo, initialVisit, onGro
           {selected && <div className="planner-selection"><div><strong>{selected.title}</strong><span>{selected.startsAt.slice(5).replace("T", " ")} – {selected.endsAt.slice(0, 10) === selected.startsAt.slice(0, 10) ? selected.endsAt.slice(11) : selected.endsAt.slice(5).replace("T", " ")}</span><span>{selected.place.name}</span>{selected.note && <p>{selected.note}</p>}</div><button disabled={store.busy} onClick={() => { chooseDate(date); setTab("map"); }}>지도 보기</button><button disabled={store.busy} onClick={() => editItem(selected)}>일정 수정</button><button aria-label="일정 선택 닫기" onClick={() => setSelectedId(undefined)}><X size={16} /></button></div>}
         </div>
         <div className="planner-map-panel">{manual && <div className="planner-manual-banner">일정 장소를 지도에서 선택하세요.<button onClick={() => setManual(false)}>취소하고 돌아가기</button></div>}<div className="planner-map-canvas">
-          <KakaoMap key={`${provider}-${tab}`} visits={pins} mapProvider={provider} selectedId={selectedPin?.id} selectionRequest={0} manualMode={manual} onManualPoint={manualPoint} onSelect={(pin) => { setPinChoices(pin.items.map((item) => item.id)); setSelectedId(pin.items[0].id); }} />
+          <KakaoMap key={`${provider}-${tab}`} visits={pins} mapProvider={provider} selectedId={selectedPin?.id} selectionRequest={0} manualMode={manual} onManualPoint={manualPoint} onSelect={(pin) => { setPinChoices(pin.items.map((item) => item.id)); setSelectedId(pin.items[0].id); }} route={visibleRoute} />
           <div className="planner-map-controls"><button aria-pressed={provider === "kakao"} onClick={() => setProvider("kakao")}>국내</button><button aria-pressed={provider === "osm"} onClick={() => setProvider("osm")}>해외</button></div>
           
-        </div><div className="planner-map-agenda" aria-label="선택한 날짜의 장소"><strong>{date} · {today.length}개 일정</strong>{!today.length && <p>이 날짜에 일정을 추가하면 지도 핀도 표시돼요.</p>}{today.filter((segment) => !pinChoices.length || pinChoices.includes(segment.item.id)).map(({ item, order }) => <button key={item.id} aria-pressed={selectedId === item.id} onClick={() => chooseItem(item, true)}><b>{order}</b><span>{item.startsAt.slice(11)}–{item.endsAt.slice(11)}</span><strong>{item.place.name}</strong></button>)}{pinChoices.length > 0 && <button onClick={() => setPinChoices([])}>이 날짜의 모든 장소</button>}</div></div>
+        </div><div className="planner-map-agenda" aria-label="선택한 날짜의 장소"><div className="planner-route-heading"><strong>{date} · {today.length}개 일정</strong><button disabled={pins.length < 2 || routeBusy} onClick={() => { if (visibleRoute) { setSavedRoute(undefined); setRouteFeedback(undefined); } else void showRoute(); }}>{routeBusy ? "경로 확인 중…" : visibleRoute ? "동선 숨기기" : "동선 확인"}</button></div>{(visibleRoute || routeNotice) && <p className={`planner-route-status ${visibleRoute?.kind === "road" ? "is-road" : ""}`}>{visibleRoute?.kind === "road" ? "자동차 경로" : visibleRoute ? "장소 순서 연결선" : ""}{visibleRoute?.distanceMeters !== undefined && ` · ${(visibleRoute.distanceMeters / 1000).toFixed(1)} km`}{visibleRoute?.durationSeconds !== undefined && ` · ${Math.round(visibleRoute.durationSeconds / 60)}분`}{routeNotice && ` · ${routeNotice}`}</p>}{pins.length < 2 && <p>동선을 보려면 서로 다른 장소를 두 곳 이상 추가해 주세요.</p>}{!today.length && <p>이 날짜에 일정을 추가하면 지도 핀도 표시돼요.</p>}{today.filter((segment) => !pinChoices.length || pinChoices.includes(segment.item.id)).map(({ item, order }) => <button key={item.id} aria-pressed={selectedId === item.id} onClick={() => chooseItem(item, true)}><b>{order}</b><span>{item.startsAt.slice(11)}–{item.endsAt.slice(11)}</span><strong>{item.place.name}</strong></button>)}{pinChoices.length > 0 && <button onClick={() => setPinChoices([])}>이 날짜의 모든 장소</button>}</div></div>
       </div>
     </>}
 

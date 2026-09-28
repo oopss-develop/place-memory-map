@@ -163,6 +163,11 @@
 .trip-planner .schedule-block-body { font-family: inherit; font-size: 12px; line-height: 1.4; }
 .planner-map-agenda { padding: 12px 16px; }
 .planner-map-agenda > strong { font-size: 12px; font-weight: 650; }
+.planner-route-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.planner-route-heading > strong { min-width: 0; font-size: 12px; font-weight: 650; }
+.trip-planner .planner-route-heading button { min-height: 32px; padding: 4px 10px; border-radius: 6px; font-size: 12px; white-space: nowrap; }
+.planner-route-status { margin: 0 0 7px; color: var(--ink-muted); font-size: 11px !important; }
+.planner-route-status.is-road { color: var(--vermilion-dark); font-weight: 650; }
 .planner-map-agenda button { border-color: var(--line); border-radius: 6px; }
 .planner-map-agenda button:hover { border-color: var(--vermilion); }
 .planner-selection { gap: 10px; }

@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
 import { markerSvgDataUrl, normalizeMarkerStyle } from "@/lib/marker-styles";
-import type { MapPoint } from "@/types/domain";
+import type { MapPoint, TripRoute } from "@/types/domain";
 import { OpenStreetMap } from "@/components/osm-map";
 import { MapOfflineFallback } from "@/components/map-offline-fallback";
 
@@ -24,6 +24,7 @@ interface Props<T extends MapPoint> {
   mapFocus?: { latitude: number; longitude: number };
   maxZoomRequest?: { latitude: number; longitude: number; request: number };
   pulseLocation?: { latitude: number; longitude: number };
+  route?: TripRoute | null;
   highlightedIds?: string[];
 }
 
@@ -44,10 +45,11 @@ function fallbackMapPosition(latitude: number, longitude: number) {
   return { left: Math.max(8, Math.min(88, left)), top: Math.max(8, Math.min(84, top)) };
 }
 
-export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, pulseLocation, highlightedIds = EMPTY_HIGHLIGHTED_IDS }: Props<T>) {
+export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, pulseLocation, route, highlightedIds = EMPTY_HIGHLIGHTED_IDS }: Props<T>) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
+  const routeLinesRef = useRef<any[]>([]);
   const labelsRef = useRef<any[]>([]);
   const clustererRef = useRef<any>(null);
   const pulseOverlayRef = useRef<any>(null);
@@ -181,6 +183,24 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
     });
     clustererRef.current?.addMarkers(markersRef.current);
   }, [ready, visits, onSelect, selectedId, highlightedIds]);
+
+  useEffect(() => {
+    routeLinesRef.current.forEach((line) => line.setMap(null));
+    routeLinesRef.current = [];
+    if (!route || route.points.length < 2 || !ready || !mapRef.current || !window.kakao) return;
+    const styles = getComputedStyle(ref.current!);
+    const routeColor = styles.getPropertyValue("--vermilion").trim() || "#d84c32";
+    const surfaceColor = styles.getPropertyValue("--surface").trim() || "#fffdf6";
+    const path = route.points.map((point) => new window.kakao.maps.LatLng(point.latitude, point.longitude));
+    const casing = new window.kakao.maps.Polyline({ map: mapRef.current, path, strokeWeight: 10, strokeColor: surfaceColor, strokeOpacity: 0.95, strokeStyle: "solid", zIndex: 1 });
+    const line = new window.kakao.maps.Polyline({ map: mapRef.current, path, strokeWeight: 5, strokeColor: routeColor, strokeOpacity: 0.96, strokeStyle: route.kind === "road" ? "solid" : "dash", endArrow: true, zIndex: 2 });
+    routeLinesRef.current = [casing, line];
+    return () => {
+      casing.setMap(null);
+      line.setMap(null);
+      routeLinesRef.current = [];
+    };
+  }, [ready, route]);
 
   useEffect(() => {
     const removeBounce = () => {
@@ -392,7 +412,7 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
   }
 
   if (mapProvider === "osm") {
-    return <OpenStreetMap visits={visits} selectedId={selectedId} manualMode={manualMode} onSelect={onSelect} onAnchorChange={onAnchorChange} onDismissPopup={onDismissPopup} onManualPoint={onManualPoint} focusLocation={focusLocation} mapFocus={mapFocus} maxZoomRequest={maxZoomRequest} highlightedIds={highlightedIds} />;
+    return <OpenStreetMap visits={visits} selectedId={selectedId} manualMode={manualMode} onSelect={onSelect} onAnchorChange={onAnchorChange} onDismissPopup={onDismissPopup} onManualPoint={onManualPoint} focusLocation={focusLocation} mapFocus={mapFocus} maxZoomRequest={maxZoomRequest} route={route} highlightedIds={highlightedIds} />;
   }
 
   return (
@@ -402,6 +422,7 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
         <div className="map-fallback" aria-label="서울 방문 기록 데모 지도">
           <div className="river" /><div className="road road-a" /><div className="road road-b" /><div className="road road-c" />
           <span className="district district-west">종로</span><span className="district district-east">성수</span><span className="district district-south">한강</span>
+          {route && <svg className={`trip-route-overlay ${route.kind}`} viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points={route.points.map((point) => { const position = fallbackMapPosition(point.latitude, point.longitude); return `${position.left},${position.top}`; }).join(" ")} /></svg>}
           {/* Disabled ripple feedback; the selected pin now bounces in place. */}
           {/* {pulseTarget && (() => {
             const position = fallbackMapPosition(pulseTarget.latitude, pulseTarget.longitude);

@@ -44,12 +44,20 @@ select throws_ok($$select public.save_schedule_item('40000000-0000-4000-8000-000
 select lives_ok($$select public.save_schedule_item('40000000-0000-4000-8000-000000000001','{"place":{"provider":"kakao","providerPlaceId":"timetable-test","name":"Search place","latitude":37,"longitude":127},"startsAt":"2026-09-29T09:00","endsAt":"2026-09-29T10:00","title":"Search"}')$$,'search creates place and item');
 select lives_ok($$select public.save_schedule_item('40000000-0000-4000-8000-000000000001','{"place":{"provider":"kakao","providerPlaceId":"timetable-test","name":"Search place","latitude":37,"longitude":127},"startsAt":"2026-09-29T10:00","endsAt":"2026-09-29T11:00","title":"Revisit"}')$$,'same searched place can be revisited');
 select is((select count(*)::int from public.places where provider_place_id = 'timetable-test'),1,'provider place is reused');
+select lives_ok($$select public.save_trip_route(
+ '40000000-0000-4000-8000-000000000001','2026-09-28','kakao',repeat('a',64),'road',
+ '[{"latitude":37.5,"longitude":127.0},{"latitude":37.6,"longitude":127.1}]'::jsonb,12000,900)$$,
+ 'member can save a route cache');
+select is((select count(*)::int from public.trip_route_cache where trip_id = '40000000-0000-4000-8000-000000000001'),1,'member can read the shared route cache');
+select throws_ok($$insert into public.trip_route_cache(trip_id,route_date,provider,signature,route_kind,route_points,created_by) values ('40000000-0000-4000-8000-000000000001','2026-09-28','kakao',repeat('b',64),'road','[{"latitude":37,"longitude":127},{"latitude":38,"longitude":128}]','10000000-0000-4000-8000-000000000002')$$,'42501',null,'direct route cache writes are forbidden');
 
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000003',true);
 select is((select count(*)::int from public.trips),0,'outsider cannot read trips');
 select is((select count(*)::int from public.schedule_items),0,'outsider cannot read items');
+select is((select count(*)::int from public.trip_route_cache),0,'outsider cannot read route cache');
 select throws_ok($$select public.delete_trip('40000000-0000-4000-8000-000000000001',4)$$,'42501',null,'outsider cannot delete');
 select throws_ok($$select public.save_schedule_item('40000000-0000-4000-8000-000000000001','{}')$$,'42501',null,'outsider cannot add items');
+select throws_ok($$select public.save_trip_route('40000000-0000-4000-8000-000000000001','2026-09-28','kakao',repeat('c',64),'road','[{"latitude":37,"longitude":127},{"latitude":38,"longitude":128}]'::jsonb)$$,'42501',null,'outsider cannot save route cache');
 set local role anon;
 select throws_ok($$select * from public.trips$$,'42501',null,'anonymous reads forbidden');
 select throws_ok($$select public.save_trip('{}')$$,'42501',null,'anonymous RPC forbidden');
@@ -67,5 +75,6 @@ select throws_ok($$insert into public.schedule_items(group_id,trip_id,place_id,s
 delete from public.groups where id = '20000000-0000-4000-8000-000000000001';
 select is((select count(*)::int from public.trips where group_id = '20000000-0000-4000-8000-000000000001'),0,'group deletion cascades trips');
 select is((select count(*)::int from public.schedule_items where group_id = '20000000-0000-4000-8000-000000000001'),0,'group deletion cascades items');
+select is((select count(*)::int from public.trip_route_cache),0,'group deletion cascades route cache');
 select * from finish();
 rollback;

@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import { markerSvgDataUrl } from "@/lib/marker-styles";
-import type { MapPoint } from "@/types/domain";
+import type { MapPoint, TripRoute } from "@/types/domain";
 import type { MapAnchor } from "@/components/kakao-map";
 import { MapOfflineFallback } from "@/components/map-offline-fallback";
 
@@ -18,6 +18,7 @@ interface Props<T extends MapPoint> {
   focusLocation?: { latitude: number; longitude: number };
   mapFocus?: { latitude: number; longitude: number };
   maxZoomRequest?: { latitude: number; longitude: number; request: number };
+  route?: TripRoute | null;
   highlightedIds?: string[];
 }
 
@@ -48,10 +49,12 @@ function loadLeaflet() {
   return leafletPromise;
 }
 
-export function OpenStreetMap<T extends MapPoint>({ visits, selectedId, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, highlightedIds = EMPTY_HIGHLIGHTED_IDS }: Props<T>) {
+export function OpenStreetMap<T extends MapPoint>({ visits, selectedId, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, route, highlightedIds = EMPTY_HIGHLIGHTED_IDS }: Props<T>) {
   const elementRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markerLayerRef = useRef<any>(null);
+  const lastSelectedIdRef = useRef<string | undefined>(undefined);
+  const lastBoundsSignatureRef = useRef("");
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const stateRef = useRef({ visits, selectedId, manualMode, onAnchorChange, onDismissPopup, onManualPoint });
@@ -101,11 +104,29 @@ export function OpenStreetMap<T extends MapPoint>({ visits, selectedId, manualMo
       const icon = L.divIcon({ className: `osm-pin-icon${selected ? " selected" : ""}`, html: content, iconSize: [44, 44], iconAnchor: [22, 44] });
       L.marker([visit.place.latitude, visit.place.longitude], { icon, zIndexOffset: selectedId === visit.id ? 100 : 0 }).on("click", (event: any) => { L.DomEvent.stopPropagation(event); onSelect(visit); }).addTo(markerLayerRef.current);
     });
-    if (!selectedId && !mapFocus && visits.length) {
-      const bounds = L.latLngBounds(visits.map((visit) => [visit.place.latitude, visit.place.longitude]));
-      map.fitBounds(bounds, { padding: [56, 56], maxZoom: 12 });
+    if (!selectedId && visits.length) {
+      const signature = visits.map((visit) => `${visit.id}:${visit.place.latitude},${visit.place.longitude}`).sort().join("|");
+      if (mapFocus) lastBoundsSignatureRef.current = signature;
+      else if (signature !== lastBoundsSignatureRef.current) {
+        const bounds = L.latLngBounds(visits.map((visit) => [visit.place.latitude, visit.place.longitude]));
+        map.fitBounds(bounds, { padding: [56, 56], maxZoom: 12 });
+        lastBoundsSignatureRef.current = signature;
+      }
     }
   }, [highlightedIds, mapFocus, onSelect, ready, selectedId, visits]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    const L = window.L;
+    if (!map || !L || !route || route.points.length < 2) return;
+    const styles = getComputedStyle(elementRef.current!);
+    const routeColor = styles.getPropertyValue("--vermilion").trim() || "#d84c32";
+    const surfaceColor = styles.getPropertyValue("--surface").trim() || "#fffdf6";
+    const points = route.points.map((point) => [point.latitude, point.longitude]);
+    const casing = L.polyline(points, { color: surfaceColor, weight: 10, opacity: 0.95, lineCap: "round", lineJoin: "round", interactive: false }).addTo(map);
+    const line = L.polyline(points, { color: routeColor, weight: 5, opacity: 0.96, dashArray: route.kind === "straight" ? "9 8" : undefined, lineCap: "round", lineJoin: "round", interactive: false }).addTo(map);
+    return () => { casing.remove(); line.remove(); };
+  }, [ready, route]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -115,11 +136,17 @@ export function OpenStreetMap<T extends MapPoint>({ visits, selectedId, manualMo
       const zoom = mapFocus ? map.getZoom() : Math.max(map.getMinZoom(), map.getMaxZoom() - 2);
       map.setView([target.latitude, target.longitude], zoom, { animate: true });
     }
-    if (selectedId) {
-      const visit = visits.find((item) => item.id === selectedId);
-      if (visit) map.panTo([visit.place.latitude, visit.place.longitude]);
-    }
-  }, [focusLocation, mapFocus, ready, selectedId, visits]);
+  }, [focusLocation, mapFocus, ready]);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const selectionChanged = lastSelectedIdRef.current !== selectedId;
+    lastSelectedIdRef.current = selectedId;
+    if (!selectionChanged || !selectedId) return;
+    const visit = visits.find((item) => item.id === selectedId);
+    if (visit) map.panTo([visit.place.latitude, visit.place.longitude]);
+  }, [ready, selectedId, visits]);
 
   useEffect(() => {
     const map = mapRef.current;

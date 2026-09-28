@@ -30,6 +30,20 @@ Vercel 프로젝트에 Git 저장소를 연결하고 `.env.example`의 값을 �
 
 새로 추가된 맵핀 모양을 저장하려면 Supabase SQL Editor에서 `202609190001_expand_visit_marker_styles.sql`도 실행해야 합니다. Vercel 재배포나 브라우저 캐시 삭제만으로는 DB의 기존 맵핀 제한 규칙이 바뀌지 않습니다.
 
+### 여행 동선 캐시 DB 적용
+
+`202609280001_trip_timetables.sql` 뒤에 `202609290001_trip_route_cache.sql`을 Supabase SQL Editor에서 실행하고 앱을 배포합니다. 동선은 지도의 **동선 확인** 버튼을 눌렀을 때만 계산합니다. 국내 지도에서 장소가 2~32곳이면 Kakao Mobility 다중 경유지 길찾기를 한 번 요청하고, 순서가 같은 경로 결과는 지도 멤버들과 공유해 DB에서 불러옵니다. 해외 지도, 32곳 초과, 또는 길찾기에 실패한 경우는 방문 순서 직선으로 저장합니다. 브라우저를 새로고침하거나 동선을 다시 열 때 Kakao 길찾기 API를 다시 호출하지 않습니다.
+
+`KAKAO_REST_API_KEY`를 서버 환경 변수로 설정해야 국내 도로 경로를 만들 수 있습니다. 동선 계산은 사용자가 직접 요청한 경우에만 발생합니다. Kakao Mobility의 현재 공개 기준은 다중 경유지 API 일 5,000건 무료 제공량이며, 무료 제공량 초과 후 월 500,000건 구간은 요청당 16원입니다. 한 경로 계산은 최대 30개 경유지를 포함하는 단일 요청으로 제한합니다. ([공식 쿼터 및 가격](https://developers.kakaomobility.com/price/), [다중 경유지 API](https://developers.kakaomobility.com/guide/navi-api/waypoints.html))
+
+```sql
+select to_regclass('public.trip_route_cache') as trip_route_cache,
+       has_table_privilege('authenticated', 'public.trip_route_cache', 'SELECT') as can_read,
+       has_table_privilege('authenticated', 'public.trip_route_cache', 'INSERT') as direct_insert,
+       has_function_privilege('authenticated', 'public.save_trip_route(uuid,date,text,text,text,jsonb,integer,integer)', 'EXECUTE') as can_save;
+-- public.trip_route_cache, true, false, true
+```
+
 ### 여행 시간표 DB 적용
 
 1. 기존 마이그레이션이 `202609190001`까지 적용되었는지 확인합니다.

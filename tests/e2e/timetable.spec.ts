@@ -73,6 +73,23 @@ test("search, overnight entries, overlapping places and failure fallback", async
   await expect(page.locator('.timetable-day.current .schedule-block')).toHaveCount(2);
 });
 
+test("ordered trip route is saved and restored without another route request", async ({ page }, testInfo) => {
+  await page.route("**/api/places/search?**", (route) => route.fulfill({ json: { results: [{ id: "route-place", placeName: "성수 목적지", roadAddressName: "서울 성동구", addressName: "서울", categoryName: "장소", latitude: 37.545, longitude: 127.055 }] } }));
+  await openPlanner(page); await createTrip(page); await addExisting(page);
+  await page.getByRole("button", { name: "일정 추가", exact: true }).click();
+  await page.getByLabel("일정 장소 검색").fill("성수 목적지"); await page.getByRole("button", { name: "검색", exact: true }).click();
+  await page.getByRole("button", { name: "성수 목적지 서울 성동구", exact: true }).click();
+  await page.getByRole("button", { name: "일정 저장", exact: true }).click();
+  if (testInfo.project.name === "mobile") await page.getByRole("button", { name: "지도", exact: true }).click();
+  await page.getByRole("button", { name: "동선 확인", exact: true }).click();
+  await expect(page.locator(".trip-route-overlay")).toBeVisible();
+  await expect(page.locator(".planner-route-status")).toContainText("연결선");
+  await page.reload(); await openPlanner(page);
+  if (testInfo.project.name === "mobile") await page.getByRole("button", { name: "지도", exact: true }).click();
+  await expect(page.locator(".trip-route-overlay")).toBeVisible();
+  await expect(page.getByRole("button", { name: "동선 숨기기", exact: true })).toBeVisible();
+});
+
 test("mouse drag creates, moves and resizes while rejecting out-of-range edits", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name === "mobile", "mouse interaction covered on desktop");
   await openPlanner(page); await createTrip(page);

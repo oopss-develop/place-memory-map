@@ -79,6 +79,13 @@ export interface ScheduleItem {
   version: number;
 }
 
+export interface TripRoute {
+  kind: "road" | "straight";
+  points: Array<{ latitude: number; longitude: number }>;
+  distanceMeters?: number;
+  durationSeconds?: number;
+}
+
 export interface MapPoint {
   id: string;
   place: Place;
