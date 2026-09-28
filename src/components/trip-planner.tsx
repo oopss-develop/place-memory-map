@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, CalendarDays, MapPin, Plus, Search, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, MapPin, Plus, Search, X } from "lucide-react";
 import { KakaoMap } from "@/components/kakao-map";
 import { TimetableGrid } from "@/components/timetable-grid";
 import { addMinutes, daySegments, scheduleSchema, tripDates, tripSchema } from "@/lib/timetable";
@@ -110,23 +110,26 @@ export function TripPlanner({ groupId, groups, visits, demo, initialVisit, onGro
   }
   const records = visits.filter((visit) => visit.groupId === groupId && (!plannedOnly || visit.isPlanned) && `${visit.place.name} ${visit.title}`.toLowerCase().includes(query.toLowerCase()));
 
+  useEffect(() => {
+    if (!message) return;
+    const timeout = window.setTimeout(() => setMessage(""), 3600);
+    return () => window.clearTimeout(timeout);
+  }, [message]);
+
   return <section className={`trip-planner ${manual ? "is-manual" : ""}`} aria-label="여행 계획">
     <header className="planner-header">
       <button className="planner-back" onClick={onClose} disabled={store.busy}><ArrowLeft size={18} />기록</button>
       <h1>여행 계획</h1>
       <label className="planner-group">함께 보는 지도<select aria-label="여행 계획 지도" value={groupId} disabled={store.busy} onChange={(event) => onGroup(event.target.value)}>{groups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}</select></label>
-      <button className="primary-button" onClick={() => openTrip()} disabled={!store.ready || store.busy}><Plus size={17} />새 여행</button>
+      {trip && store.trips.length > 1 && <label className="planner-trip-choice">여행<select aria-label="여행 선택" value={trip.id} disabled={store.busy} onChange={(event) => chooseTrip(event.target.value)}>{store.trips.map((value) => <option key={value.id} value={value.id}>{value.name} · {value.startDate.slice(2)} – {value.endDate.slice(2)}</option>)}</select></label>}
+      {trip && store.trips.length === 1 && <span className="planner-trip-choice planner-trip-name">{trip.name}<small>{trip.startDate} – {trip.endDate} · {trip.timeZone}</small></span>}
+      {trip && <div className="planner-header-actions"><button onClick={() => openTrip(trip)} disabled={store.busy}>여행 설정</button><button className="planner-new-trip" onClick={() => openTrip()} disabled={!store.ready || store.busy}>새 여행</button><button className="primary-button" onClick={() => createDraft()} disabled={store.busy}><Plus size={17} />일정 추가</button></div>}
+      {!trip && <button className="primary-button planner-new-empty" onClick={() => openTrip()} disabled={!store.ready || store.busy}><Plus size={17} />새 여행</button>}
     </header>
-    {(message || store.error) && <div className="planner-message" role="status">{store.error || message}<button aria-label="안내 닫기" onClick={() => setMessage("")}><X size={16} /></button>{store.error && <button onClick={() => void store.refresh().catch((error) => setMessage(error.message))}>다시 불러오기</button>}</div>}
+    {(message || store.error) && <div className={`planner-message ${store.error ? "has-error" : ""}`} role={store.error ? "alert" : "status"}>{store.error || message}<button aria-label="안내 닫기" onClick={() => setMessage("")}><X size={16} /></button>{store.error && <button onClick={() => void store.refresh().catch((error) => setMessage(error.message))}>다시 불러오기</button>}</div>}
     {!store.ready ? <p className="planner-empty">여행을 불러오는 중…</p> : !trip ? <div className="planner-empty"><CalendarDays size={40} /><h2>함께 갈 곳, 시간표로 모아보세요.</h2><p>여행 기간을 정하고 빈 시간을 드래그하면<br />장소와 일정이 지도에 함께 남아요.</p>{carryVisit && <p>선택한 장소: {carryVisit.place.name}</p>}<button className="primary-button" onClick={() => openTrip()}>첫 여행 만들기</button></div> : <>
-      <div className="planner-toolbar">
-        <label>여행<select aria-label="여행 선택" value={trip.id} disabled={store.busy} onChange={(event) => chooseTrip(event.target.value)}>{store.trips.map((value) => <option key={value.id} value={value.id}>{value.name}</option>)}</select></label>
-        <span className="planner-zone">{trip.startDate} – {trip.endDate}<br /> {trip.timeZone} · 현지 시각</span>
-        <button onClick={() => openTrip(trip)} disabled={store.busy}>여행 설정</button>
-        <button className="primary-button" onClick={() => createDraft()} disabled={store.busy}><Plus size={17} />일정 추가</button>
-      </div>
       {carryVisit && <div className="planner-carry">{carryVisit.place.name}을 넣을 시간을 선택해 주세요.<button onClick={() => setCarryVisit(undefined)}>선택 취소</button></div>}
-      <div className="planner-datebar"><label>선택 날짜<input aria-label="계획 날짜" type="date" min={trip.startDate} max={trip.endDate} value={date} onChange={(event) => { if (tripDates(trip).includes(event.target.value)) chooseDate(event.target.value); }} /></label><span>빈 시간을 드래그 · 모바일은 길게 누르기</span><div className="planner-mobile-tabs" role="group" aria-label="계획 보기"><button aria-pressed={tab === "time"} onClick={() => setTab("time")}>시간표</button><button aria-pressed={tab === "map"} onClick={() => setTab("map")}>지도</button></div></div>
+      <div className="planner-datebar"><strong className="planner-day-title">{date && new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`))}</strong><div className="planner-date-choice"><button aria-label="이전 날짜" disabled={date <= trip.startDate} onClick={() => chooseDate(addMinutes(`${date}T00:00`, -1440).slice(0, 10))}><ChevronLeft size={17} /></button><label>날짜<input aria-label="계획 날짜" type="date" min={trip.startDate} max={trip.endDate} value={date} onChange={(event) => { if (tripDates(trip).includes(event.target.value)) chooseDate(event.target.value); }} /></label><button aria-label="다음 날짜" disabled={date >= trip.endDate} onClick={() => chooseDate(addMinutes(`${date}T00:00`, 1440).slice(0, 10))}><ChevronRight size={17} /></button></div><span className="planner-drag-hint">시간표를 드래그해 일정 추가</span><div className="planner-mobile-tabs" role="group" aria-label="계획 보기"><button aria-pressed={tab === "time"} onClick={() => setTab("time")}>시간표</button><button aria-pressed={tab === "map"} onClick={() => setTab("map")}>지도</button></div></div>
       <div className={`planner-workspace view-${tab}`}>
         <div className="planner-time-panel"><TimetableGrid trip={trip} items={items} date={date} selectedId={selectedId} active={tab === "time"} disabled={store.busy} onDate={chooseDate} onSelect={chooseItem} onCreate={createDraft} onChange={(item) => void changeItem(item)} />
           {selected && <div className="planner-selection"><div><strong>{selected.title}</strong><span>{selected.startsAt.slice(5).replace("T", " ")} – {selected.endsAt.slice(0, 10) === selected.startsAt.slice(0, 10) ? selected.endsAt.slice(11) : selected.endsAt.slice(5).replace("T", " ")}</span><span>{selected.place.name}</span>{selected.note && <p>{selected.note}</p>}</div><button disabled={store.busy} onClick={() => { chooseDate(date); setTab("map"); }}>지도 보기</button><button disabled={store.busy} onClick={() => editItem(selected)}>일정 수정</button><button aria-label="일정 선택 닫기" onClick={() => setSelectedId(undefined)}><X size={16} /></button></div>}
