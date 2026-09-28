@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
 import { useEffect, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
-import { markerSvgDataUrl, normalizeMarkerStyle } from "@/lib/marker-styles";
+import { markerSvgDataUrl, normalizeMarkerStyle, tripMarkerDataUrl } from "@/lib/marker-styles";
 import type { MapPoint, TripRoute } from "@/types/domain";
 import { OpenStreetMap } from "@/components/osm-map";
 import { MapOfflineFallback } from "@/components/map-offline-fallback";
@@ -154,7 +154,7 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
     markersRef.current = visits.map((visit) => {
       const highlighted = highlightedIds.includes(visit.id);
       const selected = selectedId === visit.id;
-      const markerSize = highlighted ? 48 : 44;
+      const markerSize = visit.pinNumber || highlighted ? 48 : 44;
       const imageSize = new window.kakao.maps.Size(markerSize, markerSize);
       const image = new window.kakao.maps.MarkerImage(
         markerSvgDataUrl(visit.markerStyle, { highlighted, selected }),
@@ -164,7 +164,9 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
       const marker = new window.kakao.maps.Marker({
         map: clustererRef.current ? null : mapRef.current,
         position: new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude),
-        image,
+        image: visit.pinNumber
+          ? new window.kakao.maps.MarkerImage(tripMarkerDataUrl(visit.pinNumber, selected), imageSize, { offset: new window.kakao.maps.Point(markerSize / 2, markerSize) })
+          : image,
         clickable: true,
         zIndex: highlighted ? 3 : selected ? 2 : 1,
       });
@@ -217,14 +219,16 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
     const selectedVisit = visits[visitIndex];
     if (!selectedMarker || !selectedVisit) return;
 
-    const markerSize = highlightedIds.includes(selectedVisit.id) ? 48 : 44;
+    const markerSize = selectedVisit.pinNumber || highlightedIds.includes(selectedVisit.id) ? 48 : 44;
     const content = document.createElement("span");
     content.className = "map-marker-bounce-overlay";
     content.style.width = `${markerSize}px`;
     content.style.height = `${markerSize}px`;
     content.setAttribute("aria-hidden", "true");
     const image = document.createElement("img");
-    image.src = markerSvgDataUrl(selectedVisit.markerStyle, { highlighted: highlightedIds.includes(selectedVisit.id), selected: true });
+    image.src = selectedVisit.pinNumber
+      ? tripMarkerDataUrl(selectedVisit.pinNumber, true)
+      : markerSvgDataUrl(selectedVisit.markerStyle, { highlighted: highlightedIds.includes(selectedVisit.id), selected: true });
     image.alt = "";
     content.append(image);
     const overlay = new window.kakao.maps.CustomOverlay({
@@ -290,7 +294,7 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
         completed = true;
         window.kakao.maps.event.removeListener(mapRef.current, "idle", reveal);
         const point = mapRef.current.getProjection().containerPointFromCoords(new window.kakao.maps.LatLng(selectedVisit.place.latitude, selectedVisit.place.longitude));
-        const markerHeight = highlightedIds.includes(selectedVisit.id) ? 48 : 44;
+        const markerHeight = selectedVisit.pinNumber || highlightedIds.includes(selectedVisit.id) ? 48 : 44;
         const mapElement = ref.current;
         if (!mapElement || point.x < 0 || point.x > mapElement.clientWidth || point.y < 0 || point.y > mapElement.clientHeight) {
           onDismissPopup?.();
@@ -362,7 +366,7 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
         const visit = visits.find((item) => item.id === selectedId);
         if (!visit) return onAnchorChange();
         const point = mapRef.current.getProjection().containerPointFromCoords(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude));
-        const markerHeight = highlightedIds.includes(visit.id) ? 48 : 44;
+        const markerHeight = visit.pinNumber || highlightedIds.includes(visit.id) ? 48 : 44;
         const mapElement = ref.current;
         if (!mapElement || point.x < 0 || point.x > mapElement.clientWidth || point.y < 0 || point.y > mapElement.clientHeight) {
           onDismissPopup?.();
@@ -431,7 +435,7 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
           {visits.map((visit) => {
             const position = fallbackMapPosition(visit.place.latitude, visit.place.longitude);
             const highlighted = highlightedIds.includes(visit.id);
-            return <button key={visit.id} data-visit-id={visit.id} data-marker-style={normalizeMarkerStyle(visit.markerStyle)} className={`map-pin ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${position.left}%`, top: `${position.top}%` }} onClick={(event) => { event.stopPropagation(); onSelect(visit); }} aria-label={`${visit.place.name} ${visit.pinLabel ?? "기록 보기"}`}><img src={markerSvgDataUrl(visit.markerStyle, { highlighted, selected: selectedId === visit.id })} alt="" />{visit.pinLabel && <span className="schedule-pin-label">{visit.pinLabel}</span>}</button>;
+            return <button key={visit.id} data-visit-id={visit.id} data-pin-number={visit.pinNumber} data-marker-style={normalizeMarkerStyle(visit.markerStyle)} className={`map-pin ${visit.pinNumber ? "trip-number-pin" : ""} ${highlighted ? "highlighted" : ""} ${selectedId === visit.id ? "selected" : ""}`} style={{ left: `${position.left}%`, top: `${position.top}%` }} onClick={(event) => { event.stopPropagation(); onSelect(visit); }} aria-label={`${visit.place.name} ${visit.pinLabel ?? "기록 보기"}`}><img src={visit.pinNumber ? tripMarkerDataUrl(visit.pinNumber, selectedId === visit.id) : markerSvgDataUrl(visit.markerStyle, { highlighted, selected: selectedId === visit.id })} alt="" />{visit.pinLabel && <span className="schedule-pin-label">{visit.pinLabel}</span>}</button>;
           })}
           {focusLocation && <span className="current-location-dot" aria-label="현재 위치" />}
           <div className="demo-map-note">Kakao Map 키 연결 전 데모 지도</div>

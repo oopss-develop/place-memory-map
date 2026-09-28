@@ -120,3 +120,11 @@ export function markerSvgDataUrl(value: unknown, options: { selected?: boolean; 
   void options;
   return `/map-pins/${MARKER_STYLE_FILES[style]}`;
 }
+
+export function tripMarkerDataUrl(number: string, selected = false) {
+  const label = number.replace(/[^0-9,–-]/g, "").slice(0, 5) || "•";
+  const fill = selected ? "#a93324" : "#d84c32";
+  const fontSize = label.length > 2 ? 10 : 14;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="44" height="48" viewBox="0 0 44 48"><path d="M22 2C11.2 2 3 10.1 3 20c0 11.4 19 26 19 26s19-14.6 19-26C41 10.1 32.8 2 22 2Z" fill="${fill}" stroke="#fffdf6" stroke-width="2.5"/><circle cx="22" cy="19" r="11" fill="#fffdf6"/><text x="22" y="23.5" text-anchor="middle" font-family="Arial,sans-serif" font-size="${fontSize}" font-weight="700" fill="#162d38">${label}</text></svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}

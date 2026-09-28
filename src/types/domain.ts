@@ -91,4 +91,5 @@ export interface MapPoint {
   place: Place;
   markerStyle: MarkerStyle;
   pinLabel?: string;
+  pinNumber?: string;
 }

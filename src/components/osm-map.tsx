@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
-import { markerSvgDataUrl } from "@/lib/marker-styles";
+import { markerSvgDataUrl, tripMarkerDataUrl } from "@/lib/marker-styles";
 import type { MapPoint, TripRoute } from "@/types/domain";
 import type { MapAnchor } from "@/components/kakao-map";
 import { MapOfflineFallback } from "@/components/map-offline-fallback";
@@ -99,9 +99,10 @@ export function OpenStreetMap<T extends MapPoint>({ visits, selectedId, manualMo
       const selected = selectedId === visit.id;
       const content = document.createElement("div");
       const image = document.createElement("img");
-      image.src = markerSvgDataUrl(visit.markerStyle, { highlighted, selected }); image.alt = ""; content.append(image);
+      image.src = visit.pinNumber ? tripMarkerDataUrl(visit.pinNumber, selected) : markerSvgDataUrl(visit.markerStyle, { highlighted, selected }); image.alt = ""; content.append(image);
       if (visit.pinLabel) { const label = document.createElement("span"); label.className = "schedule-pin-label"; label.textContent = visit.pinLabel; content.append(label); }
-      const icon = L.divIcon({ className: `osm-pin-icon${selected ? " selected" : ""}`, html: content, iconSize: [44, 44], iconAnchor: [22, 44] });
+      const markerHeight = visit.pinNumber ? 48 : 44;
+      const icon = L.divIcon({ className: `osm-pin-icon${visit.pinNumber ? " osm-trip-number-icon" : ""}${selected ? " selected" : ""}`, html: content, iconSize: [44, markerHeight], iconAnchor: [22, markerHeight] });
       L.marker([visit.place.latitude, visit.place.longitude], { icon, zIndexOffset: selectedId === visit.id ? 100 : 0 }).on("click", (event: any) => { L.DomEvent.stopPropagation(event); onSelect(visit); }).addTo(markerLayerRef.current);
     });
     if (!selectedId && visits.length) {

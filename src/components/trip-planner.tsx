@@ -49,8 +49,8 @@ export function TripPlanner({ groupId, groups, visits, demo, initialVisit, onGro
       const item = segment.item;
       const coordinate = `${item.place.latitude.toFixed(6)},${item.place.longitude.toFixed(6)}`;
       const previous = grouped.get(coordinate);
-      if (previous) { previous.items.push(item); previous.pinLabel += ` · ${segment.order}`; }
-      else grouped.set(coordinate, { id: item.id, place: item.place, markerStyle: item.markerStyle, items: [item], pinLabel: `${segment.order} · ${item.startsAt.slice(11)}` });
+      if (previous) { previous.items.push(item); previous.pinLabel += ` · ${segment.order}`; previous.pinNumber += `,${segment.order}`; }
+      else grouped.set(coordinate, { id: item.id, place: item.place, markerStyle: item.markerStyle, items: [item], pinLabel: `${segment.order} · ${item.startsAt.slice(11)}`, pinNumber: `${segment.order}` });
     }
     return [...grouped.values()];
   }, [items, date]);
