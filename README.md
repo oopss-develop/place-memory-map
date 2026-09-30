@@ -84,6 +84,6 @@ select has_table_privilege('authenticated', 'public.trips', 'SELECT') as can_rea
 1. Vercel 프로젝트의 **Settings → Environment Variables**에서 `ALLOWED_MEMBERS_JSON`을 추가하고 위 JSON 형식으로 네 사람을 입력합니다. Production, Preview, Development에 필요한 범위를 선택한 뒤 재배포합니다.
 2. Supabase의 **Authentication → URL Configuration**에서 Site URL을 실제 Vercel 주소로 지정하고 Redirect URLs에 `https://내-도메인/auth/callback`을 추가합니다. 로컬 개발에는 `http://localhost:3000/auth/callback`도 추가합니다.
 3. Supabase의 **Authentication → Email**에서 이메일 로그인을 켜고, **SMTP Settings**에 Brevo SMTP를 연결합니다.
-4. 등록된 첫 번째 사람이 로그인 링크로 접속해 첫 지도를 만든 뒤 그룹 메뉴에서 나머지 세 사람에게 각각 새 초대 링크를 보냅니다. 초대 링크는 한 번만 사용할 수 있으므로 세 개를 따로 생성합니다.
+4. 등록된 네 명은 이메일과 키워드로 로그인합니다. 서버의 `SUPABASE_SERVICE_ROLE_KEY`로 네 명이 만든 기존 지도와 새 지도의 멤버를 자동 연결하며, 기록·사진·여행 계획을 모두 함께 보고 수정할 수 있습니다. 아직 계정이 없는 사람은 첫 로그인 후 기존 지도에 연결됩니다. 초대 링크를 만들 필요가 없으며, 지도 전체 삭제는 만든 사람만 할 수 있습니다.
 
 각 사용자는 새 기기에서 처음 로그인하거나 직접 로그아웃했을 때만 이메일 링크를 다시 받으면 됩니다. 등록되지 않은 이메일은 앱과 초대 링크에 접근할 수 없습니다.

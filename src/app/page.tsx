@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { MapJournal } from "@/components/map-journal";
 import { getDashboardData } from "@/lib/data";
 import { getAccessWorkspaceUser } from "@/lib/access-workspace";
+import { synchronizeSharedMaps } from "@/lib/shared-maps";
 
 export const dynamic = "force-dynamic";
 
@@ -13,5 +14,6 @@ export default async function Home() {
 
   const workspace = await getAccessWorkspaceUser();
   if (!workspace) redirect("/login");
+  await synchronizeSharedMaps();
   return <MapJournal initialData={await getDashboardData(workspace.supabase, workspace.userId)} viewerId={workspace.userId} viewerName={workspace.member.displayName} />;
 }

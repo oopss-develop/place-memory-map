@@ -13,12 +13,24 @@ function normalizeEmail(email: string) {
   return email.trim().toLocaleLowerCase("en-US");
 }
 
+function parseMemberArray(raw = ""): unknown[] {
+  let text = raw.trim();
+  // .env loaders remove shell quotes; dashboard values can retain them literally.
+  if (text.startsWith("'") && text.endsWith("'")) text = text.slice(1, -1).trim();
+  try {
+    let value: unknown = JSON.parse(text);
+    if (typeof value === "string") value = JSON.parse(value);
+    return Array.isArray(value) ? value : [];
+  } catch {
+    return [];
+  }
+}
+
 export function parseAllowedMembers(raw = ""): AllowedMember[] {
   if (!raw.trim()) return [];
 
   try {
-    const value: unknown = JSON.parse(raw);
-    if (!Array.isArray(value)) return [];
+    const value = parseMemberArray(raw);
 
     const members = value.flatMap((item) => {
       if (!item || typeof item !== "object") return [];
@@ -39,8 +51,7 @@ export function getAllowedMembers() {
   if (configuredMembers.length === 4) return configuredMembers;
 
   try {
-    const value: unknown = JSON.parse(process.env.ALLOWED_MEMBER_KEYS_JSON ?? "");
-    if (!Array.isArray(value)) return [];
+    const value = parseMemberArray(process.env.ALLOWED_MEMBER_KEYS_JSON);
     return parseAllowedMembers(JSON.stringify(value));
   } catch {
     return [];
@@ -57,11 +68,10 @@ export function getAllowedMemberCredential(email: string | null | undefined, key
   if (!email || !keyword) return null;
 
   try {
-    const value: unknown = JSON.parse(process.env.ALLOWED_MEMBER_KEYS_JSON ?? "");
-    if (!Array.isArray(value)) return null;
+    const value = parseMemberArray(process.env.ALLOWED_MEMBER_KEYS_JSON);
 
     return value.find((item): item is { email: string; keyword: string; displayName?: string } => (
-      Boolean(item) && typeof item === "object" &&
+      item !== null && typeof item === "object" &&
       "email" in item && typeof item.email === "string" &&
       "keyword" in item && typeof item.keyword === "string" &&
       normalizeEmail(item.email) === normalizeEmail(email) && item.keyword === keyword

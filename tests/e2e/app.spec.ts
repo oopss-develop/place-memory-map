@@ -28,7 +28,7 @@ test("mobile search opens with account submenus closed", async ({ page }) => {
   await expect(page.getByRole("searchbox", { name: "장소 검색" })).toBeFocused();
 });
 
-test("account menu closes when interaction leaves it", async ({ page }) => {
+test("account menu closes when interaction leaves it", async ({ page }, testInfo) => {
   await page.addInitScript(() => localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true"));
   await page.goto("/");
   const mobile = (page.viewportSize()?.width ?? 1000) <= 820;
@@ -36,6 +36,9 @@ test("account menu closes when interaction leaves it", async ({ page }) => {
 
   const menuButton = page.getByRole("button", { name: "그룹 메뉴" });
   await menuButton.click();
+  await expect(page.getByText("등록된 네 명이 지도와 여행 계획을 함께 보고 수정할 수 있어요.")).toBeVisible();
+  await expect(page.getByRole("button", { name: "초대 링크 만들기" })).toHaveCount(0);
+  await page.screenshot({ path: testInfo.outputPath("shared-map-menu.png") });
   await page.getByRole("button", { name: "테마 선택" }).click();
   await expect(page.locator(".group-menu")).toBeVisible();
 

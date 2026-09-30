@@ -28,8 +28,8 @@ Members switch between private groups, search Korean businesses through Kakao, a
 
 ## Capabilities and Constraints
 
-- Email magic-link authentication and invitation links that expire after seven days.
-- Multiple groups per user; owners manage invitations and membership.
+- Four registered users sign in with their email and keyword.
+- Maps created by these users automatically share records, photos and trip schedules with all four. Existing maps join at dashboard load; new users join after their first login. Owners retain whole-map deletion rights.
 - All current group members can collaboratively create and edit visits.
 - Visits include date, title, note, participants, rating, tags, and up to five photos.
 - Places may have multiple visits. Deletion is recoverable for 30 days.

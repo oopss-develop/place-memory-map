@@ -78,7 +78,6 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [themeLoaded, setThemeLoaded] = useState(false);
   const [groupPickerOpen, setGroupPickerOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState("");
-  const [inviteLink, setInviteLink] = useState("");
   const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number }>();
   const [mapFocus, setMapFocus] = useState<{ latitude: number; longitude: number }>();
   const [maxZoomRequest, setMaxZoomRequest] = useState<{ latitude: number; longitude: number; request: number }>();
@@ -556,12 +555,14 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     const name = newGroupName.trim();
     if (name.length < 2) return setNotice("지도 이름을 두 글자 이상 입력해 주세요.");
     let group: Group = { id: crypto.randomUUID(), name, role: "owner", memberCount: 4, ownerId: viewerId };
+    let creationNotice = `“${name}” 지도를 만들었습니다. 등록된 네 명에게 자동 공유됩니다.`;
     if (!initialData.demoMode) {
       try {
         const response = await fetch("/api/groups", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name }) });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error);
         group = data.group as Group;
+        if (data.notice) creationNotice = data.notice;
       } catch (error) {
         return setNotice(error instanceof Error ? error.message : "지도를 만들지 못했습니다.");
       }
@@ -570,17 +571,8 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     setActiveGroupId(group.id);
     setSelectedId(undefined);
     setSelectedDateKey(undefined);
-    setNotice(`“${name}” 지도를 만들었습니다.`);
+    setNotice(creationNotice);
     groupDialogRef.current?.close();
-  }
-
-  async function createInvite() {
-    if (!activeGroup || !canManageActiveGroup) return setNotice("이 지도는 만든 사람만 관리할 수 있어요.");
-    if (initialData.demoMode) return setNotice("서버 저장소를 연결하면 초대 링크를 만들 수 있어요.");
-    const response = await fetch("/api/groups/invite", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ groupId: activeGroup.id }) });
-    const data = await response.json();
-    if (!response.ok) return setNotice(data.error);
-    setInviteLink(data.url); await navigator.clipboard.writeText(data.url); setNotice("7일 동안 유효한 초대 링크를 복사했습니다.");
   }
 
   async function deleteGroup() {
@@ -653,7 +645,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
             </section>;
           })}
         </div>
-        <footer className="sidebar-footer"><span className="avatar">{getMemberInitials(viewerName ?? initialData.members[0]?.displayName ?? "여행자")}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button ref={groupMenuButtonRef} className="icon-button" type="button" aria-label="그룹 메뉴" aria-controls="group-menu" aria-expanded={groupMenu} onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div ref={groupMenuRef} id="group-menu" className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {canManageActiveGroup ? "그룹장" : "멤버"}</span><button className="theme-toggle" type="button" aria-expanded={themePickerOpen} onClick={() => setThemePickerOpen((value) => !value)}><Palette size={15} />테마 선택<ChevronDown size={14} /></button>{themePickerOpen && <div className="theme-picker" role="radiogroup" aria-label="테마 선택">{THEME_OPTIONS.map((option) => <button key={option.id} className={`theme-option ${theme === option.id ? "active" : ""}`} type="button" role="radio" aria-checked={theme === option.id} onClick={() => { setTheme(option.id); setThemePickerOpen(false); }}><span className="theme-swatch" style={{ background: option.swatch }} /><span><strong>{option.label}</strong><small>{option.description}</small></span>{theme === option.id && <Check size={14} aria-hidden="true" />}</button>)}</div>}<FontPicker />{canManageActiveGroup && <button onClick={createInvite}>초대 링크 만들기</button>}{inviteLink && <input value={inviteLink} readOnly aria-label="초대 링크" />}<InstallAppButton />{canManageActiveGroup && <button className="group-menu-delete" type="button" disabled={groups.length <= 1} title={groups.length <= 1 ? "마지막 지도는 삭제할 수 없습니다." : undefined} onClick={deleteGroup}>현재 지도 삭제</button>}{canManageActiveGroup && groups.length <= 1 && <small className="group-menu-hint">마지막 지도는 삭제할 수 없어요.</small>}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
+        <footer className="sidebar-footer"><span className="avatar">{getMemberInitials(viewerName ?? initialData.members[0]?.displayName ?? "여행자")}</span><div><strong>{viewerName ?? initialData.members[0]?.displayName ?? "여행자"}</strong><span>{initialData.demoMode ? "간편 로그인" : "로그인됨"}</span></div><button ref={groupMenuButtonRef} className="icon-button" type="button" aria-label="그룹 메뉴" aria-controls="group-menu" aria-expanded={groupMenu} onClick={() => setGroupMenu((value) => !value)}><Menu size={19} /></button>{groupMenu && <div ref={groupMenuRef} id="group-menu" className="group-menu"><strong>{activeGroup?.name}</strong><span>구성원 {activeGroup?.memberCount}명 · {canManageActiveGroup ? "그룹장" : "멤버"}</span><button className="theme-toggle" type="button" aria-expanded={themePickerOpen} onClick={() => setThemePickerOpen((value) => !value)}><Palette size={15} />테마 선택<ChevronDown size={14} /></button>{themePickerOpen && <div className="theme-picker" role="radiogroup" aria-label="테마 선택">{THEME_OPTIONS.map((option) => <button key={option.id} className={`theme-option ${theme === option.id ? "active" : ""}`} type="button" role="radio" aria-checked={theme === option.id} onClick={() => { setTheme(option.id); setThemePickerOpen(false); }}><span className="theme-swatch" style={{ background: option.swatch }} /><span><strong>{option.label}</strong><small>{option.description}</small></span>{theme === option.id && <Check size={14} aria-hidden="true" />}</button>)}</div>}<FontPicker /><small className="group-menu-hint">등록된 네 명이 지도와 여행 계획을 함께 보고 수정할 수 있어요.</small><InstallAppButton />{canManageActiveGroup && <button className="group-menu-delete" type="button" disabled={groups.length <= 1} title={groups.length <= 1 ? "마지막 지도는 삭제할 수 없습니다." : undefined} onClick={deleteGroup}>현재 지도 삭제</button>}{canManageActiveGroup && groups.length <= 1 && <small className="group-menu-hint">마지막 지도는 삭제할 수 없어요.</small>}<button className="group-menu-logout" onClick={logout}><LogOut size={15} />로그아웃</button></div>}</footer>
       </aside>
 
       <section ref={mapStageRef} className="map-stage" inert={isMobile && mobileList} onPointerDown={closeGroupMenu}>

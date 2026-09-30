@@ -234,8 +234,10 @@
   .planner-header .planner-group { order: 4; max-width: none; width: 100%; flex-direction: row; align-items: center; }
   .planner-group select { flex: 1; }
   .planner-header .planner-trip-choice { order: 5; width: 100%; max-width: none; min-width: 0; }
-  .planner-header-actions { order: 6; width: 100%; display: flex; gap: 8px; }
-  .planner-header-actions button { flex: 1; }
+  .planner-header-actions { order: 6; width: 100%; display: flex; flex-wrap: wrap; gap: 8px; }
+  .planner-header-actions button { flex: 1; padding-inline: 8px; white-space: nowrap; }
+  .planner-header-actions .planner-export { flex: 0 0 auto; white-space: nowrap; }
+  .planner-export-label { display: none; }
   .planner-new-empty { margin-left: auto; }
   .planner-toolbar { padding: 10px 12px; flex-wrap: wrap; gap: 8px; }
   .planner-toolbar label { flex: 1; min-width: 130px; }
