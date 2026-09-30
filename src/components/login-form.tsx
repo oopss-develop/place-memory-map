@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export function LoginForm({ next = "/", initialMessage = "" }: { next?: string; initialMessage?: string }) {
   const [email, setEmail] = useState("");
@@ -32,18 +35,18 @@ export function LoginForm({ next = "/", initialMessage = "" }: { next?: string; 
 
   return (
     <form className="login-form" onSubmit={submit}>
-      <label htmlFor="member-email">등록된 이메일</label>
+      <Label htmlFor="member-email">등록된 이메일</Label>
       <div className="input-with-icon">
         <Mail aria-hidden="true" size={18} />
-        <input id="member-email" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setSent(false); }} placeholder="name@example.com" autoComplete="email" inputMode="email" aria-describedby="login-message" maxLength={254} disabled={pending} required />
+        <Input id="member-email" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setSent(false); }} placeholder="name@example.com" autoComplete="email" inputMode="email" aria-describedby="login-message" maxLength={254} disabled={pending} required />
       </div>
-      <label htmlFor="member-keyword">키워드</label>
+      <Label htmlFor="member-keyword">키워드</Label>
       <div className="input-with-icon">
-        <input id="member-keyword" name="member-keyword" type="text" placeholder="등록된 키워드" autoComplete="off" aria-describedby="login-message" maxLength={100} disabled={pending} required />
+        <Input id="member-keyword" name="member-keyword" type="text" placeholder="등록된 키워드" autoComplete="off" aria-describedby="login-message" maxLength={100} disabled={pending} required />
       </div>
-      <button className="primary-button" type="submit" disabled={pending || sent}>
+      <Button className="primary-button" type="submit" disabled={pending || sent}>
         {pending ? "로그인 중…" : sent ? "로그인 완료" : "로그인"}<Send size={18} aria-hidden="true" />
-      </button>
+      </Button>
       <p id="login-message" className="form-message" aria-live="polite">{message || "등록된 이메일과 키워드를 입력해 주세요."}</p>
     </form>
   );
