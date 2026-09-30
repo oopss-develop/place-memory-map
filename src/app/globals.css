@@ -11,15 +11,15 @@ html[data-font="gowun"] { --font-sans: var(--font-gowun), serif; }
 html[data-font="system"] { --font-sans: system-ui, sans-serif; }
 
 :root {
-  --paper: #f4efdf;
-  --paper-deep: #e9e0c8;
-  --ink: #162d38;
-  --ink-muted: #5c6966;
-  --vermilion: #d84c32;
-  --vermilion-dark: #a93324;
-  --olive: #69784d;
-  --line: #c8c0a9;
-  --white: #fffdf6;
+  --paper: #f8fafc;
+  --paper-deep: #f1f5f9;
+  --ink: #0f172a;
+  --ink-muted: #64748b;
+  --vermilion: #f97316;
+  --vermilion-dark: #c2410c;
+  --olive: #475569;
+  --line: #e2e8f0;
+  --white: #ffffff;
   --rating-gold: #ffc400;
   --rating-gold-deep: #d89a00;
   --surface: var(--white);
@@ -628,4 +628,61 @@ button, select { cursor: pointer; }
   .map-pin.selected::before, .map-marker-bounce-overlay::before, .osm-pin-icon.selected::before { display: none; }
   .osm-pin-icon.selected img { animation: none; transform: none; }
   .rating-particle, .rating-fall-fragment { display: none; }
+}
+
+/* shadcn surface pass: modern neutral surfaces with the existing orange map accent */
+.journal-sidebar { border-right: 1px solid var(--border); background: var(--background); box-shadow: 4px 0 18px rgba(15,23,42,.06); }
+.journal-sidebar::before { display: none; }
+.sidebar-header { min-height: 72px; padding: 16px 20px; border-bottom-color: var(--border); }
+.wordmark { color: var(--foreground); letter-spacing: .08em; }
+.group-row { padding: 16px 20px; border-bottom-color: var(--border); }
+.group-row label { color: var(--muted-foreground); font-size: 11px; letter-spacing: .04em; }
+.group-picker-trigger { min-height: 40px; padding: 0 12px; border: 1px solid var(--input); border-radius: var(--radius-md); background: var(--background); font-family: var(--font-sans), sans-serif; font-size: 14px; font-weight: 600; }
+.group-picker-trigger:hover, .group-picker-trigger:focus-visible, .group-picker-trigger[aria-expanded="true"] { border-color: var(--ring); background: var(--background); }
+.group-picker-menu { margin-top: 6px; border-color: var(--border); border-radius: var(--radius-lg); }
+.journal-view-switch { gap: 4px; padding: 6px 20px; border-bottom: 1px solid var(--border); }
+.journal-view-switch button { min-height: 38px; border: 1px solid transparent; border-radius: var(--radius-md); color: var(--muted-foreground); background: transparent; }
+.journal-view-switch button:hover { background: var(--accent); color: var(--accent-foreground); }
+.search-area { margin: 16px 20px 10px; }
+.place-search { min-height: 42px; padding: 3px 4px 3px 12px; border: 1px solid var(--input); border-radius: var(--radius-md); background: var(--background); box-shadow: 0 1px 2px rgba(15,23,42,.04); }
+.place-search:focus-within { border-color: var(--ring); box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 22%, transparent); }
+.place-search button { border-radius: var(--radius-md); background: var(--primary); }
+.filter-row { padding: 4px 20px 12px; border-bottom-color: var(--border); }
+.record-heading { padding: 18px 20px 10px; }
+.record-heading h1 { font-family: var(--font-sans), sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+.record-list { padding: 0 12px 18px 12px; }
+.date-group { border-bottom-color: var(--border); }
+.date-group-toggle { padding: 12px 8px; color: var(--muted-foreground); }
+.date-group.active .date-group-toggle { color: var(--primary); }
+.record-item { margin: 4px 0; padding: 12px 10px; border: 1px solid transparent; border-radius: var(--radius-md); background: transparent; }
+.record-item:hover { border-color: var(--border); background: var(--accent); }
+.record-item.selected { border-color: color-mix(in srgb, var(--primary) 42%, var(--border)); background: var(--card); box-shadow: 0 2px 8px rgba(15,23,42,.06); }
+.record-item.selected::after { display: none; }
+.sidebar-footer { min-height: 64px; padding: 10px 16px 10px 20px; border-top-color: var(--border); background: var(--muted); background: var(--paper-deep); }
+.group-menu { border-color: var(--border); border-radius: var(--radius-lg); }
+.group-menu button { border-radius: var(--radius-md); }
+.map-topbar { top: 14px; left: 14px; right: 14px; }
+.map-topbar > *, .map-provider-switch, .add-pin-button { border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: 0 4px 12px rgba(15,23,42,.10); }
+.map-date, .location-button { background: rgba(255,255,255,.94); }
+.map-provider-switch { padding: 3px; background: rgba(255,255,255,.94); }
+.map-provider-switch button { border-radius: var(--radius-md); }
+.map-provider-switch button.active { color: var(--primary-foreground); background: var(--ink); }
+.location-button { color: var(--foreground); }
+.add-pin-button { right: 18px; bottom: 18px; min-height: 46px; padding: 0 18px; border: 0; color: var(--primary-foreground); background: var(--primary); font-weight: 700; }
+.add-pin-button:hover { background: var(--vermilion-dark); box-shadow: 0 6px 18px rgba(194,65,12,.25); }
+.place-sheet { border-color: var(--border); border-radius: var(--radius-lg); background: var(--card); box-shadow: 0 18px 50px rgba(15,23,42,.18); }
+.sheet-toolbar { border-bottom-color: var(--border); background: var(--card); }
+.sheet-content h2 { font-family: var(--font-sans), sans-serif; font-size: 24px; letter-spacing: -.03em; }
+.sheet-actions button { min-height: 36px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); }
+.sheet-actions button:hover { background: var(--accent); }
+.sheet-actions .danger-button { color: var(--destructive); border-color: color-mix(in srgb, var(--destructive) 35%, var(--border)); }
+.mobile-nav { border-top-color: var(--border); background: rgba(255,255,255,.96); }
+.mobile-nav button.active { color: var(--primary); background: var(--accent); }
+
+@media (max-width: 820px) {
+  .sidebar-header, .group-row { padding-inline: 16px; }
+  .search-area { margin-inline: 14px; }
+  .record-list { padding-inline: 10px; }
+  .map-topbar { top: calc(12px + env(safe-area-inset-top, 0px)); left: max(12px, env(safe-area-inset-left, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); }
+  .add-pin-button { right: max(14px, env(safe-area-inset-right, 0px)); bottom: calc(var(--mobile-nav-height) + 16px); }
 }
