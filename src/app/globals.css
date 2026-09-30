@@ -94,6 +94,14 @@ html[data-font="system"] { --font-sans: system-ui, sans-serif; }
   --font-sans: var(--font-sans);
 }
 
+/* shadcn-style control states shared by legacy map surfaces */
+.relative:focus-within > [role="listbox"] { display: block; }
+.group-picker-trigger, .map-provider-switch button, .planner-mobile-tabs button, .journal-view-switch button, .sheet-actions button, .form-actions button { transition: color .15s ease, background-color .15s ease, border-color .15s ease, box-shadow .15s ease; }
+.group-picker-trigger:focus-visible, .map-provider-switch button:focus-visible, .planner-mobile-tabs button:focus-visible, .journal-view-switch button:focus-visible, .sheet-actions button:focus-visible, .form-actions button:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring); }
+.group-picker-menu, .search-popover, .group-menu { background: var(--popover); color: var(--popover-foreground); box-shadow: 0 10px 30px rgba(20,31,32,.16); }
+.map-provider-switch button[aria-pressed="true"], .planner-mobile-tabs button[aria-pressed="true"], .journal-view-switch button[aria-pressed="true"] { color: var(--accent-foreground); background: var(--accent); box-shadow: inset 0 0 0 1px var(--border); }
+.visit-form input[type="radio"], .visit-form input[type="checkbox"], .member-checks input[type="checkbox"], .planned-toggle input[type="checkbox"] { accent-color: var(--primary); }
+
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; }
 
