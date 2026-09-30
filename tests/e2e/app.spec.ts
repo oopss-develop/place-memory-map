@@ -82,6 +82,7 @@ test("group owner can delete an additional map", async ({ page }) => {
   await expect(page.getByText("“삭제할 지도” 지도를 삭제했습니다.")).toBeVisible();
 });
 
+
 test("a member cannot delete a map created by someone else", async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem("place-memory-groups-v1", JSON.stringify([
