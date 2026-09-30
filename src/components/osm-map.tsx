@@ -100,7 +100,6 @@ export function OpenStreetMap<T extends MapPoint>({ visits, selectedId, manualMo
       const content = document.createElement("div");
       const image = document.createElement("img");
       image.src = visit.pinNumber ? tripMarkerDataUrl(visit.pinNumber, selected) : markerSvgDataUrl(visit.markerStyle, { highlighted, selected }); image.alt = ""; content.append(image);
-      if (visit.pinLabel) { const label = document.createElement("span"); label.className = "schedule-pin-label"; label.textContent = visit.pinLabel; content.append(label); }
       const markerHeight = visit.pinNumber ? 48 : 44;
       const icon = L.divIcon({ className: `osm-pin-icon${visit.pinNumber ? " osm-trip-number-icon" : ""}${selected ? " selected" : ""}`, html: content, iconSize: [44, markerHeight], iconAnchor: [22, markerHeight] });
       L.marker([visit.place.latitude, visit.place.longitude], { icon, zIndexOffset: selectedId === visit.id ? 100 : 0 }).on("click", (event: any) => { L.DomEvent.stopPropagation(event); onSelect(visit); }).addTo(markerLayerRef.current);

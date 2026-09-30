@@ -84,6 +84,8 @@ test("ordered trip route is saved and restored without another route request", a
   await expect(page.locator(".trip-number-pin")).toHaveCount(2);
   await expect(page.locator('.trip-number-pin[data-pin-number="1"]')).toBeVisible();
   await expect(page.locator('.trip-number-pin[data-pin-number="2"]')).toBeVisible();
+  await page.locator('.trip-number-pin[data-pin-number="1"]').click();
+  await expect(page.locator('.trip-number-pin[data-pin-number="1"] img')).toHaveCSS("animation-name", "map-pin-bounce");
   await page.getByRole("button", { name: "동선 확인", exact: true }).click();
   await expect(page.locator(".trip-route-overlay")).toBeVisible();
   await expect(page.locator(".planner-route-status")).toContainText("연결선");

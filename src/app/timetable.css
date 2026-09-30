@@ -97,6 +97,9 @@
 .planner-manual-banner { padding: 10px 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; background: var(--surface); border-bottom: 1px solid var(--line); font-size: 13px; }
 .trip-planner .map-pin { padding: 0; border: 0; background: transparent; }
 .trip-planner .map-pin.trip-number-pin img { width: 44px; height: 48px; margin: 0 auto; }
+.trip-planner .schedule-number-marker { display: block; width: 48px; height: 48px; padding: 0; border: 0; background: transparent; cursor: pointer; filter: drop-shadow(0 3px 3px rgba(53,39,28,.25)); }
+.trip-planner .schedule-number-marker img { display: block; width: 48px; height: 48px; }
+.trip-planner .schedule-number-marker:focus-visible { outline: 2px solid var(--vermilion-dark); outline-offset: 2px; border-radius: 50%; }
 .planner-map-canvas .pinning-hint { pointer-events: none; }
 .map-offline-fallback { position: absolute; inset: 0; z-index: 8; padding: 70px 20px 130px; overflow: auto; background: var(--paper); display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .map-offline-fallback form { display: grid; gap: 10px; }
