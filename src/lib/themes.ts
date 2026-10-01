@@ -2,11 +2,11 @@ export const THEME_IDS = ["notebook", "pure", "dark", "forest", "lavender"] as c
 export type ThemeId = (typeof THEME_IDS)[number];
 
 export const THEME_OPTIONS: Array<{ id: ThemeId; label: string; description: string; swatch: string }> = [
-  { id: "notebook", label: "노트", description: "따스한 기록장", swatch: "#d84c32" },
-  { id: "pure", label: "퓨어", description: "맑고 가벼운 화면", swatch: "#287998" },
-  { id: "dark", label: "다크", description: "눈이 편한 어두운 화면", swatch: "#ff987e" },
-  { id: "forest", label: "포레스트", description: "차분한 초록빛", swatch: "#3f7456" },
-  { id: "lavender", label: "라벤더", description: "서늘한 보랏빛", swatch: "#a85e76" },
+  { id: "notebook", label: "뉴트럴", description: "흰색과 회색의 기본 화면", swatch: "#18181b" },
+  { id: "pure", label: "블루", description: "파란색 포인트", swatch: "#0369a1" },
+  { id: "dark", label: "다크", description: "어두운 배경의 화면", swatch: "#27272a" },
+  { id: "forest", label: "그린", description: "초록색 포인트", swatch: "#166534" },
+  { id: "lavender", label: "바이올렛", description: "보라색 포인트", swatch: "#6d28d9" },
 ];
 
 export const DEFAULT_THEME: ThemeId = "notebook";

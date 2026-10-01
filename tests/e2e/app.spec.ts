@@ -280,8 +280,8 @@ test("planned visit filter shows only planned records", async ({ page }) => {
   });
   await page.goto("/");
   if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
-  await expect(page.getByRole("button", { name: "방문 예정", exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "방문 예정", exact: true }).click();
+  await expect(page.getByRole("radio", { name: "방문 예정", exact: true })).toBeVisible();
+  await page.getByRole("radio", { name: "방문 예정", exact: true }).click();
   await expect(page.getByText("1개의 방문 기록")).toBeVisible();
   await page.getByRole("button", { name: /방문 기록 1개/ }).click();
   await expect(page.locator(".record-item")).toHaveCount(1);

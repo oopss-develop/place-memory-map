@@ -1,0 +1,132 @@
+[
+  {
+    "name": "desktop",
+    "surface": "map",
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "name": "desktop",
+    "surface": "records",
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "name": "desktop",
+    "surface": "detail",
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "name": "desktop",
+    "surface": "visit",
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "name": "desktop",
+    "surface": "trip-settings",
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "name": "desktop",
+    "surface": "schedule-edit",
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "name": "desktop",
+    "surface": "planner",
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "name": "desktop",
+    "surface": "dark",
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "name": "desktop",
+    "surface": "login",
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "name": "desktop",
+    "surface": "offline",
+    "width": 1440,
+    "scrollWidth": 1440
+  },
+  {
+    "name": "mobile",
+    "surface": "map",
+    "width": 390,
+    "scrollWidth": 390
+  },
+  {
+    "name": "mobile",
+    "surface": "records",
+    "width": 390,
+    "scrollWidth": 390
+  },
+  {
+    "name": "mobile",
+    "surface": "detail",
+    "width": 390,
+    "scrollWidth": 390
+  },
+  {
+    "name": "mobile",
+    "surface": "detail-actions",
+    "width": 390,
+    "scrollWidth": 390
+  },
+  {
+    "name": "mobile",
+    "surface": "detail-touch-targets",
+    "heights": [
+      44,
+      44,
+      44,
+      44
+    ]
+  },
+  {
+    "name": "mobile",
+    "surface": "visit",
+    "width": 390,
+    "scrollWidth": 390
+  },
+  {
+    "name": "mobile",
+    "surface": "trip-settings",
+    "width": 390,
+    "scrollWidth": 390
+  },
+  {
+    "name": "mobile",
+    "surface": "schedule-edit",
+    "width": 390,
+    "scrollWidth": 390
+  },
+  {
+    "name": "mobile",
+    "surface": "planner",
+    "width": 390,
+    "scrollWidth": 390
+  },
+  {
+    "name": "mobile",
+    "surface": "login",
+    "width": 390,
+    "scrollWidth": 390
+  },
+  {
+    "name": "mobile",
+    "surface": "offline",
+    "width": 390,
+    "scrollWidth": 390
+  }
+]

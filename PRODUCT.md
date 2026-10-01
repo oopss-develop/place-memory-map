@@ -42,7 +42,7 @@ Members switch between private groups, search Korean businesses through Kakao, a
 
 ## Brand Commitments
 
-Product name: Place Memory Map. Korean is the primary interface language. The experience must feel like a considered travel field notebook and must not resemble generic AI-generated dashboard UI.
+Product name: Place Memory Map. Korean is the primary interface language. The experience must use a clean, organized shadcn interface with neutral surfaces and consistent typography and component placement.
 
 ## Evidence on Hand
 

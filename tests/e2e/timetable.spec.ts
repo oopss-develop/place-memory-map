@@ -17,7 +17,7 @@ async function createTrip(page: Page) {
 }
 async function addExisting(page: Page) {
   await page.getByRole("button", { name: "일정 추가", exact: true }).click();
-  await page.getByRole("button", { name: "기존 기록", exact: true }).click();
+  await page.getByRole("radio", { name: "기존 기록", exact: true }).click();
   await page.getByLabel("방문 예정만").check();
   await page.getByRole("button", { name: /북촌 산책.*다시 가고 싶은 곳/ }).click();
   await page.getByRole("button", { name: "일정 저장", exact: true }).click();
@@ -57,7 +57,7 @@ test("trip, saved place, edit, map and persistence preserve the original memory"
   await page.getByRole("button", { name: "일정 저장", exact: true }).click();
   await expect(page.locator(".schedule-block-body").first()).toContainText("10:00–11:30");
   const mobile = testInfo.project.name === "mobile";
-  if (mobile) await page.getByRole("button", { name: "지도", exact: true }).click();
+  if (mobile) await page.getByRole("radio", { name: "지도", exact: true }).click();
   await page.locator(".planner-map-canvas [data-visit-id]").click();
   await page.locator(".planner-map-agenda").getByRole("button", { name: /북촌 산책/ }).click();
   await expect(page.locator(".schedule-block.selected")).toBeVisible();
@@ -88,7 +88,7 @@ test("search, overnight entries, overlapping places and failure fallback", async
   await expect(page.getByLabel("일정 시작")).toHaveValue("2026-10-04T09:00");
   await page.getByLabel("장소 이름", { exact: true }).fill("직접 고른 장소");
   await page.getByRole("button", { name: "일정 저장", exact: true }).click();
-  if (testInfo.project.name === "mobile") await page.getByRole("button", { name: "시간표", exact: true }).click();
+  if (testInfo.project.name === "mobile") await page.getByRole("radio", { name: "시간표", exact: true }).click();
   await expect(page.locator('.timetable-day.current .schedule-block')).toHaveCount(2);
 });
 
@@ -99,7 +99,7 @@ test("ordered trip route is saved and restored without another route request", a
   await page.getByLabel("일정 장소 검색").fill("성수 목적지"); await page.getByRole("button", { name: "검색", exact: true }).click();
   await page.getByRole("button", { name: "성수 목적지 서울 성동구", exact: true }).click();
   await page.getByRole("button", { name: "일정 저장", exact: true }).click();
-  if (testInfo.project.name === "mobile") await page.getByRole("button", { name: "지도", exact: true }).click();
+  if (testInfo.project.name === "mobile") await page.getByRole("radio", { name: "지도", exact: true }).click();
   await expect(page.locator(".trip-number-pin")).toHaveCount(2);
   await expect(page.locator('.trip-number-pin[data-pin-number="1"]')).toBeVisible();
   await expect(page.locator('.trip-number-pin[data-pin-number="2"]')).toBeVisible();
@@ -109,7 +109,7 @@ test("ordered trip route is saved and restored without another route request", a
   await expect(page.locator(".trip-route-overlay")).toBeVisible();
   await expect(page.locator(".planner-route-status")).toContainText("연결선");
   await page.reload(); await openPlanner(page);
-  if (testInfo.project.name === "mobile") await page.getByRole("button", { name: "지도", exact: true }).click();
+  if (testInfo.project.name === "mobile") await page.getByRole("radio", { name: "지도", exact: true }).click();
   await expect(page.locator(".trip-route-overlay")).toBeVisible();
   await expect(page.getByRole("button", { name: "동선 숨기기", exact: true })).toBeVisible();
 });
@@ -123,7 +123,7 @@ test("mouse drag creates, moves and resizes while rejecting out-of-range edits",
   await page.mouse.move(x, y); await page.mouse.down(); await page.mouse.move(x, y + 72, { steps: 8 }); await page.mouse.up();
   await expect(page.getByLabel("일정 시작")).toHaveValue("2026-10-03T09:00");
   await expect(page.getByLabel("일정 종료")).toHaveValue("2026-10-03T10:00");
-  await page.getByRole("button", { name: "기존 기록", exact: true }).click(); await page.getByRole("button", { name: /북촌 산책.*다시 가고 싶은 곳/ }).click(); await page.getByRole("button", { name: "일정 저장", exact: true }).click();
+  await page.getByRole("radio", { name: "기존 기록", exact: true }).click(); await page.getByRole("button", { name: /북촌 산책.*다시 가고 싶은 곳/ }).click(); await page.getByRole("button", { name: "일정 저장", exact: true }).click();
   const body = page.locator(".schedule-block-body").first();
   const block = (await body.boundingBox())!;
   await page.mouse.move(block.x + 50, block.y + 24); await page.mouse.down(); await page.mouse.move(block.x + 50, block.y + 60, { steps: 6 }); await page.mouse.up();
@@ -141,7 +141,7 @@ test("short adjacent schedules remain selectable and same-location visits share 
   for (const [start, end] of [["09:00", "09:15"], ["09:15", "09:30"]]) {
     await page.getByRole("button", { name: "일정 추가", exact: true }).click();
     await page.getByLabel("일정 시작").fill(`2026-10-03T${start}`); await page.getByLabel("일정 종료").fill(`2026-10-03T${end}`);
-    await page.getByRole("button", { name: "기존 기록", exact: true }).click(); await page.getByRole("button", { name: /북촌 산책.*다시 가고 싶은 곳/ }).click(); await page.getByRole("button", { name: "일정 저장", exact: true }).click();
+    await page.getByRole("radio", { name: "기존 기록", exact: true }).click(); await page.getByRole("button", { name: /북촌 산책.*다시 가고 싶은 곳/ }).click(); await page.getByRole("button", { name: "일정 저장", exact: true }).click();
   }
   const compact = page.locator(".schedule-block.compact");
   await expect(compact).toHaveCount(2);
@@ -150,7 +150,7 @@ test("short adjacent schedules remain selectable and same-location visits share 
   await compact.last().locator(".schedule-block-body").press("Enter");
   await expect(page.getByRole("button", { name: "일정 수정", exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("short-schedules.png") });
-  if (testInfo.project.name === "mobile") await page.getByRole("button", { name: "지도", exact: true }).click();
+  if (testInfo.project.name === "mobile") await page.getByRole("radio", { name: "지도", exact: true }).click();
   await expect(page.locator(".planner-map-canvas [data-visit-id]")).toHaveCount(1);
   await page.locator(".planner-map-canvas [data-visit-id]").click();
   await expect(page.locator(".planner-map-agenda").getByRole("button", { name: /북촌 산책/ })).toHaveCount(2);

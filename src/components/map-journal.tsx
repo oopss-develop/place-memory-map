@@ -13,6 +13,13 @@ import { InstallAppButton } from "@/components/install-app-button";
 import { FontPicker } from "@/components/font-preference";
 import { RatingPicker } from "@/components/rating-picker";
 import { SquareSparkIcon } from "@/components/square-spark-icon";
+import { Field, FieldLabel, FieldGroup } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Button } from "@/components/ui/button";
+import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
+import { Brand } from "@/components/brand";
 import { Badge } from "@/components/ui/badge";
 import { prepareVisitImage } from "@/lib/images";
 import { DEFAULT_MARKER_STYLE, MARKER_PICKER_STYLE_IDS as MARKER_STYLE_IDS, markerSvgDataUrl, normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
@@ -630,13 +637,13 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     <main className="journal-app" data-theme={theme}>
       {mobileList && <div className="sidebar-backdrop" aria-hidden="true" onClick={() => { setMobileList(false); closeGroupMenu(); }} />}
       <aside ref={sidebarRef} id="journal-sidebar" className={`journal-sidebar ${mobileList ? "mobile-open" : ""}`} inert={isMobile && !mobileList} role={isMobile && mobileList ? "dialog" : undefined} aria-modal={isMobile && mobileList ? true : undefined} aria-label="기록 목록과 장소 검색">
-        <header className="sidebar-header"><div className="wordmark"><span className="wordmark-pin"><img src="/map-pins/sparkle-yellow-round.png" alt="" /></span><span>PLACE<br />MEMORY MAP</span></div><button className="icon-button mobile-close" onClick={() => setMobileList(false)} aria-label="목록 닫기"><X size={20} /></button></header>
+        <header className="sidebar-header"><Brand compact /><button className="icon-button mobile-close" onClick={() => setMobileList(false)} aria-label="목록 닫기"><X size={20} /></button></header>
         <div className="group-row"><label id="group-label">함께 보는 지도</label><div className="group-picker"><button className="group-picker-trigger" type="button" aria-labelledby="group-label" aria-haspopup="listbox" aria-expanded={groupPickerOpen} onClick={() => setGroupPickerOpen((value) => !value)}><span>{activeGroup?.name ?? "지도 선택"}</span><ChevronDown size={17} /></button>{groupPickerOpen && <div className="group-picker-menu" role="listbox" aria-label="함께 보는 지도 선택">{groups.filter((group) => group.id !== activeGroupId).map((group) => <button key={group.id} className="group-picker-option" type="button" role="option" aria-selected={false} onClick={() => chooseGroup(group.id)}>{group.name}<span>{visits.filter((visit) => visit.groupId === group.id).length}건</span></button>)}<button className="group-picker-add" type="button" onClick={openCreateGroup}><Plus size={15} />함께 보는 지도 추가</button></div>}</div></div>
         <nav className="journal-view-switch" aria-label="지도 보기 방식"><button aria-pressed="true">기록</button><button onClick={() => { setPlannerVisit(undefined); setPlannerOpen(true); setMobileList(false); }}>여행 계획</button></nav><div className="search-area"><form className="place-search" role="search" onSubmit={searchPlaces}><Search size={19} aria-hidden="true" /><input ref={searchInputRef} type="search" enterKeyHint="search" value={query} onChange={(event) => { setQuery(event.target.value); setSearchResults([]); setSearchMessage(""); }} placeholder={mapProvider === "osm" ? "도시, 명소, 주소로 해외 검색" : "장소 이름으로 국내 검색"} aria-label="장소 검색" autoComplete="off" /><button type="submit" disabled={searching}>{searching ? "찾는 중" : "찾기"}</button></form>{(searchResults.length > 0 || searchMessage) && <div className="search-popover" aria-live="polite">{searchResults.map((result) => <button key={result.id} type="button" onClick={() => openForPlace({ id: crypto.randomUUID(), provider: mapProvider === "osm" ? "manual" : "kakao", providerPlaceId: result.id, name: result.placeName, address: result.roadAddressName || result.addressName, category: result.categoryName, latitude: result.latitude, longitude: result.longitude })}><strong>{result.placeName}</strong><span>{result.roadAddressName || result.addressName}</span></button>)}{searchMessage && <p>{searchMessage}</p>}<button className="search-manual" type="button" onClick={startManualPin}>찾는 장소가 없나요? 지도에서 직접 선택</button></div>}</div>
-        <div className="filter-row" aria-label="기록 필터"><Filter size={15} />{allTags.map((item) => <button key={item} type="button" className={tag === item ? "active" : ""} aria-pressed={tag === item} onClick={() => setTag(item)}>{item}</button>)}</div>
+        <ToggleGroup className="filter-row" type="single" value={tag} onValueChange={(value) => { if (value) setTag(value); }} spacing={1} aria-label="기록 필터"><Filter size={15} aria-hidden="true" />{allTags.map((item) => <ToggleGroupItem key={item} value={item}>{item}</ToggleGroupItem>)}</ToggleGroup>
         <div className="record-heading"><div><h1>기록</h1><p>{groupVisits.length}개의 방문 기록</p></div></div>
         <div className="record-list">
-          {!groupVisits.length && <div className="empty-records"><MapPin size={24} /><strong>아직 남긴 발자국이 없어요.</strong><span>장소를 검색하거나, 지도에서 위치를 직접 고를 수 있어요.</span><button type="button" onClick={startManualPin}><Plus size={16} />지도에서 첫 장소 추가</button></div>}
+          {!groupVisits.length && <Empty className="empty-records"><EmptyHeader><MapPin aria-hidden="true" /><EmptyTitle>아직 남긴 발자국이 없어요.</EmptyTitle><EmptyDescription>장소를 검색하거나, 지도에서 위치를 직접 고를 수 있어요.</EmptyDescription></EmptyHeader><EmptyContent><Button variant="outline" onClick={startManualPin}><Plus data-icon="inline-start" />지도에서 첫 장소 추가</Button></EmptyContent></Empty>}
           {dateGroups.map(({ date, visits: dateVisits }) => {
             const active = selectedDateKey === date;
             return <section key={date} className={`date-group ${active ? "active" : ""}`}>
@@ -651,7 +658,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       <section ref={mapStageRef} className="map-stage" inert={isMobile && mobileList} onPointerDown={closeGroupMenu}>
         <KakaoMap key={mapProvider} visits={groupVisits} mapProvider={mapProvider} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} mapFocus={mapFocus} maxZoomRequest={maxZoomRequest} pulseLocation={pulseLocation} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => openMobileList()} aria-label="기록 목록 열기" aria-controls="journal-sidebar" aria-expanded={mobileList}><List size={20} /></button><button className="mobile-search-button" onClick={() => openMobileList("search")}><Search size={18} /><span>장소 검색</span></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
-        <div className="map-provider-switch" role="group" aria-label="지도 선택"><button type="button" className={mapProvider === "kakao" ? "active" : ""} aria-pressed={mapProvider === "kakao"} onClick={() => changeMapProvider("kakao")}><MapIcon size={15} />국내</button><button type="button" className={mapProvider === "osm" ? "active" : ""} aria-pressed={mapProvider === "osm"} onClick={() => changeMapProvider("osm")}><Globe2 size={15} />해외</button></div>
+        <ToggleGroup className="map-provider-switch" type="single" value={mapProvider} onValueChange={(value) => { if (value === "kakao" || value === "osm") changeMapProvider(value); }} spacing={1} aria-label="지도 선택"><ToggleGroupItem value="kakao"><MapIcon aria-hidden="true" />국내</ToggleGroupItem><ToggleGroupItem value="osm"><Globe2 aria-hidden="true" />해외</ToggleGroupItem></ToggleGroup>
         <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
         {selected && <article ref={sheetRef} aria-label={`${selected.place.name} 방문 기록`} className={`place-sheet ${activePhotoUrl ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""} ${sheetExpanded ? "is-expanded" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>
           {pendingAction === "delete" && <div className="operation-progress" role="progressbar" aria-label="기록 삭제 중" />}
@@ -682,7 +689,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
       <InstallAppButton autoPrompt suppressAutoPrompt={Boolean(selected || draftPlace || manualMode || mobileList)} />
 
-      <dialog ref={dialogRef} className="visit-dialog" aria-label={editing ? "기록 고치기" : "새 방문 기록"} onCancel={(event) => { if (pendingAction) event.preventDefault(); }} onClose={() => { setDraftPlace(null); setEditing(null); setFormError(""); setPulseLocation(undefined); }}>
+      <dialog ref={dialogRef} className="visit-dialog" aria-describedby="visit-dialog-title" aria-label={editing ? "기록 고치기" : "새 방문 기록"} onCancel={(event) => { if (pendingAction) event.preventDefault(); }} onClose={() => { setDraftPlace(null); setEditing(null); setFormError(""); setPulseLocation(undefined); }}>
         <form method="dialog" className="dialog-close-form"><button disabled={Boolean(pendingAction)} aria-label="창 닫기"><X size={20} /></button></form>
         {formError && <p className="visit-form-error" role="alert">{formError}</p>}
         {draftPlace && (
@@ -690,25 +697,25 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
             {pendingAction === "save" && <div className="operation-progress" role="progressbar" aria-label={editing ? "기록 수정 중" : "기록 저장 중"} />}
             <div className="form-title">
               <MapPin size={22} />
-              <div><span>{editing ? "기록 고치기" : "새 방문 기록"}</span><h2>{draftPlace.name || "이 위치에 이름을 붙여주세요"}</h2></div>
+              <div><h2 id="visit-dialog-title">{draftPlace.name || "이 위치에 이름을 붙여주세요"}</h2></div>
             </div>
-            <div className="form-grid">
-              <label>장소 이름<input name="placeName" defaultValue={draftPlace.name} required /></label>
-              <label>방문한 날<input name="visitedOn" type="date" defaultValue={editing?.visitedOn ?? new Date().toISOString().slice(0, 10)} required /></label>
-            </div>
+            <FieldGroup className="form-grid">
+              <Field><FieldLabel htmlFor="visit-field-1">장소 이름</FieldLabel><Input id="visit-field-1" name="placeName" defaultValue={draftPlace.name} required /></Field>
+              <Field><FieldLabel htmlFor="visit-field-2">방문한 날</FieldLabel><Input id="visit-field-2" name="visitedOn" type="date" defaultValue={editing?.visitedOn ?? new Date().toISOString().slice(0, 10)} required /></Field>
+            </FieldGroup>
             <label className="planned-toggle"><input name="isPlanned" type="checkbox" defaultChecked={editing?.isPlanned ?? false} /><span><strong>방문 예정</strong><small>아직 방문하지 않은 장소로 표시</small></span></label>
-            <label>주소 또는 위치 설명<input name="address" defaultValue={draftPlace.address} placeholder="예: 해방촌 골목 안쪽" /></label>
+            <Field><FieldLabel htmlFor="visit-field-3">주소 또는 위치 설명</FieldLabel><Input id="visit-field-3" name="address" defaultValue={draftPlace.address} placeholder="예: 해방촌 골목 안쪽" /></Field>
             <fieldset className="marker-picker">
               <legend>지도에 표시할 핀</legend>
               <div>{MARKER_STYLE_IDS.map((style, index) => <label key={style} className={markerStyle === style ? "selected" : undefined} title={`핀 ${index + 1}`}><input type="radio" name="markerStyle" value={style} checked={markerStyle === style} onChange={() => setMarkerStyle(style)} aria-label={`핀 ${index + 1}`} /><img src={markerSvgDataUrl(style)} alt="" /><Check size={14} strokeWidth={3} aria-hidden="true" /></label>)}</div>
               {!MARKER_STYLE_IDS.includes(markerStyle) && <small className="marker-picker-hint">기존 사각 핀을 유지합니다. 원형 핀을 선택하면 변경돼요.</small>}
             </fieldset>
-            <label>기록 제목<input name="title" defaultValue={editing?.title} placeholder="그날을 한 문장으로" required /></label>
-            <label>무엇을 했나요?<textarea name="note" defaultValue={editing?.note} rows={4} placeholder="먹은 것, 나눈 이야기, 다시 오고 싶은 이유…" /></label>
-            <div className="form-grid">
+            <Field><FieldLabel htmlFor="visit-field-4">기록 제목</FieldLabel><Input id="visit-field-4" name="title" defaultValue={editing?.title} placeholder="그날을 한 문장으로" required /></Field>
+            <Field><FieldLabel htmlFor="visit-field-5">무엇을 했나요?</FieldLabel><Textarea id="visit-field-5" name="note" defaultValue={editing?.note} rows={4} placeholder="먹은 것, 나눈 이야기, 다시 오고 싶은 이유…" /></Field>
+            <FieldGroup className="form-grid">
               <RatingPicker defaultValue={editing?.rating ?? 5} />
-              <label>태그<input name="tags" defaultValue={editing?.tags.join(", ")} placeholder="데이트, 산책, 맛집" /></label>
-            </div>
+              <Field><FieldLabel htmlFor="visit-field-6">태그</FieldLabel><Input id="visit-field-6" name="tags" defaultValue={editing?.tags.join(", ")} placeholder="데이트, 산책, 맛집" /></Field>
+            </FieldGroup>
             <fieldset>
               <legend>함께한 사람</legend>
               <div className="member-checks">{initialData.members.map((member) => <label key={member.id}><input type="checkbox" name={`member-${member.id}`} defaultChecked={editing ? editing.participants.some((person) => person.id === member.id) : true} /><span className="member-avatar">{member.initials}</span><span className="member-name">{member.displayName}</span><Check className="member-checkmark" size={13} strokeWidth={3} aria-hidden="true" /></label>)}</div>
@@ -718,9 +725,9 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
           </form>
         )}
       </dialog>
-      <dialog ref={groupDialogRef} className="group-dialog" onClose={() => setNewGroupName("")}>
+      <dialog ref={groupDialogRef} className="group-dialog" aria-labelledby="group-dialog-title" onClose={() => setNewGroupName("")}>
         <form className="group-create-form" onSubmit={createGroup}>
-          <div className="form-title"><MapIcon size={21} /><div><span>새 지도 만들기</span><h2>함께 볼 지도의 이름</h2></div></div>
+          <div className="form-title"><MapIcon size={21} /><div><h2 id="group-dialog-title">새 지도 만들기</h2></div></div>
           <label htmlFor="new-group-name">지도 이름<input id="new-group-name" value={newGroupName} onChange={(event) => setNewGroupName(event.target.value)} placeholder="예: 제주도 여름 기록" maxLength={40} autoFocus required /></label>
           <p className="form-message">새 지도는 네 명이 함께 기록할 수 있어요.</p>
           <div className="form-actions"><button type="button" onClick={() => groupDialogRef.current?.close()}>취소</button><button className="primary-button" type="submit">지도 만들기</button></div>

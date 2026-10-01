@@ -57,7 +57,7 @@ test("overseas map switch uses global search and keeps the selected coordinates"
     });
   });
   await page.goto("/");
-  await page.getByRole("button", { name: "해외" }).click();
+  await page.getByRole("radio", { name: "해외" }).click();
   await expect(page.locator(".osm-map")).toBeVisible();
   await page.getByRole("button", { name: "장소 검색", exact: true }).click();
   const search = page.getByRole("searchbox", { name: "장소 검색" });
@@ -69,12 +69,12 @@ test("overseas map switch uses global search and keeps the selected coordinates"
   await expect(page.getByRole("heading", { name: "에펠탑" })).toBeVisible();
   await expect(page.getByLabel("주소 또는 위치 설명")).toHaveValue("5 Avenue Anatole France, Paris");
   await page.getByRole("button", { name: "창 닫기" }).click();
-  await page.getByRole("button", { name: "국내" }).click();
+  await page.getByRole("radio", { name: "국내" }).click();
   await expect(page.locator(".osm-map")).toHaveCount(0);
   await expect(page.locator(".kakao-map")).toBeVisible();
-  await page.getByRole("button", { name: "해외" }).click();
+  await page.getByRole("radio", { name: "해외" }).click();
   await expect(page.locator(".osm-map")).toBeVisible();
-  await page.getByRole("button", { name: "국내" }).click();
+  await page.getByRole("radio", { name: "국내" }).click();
   await expect(page.locator(".kakao-map")).toBeVisible();
 });
 

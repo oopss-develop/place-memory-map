@@ -1,29 +1,33 @@
-# Direction contract
+# Redesign contract — 2026-10-01
 
-## World
+User direction: redesign the entire application to follow shadcn design patterns,
+font sizes, and component placement. Warmth is unnecessary; prioritize a clean,
+organized interface. This supersedes the previous field-notebook visual world.
 
-A field notebook that has accumulated real trips: cream stock, ink-blue type, vermilion location marks, olive utility ink, ruled dividers, date stamps, and photographs attached like evidence. It is an operating surface, not nostalgic decoration.
+Mode: Operate. Users record shared places on phones while out and organize records
+and travel timetables on larger screens. Neutral light surfaces stay readable in
+daylight; a neutral dark theme remains available for low-light use.
 
-## First viewport
+World: shadcn/ui New York, Neutral base, Lucide icons, Noto Sans KR by default.
+Black primary actions, white content, soft gray navigation, thin gray boundaries.
+Small, consistent controls and a 12/14/16/20/24px type scale. Preserve stored font
+and color preferences, accessible lists, map interactions, data and permissions.
 
-The map occupies the field. A narrow bound notebook index on the left exposes the current group, place search, filters, and recent visits without a marketing introduction. A red pin action sits where a traveler can reach it.
+First viewport: a 340px navigation sidebar groups map selection, record/travel
+navigation, search, filters and chronological records above the anchored account
+footer. The map fills the remaining space. Mobile places search above the map,
+keeps the record drawer and bottom navigation, and reserves 44px touch controls.
 
-## Visitor path
+Signature interaction: selecting a dated record reveals a compact place sheet
+while retaining geographic context; travel planning uses the same controls and
+visual tokens in its timetable/map split. Keep existing native-dialog focus and
+sticky mobile save/cancel actions.
 
-Search or place a pin, inspect the place's visit history, record a dated memory with companions and photographs, then return to the map with the new pin selected.
+Scope: main map and record drawer, account/theme/font menus, place details,
+visit/map dialogs, travel header/timetable/agenda/dialogs, login, first-map setup,
+offline screen, shared UI primitives and design documentation.
 
-## Signature interaction
-
-Selecting a pin draws a vermilion route-thread from the pin to its record in the notebook index; on mobile the record rises as a paper sheet from the map edge.
-
-## System rules
-
-- One ruled-paper rhythm controls alignment and spacing.
-- Color is functional: vermilion commits and locates, olive filters, ink-blue carries content.
-- Controls are rectangular with small radii; pills are reserved for removable tags and compact filters.
-- Photography is user content, never decorative chrome.
-- Motion is one sheet-and-thread transition and respects reduced motion.
-
-## Honest risk
-
-Notebook references can become decorative or cramped. The map remains dominant, body text stays at least 16px, and texture is limited to real ruled structure rather than fake grain.
+Validation: desktop/mobile screenshots, dark menu check, empty and populated
+states, existing unit and interaction tests, TypeScript, ESLint and Next build.
+Implementation is code-led because the user has already selected the UI language.
+No imagery or decorative comp is necessary for this operational redesign.

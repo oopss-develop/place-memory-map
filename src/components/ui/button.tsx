@@ -12,10 +12,10 @@ const variants: Record<ButtonVariant, string> = {
   destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
 };
 const sizes: Record<ButtonSize, string> = {
-  default: "h-10 px-4 py-2",
-  sm: "h-9 rounded-md px-3",
+  default: "h-9 px-4 py-2 max-md:min-h-11",
+  sm: "h-8 rounded-md px-3 max-md:min-h-11",
   lg: "h-11 rounded-md px-8",
-  icon: "h-10 w-10",
+  icon: "size-9 max-md:size-11",
 };
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -24,5 +24,5 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export function Button({ className, variant = "default", size = "default", type = "button", ...props }: ButtonProps) {
-  return <button type={type} className={cn("inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50", variants[variant], sizes[size], className)} {...props} />;
+  return <button type={type} data-slot="button" className={cn("inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 disabled:pointer-events-none disabled:opacity-50", variants[variant], sizes[size], className)} {...props} />;
 }

@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Mail, Send } from "lucide-react";
+import { Mail, ArrowRight, LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 
 export function LoginForm({ next = "/", initialMessage = "" }: { next?: string; initialMessage?: string }) {
   const [email, setEmail] = useState("");
@@ -35,17 +36,22 @@ export function LoginForm({ next = "/", initialMessage = "" }: { next?: string; 
 
   return (
     <form className="login-form" onSubmit={submit}>
-      <Label htmlFor="member-email">등록된 이메일</Label>
-      <div className="input-with-icon">
-        <Mail aria-hidden="true" size={18} />
-        <Input id="member-email" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setSent(false); }} placeholder="name@example.com" autoComplete="email" inputMode="email" aria-describedby="login-message" maxLength={254} disabled={pending} required />
-      </div>
-      <Label htmlFor="member-keyword">키워드</Label>
-      <div className="input-with-icon">
+      <FieldGroup>
+      <Field data-disabled={pending}>
+        <FieldLabel htmlFor="member-email">등록된 이메일</FieldLabel>
+        <InputGroup>
+        <InputGroupAddon><Mail aria-hidden="true" /></InputGroupAddon>
+        <InputGroupInput id="member-email" type="email" value={email} onChange={(event) => { setEmail(event.target.value); setSent(false); }} placeholder="name@example.com" autoComplete="email" inputMode="email" aria-describedby="login-message" maxLength={254} disabled={pending} required />
+        </InputGroup>
+      </Field>
+      <Field data-disabled={pending}>
+        <FieldLabel htmlFor="member-keyword">키워드</FieldLabel>
         <Input id="member-keyword" name="member-keyword" type="text" placeholder="등록된 키워드" autoComplete="off" aria-describedby="login-message" maxLength={100} disabled={pending} required />
-      </div>
-      <Button className="primary-button" type="submit" disabled={pending || sent}>
-        {pending ? "로그인 중…" : sent ? "로그인 완료" : "로그인"}<Send size={18} aria-hidden="true" />
+      </Field>
+      </FieldGroup>
+      <Button type="submit" disabled={pending || sent} aria-busy={pending}>
+        {pending ? <LoaderCircle className="animate-spin" data-icon="inline-start" aria-hidden="true" /> : null}
+        {pending ? "로그인 중…" : sent ? "로그인 완료" : "로그인"}<ArrowRight data-icon="inline-end" aria-hidden="true" />
       </Button>
       <p id="login-message" className="form-message" aria-live="polite">{message || "등록된 이메일과 키워드를 입력해 주세요."}</p>
     </form>

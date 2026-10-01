@@ -1,242 +1,232 @@
 ---
 name: Place Memory Map
-description: A private shared map journal with the character of a working travel field notebook.
+description: A clean, organized private map journal using shadcn/ui New York and Neutral surfaces.
 colors:
-  primary: "#d84c32"
-  primary-dark: "#a93324"
-  paper: "#f4efdf"
-  paper-deep: "#e9e0c8"
-  ink: "#162d38"
-  ink-muted: "#5c6966"
-  olive: "#69784d"
-  rule: "#c8c0a9"
-  sheet: "#fffdf6"
+  primary: "#18181b"
+  primary-foreground: "#fafafa"
+  background: "#ffffff"
+  foreground: "#18181b"
+  card: "#ffffff"
+  muted: "#f4f4f5"
+  muted-foreground: "#71717a"
+  sidebar: "#fafafa"
+  border: "#e4e4e7"
+  input: "#d4d4d8"
+  ring: "#a1a1aa"
+  destructive: "#dc2626"
   rating-gold: "#ffc400"
-  rating-gold-deep: "#d89a00"
+  rating-gold-deep: "#a16207"
 typography:
   display:
-    fontFamily: "var(--font-serif), serif"
-    fontWeight: 700
-    lineHeight: 1.2
-  body:
+    fontFamily: "var(--font-sans), sans-serif"
+    fontSize: "26px"
+    fontWeight: 600
+    lineHeight: 1.3
+    letterSpacing: "-.02em"
+  headline:
+    fontFamily: "var(--font-sans), sans-serif"
+    fontSize: "24px"
+    fontWeight: 600
+    lineHeight: 1.4
+    letterSpacing: "-.02em"
+  title:
+    fontFamily: "var(--font-sans), sans-serif"
+    fontSize: "20px"
+    fontWeight: 600
+    lineHeight: 1.4
+    letterSpacing: "-.02em"
+  section:
     fontFamily: "var(--font-sans), sans-serif"
     fontSize: "16px"
+    fontWeight: 600
+    lineHeight: 1.5
+  body:
+    fontFamily: "var(--font-sans), sans-serif"
+    fontSize: "14px"
     fontWeight: 400
     lineHeight: 1.5
   label:
     fontFamily: "var(--font-sans), sans-serif"
     fontSize: "12px"
-    fontWeight: 700
-    letterSpacing: ".06em"
+    fontWeight: 500
+    lineHeight: 1.5
 rounded:
-  control: "7px"
-  panel: "11px"
-  chip: "999px"
+  sm: ".375rem"
+  md: ".5rem"
+  lg: ".625rem"
+  sheet: "12px"
+  pill: "999px"
 spacing:
-  xs: "5px"
+  xs: "4px"
   sm: "8px"
+  control: "12px"
   md: "16px"
+  gutter: "20px"
   lg: "24px"
   xl: "32px"
 components:
   button-primary:
-    background: "{colors.primary}"
-    color: "{colors.sheet}"
-    borderRadius: "{rounded.control}"
-    fontWeight: 700
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.primary-foreground}"
+    typography: "{typography.body}"
+    rounded: "{rounded.md}"
+    padding: "8px 16px"
+    height: "36px"
+  button-outline:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.md}"
+    padding: "8px 16px"
+    height: "36px"
+  button-ghost:
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.md}"
+    padding: "8px 16px"
+    height: "36px"
   input:
-    background: "{colors.sheet}"
-    color: "{colors.ink}"
-    borderColor: "{colors.rule}"
-    borderRadius: "{rounded.control}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.md}"
+    padding: "4px 12px"
+    height: "36px"
+  badge:
+    backgroundColor: "{colors.muted}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.label}"
+    rounded: "{rounded.pill}"
+    padding: "2px 10px"
+  card:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.lg}"
+    padding: "24px"
+  navigation:
+    backgroundColor: "{colors.sidebar}"
+    textColor: "{colors.foreground}"
+    width: "340px"
+  place-sheet:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.foreground}"
+    rounded: "{rounded.sheet}"
+    padding: "20px"
 ---
-
 # Design System: Place Memory Map
-
-## Sidebar system (September 16 revision)
-
-### User-selectable font
-
-The account menu provides four independent font preferences: Noto Sans KR
-(default), NanumSquare, Gowun Batang, and system-ui. Each option previews its
-own typeface. The choice applies throughout the app via the `--font-sans` and
-`--font-serif` aliases, including controls and memory details, and persists in
-local storage per browser/device. Color themes do not change this choice.
-Typography sizes, weights, and spacing below remain consistent across fonts.
-NanumSquare's original 400/700/800 WOFF files are self-hosted with attribution.
-
-The navigation sidebar uses Noto Sans KR throughout, including map names,
-record titles, dates and the account area. This supersedes the sidebar-specific
-serif, numbered index and notebook-rule treatments described below.
-
-- Heading: 18px / 700; item and control: 15px / 600; metadata: 13px / 400–600.
-- Line height: 1.5. Numerals in metadata use tabular figures.
-- Shared gutters: 24px desktop, 20px mobile; section spacing: 20–24px.
-- Search and map picker: 48px overall height; filters: 40px minimum.
-- Records show a 36px thumbnail of their selected map pin, not a sequence number.
-- Selection uses a theme-aware filled background and one-pixel outline.
-- Dividers and hover surfaces use theme variables. Date icons remain upright.
-- The account footer anchors the sidebar; its menu layers above the search box.
-- Long names wrap; record subtitles truncate; counts never shrink.
-
-The sidebar is an operational list, with a flat surface and no decorative
-vertical notebook rule. Serif remains available for memory detail content.
-
-## Mobile usability (September 16 revision)
-
-- Keep a labeled place-search entry visible above the map. Opening search focuses
-  the input during the tap; failed searches offer a direct manual-pin action.
-- The record drawer leaves a 32px backdrop edge (390px maximum width), blocks
-  interaction with the map, traps keyboard focus, and closes with Escape, its
-  close button, or a backdrop tap. Closed drawers are hidden from navigation.
-- The 64px bottom navigation adds the device's bottom safe area. Map controls,
-  notices, install prompts, and record sheets account for that space and notches.
-- Use 44px minimum touch controls and 16px form inputs on mobile. Keep the map
-  pin action labeled, and show an explicit cancel state while placing a pin.
-- Record details have a persistent expand/close toolbar and independently
-  scrolling content. Expanded details stop below the map toolbar and above the
-  navigation. Editing and deletion actions have full touch targets.
-- Visit entry uses a full-width bottom dialog with a sticky save/cancel bar.
-  Validation and save errors appear inside the dialog, and saving disables
-  dismissal. Short landscape screens allow the drawer itself to scroll.
-
-These rules supersede the original mobile dimensions and control sizes below;
-the notebook palette, theme/font choices, and desktop split layout remain.
 
 ## Overview
 
-**Creative North Star: "The Working Travel Field Notebook"**
+**Creative North Star: "The Organized Map Workspace"**
 
-The interface feels like a notebook that is actively used on a trip, not a themed scrapbook. Warm paper, ruled divisions, editorial serif headings, compact date marks, and real visit photography give memories a physical home while the map remains the dominant working surface.
+The user-selected visual world is shadcn/ui New York with a Neutral base, Lucide icons, and Noto Sans KR by default. White content, soft gray navigation, thin boundaries, and compact typography make records and travel plans easy to scan.
 
-The system is calm and information-dense. Vermilion marks location and commitment; olive signals filters and metadata; blue-black ink carries the narrative. It explicitly rejects generic dashboard tiles, glass surfaces, purple gradients, inflated marketing headlines, and decorative AI imagery.
+The whole application shares this system: map journal, record drawer, account and preference menus, place details, visit and map dialogs, travel timetable and agenda, login, first-map setup, and offline screen. Warm notebook styling is superseded by the explicit request for a clean, organized shadcn interface.
 
 **Key Characteristics:**
 
-- Map-first split workspace on desktop and map-plus-bottom-sheet on mobile.
-- Restrained physical cues: rules, paper tones, date stamps, and attached photographs.
-- Small-radius rectangular controls; pills only for tags, filters, and people.
-- Korean editorial serif for memory titles, clear sans-serif for operation.
+- Neutral surfaces and dark primary actions with consistent focus and disabled states.
+- Compact operational typography and gently curved controls.
+- Map-first desktop workspace and touch-friendly mobile sheets.
+- Persistent, independent user font and color preferences.
 
 ## Colors
 
-The palette is warm, muted, and functional, with one decisive vermilion action color.
+The default palette is neutral; meaningful accents belong to actions, errors, ratings, and user-selected themes.
 
 ### Primary
 
-- **Travel Pin Vermilion:** Commits saves, marks pins, and identifies the selected record.
-- **Dried Vermilion:** Hover and strong warning state for the primary accent.
+**Neutral Primary** commits actions and anchors the brand mark. **Primary Foreground** provides its readable inverse text.
 
 ### Secondary
 
-- **Field Olive:** Filters, dates, categories, and quiet utility metadata.
-- **Rating Spark Gold:** A bright, celebratory accent reserved for rating stars and their feedback particles.
+The destructive color marks validation and destructive actions. Rating gold and its deeper outline remain reserved for stars and rating feedback.
 
 ### Neutral
 
-- **Notebook Paper:** Main bound-paper surface and page field.
-- **Aged Paper:** Footer and recessed notebook regions.
-- **Blue-Black Ink:** Primary text, dark controls, and avatars.
-- **Soft Ink:** Supporting copy and secondary metadata.
-- **Pencil Rule:** Dividers, input strokes, and notebook structure.
-- **Fresh Sheet:** Raised records, detail sheets, and input fill.
+Background and card provide white content surfaces. Sidebar provides a quiet navigation field. Muted supplies hover, selected, and recessed surfaces; muted foreground carries metadata. Border separates content; input distinguishes editable fields; ring identifies keyboard focus. Secondary, accent, and popover semantic roles inherit the corresponding neutral surface values in CSS.
 
-### Named Rules
+**The Semantic Surface Rule.** Use semantic CSS variables so color preferences apply consistently to new surfaces.
 
-**The Functional Ink Rule.** Vermilion locates or commits, olive classifies, and blue-black communicates; do not swap these roles for decoration.
+### Preferences
 
-**The Paper Majority Rule.** Warm neutral fields occupy most of every screen so accent colors remain meaningful.
+Preserve theme IDs and browser storage: `notebook` now displays **뉴트럴** (Neutral), `pure` uses blue primary, `forest` green, `lavender` violet, and `dark` reverses neutral surfaces. These preferences keep the clean layout and type hierarchy. Compatibility aliases such as paper, ink, vermilion, and olive resolve to the new semantic roles; their names do not authorize notebook styling.
+
+Existing map-pin rasters, numbered travel pins, photographs, provider tiles, and rating effects retain their established asset colors and interactions. They are legacy map/content assets, not a UI palette source.
 
 ## Typography
 
-**Display Font:** Gowun Batang (with serif fallback)  
-**Body Font:** Noto Sans KR (with sans-serif fallback)  
-**Label/Mono Font:** Noto Sans KR; record numbers use the system monospace fallback.
+**Default Font:** Noto Sans KR, through the shared font alias. User options are Noto Sans KR, NanumSquare, Gowun Batang, and system-ui. The choice applies to app typography, including controls and detail content, independently of color theme, and persists per browser/device. NanumSquare is self-hosted with attribution.
 
-**Character:** The serif voice is personal and literary without becoming ornamental. The sans-serif voice keeps search, forms, and metadata brisk and legible.
+The regular hierarchy uses label, body, section, title, and headline roles from the frontmatter. Login uses the restrained display role. Body text is regular; controls commonly use medium weight (500); section and dialog headings use semibold (600). Metadata and schedule times use tabular numerals where present.
 
-### Hierarchy
+Inputs use (16px) type on mobile. Existing dense timetable metadata also uses (11–13px); responsive planner headings use (18–20px), planner empty states and offline headings use (22px). These local exceptions do not introduce a second display hierarchy.
 
-- **Display** (700, 43–72px, 1.12): Authentication and first-use statements only.
-- **Headline** (700, 24–25px, 1.25): Notebook section and place names.
-- **Title** (700, 17–19px, 1.25): Visit rows and group selection.
-- **Body** (400, 15–16px, 1.5–1.7): Notes and explanatory content.
-- **Label** (700–800, 11–13px, .04–.12em): Dates, categories, and operational labels.
-
-### Named Rules
-
-**The Memory Voice Rule.** Use the serif face for places, memories, and reflective prose; keep operational text in sans-serif.
+**The Preference Continuity Rule.** Keep size and hierarchy consistent when a member changes their font; do not assign a mandatory serif voice to memories.
 
 ## Layout
 
-Desktop uses a fixed 374px notebook index beside a flexible map. The sidebar's 28px inner red rule anchors content at a 44–46px left inset. Mobile switches to a full-viewport map, an off-canvas 92vw record index, a 64px bottom navigation, and a detail sheet above it. Spacing follows a compact 5/8/16/24/32px rhythm, with denser metadata inside record rows.
+Desktop journal uses a fixed (340px) sidebar beside a flexible map in a viewport-height grid. Shared sidebar gutters are (20px), record-list gutters (12px), and the account footer anchors beneath scrolling records. Group picker, record/travel navigation, search, filters, and dated records follow a stable vertical order.
+
+At (820px) and below, the map fills the viewport. A visible search entry sits above it; records use a focus-managed drawer with width `min(calc(100% - 32px), 390px)`. Mobile sidebar gutters use (16px). Bottom navigation is (64px) plus safe-area inset and has five destinations when travel navigation is enabled. Detail sheets and pin actions reserve this space.
+
+The travel planner places timetable and map side by side on desktop, using approximately (1.04fr / .96fr) proportions, with a compact (64px) header and (54px) date bar. Below the mobile breakpoint, time/map tabs reveal one panel and a single current day. Intermediate desktop widths relax panel minimum widths.
+
+Login has a centered (360px maximum) column; first-map setup uses (400px maximum). Dialogs and scroll areas respect viewport height and safe areas. Use the observed (4/8/12/16/20/24/32px) spacing steps for alignment.
 
 ## Elevation & Depth
 
-The default system is flat and divided by pencil rules. Shadows appear only where a paper object genuinely lifts over the map: search results, visit detail sheets, dialogs, notices, and the notebook edge. They are soft ambient shadows, never hard offset decoration.
+Structural navigation is flat, separated by tonal surfaces and one-pixel borders. Shared cards and buttons use subtle low shadows. Floating menus and notices use the popover shadow; place sheets and dialogs use the overlay shadow. The CSS defines popover as `0 4px 16px rgb(0 0 0 / .1)` and overlay as `0 16px 48px rgb(0 0 0 / .16)`.
 
-### Shadow Vocabulary
+**The Workspace Layer Rule.** Keep permanent workspace regions flat; use elevation to distinguish controls and content that float over the map.
 
-- **Notebook Edge** (`9px 0 28px rgba(45, 42, 31, .12)`): Separates the bound index from the map.
-- **Raised Paper** (`0 22px 55px rgba(36, 39, 31, .26)`): Visit detail sheet over the map.
-- **Modal Paper** (`0 30px 90px rgba(20, 31, 32, .42)`): Focused visit entry dialog.
-
-### Named Rules
-
-**The Physical Cause Rule.** A shadow is allowed only when a paper layer is visibly above another surface.
+Existing search overlays, desktop planner notices, and map markers retain local shadow declarations. Their legacy tints and pin drop shadows are not new reusable elevation tokens.
 
 ## Shapes
 
-Controls use restrained 6–9px radii, larger paper panels use 11–12px, and filters or people use full pills. The distinctive pin mark combines a round head with one tightened lower corner. Borders stay one pixel and slightly warm, like pencil or aged rule ink.
+Use gently curved rectangles: small, medium, and large shared radii are in the frontmatter. Custom detail and planner sheets use the sheet radius. Badges and avatars remain round. Timetable events use a compact (6px) radius. Use one-pixel neutral borders and avoid restoring ruled notebook decoration.
 
 ## Components
 
 ### Buttons
 
-- **Shape:** Compact rectangular controls with gently curved corners (7–9px).
-- **Primary:** Vermilion fill, fresh-sheet text, 42–50px touch height, strong sans-serif label.
-- **Hover / Focus:** Darken to dried vermilion; use the shared 3px amber focus outline.
-- **Secondary / Ghost:** Transparent or fresh-sheet fill with a warm one-pixel stroke.
+Shared buttons expose default, secondary, outline, ghost, and destructive variants. Default uses primary and primary foreground, medium labels, and (16px) horizontal padding. Outline uses the input border; ghost gains an accent surface on hover. Shared default height is (36px), small is (32px), large is (44px). Mobile shared buttons and icon controls use (44px) minimum targets. Custom map pin and visit save actions use (48px) on mobile.
 
-### Chips
-
-- **Style:** Compact 12px labels; inactive filters are transparent, selected filters use field olive and fresh-sheet text.
-- **State:** Full-pill geometry is reserved for filters, tags, and participant selectors.
-
-### Cards / Containers
-
-- **Corner Style:** 9–12px, never a grid of uniformly floating cards.
-- **Background:** Fresh sheet over map; notebook paper for structural surfaces.
-- **Shadow Strategy:** Only raised paper layers receive ambient depth.
-- **Border:** One-pixel warm pencil rule.
-- **Internal Padding:** 16–20px for detail content.
+Shared primitives show a translucent (3px) ring on keyboard focus, while native/custom controls use a (2px) outline or an offset ring. Preserve the visible treatment appropriate to each component. Disabled actions reduce opacity and prevent interaction.
 
 ### Inputs / Fields
 
-- **Style:** Fresh-sheet fill, warm one-pixel stroke, 7–9px radius, 42px minimum height.
-- **Focus:** Vermilion border with a quiet translucent ring.
-- **Error / Disabled:** Error copy uses dried vermilion; disabled actions reduce opacity without removing their label.
+Inputs have thin input borders, rounded corners, muted placeholder text, compact padding, and a visible ring on focus. Shared input height is (36px) desktop and at least (44px) mobile; visit fields are (48px) mobile. Invalid fields use destructive borders/rings and inline error copy. Forms keep labels and validation adjacent to the relevant field.
+
+### Cards / Containers
+
+Shared cards use the large radius, a neutral border, subtle shadow, and (24px) content padding. Custom place sheets use (20px) content padding and overlay elevation. Keep structural lists and timetable regions flat.
+
+### Chips / Badges
+
+Badges use compact labels and round geometry. Filters use small rounded rectangles, with muted hover/selected fill and a border. Selection must remain understandable through text, state, and geometry.
 
 ### Navigation
 
-The desktop notebook index is persistent. Mobile navigation is a flat four-item paper strip; the active destination is vermilion, while list content moves in as a bound sheet from the left.
+Record/travel and planner source/view toggles use a muted grouped track and a selected surface. Dated record rows use compact (32px) pin thumbnails, medium titles, muted summaries, and an outlined accent selection. Account menus preserve theme and font previews. Lucide icons accompany readable labels or accessible names.
 
-### Visit Detail Sheet
+### Place Details and Dialogs
 
-The signature content object attaches a real visit photo to a fresh paper sheet, followed by a date/category line, serif place name, address, memory, tags, companions, and a small edit action. On mobile it rises from the map edge and must remain dismissible without losing map context.
+Selecting a record reveals a compact place sheet while keeping map context. Mobile detail content scrolls independently beneath persistent expand/close controls. Visit and planner dialogs retain native dialog focus behavior; mobile save/cancel actions remain sticky and saving prevents accidental dismissal. Preserve inline validation and save errors.
+
+### Timetable
+
+Time brushing previews a range before destination selection. Events expose selected state and full details through the selection panel; movement, resizing, overlap, overnight segments, and numbered map pins retain existing behavior. Timetable geometry and small resize handles are task-specific controls, not general touch-size primitives.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- **Do** let the map and member photographs carry visual interest.
-- **Do** use rules and paper tone to establish hierarchy before adding a shadow.
-- **Do** keep core controls at least 42px tall and preserve visible keyboard focus.
-- **Do** label demonstration content explicitly as synthetic.
+- Do inherit semantic colors and shared UI primitives across every app surface.
+- Do preserve independent stored font and color preferences.
+- Do use at least 44px mobile touch targets and 16px editable input text.
+- Do retain visible keyboard focus, accessible record lists, and sticky mobile save actions.
+- Do let the map, photographs, and existing pins carry content-specific visual interest.
 
 ### Don't:
 
-- **Don't** introduce glassmorphism, purple gradients, oversized marketing copy, or decorative AI illustrations.
-- **Don't** turn every piece of information into a rounded floating card.
-- **Don't** use vermilion as ambient decoration; reserve it for location, selection, and commitment.
-- **Don't** simulate paper with noisy fake grain; the ruled structure is enough.
+- Don't restore warm paper surfaces, vermilion actions, notebook rules, or mandatory serif memory headings.
+- Don't introduce a separate color, typography, or control system for travel planning.
+- Don't infer reusable UI colors from preserved map tiles or pin assets.
+- Don't obscure inline errors or dismiss a form while saving.

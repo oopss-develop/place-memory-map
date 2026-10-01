@@ -1,117 +1,473 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-17T16:30:00+09:00",
+  "generatedAt": "2026-10-01T00:00:00+09:00",
   "title": "Design System: Place Memory Map",
   "extensions": {
+    "sources": [
+      "components.json",
+      "src/app/globals.css",
+      "src/app/timetable.css",
+      "src/components/ui/button.tsx",
+      "src/components/ui/input.tsx",
+      "src/components/ui/card.tsx",
+      "src/components/ui/badge.tsx",
+      "src/components/ui/toggle.tsx",
+      "src/lib/themes.ts",
+      "src/lib/fonts.ts"
+    ],
     "fontPreference": {
       "default": "noto",
-      "options": ["noto", "nanum-square", "gowun", "system"],
+      "options": [
+        "noto",
+        "nanum-square",
+        "gowun",
+        "system"
+      ],
       "storageKey": "place-memory-font-v1",
-      "scope": "all app typography; independent of color theme"
+      "scope": "All app typography, independent of theme."
     },
-    "sidebar": {
-      "fontFamily": "var(--font-sans), sans-serif",
-      "heading": { "fontSize": "18px", "fontWeight": 700 },
-      "item": { "fontSize": "15px", "fontWeight": 600 },
-      "metadata": { "fontSize": "13px", "fontWeight": 400 },
-      "lineHeight": 1.5,
-      "desktopGutter": "24px",
-      "mobileGutter": "20px",
-      "recordMarkerSize": "36px",
-      "selection": "paper-deep background with 1px olive outline"
-    },
-    "markerPicker": {
-      "columns": 4,
-      "gap": "8px",
-      "tileHeight": "64px",
-      "maxHeight": "236px",
-      "selection": "vermilion outline with paper-deep background"
+    "themePreference": {
+      "default": "notebook",
+      "storageKey": "place-memory-theme-v1",
+      "options": [
+        {
+          "id": "notebook",
+          "label": "뉴트럴",
+          "description": "Neutral default; legacy stored ID preserved."
+        },
+        {
+          "id": "pure",
+          "primary": "#0369a1"
+        },
+        {
+          "id": "forest",
+          "primary": "#166534"
+        },
+        {
+          "id": "lavender",
+          "primary": "#6d28d9"
+        },
+        {
+          "id": "dark",
+          "background": "#09090b",
+          "foreground": "#fafafa",
+          "card": "#18181b",
+          "primary": "#fafafa",
+          "primaryForeground": "#18181b",
+          "muted": "#27272a",
+          "mutedForeground": "#a1a1aa",
+          "border": "#3f3f46",
+          "input": "#52525b",
+          "ring": "#71717a",
+          "destructive": "#f87171"
+        }
+      ]
     },
     "colorMeta": {
-      "primary": { "role": "primary", "displayName": "Travel Pin Vermilion", "canonical": "#d84c32", "tonalRamp": ["#43140d", "#6d2117", "#963021", "#bd3e2b", "#d84c32", "#e77d69", "#f2b4a7", "#fbe9e4"] },
-      "paper": { "role": "neutral", "displayName": "Notebook Paper", "canonical": "#f4efdf", "tonalRamp": ["#28251c", "#494335", "#6f6652", "#958a70", "#b9ad90", "#d8ceb5", "#f4efdf", "#fffdf6"] },
-      "ink": { "role": "neutral", "displayName": "Blue-Black Ink", "canonical": "#162d38", "tonalRamp": ["#081116", "#10232b", "#193943", "#2b515d", "#52717a", "#819ca3", "#b7c8cb", "#edf4f3"] },
-      "olive": { "role": "secondary", "displayName": "Field Olive", "canonical": "#69784d", "tonalRamp": ["#19200e", "#303d1d", "#4a5a31", "#69784d", "#8e9a71", "#b4bea0", "#d9dfce", "#f3f5ed"] },
-      "rating-gold": { "role": "tertiary", "displayName": "Rating Spark Gold", "canonical": "#ffc400", "tonalRamp": ["#4a3800", "#735700", "#9d7800", "#c89a00", "#ffc400", "#ffd84f", "#ffeb9c", "#fff8dd"] },
-      "rating-gold-deep": { "role": "tertiary", "displayName": "Rating Spark Outline", "canonical": "#d89a00", "tonalRamp": ["#3e2b00", "#654600", "#8d6300", "#b57f00", "#d89a00", "#e9bb4f", "#f4d997", "#fff4d5"] }
+      "primary": {
+        "role": "primary",
+        "displayName": "Primary",
+        "canonical": "#18181b",
+        "tonalRamp": [
+          "#09090b",
+          "#18181b",
+          "#27272a",
+          "#3f3f46",
+          "#71717a",
+          "#a1a1aa",
+          "#e4e4e7",
+          "#fafafa"
+        ]
+      },
+      "primary-foreground": {
+        "role": "neutral",
+        "displayName": "Primary Foreground",
+        "canonical": "#fafafa",
+        "tonalRamp": [
+          "#09090b",
+          "#18181b",
+          "#27272a",
+          "#3f3f46",
+          "#71717a",
+          "#a1a1aa",
+          "#e4e4e7",
+          "#fafafa"
+        ]
+      },
+      "background": {
+        "role": "neutral",
+        "displayName": "Background",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#09090b",
+          "#18181b",
+          "#27272a",
+          "#3f3f46",
+          "#71717a",
+          "#a1a1aa",
+          "#e4e4e7",
+          "#fafafa"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Foreground",
+        "canonical": "#18181b",
+        "tonalRamp": [
+          "#09090b",
+          "#18181b",
+          "#27272a",
+          "#3f3f46",
+          "#71717a",
+          "#a1a1aa",
+          "#e4e4e7",
+          "#fafafa"
+        ]
+      },
+      "card": {
+        "role": "neutral",
+        "displayName": "Card",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#09090b",
+          "#18181b",
+          "#27272a",
+          "#3f3f46",
+          "#71717a",
+          "#a1a1aa",
+          "#e4e4e7",
+          "#fafafa"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "canonical": "#f4f4f5",
+        "tonalRamp": [
+          "#09090b",
+          "#18181b",
+          "#27272a",
+          "#3f3f46",
+          "#71717a",
+          "#a1a1aa",
+          "#e4e4e7",
+          "#fafafa"
+        ]
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Muted Foreground",
+        "canonical": "#71717a",
+        "tonalRamp": [
+          "#09090b",
+          "#18181b",
+          "#27272a",
+          "#3f3f46",
+          "#71717a",
+          "#a1a1aa",
+          "#e4e4e7",
+          "#fafafa"
+        ]
+      },
+      "sidebar": {
+        "role": "neutral",
+        "displayName": "Sidebar",
+        "canonical": "#fafafa",
+        "tonalRamp": [
+          "#09090b",
+          "#18181b",
+          "#27272a",
+          "#3f3f46",
+          "#71717a",
+          "#a1a1aa",
+          "#e4e4e7",
+          "#fafafa"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Border",
+        "canonical": "#e4e4e7",
+        "tonalRamp": [
+          "#09090b",
+          "#18181b",
+          "#27272a",
+          "#3f3f46",
+          "#71717a",
+          "#a1a1aa",
+          "#e4e4e7",
+          "#fafafa"
+        ]
+      },
+      "input": {
+        "role": "neutral",
+        "displayName": "Input",
+        "canonical": "#d4d4d8",
+        "tonalRamp": [
+          "#09090b",
+          "#18181b",
+          "#27272a",
+          "#3f3f46",
+          "#71717a",
+          "#a1a1aa",
+          "#e4e4e7",
+          "#fafafa"
+        ]
+      },
+      "ring": {
+        "role": "neutral",
+        "displayName": "Ring",
+        "canonical": "#a1a1aa",
+        "tonalRamp": [
+          "#09090b",
+          "#18181b",
+          "#27272a",
+          "#3f3f46",
+          "#71717a",
+          "#a1a1aa",
+          "#e4e4e7",
+          "#fafafa"
+        ]
+      },
+      "destructive": {
+        "role": "secondary",
+        "displayName": "Destructive",
+        "canonical": "#dc2626",
+        "tonalRamp": [
+          "#450a0a",
+          "#7f1d1d",
+          "#991b1b",
+          "#b91c1c",
+          "#dc2626",
+          "#f87171",
+          "#fecaca",
+          "#fef2f2"
+        ]
+      },
+      "rating-gold": {
+        "role": "tertiary",
+        "displayName": "Rating Gold",
+        "canonical": "#ffc400",
+        "tonalRamp": [
+          "#422006",
+          "#713f12",
+          "#854d0e",
+          "#a16207",
+          "#ca8a04",
+          "#facc15",
+          "#fef08a",
+          "#fefce8"
+        ]
+      },
+      "rating-gold-deep": {
+        "role": "tertiary",
+        "displayName": "Rating Gold Deep",
+        "canonical": "#a16207",
+        "tonalRamp": [
+          "#422006",
+          "#713f12",
+          "#854d0e",
+          "#a16207",
+          "#ca8a04",
+          "#facc15",
+          "#fef08a",
+          "#fefce8"
+        ]
+      }
     },
     "typographyMeta": {
-      "display": { "displayName": "Memory Serif", "purpose": "Place names, memory prose, and rare first-use display statements." },
-      "body": { "displayName": "Operational Sans", "purpose": "Controls, forms, lists, and supporting information." },
-      "label": { "displayName": "Field Label", "purpose": "Dates, categories, status, and compact metadata." }
+      "display": {
+        "displayName": "Login Heading",
+        "purpose": "Restrained authentication statement."
+      },
+      "headline": {
+        "displayName": "First Map Heading",
+        "purpose": "First-map setup heading."
+      },
+      "title": {
+        "displayName": "Dialog and Place Title",
+        "purpose": "Primary content headings."
+      },
+      "section": {
+        "displayName": "Section Heading",
+        "purpose": "Record list and small content sections."
+      },
+      "body": {
+        "displayName": "Operational Body",
+        "purpose": "Forms, record titles, supporting text."
+      },
+      "label": {
+        "displayName": "Metadata Label",
+        "purpose": "Dates, status and compact labels."
+      }
     },
     "shadows": [
-      { "name": "notebook-edge", "value": "9px 0 28px rgba(45, 42, 31, .12)", "purpose": "Separate the notebook index from the map." },
-      { "name": "raised-paper", "value": "0 22px 55px rgba(36, 39, 31, .26)", "purpose": "Lift visit details above the map." },
-      { "name": "modal-paper", "value": "0 30px 90px rgba(20, 31, 32, .42)", "purpose": "Focus the visit entry dialog." }
+      {
+        "name": "popover",
+        "value": "0 4px 16px rgb(0 0 0 / .1)",
+        "purpose": "Menus and floating controls."
+      },
+      {
+        "name": "overlay",
+        "value": "0 16px 48px rgb(0 0 0 / .16)",
+        "purpose": "Place details and dialogs."
+      }
     ],
     "motion": [
-      { "name": "sheet-enter", "value": ".32s cubic-bezier(.2,.8,.2,1)", "purpose": "Bring a selected memory up from the map edge." },
-      { "name": "state-change", "value": ".18s ease", "purpose": "Record selection and lightweight hover feedback." }
+      {
+        "name": "control-state",
+        "value": ".15s ease",
+        "purpose": "Shared native control hover/focus transitions."
+      },
+      {
+        "name": "record-selection",
+        "value": ".18s ease",
+        "purpose": "Record background changes."
+      },
+      {
+        "name": "drawer",
+        "value": ".24s ease",
+        "purpose": "Mobile record drawer."
+      },
+      {
+        "name": "detail-enter",
+        "value": ".22s cubic-bezier(.2,.8,.2,1)",
+        "purpose": "Selected place sheet."
+      }
     ],
-    "breakpoints": [{ "name": "map-mobile", "value": "820px" }]
+    "breakpoints": [
+      {
+        "name": "workspace-mobile",
+        "value": "820px"
+      },
+      {
+        "name": "primitive-mobile",
+        "value": "768px",
+        "description": "Tailwind max-md primitive sizing; workspace-specific CSS continues through 820px."
+      }
+    ],
+    "layout": {
+      "desktopSidebar": "340px",
+      "desktopGutter": "20px",
+      "mobileGutter": "16px",
+      "recordPinThumbnail": "32px",
+      "mobileDrawer": "min(calc(100% - 32px), 390px)",
+      "mobileNavigation": "64px + safe-area bottom",
+      "mobileTouchMinimum": "44px",
+      "mobileInputFontSize": "16px",
+      "mobileVisitSaveHeight": "48px"
+    },
+    "focus": {
+      "primitives": "3px ring, 50% ring color",
+      "native": "2px ring outline or offset ring; planner selection also uses primary"
+    },
+    "legacyAssets": "Existing map pin rasters, provider tiles, numbering, photo assets, rating particles, local map shadow and animation treatments remain content/interaction assets, not the new UI identity.",
+    "reducedMotion": "Global reduced-motion rule minimizes transitions and animations; marker bounce and rating particles are disabled."
   },
   "components": [
     {
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Commits a visit or begins the pin-placement flow.",
-      "html": "<button class=\"ds-btn-primary\">지도에 기록 남기기</button>",
-      "css": ".ds-btn-primary{min-height:42px;padding:0 16px;border:0;border-radius:7px;background:var(--vermilion,#d84c32);color:var(--white,#fffdf6);font-family:var(--font-sans),sans-serif;font-weight:700;transition:background .18s ease}.ds-btn-primary:hover{background:var(--vermilion-dark,#a93324)}.ds-btn-primary:focus-visible{outline:3px solid #e39447;outline-offset:3px}.ds-btn-primary:active{transform:translateY(1px)}"
+      "description": "Commit a visit or schedule.",
+      "html": "<button class=\"ds-button ds-primary\">저장</button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;padding:8px 16px;border-radius:var(--radius-md,8px);font:500 14px var(--font-sans,sans-serif);cursor:pointer;transition:background-color .15s ease,color .15s ease}.ds-button:focus-visible{outline:3px solid color-mix(in srgb,var(--ring,#a1a1aa) 50%,transparent);outline-offset:2px}.ds-button:disabled{opacity:.5;pointer-events:none}@media(max-width:820px){.ds-button{min-height:44px}}.ds-primary{border:0;background:var(--primary,#18181b);color:var(--primary-foreground,#fafafa)}.ds-primary:hover{background:color-mix(in srgb,var(--primary,#18181b) 90%,transparent)}"
     },
     {
-      "name": "Place Search",
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary form action.",
+      "html": "<button class=\"ds-button ds-outline\">취소</button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;padding:8px 16px;border-radius:var(--radius-md,8px);font:500 14px var(--font-sans,sans-serif);cursor:pointer;transition:background-color .15s ease,color .15s ease}.ds-button:focus-visible{outline:3px solid color-mix(in srgb,var(--ring,#a1a1aa) 50%,transparent);outline-offset:2px}.ds-button:disabled{opacity:.5;pointer-events:none}@media(max-width:820px){.ds-button{min-height:44px}}.ds-outline{border:1px solid var(--input,#d4d4d8);background:var(--background,#fff);color:var(--foreground,#18181b)}.ds-outline:hover{background:var(--accent,#f4f4f5)}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Quiet utility action.",
+      "html": "<button class=\"ds-button ds-ghost\">닫기</button>",
+      "css": ".ds-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;padding:8px 16px;border-radius:var(--radius-md,8px);font:500 14px var(--font-sans,sans-serif);cursor:pointer;transition:background-color .15s ease,color .15s ease}.ds-button:focus-visible{outline:3px solid color-mix(in srgb,var(--ring,#a1a1aa) 50%,transparent);outline-offset:2px}.ds-button:disabled{opacity:.5;pointer-events:none}@media(max-width:820px){.ds-button{min-height:44px}}.ds-ghost{border:0;background:transparent;color:var(--foreground,#18181b)}.ds-ghost:hover{background:var(--accent,#f4f4f5)}"
+    },
+    {
+      "name": "Input",
       "kind": "input",
       "refersTo": "input",
-      "description": "Searches Kakao while retaining the notebook's compact working character.",
-      "html": "<label class=\"ds-search\"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"7\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/><path d=\"m20 20-4-4\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"/></svg><input placeholder=\"장소 이름으로 찾기\"><button>찾기</button></label>",
-      "css": ".ds-search{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:9px;padding:4px 5px 4px 13px;border:1px solid #9c9582;border-radius:9px;background:#fffdf6;color:#162d38}.ds-search svg{width:19px}.ds-search input{height:38px;border:0;outline:0;background:transparent;font:inherit}.ds-search:focus-within{box-shadow:0 0 0 2px rgba(216,76,50,.16)}.ds-search button{height:34px;padding:0 12px;border:0;border-radius:6px;background:#162d38;color:#fffdf6;font-weight:700}"
+      "description": "Labeled editable text field.",
+      "html": "<label class=\"ds-label\">제목<input class=\"ds-input\" placeholder=\"기록 제목\"></label>",
+      "css": ".ds-label{display:grid;gap:8px;color:var(--foreground,#18181b);font:500 14px var(--font-sans,sans-serif)}.ds-input{height:36px;padding:4px 12px;border:1px solid var(--input,#d4d4d8);border-radius:var(--radius-md,8px);background:transparent;color:var(--foreground,#18181b);font:400 14px var(--font-sans,sans-serif);transition:border-color .15s ease,box-shadow .15s ease}.ds-input::placeholder{color:var(--muted-foreground,#71717a)}.ds-input:hover{border-color:var(--ring,#a1a1aa)}.ds-input:focus-visible{border-color:var(--ring,#a1a1aa);outline:0;box-shadow:0 0 0 3px color-mix(in srgb,var(--ring,#a1a1aa) 50%,transparent)}.ds-input[aria-invalid=true]{border-color:var(--destructive,#dc2626)}@media(max-width:820px){.ds-input{min-height:44px;font-size:16px}}"
     },
     {
-      "name": "Selected Filter",
+      "name": "Secondary Badge",
       "kind": "chip",
-      "refersTo": "filter-selected",
-      "description": "Marks an active journal filter without competing with map pins.",
-      "html": "<button class=\"ds-filter\">전체</button>",
-      "css": ".ds-filter{padding:5px 9px;border:1px solid #7d8864;border-radius:999px;background:#69784d;color:#fffdf6;font-size:12px;font-weight:600}.ds-filter:hover{background:#56643d}.ds-filter:focus-visible{outline:3px solid #e39447;outline-offset:3px}.ds-filter:active{transform:translateY(1px)}"
+      "refersTo": "badge",
+      "description": "Compact contextual metadata.",
+      "html": "<span class=\"ds-badge\">방문 기록</span>",
+      "css": ".ds-badge{display:inline-flex;padding:2px 10px;border:1px solid transparent;border-radius:999px;background:var(--secondary,#f4f4f5);color:var(--secondary-foreground,#18181b);font:600 12px var(--font-sans,sans-serif)}"
     },
     {
-      "name": "Visit Detail Sheet",
+      "name": "Card",
       "kind": "card",
-      "refersTo": "visit-detail",
-      "description": "The primary memory object layered over the map.",
-      "html": "<article class=\"ds-visit\"><time>8월 23일 (일)</time><h2>서촌 작은 식탁</h2><p>비 오기 전, 늦은 점심</p></article>",
-      "css": ".ds-visit{width:320px;padding:18px 20px;border:1px solid #98917d;border-radius:11px;background:#fffdf6;color:#162d38;box-shadow:0 22px 55px rgba(36,39,31,.26)}.ds-visit time{color:#69784d;font-size:11px;font-weight:800}.ds-visit h2{margin:5px 0 8px;font-family:var(--font-serif),serif;font-size:25px;line-height:1.25}.ds-visit p{margin:0;color:#435157;font-family:var(--font-serif),serif;line-height:1.7}.ds-visit:focus-within{outline:3px solid #e39447;outline-offset:3px}"
+      "refersTo": "card",
+      "description": "Bounded content or form section.",
+      "html": "<section class=\"ds-card\"><h3>기록</h3><p>장소와 추억을 함께 기록하세요.</p></section>",
+      "css": ".ds-card{padding:24px;border:1px solid var(--border,#e4e4e7);border-radius:var(--radius-lg,10px);background:var(--card,#fff);color:var(--card-foreground,#18181b);box-shadow:0 1px 3px rgb(0 0 0 / .1);font:14px var(--font-sans,sans-serif)}.ds-card h3{margin:0 0 8px;font-size:16px;font-weight:600}.ds-card p{margin:0;color:var(--muted-foreground,#71717a)}"
     },
     {
-      "name": "Map Pin Picker",
-      "kind": "custom",
-      "refersTo": "marker-picker",
-      "description": "A four-column grid for choosing a visible map pin style.",
-      "html": "<fieldset class=\"ds-marker-picker\"><legend>지도에 표시할 핀</legend><div><button type=\"button\" aria-pressed=\"true\"><img src=\"/map-pins/food-coral-square.png\" alt=\"\" /></button></div></fieldset>",
-      "css": ".ds-marker-picker{border:0;padding:0}.ds-marker-picker>div{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;max-height:236px;overflow-y:auto}.ds-marker-picker button{display:grid;place-items:center;height:64px;border:2px solid transparent;border-radius:12px;background:#fffdf6}.ds-marker-picker button:hover{background:#e9e0c8}.ds-marker-picker button[aria-pressed=\"true\"]{border-color:#d84c32;background:#e9e0c8}.ds-marker-picker img{width:42px;height:42px;object-fit:contain}"
-    },
-    {
-      "name": "Mobile Navigation",
+      "name": "Workspace Navigation",
       "kind": "nav",
-      "refersTo": "mobile-navigation",
-      "description": "A flat paper strip that keeps the map primary on small screens.",
-      "html": "<nav class=\"ds-nav\"><button class=\"is-active\">지도</button><button>기록</button><button>추가</button><button>그룹</button></nav>",
-      "css": ".ds-nav{display:grid;height:64px;grid-template-columns:repeat(4,1fr);border-top:1px solid #918a78;background:#fffdf6}.ds-nav button{border:0;background:transparent;color:#162d38;font-size:11px}.ds-nav button:hover{background:rgba(22,45,56,.06)}.ds-nav button:focus-visible{outline:3px solid #e39447;outline-offset:-3px}.ds-nav button.is-active{color:#d84c32;font-weight:800}"
+      "refersTo": "navigation",
+      "description": "Grouped record and travel destinations.",
+      "html": "<nav class=\"ds-nav\"><button aria-pressed=\"true\">기록</button><button aria-pressed=\"false\">여행</button></nav>",
+      "css": ".ds-nav{display:flex;gap:4px;padding:4px;border-radius:8px;background:var(--muted,#f4f4f5);font:500 14px var(--font-sans,sans-serif)}.ds-nav button{flex:1;min-height:36px;border:0;border-radius:6px;background:transparent;color:var(--muted-foreground,#71717a);font:inherit}.ds-nav button:hover{background:var(--accent,#f4f4f5);color:var(--foreground,#18181b)}.ds-nav button[aria-pressed=true]{background:var(--card,#fff);color:var(--foreground,#18181b);box-shadow:0 1px 3px rgb(0 0 0 / .08)}.ds-nav button:focus-visible{outline:2px solid var(--ring,#a1a1aa);outline-offset:2px}@media(max-width:820px){.ds-nav button{min-height:44px}}"
+    },
+    {
+      "name": "Place Sheet",
+      "kind": "custom",
+      "refersTo": "place-sheet",
+      "description": "Selected memory above the map.",
+      "html": "<article class=\"ds-sheet\"><span>방문 기록</span><h2>장소 이름</h2><p>함께 남긴 기억을 확인하세요.</p><button>수정</button></article>",
+      "css": ".ds-sheet{max-width:380px;padding:20px;border-radius:12px;background:var(--card,#fff);color:var(--foreground,#18181b);box-shadow:var(--shadow-overlay,0 16px 48px rgb(0 0 0 / .16));font:14px var(--font-sans,sans-serif)}.ds-sheet>span,.ds-sheet p{color:var(--muted-foreground,#71717a)}.ds-sheet>span{font-size:12px}.ds-sheet h2{margin:8px 0;font-size:20px;font-weight:600;line-height:1.4;letter-spacing:-.02em}.ds-sheet button{min-height:36px;padding:0 12px;border:1px solid var(--border,#e4e4e7);border-radius:var(--radius-md,8px);background:var(--background,#fff);color:inherit;font:500 12px var(--font-sans,sans-serif)}.ds-sheet button:hover{background:var(--accent,#f4f4f5)}.ds-sheet button:focus-visible{outline:2px solid var(--ring,#a1a1aa);outline-offset:3px}@media(max-width:820px){.ds-sheet button{min-height:44px;font-size:14px}}"
     }
   ],
   "narrative": {
-    "northStar": "The Working Travel Field Notebook",
-    "overview": "The interface feels like a notebook that is actively used on a trip, not a themed scrapbook. Warm paper, ruled divisions, editorial serif headings, compact date marks, and real visit photography give memories a physical home while the map remains the dominant working surface. The system is calm and information-dense.",
-    "keyCharacteristics": ["Map-first split workspace on desktop and map-plus-bottom-sheet on mobile.", "Restrained physical cues: rules, paper tones, date stamps, and attached photographs.", "Small-radius rectangular controls; pills only for tags, filters, and people.", "Korean editorial serif for memory titles, clear sans-serif for operation."],
-    "rules": [
-      { "name": "The Functional Ink Rule", "body": "Vermilion locates or commits, olive classifies, and blue-black communicates; do not swap these roles for decoration.", "section": "colors" },
-      { "name": "The Paper Majority Rule", "body": "Warm neutral fields occupy most of every screen so accent colors remain meaningful.", "section": "colors" },
-      { "name": "The Memory Voice Rule", "body": "Use the serif face for places, memories, and reflective prose; keep operational text in sans-serif.", "section": "typography" },
-      { "name": "The Physical Cause Rule", "body": "A shadow is allowed only when a paper layer is visibly above another surface.", "section": "elevation" }
+    "northStar": "The Organized Map Workspace",
+    "overview": "The user-selected visual world is shadcn/ui New York with a Neutral base, Lucide icons, and Noto Sans KR by default. White content, soft gray navigation, thin boundaries, and compact typography make records and travel plans easy to scan.\n\nThe whole application shares this system: map journal, record drawer, account and preference menus, place details, visit and map dialogs, travel timetable and agenda, login, first-map setup, and offline screen. Warm notebook styling is superseded by the explicit request for a clean, organized shadcn interface.",
+    "keyCharacteristics": [
+      "Neutral surfaces and dark primary actions with consistent focus and disabled states.",
+      "Compact operational typography and gently curved controls.",
+      "Map-first desktop workspace and touch-friendly mobile sheets.",
+      "Persistent, independent user font and color preferences."
     ],
-    "dos": ["Do let the map and member photographs carry visual interest.", "Do use rules and paper tone to establish hierarchy before adding a shadow.", "Do keep core controls at least 42px tall and preserve visible keyboard focus.", "Do label demonstration content explicitly as synthetic."],
-    "donts": ["Don't introduce glassmorphism, purple gradients, oversized marketing copy, or decorative AI illustrations.", "Don't turn every piece of information into a rounded floating card.", "Don't use vermilion as ambient decoration; reserve it for location, selection, and commitment.", "Don't simulate paper with noisy fake grain; the ruled structure is enough."]
+    "rules": [
+      {
+        "name": "The Semantic Surface Rule",
+        "body": "Use semantic CSS variables so color preferences apply consistently to new surfaces.",
+        "section": "colors"
+      },
+      {
+        "name": "The Preference Continuity Rule",
+        "body": "Keep size and hierarchy consistent when a member changes their font; do not assign a mandatory serif voice to memories.",
+        "section": "typography"
+      },
+      {
+        "name": "The Workspace Layer Rule",
+        "body": "Keep permanent workspace regions flat; use elevation to distinguish controls and content that float over the map.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do inherit semantic colors and shared UI primitives across every app surface.",
+      "Do preserve independent stored font and color preferences.",
+      "Do use at least 44px mobile touch targets and 16px editable input text.",
+      "Do retain visible keyboard focus, accessible record lists, and sticky mobile save actions.",
+      "Do let the map, photographs, and existing pins carry content-specific visual interest."
+    ],
+    "donts": [
+      "Don't restore warm paper surfaces, vermilion actions, notebook rules, or mandatory serif memory headings.",
+      "Don't introduce a separate color, typography, or control system for travel planning.",
+      "Don't infer reusable UI colors from preserved map tiles or pin assets.",
+      "Don't obscure inline errors or dismiss a form while saving."
+    ]
   }
 }
