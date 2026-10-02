@@ -16,6 +16,41 @@ test("photo enlargement, keyboard navigation and individual deletion",async({pag
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem("place-memory-visits-v2")!)[0].photoUrls.length)).toBe(1);
   await page.getByRole("button",{name:"사진 보기 닫기"}).click();await expect(dialog).not.toBeVisible();
 });
+test("photo popup opens centered, moves within the viewport and recenters", async ({ page }, info) => {
+  await openRecord(page);
+  const opener = page.getByRole("button", { name: "사진 크게 보기", exact: true });
+  await opener.click();
+  const dialog = page.getByRole("dialog", { name: "사진 크게 보기" });
+  const viewport = page.viewportSize()!;
+  async function expectCentered() {
+    await expect.poll(async () => {
+      const box = (await dialog.boundingBox())!;
+      return Math.max(Math.abs(box.x + box.width / 2 - viewport.width / 2), Math.abs(box.y + box.height / 2 - viewport.height / 2));
+    }).toBeLessThan(2);
+  }
+  await expectCentered();
+  const handle = page.getByRole("button", { name: "사진 창 이동" });
+  const start = (await handle.boundingBox())!;
+  await page.mouse.move(start.x + 20, start.y + 20);
+  await page.mouse.down();
+  await page.mouse.move(start.x + 60, start.y + 70, { steps: 5 });
+  await page.mouse.up();
+  await expect.poll(async () => Math.abs((await dialog.boundingBox())!.y + (await dialog.boundingBox())!.height / 2 - viewport.height / 2)).toBeGreaterThan(5);
+  await handle.press("ArrowDown");
+  await expect(dialog.locator("strong")).toContainText("1/2");
+  const moved = (await dialog.boundingBox())!;
+  expect(moved.x).toBeGreaterThanOrEqual(15);
+  expect(moved.y).toBeGreaterThanOrEqual(15);
+  expect(moved.x + moved.width).toBeLessThanOrEqual(viewport.width - 15);
+  expect(moved.y + moved.height).toBeLessThanOrEqual(viewport.height - 15);
+  await page.getByRole("button", { name: "가운데로", exact: true }).click();
+  await expectCentered();
+  await page.screenshot({ path: info.outputPath("centered-photo-popup.png") });
+  await handle.press("ArrowUp");
+  await page.getByRole("button", { name: "사진 보기 닫기" }).click();
+  await opener.click();
+  await expectCentered();
+});
 test("trash restores the deleted record and photos after a reload",async({page})=>{
   await openRecord(page);await page.getByRole("button",{name:"삭제",exact:true}).click();await page.getByRole("dialog",{name:"삭제 확인"}).getByRole("button",{name:"삭제",exact:true}).click();
   await expect(page.getByRole("button",{name:"실행 취소"})).toBeVisible();await page.reload();await openList(page);

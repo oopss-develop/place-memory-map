@@ -27,6 +27,7 @@ import { clearDraft, clearUserDrafts, formValues, listDrafts, saveDraft, type Sa
 import { EMPTY_FILTERS, filterVisits, type VisitFilters } from "@/lib/visit-filter";
 import { Badge } from "@/components/ui/badge";
 import { prepareVisitImage } from "@/lib/images";
+import { preservePhotoUrls } from "@/lib/photo-sync";
 import { DEFAULT_MARKER_STYLE, MARKER_PICKER_STYLE_IDS as MARKER_STYLE_IDS, markerSvgDataUrl, normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
 
 const markerSvgData = markerSvgDataUrl;
@@ -74,6 +75,8 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [undo, setUndo] = useState<Visit>();
   const [lightbox, setLightbox] = useState(false);
   const lightboxRef = useRef<HTMLDialogElement>(null);
+  const [lightboxOffset, setLightboxOffset] = useState({ x: 0, y: 0 });
+  const lightboxDrag = useRef<{ pointerId: number; x: number; y: number; offsetX: number; offsetY: number; rect: DOMRect } | null>(null);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [visitConflict, setVisitConflict] = useState(false);
   const [fieldErrors,setFieldErrors]=useState<Record<string,string>>({});
@@ -177,9 +180,10 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   useEffect(() => {
     if (initialData.demoMode) return;
     const visitsChanged = visitRevision(visitsRef.current) !== visitRevision(initialData.visits);
-    const photoLinksChanged = JSON.stringify(visitsRef.current.map(visit=>visit.photoUrls)) !== JSON.stringify(initialData.visits.map(visit=>visit.photoUrls));
+    const nextVisits = preservePhotoUrls(visitsRef.current, initialData.visits);
+    const photoLinksChanged = JSON.stringify(visitsRef.current.map(visit=>visit.photoUrls)) !== JSON.stringify(nextVisits.map(visit=>visit.photoUrls));
     const groupsChanged = groupRevision(groupsRef.current) !== groupRevision(initialData.groups);
-    if (visitsChanged || photoLinksChanged) setVisits(initialData.visits);
+    if (visitsChanged || photoLinksChanged) setVisits(nextVisits);
     if (groupsChanged) {
       setGroups(initialData.groups);
       setActiveGroupId((current) => initialData.groups.some((group) => group.id === current) ? current : initialData.groups[0]?.id ?? "");
@@ -333,6 +337,19 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   useEffect(() => { if (filterStorageReady.current) { try { localStorage.setItem(userKey+":record-view:"+activeGroupId,JSON.stringify({filters,tag,mode:searchMode})); } catch {} } },[userKey,activeGroupId,filters,tag,searchMode]);
   useEffect(() => { if (!undo) return; const timer = setTimeout(() => setUndo(undefined), 10000); return () => clearTimeout(timer); }, [undo]);
   useEffect(() => { if (lightbox && !lightboxRef.current?.open) lightboxRef.current?.showModal(); }, [lightbox]);
+  useEffect(() => {
+    if (!lightbox) return;
+    const recenter = () => { lightboxDrag.current = null; setLightboxOffset({ x: 0, y: 0 }); };
+    window.addEventListener("resize", recenter);
+    return () => window.removeEventListener("resize", recenter);
+  }, [lightbox]);
+  function moveLightbox(x: number, y: number, rect: DOMRect, offsetX: number, offsetY: number) {
+    const margin = 16;
+    setLightboxOffset({
+      x: offsetX + Math.max(margin - rect.left, Math.min(x, window.innerWidth - margin - rect.right)),
+      y: offsetY + Math.max(margin - rect.top, Math.min(y, window.innerHeight - margin - rect.bottom)),
+    });
+  }
   useEffect(() => { const flush = () => writeDraftNow.current?.(); window.addEventListener("pagehide", flush); return () => { flush(); window.removeEventListener("pagehide", flush); if (draftTimer.current) clearTimeout(draftTimer.current); }; }, []);
   function persistVisitForm(form: HTMLFormElement) {
     if (!draftPlace) return;
@@ -778,7 +795,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
           </div>
           <div className="sheet-body" id="visit-detail-body">
           {activePhotoUrl && <div className="sheet-photo" onTouchStart={(event) => { photoTouchStartX.current = event.touches[0]?.clientX ?? null; }} onTouchEnd={(event) => { const start = photoTouchStartX.current; const end = event.changedTouches[0]?.clientX; photoTouchStartX.current = null; if (start === null || end === undefined || Math.abs(start - end) < 42) return; showPhoto(start > end ? 1 : -1); }}>
-            <button className="photo-enlarge" type="button" aria-label="사진 크게 보기" onClick={() => { setPhotoError(""); setLightbox(true); }}><img key={activePhotoUrl} src={activePhotoUrl} alt={`${selected.place.name} 방문 사진 ${activePhotoIndex + 1}/${selected.photoUrls.length}`} draggable={false} /></button>
+            <button className="photo-enlarge" type="button" aria-label="사진 크게 보기" onClick={() => { setPhotoError(""); setLightboxOffset({ x: 0, y: 0 }); setLightbox(true); }}><img key={`${selected.id}:${selected.photoIds?.[activePhotoIndex] ?? activePhotoIndex}`} src={activePhotoUrl} alt={`${selected.place.name} 방문 사진 ${activePhotoIndex + 1}/${selected.photoUrls.length}`} draggable={false} /></button>
             {selected.photoUrls.length > 1 && <>
               <button className="sheet-photo-nav previous" type="button" onClick={() => showPhoto(-1)} aria-label="이전 사진"><ChevronLeft size={21} /></button>
               <button className="sheet-photo-nav next" type="button" onClick={() => showPhoto(1)} aria-label="다음 사진"><ChevronRight size={21} /></button>
@@ -800,7 +817,43 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       </section>
 
       {confirmation.dialog}
-      <dialog ref={lightboxRef} className="photo-lightbox" aria-label="사진 크게 보기" onClose={() => setLightbox(false)} onKeyDown={event => { if (event.key === "ArrowLeft") showPhoto(-1); if (event.key === "ArrowRight") showPhoto(1); }}><div className="lightbox-toolbar"><strong>{selected?.place.name} · {activePhotoIndex+1}/{selected?.photoUrls.length}</strong><Button variant="outline" disabled={photoBusy} onClick={() => void deletePhoto()}>사진 삭제</Button><Button variant="outline" aria-label="사진 보기 닫기" onClick={() => lightboxRef.current?.close()}><X /></Button></div>{photoError && <p className="form-error" role="alert">{photoError}</p>}{activePhotoUrl && <img src={activePhotoUrl} alt="확대된 방문 사진" />}<div className="lightbox-navigation"><Button variant="outline" aria-label="확대 사진 이전" disabled={!selected || selected.photoUrls.length<2} onClick={() => showPhoto(-1)}><ChevronLeft /></Button><Button variant="outline" aria-label="확대 사진 다음" disabled={!selected || selected.photoUrls.length<2} onClick={() => showPhoto(1)}><ChevronRight /></Button></div></dialog>
+      <dialog ref={lightboxRef} className="photo-lightbox" aria-label="사진 크게 보기"
+        style={{ translate: `${lightboxOffset.x}px ${lightboxOffset.y}px` }}
+        onClose={() => { lightboxDrag.current = null; setLightbox(false); }}
+        onKeyDown={event => { if (event.key === "ArrowLeft") showPhoto(-1); if (event.key === "ArrowRight") showPhoto(1); }}>
+        <div className="lightbox-toolbar">
+          <button type="button" className="lightbox-drag-handle" aria-label="사진 창 이동" title="드래그하거나 방향키로 이동"
+            onPointerDown={event => {
+              if (event.button !== 0 || !lightboxRef.current) return;
+              lightboxDrag.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY, offsetX: lightboxOffset.x, offsetY: lightboxOffset.y, rect: lightboxRef.current.getBoundingClientRect() };
+              event.currentTarget.setPointerCapture(event.pointerId);
+            }}
+            onPointerMove={event => {
+              const drag = lightboxDrag.current;
+              if (!drag || drag.pointerId !== event.pointerId) return;
+              moveLightbox(event.clientX - drag.x, event.clientY - drag.y, drag.rect, drag.offsetX, drag.offsetY);
+            }}
+            onPointerUp={event => { lightboxDrag.current = null; if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId); }}
+            onPointerCancel={() => { lightboxDrag.current = null; }}
+            onLostPointerCapture={() => { lightboxDrag.current = null; }}
+            onKeyDown={event => {
+              const steps: Record<string, [number, number]> = { ArrowLeft: [-24, 0], ArrowRight: [24, 0], ArrowUp: [0, -24], ArrowDown: [0, 24] };
+              const step = steps[event.key];
+              if (!step || !lightboxRef.current) return;
+              event.preventDefault(); event.stopPropagation();
+              moveLightbox(step[0], step[1], lightboxRef.current.getBoundingClientRect(), lightboxOffset.x, lightboxOffset.y);
+            }}>
+            <strong>{selected?.place.name} · {activePhotoIndex + 1}/{selected?.photoUrls.length}</strong>
+            <span>드래그하여 이동</span>
+          </button>
+          <Button variant="outline" onClick={() => { lightboxDrag.current = null; setLightboxOffset({ x: 0, y: 0 }); }}>가운데로</Button>
+          <Button variant="outline" disabled={photoBusy} onClick={() => void deletePhoto()}>사진 삭제</Button>
+          <Button variant="outline" aria-label="사진 보기 닫기" onClick={() => lightboxRef.current?.close()}><X /></Button>
+        </div>
+        {photoError && <p className="form-error" role="alert">{photoError}</p>}
+        {activePhotoUrl && <img src={activePhotoUrl} alt="확대된 방문 사진" draggable={false} />}
+        <div className="lightbox-navigation"><Button variant="outline" aria-label="확대 사진 이전" disabled={!selected || selected.photoUrls.length<2} onClick={() => showPhoto(-1)}><ChevronLeft /></Button><Button variant="outline" aria-label="확대 사진 다음" disabled={!selected || selected.photoUrls.length<2} onClick={() => showPhoto(1)}><ChevronRight /></Button></div>
+      </dialog>
       {trashOpen && <TrashDialog visits={trash} loading={trashLoading} error={trashError} onClose={() => setTrashOpen(false)} onRestore={restoreVisit} />}
       <InstallAppButton autoPrompt suppressAutoPrompt={Boolean(selected || draftPlace || manualMode || mobileList)} />
 

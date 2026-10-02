@@ -2,9 +2,10 @@ import { afterEach,beforeEach,expect,it,vi } from "vitest";
 import { cleanup,fireEvent,render,screen,waitFor } from "@testing-library/react";
 import type { ComponentProps } from "react";
 import type { KakaoMap } from "./kakao-map";
+import type { DashboardData } from "@/lib/data";
 const mocks=vi.hoisted(()=>({refresh:vi.fn(),fetch:vi.fn()}));
 vi.mock("next/navigation",()=>({useRouter:()=>({refresh:mocks.refresh,replace:vi.fn()})}));
-vi.mock("@/components/kakao-map",()=>({KakaoMap:(props:ComponentProps<typeof KakaoMap>)=><button onClick={()=>props.onManualPoint?.(37,127)}>테스트 장소 선택</button>}));
+vi.mock("@/components/kakao-map",()=>({KakaoMap:(props:ComponentProps<typeof KakaoMap>)=><><button onClick={()=>props.onManualPoint?.(37,127)}>테스트 장소 선택</button>{props.visits[0] && <button onClick={()=>props.onSelect(props.visits[0])}>테스트 기록 선택</button>}</>}));
 vi.mock("@/components/install-app-button",()=>({InstallAppButton:()=>null}));
 vi.mock("@/lib/images",()=>({prepareVisitImage:async(file:File)=>file}));
 import { MapJournal } from "./map-journal";
@@ -23,6 +24,30 @@ beforeEach(()=>{
   });
 });
 afterEach(()=>{cleanup();vi.unstubAllGlobals();});
+it("does not reload or remount displayed photos when synchronization renews signed URLs", async () => {
+  const now = Date.now();
+  const signed = (seconds: number) => `https://example.test/photo.webp?token=h.${btoa(JSON.stringify({ exp: Math.floor(now / 1000) + seconds }))}.s`;
+  const data: DashboardData = { demoMode: false, groups: [{ id, name: "공유 지도", role: "owner", memberCount: 1 }], members: [], visits: [{
+    id, groupId: id, place: { id, provider: "manual", name: "사진 장소", address: "", category: "", latitude: 37, longitude: 127 },
+    visitedOn: "2026-10-02", isPlanned: false, title: "기록", note: "", rating: 5, tags: [], participants: [], photoIds: ["photo-1"], photoUrls: [signed(3600)], markerStyle: "black-9", version: 1, updatedBy: "나",
+  }] };
+  const { rerender } = render(<MapJournal viewerId={id} initialData={data} />);
+  fireEvent.click(screen.getByText("테스트 기록 선택"));
+  const image = document.querySelector(".sheet-photo img")!;
+  fireEvent.click(screen.getByRole("button", { name: "사진 크게 보기" }));
+  const enlarged = document.querySelector(".photo-lightbox > img")!;
+  for (let cycle = 1; cycle <= 3; cycle++) {
+    rerender(<MapJournal viewerId={id} initialData={{ ...data, visits: [{ ...data.visits[0], title: `수정 ${cycle}`, version: cycle + 1, photoUrls: [signed(3600 + cycle * 10)] }] }} />);
+    await waitFor(() => expect(screen.getByText(`수정 ${cycle}`)).toBeInTheDocument());
+    expect(document.querySelector(".sheet-photo img")).toBe(image);
+    expect(image).toHaveAttribute("src", data.visits[0].photoUrls[0]);
+    expect(document.querySelector(".photo-lightbox > img")).toBe(enlarged);
+    expect(enlarged).toHaveAttribute("src", data.visits[0].photoUrls[0]);
+  }
+  rerender(<MapJournal viewerId={id} initialData={{ ...data, visits: [{ ...data.visits[0], version: 5, photoIds: ["photo-2"], photoUrls: [signed(3700)] }] }} />);
+  await waitFor(() => expect(document.querySelector(".sheet-photo img")).not.toBe(image));
+  expect(document.querySelector(".sheet-photo img")).toHaveAttribute("src", signed(3700));
+});
 it("keeps the saved record and retries only failed photos with their original request IDs",async()=>{
   let failedId="";
   mocks.fetch.mockImplementation(async(url:string,options:RequestInit)=>{
