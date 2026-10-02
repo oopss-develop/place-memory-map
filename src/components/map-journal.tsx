@@ -5,7 +5,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { flushSync } from "react-dom";
 import { useRouter } from "next/navigation";
-import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, Globe2, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Palette, Plus, Search, Users, X, ZoomIn } from "lucide-react";
+import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, Globe2, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Palette, Plus, Search, Trash2, Users, X, ZoomIn } from "lucide-react";
 import { KakaoMap, type MapAnchor } from "@/components/kakao-map";
 import { TripPlanner } from "@/components/trip-planner";
 import { GroupOnboarding } from "@/components/group-onboarding";
@@ -76,6 +76,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [lightbox, setLightbox] = useState(false);
   const lightboxRef = useRef<HTMLDialogElement>(null);
   const [lightboxOffset, setLightboxOffset] = useState({ x: 0, y: 0 });
+  const [lightboxAspect, setLightboxAspect] = useState(1.6);
   const lightboxDrag = useRef<{ pointerId: number; x: number; y: number; offsetX: number; offsetY: number; rect: DOMRect } | null>(null);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [visitConflict, setVisitConflict] = useState(false);
@@ -818,7 +819,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
 
       {confirmation.dialog}
       <dialog ref={lightboxRef} className="photo-lightbox" aria-label="사진 크게 보기"
-        style={{ translate: `${lightboxOffset.x}px ${lightboxOffset.y}px` }}
+        style={{ translate: `${lightboxOffset.x}px ${lightboxOffset.y}px`, "--photo-aspect": lightboxAspect } as CSSProperties}
         onClose={() => { lightboxDrag.current = null; setLightbox(false); }}
         onKeyDown={event => { if (event.key === "ArrowLeft") showPhoto(-1); if (event.key === "ArrowRight") showPhoto(1); }}>
         <div className="lightbox-toolbar">
@@ -846,13 +847,20 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
             <strong>{selected?.place.name} · {activePhotoIndex + 1}/{selected?.photoUrls.length}</strong>
             <span>드래그하여 이동</span>
           </button>
-          <Button variant="outline" onClick={() => { lightboxDrag.current = null; setLightboxOffset({ x: 0, y: 0 }); }}>가운데로</Button>
-          <Button variant="outline" disabled={photoBusy} onClick={() => void deletePhoto()}>사진 삭제</Button>
-          <Button variant="outline" aria-label="사진 보기 닫기" onClick={() => lightboxRef.current?.close()}><X /></Button>
+          <Button variant="ghost" className="lightbox-control" aria-label="가운데로" title="가운데로" onClick={() => { lightboxDrag.current = null; setLightboxOffset({ x: 0, y: 0 }); }}><LocateFixed /></Button>
+          <Button variant="ghost" className="lightbox-control" aria-label="사진 삭제" title="사진 삭제" disabled={photoBusy} onClick={() => void deletePhoto()}><Trash2 /></Button>
+          <Button variant="ghost" className="lightbox-control" aria-label="사진 보기 닫기" title="닫기" onClick={() => lightboxRef.current?.close()}><X /></Button>
         </div>
         {photoError && <p className="form-error" role="alert">{photoError}</p>}
-        {activePhotoUrl && <img src={activePhotoUrl} alt="확대된 방문 사진" draggable={false} />}
-        <div className="lightbox-navigation"><Button variant="outline" aria-label="확대 사진 이전" disabled={!selected || selected.photoUrls.length<2} onClick={() => showPhoto(-1)}><ChevronLeft /></Button><Button variant="outline" aria-label="확대 사진 다음" disabled={!selected || selected.photoUrls.length<2} onClick={() => showPhoto(1)}><ChevronRight /></Button></div>
+        <div className="lightbox-image-stage">
+          {activePhotoUrl && <img src={activePhotoUrl} alt="확대된 방문 사진" draggable={false} onLoad={event => {
+            const image = event.currentTarget;
+            if (!image.naturalWidth || !image.naturalHeight) return;
+            const aspect = image.naturalWidth / image.naturalHeight;
+            if (aspect !== lightboxAspect) { setLightboxAspect(aspect); lightboxDrag.current = null; setLightboxOffset({ x: 0, y: 0 }); }
+          }} />}
+          {selected && selected.photoUrls.length > 1 && <div className="lightbox-navigation"><Button variant="ghost" className="lightbox-control" aria-label="확대 사진 이전" onClick={() => showPhoto(-1)}><ChevronLeft /></Button><Button variant="ghost" className="lightbox-control" aria-label="확대 사진 다음" onClick={() => showPhoto(1)}><ChevronRight /></Button></div>}
+        </div>
       </dialog>
       {trashOpen && <TrashDialog visits={trash} loading={trashLoading} error={trashError} onClose={() => setTrashOpen(false)} onRestore={restoreVisit} />}
       <InstallAppButton autoPrompt suppressAutoPrompt={Boolean(selected || draftPlace || manualMode || mobileList)} />

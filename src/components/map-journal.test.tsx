@@ -35,13 +35,13 @@ it("does not reload or remount displayed photos when synchronization renews sign
   fireEvent.click(screen.getByText("테스트 기록 선택"));
   const image = document.querySelector(".sheet-photo img")!;
   fireEvent.click(screen.getByRole("button", { name: "사진 크게 보기" }));
-  const enlarged = document.querySelector(".photo-lightbox > img")!;
+  const enlarged = document.querySelector(".lightbox-image-stage > img")!;
   for (let cycle = 1; cycle <= 3; cycle++) {
     rerender(<MapJournal viewerId={id} initialData={{ ...data, visits: [{ ...data.visits[0], title: `수정 ${cycle}`, version: cycle + 1, photoUrls: [signed(3600 + cycle * 10)] }] }} />);
     await waitFor(() => expect(screen.getByText(`수정 ${cycle}`)).toBeInTheDocument());
     expect(document.querySelector(".sheet-photo img")).toBe(image);
     expect(image).toHaveAttribute("src", data.visits[0].photoUrls[0]);
-    expect(document.querySelector(".photo-lightbox > img")).toBe(enlarged);
+    expect(document.querySelector(".lightbox-image-stage > img")).toBe(enlarged);
     expect(enlarged).toHaveAttribute("src", data.visits[0].photoUrls[0]);
   }
   rerender(<MapJournal viewerId={id} initialData={{ ...data, visits: [{ ...data.visits[0], version: 5, photoIds: ["photo-2"], photoUrls: [signed(3700)] }] }} />);

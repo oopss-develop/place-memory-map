@@ -51,6 +51,28 @@ test("photo popup opens centered, moves within the viewport and recenters", asyn
   await opener.click();
   await expectCentered();
 });
+test("photo popup fits portrait images and keeps navigation transparent", async ({ page }, info) => {
+  const portrait = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='450' height='800'%3E%3Crect width='450' height='800' fill='%23475665'/%3E%3C/svg%3E";
+  await page.evaluate(row => localStorage.setItem("place-memory-visits-v2", JSON.stringify([row])), { ...record, photoUrls: [photo, portrait] });
+  await page.reload();
+  await openRecord(page);
+  await expect(page.getByRole("button", { name: "이전 사진", exact: true })).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(page.getByRole("button", { name: "이전 사진", exact: true })).toHaveCSS("color", "rgb(255, 255, 255)");
+  await page.getByRole("button", { name: "사진 크게 보기", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "사진 크게 보기" });
+  const landscapeWidth = (await dialog.boundingBox())!.width;
+  const next = dialog.getByRole("button", { name: "확대 사진 다음" });
+  await expect(next).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await next.click();
+  await expect(dialog.locator("img")).toHaveAttribute("src", portrait);
+  await expect.poll(() => dialog.evaluate(element => element.style.getPropertyValue("--photo-aspect"))).toBe("0.5625");
+  const box = (await dialog.boundingBox())!;
+  expect(box.width).toBeLessThanOrEqual(landscapeWidth);
+  expect(box.width).toBeLessThanOrEqual(page.viewportSize()!.width - 31);
+  expect(box.height).toBeLessThanOrEqual(page.viewportSize()!.height - 31);
+  if (info.project.name === "desktop") expect(box.width).toBeLessThan(landscapeWidth * 0.6);
+  await page.screenshot({ path: info.outputPath("responsive-portrait-popup.png") });
+});
 test("trash restores the deleted record and photos after a reload",async({page})=>{
   await openRecord(page);await page.getByRole("button",{name:"삭제",exact:true}).click();await page.getByRole("dialog",{name:"삭제 확인"}).getByRole("button",{name:"삭제",exact:true}).click();
   await expect(page.getByRole("button",{name:"실행 취소"})).toBeVisible();await page.reload();await openList(page);
