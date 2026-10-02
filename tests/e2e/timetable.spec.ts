@@ -33,6 +33,7 @@ test.beforeEach(async ({ page }) => {
 test("downloads the whole travel plan with an embedded map and place links", async ({ page }, testInfo) => {
   await openPlanner(page); await createTrip(page); await addExisting(page);
   const downloadEvent = page.waitForEvent("download");
+  if (testInfo.project.name === "mobile") await page.getByRole("button", { name: "여행 탐색 열기" }).click();
   await page.getByRole("button", { name: "엑셀 다운로드", exact: true }).click();
   const download = await downloadEvent;
   expect(download.suggestedFilename()).toBe("서울 2박 3일_2026-10-03_2026-10-05.xlsx");
@@ -172,8 +173,10 @@ test("mobile long press creates time range while normal touch scroll stays avail
   await expect(page.getByLabel("일정 종료")).toHaveValue("2026-10-03T10:00");
   await page.getByRole("button", { name: "취소", exact: true }).click();
   const scroller = page.locator(".timetable-scroll"); const before = await scroller.evaluate((element) => element.scrollTop);
-  await session.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y: y + 60 }] });
-  await session.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y: y - 30 }] });
+  const viewport = (await scroller.boundingBox())!;
+  const scrollY = viewport.y + viewport.height / 2;
+  await session.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y: scrollY + 45 }] });
+  await session.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y: scrollY - 45 }] });
   await session.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
   await expect.poll(() => scroller.evaluate((element) => element.scrollTop)).toBeGreaterThan(before);
   await expect(page.getByRole("dialog", { name: "일정 편집" })).toHaveCount(0);

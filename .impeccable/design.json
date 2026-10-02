@@ -362,7 +362,26 @@
       "native": "2px ring outline or offset ring; planner selection also uses primary"
     },
     "legacyAssets": "Existing map pin rasters, provider tiles, numbering, photo assets, rating particles, local map shadow and animation treatments remain content/interaction assets, not the new UI identity.",
-    "reducedMotion": "Global reduced-motion rule minimizes transitions and animations; marker bounce and rating particles are disabled."
+    "reducedMotion": "Global reduced-motion rule minimizes transitions and animations; marker bounce and rating particles are disabled.",
+    "plannerWorkspace": {
+      "sidebar": {
+        "desktopWidth": 340,
+        "intermediateWidth": 280,
+        "mobile": "Focus-managed navigation drawer"
+      },
+      "selection": {
+        "component": "src/components/workspace-picker.tsx",
+        "sharedWith": "src/components/map-journal.tsx",
+        "triggerHeight": 48,
+        "keyboard": "Radix DropdownMenu radio items"
+      },
+      "main": {
+        "header": "Travel heading and primary add action",
+        "datebarMinHeight": 76,
+        "panels": "1.08fr / 1fr timetable and map"
+      },
+      "agenda": "Record-like rows with separate time and place lines"
+    }
   },
   "components": [
     {

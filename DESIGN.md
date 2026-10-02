@@ -166,7 +166,7 @@ Desktop journal uses a fixed (340px) sidebar beside a flexible map in a viewport
 
 At (820px) and below, the map fills the viewport. A visible search entry sits above it; records use a focus-managed drawer with width `min(calc(100% - 32px), 390px)`. Mobile sidebar gutters use (16px). Bottom navigation is (64px) plus safe-area inset and has five destinations when travel navigation is enabled. Detail sheets and pin actions reserve this space.
 
-The travel planner places timetable and map side by side on desktop, using approximately (1.04fr / .96fr) proportions, with a compact (64px) header and (54px) date bar. Below the mobile breakpoint, time/map tabs reveal one panel and a single current day. Intermediate desktop widths relax panel minimum widths.
+The travel planner inherits the record workspace: a (340px) navigation sidebar, reduced to (280px) at intermediate widths, groups map choice, record/travel navigation, travel choice, dated itinerary rows, and footer actions. Record and travel selectors use the same WorkspacePicker component, (48px) triggers, keyboard navigation, selected indicators, and themed menus. The main area contains the travel heading and primary add action above a (76px) date bar and timetable/map split (approximately 1.08fr / 1fr). Mobile hides navigation in a focus-managed drawer and keeps date controls and time/map tabs above the current day's workspace. The map agenda repeats the record-list pattern with separate time and place lines.
 
 Login has a centered (360px maximum) column; first-map setup uses (400px maximum). Dialogs and scroll areas respect viewport height and safe areas. Use the observed (4/8/12/16/20/24/32px) spacing steps for alignment.
 

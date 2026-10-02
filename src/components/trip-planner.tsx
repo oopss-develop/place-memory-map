@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, CalendarDays, ChevronLeft, ChevronRight, Download, MapPin, Plus, Search, X } from "lucide-react";
+import { CalendarDays, ChevronLeft, ChevronRight, Download, MapPin, Plus, Search, X, Menu, Settings } from "lucide-react";
 import { KakaoMap } from "@/components/kakao-map";
 import { TimetableGrid } from "@/components/timetable-grid";
 import { addMinutes, daySegments, scheduleSchema, tripDates, tripSchema } from "@/lib/timetable";
@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
+import { Brand } from "@/components/brand";
+import { WorkspacePicker } from "@/components/workspace-picker";
 import type { Group, KakaoPlaceResult, MapPoint, Place, ScheduleItem, Trip, TripRoute, Visit } from "@/types/domain";
 
 interface Draft { id?: string; version: number; startsAt: string; endsAt: string; title: string; note: string; place?: Place; newPlace: boolean; markerStyle: ScheduleItem["markerStyle"] }
@@ -21,6 +23,33 @@ export function TripPlanner({ groupId, groups, visits, demo, initialVisit, onGro
   groupId: string; groups: Group[]; visits: Visit[]; demo: boolean; initialVisit?: Visit; onGroup: (id: string) => void; onClose: () => void;
 }) {
   const store = useTripStore(groupId, demo);
+  const [navigationOpen, setNavigationOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const navigationRef = useRef<HTMLElement>(null);
+  const navigationTrigger = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 820px)");
+    const sync = () => { setIsMobile(media.matches); if (!media.matches) setNavigationOpen(false); };
+    sync(); media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+  useEffect(() => {
+    if (!navigationOpen || !isMobile) return;
+    const root = navigationRef.current;
+    const focusable = () => [...(root?.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), [tabindex="0"]') ?? [])].filter(el => el.getClientRects().length);
+    focusable()[0]?.focus();
+    const keydown = (event: KeyboardEvent) => {
+      if (document.querySelector('.planner-dialog[open]') || root?.querySelector('[data-state="open"][role="menu"]')) return;
+      if (event.key === "Escape") { event.preventDefault(); setNavigationOpen(false); }
+      if (event.key === "Tab") {
+        const controls = focusable(); const first = controls[0]; const last = controls.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    };
+    document.addEventListener("keydown", keydown);
+    return () => { document.removeEventListener("keydown", keydown); if (!document.querySelector('.planner-dialog[open]')) navigationTrigger.current?.focus(); };
+  }, [navigationOpen, isMobile]);
   const [tripId, setTripId] = useState("");
   const trip = store.trips.find((value) => value.id === tripId) ?? store.trips[0];
   const [chosenDate, setChosenDate] = useState("");
@@ -191,15 +220,19 @@ export function TripPlanner({ groupId, groups, visits, demo, initialVisit, onGro
   }
 
   return <section className={`trip-planner ${manual ? "is-manual" : ""}`} aria-label="여행 계획">
-    <header className="planner-header">
-      <button className="planner-back" onClick={onClose} disabled={busy}><ArrowLeft size={18} />기록</button>
-      <h1>여행 계획</h1>
-      <label className="planner-group">함께 보는 지도<select aria-label="여행 계획 지도" value={groupId} disabled={busy} onChange={(event) => onGroup(event.target.value)}>{groups.map((group) => <option key={group.id} value={group.id}>{group.name}</option>)}</select></label>
-      {trip && store.trips.length > 1 && <label className="planner-trip-choice">여행<select aria-label="여행 선택" value={trip.id} disabled={busy} onChange={(event) => chooseTrip(event.target.value)}>{store.trips.map((value) => <option key={value.id} value={value.id}>{value.name}</option>)}</select></label>}
-      {trip && store.trips.length === 1 && <span className="planner-trip-choice planner-trip-name">{trip.name}<small>{trip.startDate} – {trip.endDate} · {trip.timeZone}</small></span>}
-      {trip && <div className="planner-header-actions"><Button variant="outline" size="sm" className="planner-export" onClick={() => void exportExcel()} disabled={busy || routeBusy || manual} aria-label="엑셀 다운로드" aria-busy={exporting} title="전체 여행 계획과 선택한 날짜의 지도 저장"><Download size={16} />{exporting ? "저장 중…" : <>엑셀<span className="planner-export-label"> 다운로드</span></>}</Button><Button variant="outline" size="sm" onClick={() => openTrip(trip)} disabled={busy}>여행 설정</Button><Button variant="secondary" size="sm" className="planner-new-trip" onClick={() => openTrip()} disabled={!store.ready || busy}>새 여행</Button><Button size="sm" className="primary-button" onClick={() => createDraft()} disabled={busy}><Plus size={17} />일정 추가</Button></div>}
-      {!trip && <button className="primary-button planner-new-empty" onClick={() => openTrip()} disabled={!store.ready || busy}><Plus size={17} />새 여행</button>}
-    </header>
+    {navigationOpen && <div className="planner-sidebar-backdrop" aria-hidden="true" onClick={() => setNavigationOpen(false)} />}
+    <aside ref={navigationRef} id="planner-navigation" className={`planner-sidebar ${navigationOpen ? "is-open" : ""}`} inert={isMobile && !navigationOpen} role={isMobile && navigationOpen ? "dialog" : undefined} aria-modal={isMobile && navigationOpen ? true : undefined} aria-label="여행 탐색">
+      <div className="planner-sidebar-brand"><Brand compact /><Button className="planner-sidebar-close" variant="ghost" size="icon" aria-label="여행 탐색 닫기" onClick={() => setNavigationOpen(false)}><X /></Button></div>
+      <div className="planner-sidebar-context">
+        <div className="planner-picker-field"><span>함께 보는 지도</span><WorkspacePicker label="여행 계획 지도" value={groupId} options={groups.map(group => ({ value: group.id, label: group.name }))} disabled={busy} onChange={onGroup} /></div>
+        <nav className="planner-view-switch" aria-label="지도 보기 방식"><button disabled={busy} onClick={onClose}>기록</button><button aria-current="page">여행 계획</button></nav>
+        {trip && <div className="planner-picker-field"><span>여행 선택</span><WorkspacePicker label="여행 선택" value={trip.id} options={store.trips.map(value => ({ value: value.id, label: value.name }))} disabled={busy} onChange={chooseTrip} /><p className="planner-trip-meta"><span>{trip.startDate} – {trip.endDate}</span><span>{trip.timeZone}</span></p></div>}
+      </div>
+      {trip && <div className="planner-day-navigation"><div className="record-heading"><div><h2>여행 일정</h2><p>{tripDates(trip).length}일 · {items.length}개 일정</p></div></div><nav className="planner-day-list" aria-label="여행 날짜">{tripDates(trip).map((day, index) => <button key={day} className={day === date ? "selected" : ""} aria-current={day === date ? "date" : undefined} disabled={busy} onClick={() => { chooseDate(day); setNavigationOpen(false); }}><span className="planner-day-icon"><CalendarDays size={18} /></span><span><strong>{index + 1}일차 <span>{new Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric", weekday: "short", timeZone: "UTC" }).format(new Date(day + "T00:00:00Z"))}</span></strong><small>{daySegments(items, day).length}개 일정</small></span></button>)}</nav></div>}
+      <div className="planner-sidebar-footer"><Button variant="outline" onClick={() => { setNavigationOpen(false); openTrip(); }} disabled={!store.ready || busy}><Plus />새 여행</Button>{trip && <><Button variant="ghost" onClick={() => { setNavigationOpen(false); openTrip(trip); }} disabled={busy}><Settings />여행 설정</Button><Button variant="ghost" className="planner-export" onClick={() => void exportExcel()} disabled={busy || routeBusy || manual} aria-label="엑셀 다운로드" aria-busy={exporting}><Download />{exporting ? "저장 중…" : "엑셀 다운로드"}</Button></>}</div>
+    </aside>
+    <div className="planner-main" inert={isMobile && navigationOpen}>
+      <header className="planner-header"><div className="planner-heading"><Button variant="outline" className="planner-navigation-trigger" aria-label="여행 탐색 열기" aria-expanded={navigationOpen} aria-controls="planner-navigation" onClick={(event) => { navigationTrigger.current = event.currentTarget; setNavigationOpen(true); }}><Menu /></Button><div><h1>{trip?.name ?? "여행 계획"}</h1><p>{trip ? "시간표에서 일정을 정하고 지도에서 동선을 확인하세요." : "함께 떠날 여행의 장소와 시간을 계획하세요."}</p></div></div>{trip && <Button className="primary-button planner-add-schedule" onClick={() => createDraft()} disabled={busy}><Plus />일정 추가</Button>}</header>
     {(message || store.error) && <div className={`planner-message ${store.error ? "has-error" : ""}`} role={store.error ? "alert" : "status"}>{store.error || message}<button aria-label="안내 닫기" onClick={() => setMessage("")}><X size={16} /></button>{store.error && <button onClick={() => void store.refresh().catch((error) => setMessage(error.message))}>다시 불러오기</button>}</div>}
     {!store.ready ? <p className="planner-empty">여행을 불러오는 중…</p> : !trip ? <div className="planner-empty"><CalendarDays size={40} /><h2>함께 갈 곳, 시간표로 모아보세요.</h2><p>여행 기간을 정하고 빈 시간을 드래그하면<br />장소와 일정이 지도에 함께 남아요.</p>{carryVisit && <p>선택한 장소: {carryVisit.place.name}</p>}<button className="primary-button" onClick={() => openTrip()}>첫 여행 만들기</button></div> : <>
       {carryVisit && <div className="planner-carry">{carryVisit.place.name}을 넣을 시간을 선택해 주세요.<button onClick={() => setCarryVisit(undefined)}>선택 취소</button></div>}
@@ -216,6 +249,7 @@ export function TripPlanner({ groupId, groups, visits, demo, initialVisit, onGro
       </div>
     </>}
 
+    </div>
     <dialog className="planner-dialog" ref={tripDialog} aria-label="여행 설정" onCancel={(event) => { if (busy) event.preventDefault(); else setTripDraft(undefined); }}>
       {tripDraft && <form onSubmit={saveTrip}><h2>{tripDraft.id ? "여행 설정" : "새 여행 만들기"}</h2><Field><FieldLabel htmlFor="trip-field-1">여행 이름</FieldLabel><Input id="trip-field-1" required maxLength={120} autoFocus value={tripDraft.name} onChange={(event) => setTripDraft({ ...tripDraft, name: event.target.value })} placeholder="예: 제주 2박 3일" /></Field><FieldGroup className="planner-form-row"><Field><FieldLabel htmlFor="trip-field-2">시작일</FieldLabel><Input id="trip-field-2" type="date" required value={tripDraft.startDate} onChange={(event) => setTripDraft({ ...tripDraft, startDate: event.target.value })} /></Field><Field><FieldLabel htmlFor="trip-field-3">종료일</FieldLabel><Input id="trip-field-3" type="date" required min={tripDraft.startDate} value={tripDraft.endDate} onChange={(event) => setTripDraft({ ...tripDraft, endDate: event.target.value })} /></Field></FieldGroup><Field><FieldLabel htmlFor="trip-field-4">여행 시간대</FieldLabel><Input id="trip-field-4" required list="trip-time-zones" value={tripDraft.timeZone} onChange={(event) => setTripDraft({ ...tripDraft, timeZone: event.target.value })} /></Field><datalist id="trip-time-zones">{zoneOptions.map((zone) => <option key={zone} value={zone} />)}</datalist><p>모든 멤버에게 이 여행의 현지 시각으로 보여요. 시간대를 바꿔도 입력한 시각은 유지돼요.</p>{formError && <p className="planner-error" role="alert">{formError}</p>}<div className="planner-form-actions">{tripDraft.id && <button type="button" className="danger-button" disabled={busy} onClick={async () => { if (!confirm("이 여행과 일정을 삭제할까요? 기존 방문 기록은 유지됩니다.")) return; try { await store.deleteTrip(tripDraft as Trip); setTripDraft(undefined); tripDialog.current?.close(); } catch (error) { setFormError((error as Error).message); } }}>여행 삭제</button>}<button type="button" disabled={busy} onClick={() => { setTripDraft(undefined); tripDialog.current?.close(); }}>취소</button><button className="primary-button" disabled={busy} type="submit">{busy ? "저장 중…" : "여행 저장"}</button></div></form>}
     </dialog>

@@ -17,7 +17,7 @@ OWN-WORLD: Clean neutral surfaces, thin semantic borders, shared compact control
 
 STORY: A member chooses or names a trip, brushes a time range, searches or reuses a place, then checks the pin and adjusts the schedule. Failed saves retain the existing schedule; stale edits cannot overwrite collaborators.
 
-FIRST VIEWPORT: Compact trip and date controls precede date columns on the left and a map with an ordered agenda on the right. Desktop header is 64px, date bar 54px, and panels use approximately 1.04fr / .96fr. At 820px and below, mobile uses one current date column and time/map tabs. The primary action is 일정 추가. Selected events expose full times and editing actions.
+FIRST VIEWPORT: Inherit the record workspace. A 340px navigation sidebar (280px at intermediate widths) groups shared map selection, record/travel navigation, shared travel picker, chronological day rows, and anchored secondary actions. WorkspacePicker is shared with the journal, including 48px triggers and keyboard menus. The main area exposes the current travel heading and primary add action above a 76px date bar and 1.08fr / 1fr timetable/map split. Mobile uses a focus-managed navigation drawer, one current date column, and time/map tabs to preserve workspace height. Agenda rows repeat record-list hierarchy with separate time and place lines.
 
 FORM: Preserve time brushing, moving, resizing, overlaps, overnight segments, export, shared-location selection, and numbered map pins. Planner dialogs use neutral card surfaces, 20px headings, inline errors, and sticky save/cancel actions; mobile editable inputs use 16px text and controls reserve 44px targets. Dense timetable metadata and resize handles remain local geometry exceptions.
 

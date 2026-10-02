@@ -73,7 +73,7 @@ test("group owner can delete an additional map", async ({ page }) => {
   await page.goto("/");
   if ((page.viewportSize()?.width ?? 1000) <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
   await page.locator(".group-picker-trigger").click();
-  await page.getByRole("button", { name: "함께 보는 지도 추가" }).click();
+  await page.getByRole("menuitem", { name: "함께 보는 지도 추가" }).click();
   await page.getByLabel("지도 이름").fill("삭제할 지도");
   await page.getByRole("button", { name: "지도 만들기" }).click();
   await page.getByRole("button", { name: "그룹 메뉴" }).click();
