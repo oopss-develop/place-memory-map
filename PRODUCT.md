@@ -33,12 +33,12 @@ Members switch between private groups, search Korean businesses through Kakao, a
 - All current group members can collaboratively create and edit visits.
 - Visits include date, title, note, participants, rating, tags, and up to five photos.
 - Places may have multiple visits. Deletion is recoverable for 30 days.
-- Korea-first Kakao place search; overseas places use manual pins in v1.
+- Korea-first Kakao place search; overseas places support search and manual pins.
 - Personal, non-commercial use within Vercel, Supabase, Kakao, and Brevo free tiers.
 - Each shared map supports multiple named trips with date ranges and IANA time zones. Members plan local-clock schedule items through time brushing, moving, resizing, place search, existing records, or manual coordinates.
-- Desktop presents timetable and map together; mobile switches between a day timetable and a map. Schedule pins show time and order, with shared-location selection, overlap layout, and overnight segments.
+- Desktop presents timetable and map together; mobile defaults to a day itinerary list and switches to timetable or map. Schedule pins show time and order, with shared-location selection, overlap layout, and overnight segments.
 - Travel schedules preserve source visit history and use membership-protected database writes with conflict detection. Demo schedules are browser-local.
-- Comments, public sharing, route finding, automatic travel-time calculation, notifications, and reservation integrations are out of scope.
+- Comments, public sharing, automatic travel-time planning, notifications, and reservation integrations are out of scope. The current map can show route distance and duration with a fallback.
 
 ## Brand Commitments
 
@@ -59,3 +59,9 @@ No user-supplied photography, logo, or production data is available. Demonstrati
 ## Accessibility & Inclusion
 
 All core pin information must also be reachable through a keyboard-accessible list. Controls must work by touch and keyboard, maintain visible focus, and remain usable at 200% text zoom.
+
+## Recovery and Editing
+
+Record saves and photo uploads report separate outcomes. Stable request IDs protect retries; an atomic database transaction saves visits and participants. Visit deletion preserves photos for 30 days, offers 10-second undo, and exposes a membership- and version-checked trash restore. Individual photo deletion is available in the enlargement dialog. Daily authenticated maintenance removes expired Storage files before metadata.
+
+Visit and schedule text drafts are device-local, isolated by user/map/entity, debounce at 500ms and expire after seven days. Unuploaded photo files are excluded. Conflicts preserve input and show the latest title and note for explicit review. Saved record search combines query, dates, visit state, tags and participants; map and list share the same result.

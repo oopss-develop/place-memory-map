@@ -14,6 +14,7 @@ async function createTrip(page: Page) {
   await page.getByLabel("종료일", { exact: true }).fill("2026-10-05");
   await page.getByRole("button", { name: "여행 저장", exact: true }).click();
   await expect(page.getByLabel("계획 날짜")).toHaveValue("2026-10-03");
+  if ((page.viewportSize()?.width ?? 1000)<=820) await page.getByRole("radio",{name:"시간표",exact:true}).click();
 }
 async function addExisting(page: Page) {
   await page.getByRole("button", { name: "일정 추가", exact: true }).click();
@@ -161,6 +162,7 @@ test("mobile long press creates time range while normal touch scroll stays avail
   test.skip(testInfo.project.name !== "mobile", "touch interaction on mobile");
   await openPlanner(page); await createTrip(page);
   const session = await page.context().newCDPSession(page);
+  await page.locator(".timetable-scroll").evaluate(element => { element.scrollTop=9*60*1.2-100; });
   const column = (await page.locator('.timetable-day.current .timetable-column').boundingBox())!;
   const x = column.x + 100; const y = column.y + 9 * 60 * 1.2;
   await session.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y }] });

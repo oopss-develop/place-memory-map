@@ -27,14 +27,14 @@ export const tripSchema = z.object({
   startDate: z.string().date(), endDate: z.string().date(),
   timeZone: z.string().max(100).default("Asia/Seoul").refine((value) => { try { new Intl.DateTimeFormat("en", { timeZone: value }); return true; } catch { return false; } }, "유효한 시간대를 선택해 주세요."),
   version: z.number().int().positive().default(1),
-}).refine((value) => value.endDate >= value.startDate, "종료일은 시작일 이후여야 합니다.");
+}).refine((value) => value.endDate >= value.startDate, {message:"종료일은 시작일 이후여야 합니다.",path:["endDate"]});
 export const scheduleSchema = z.object({
   id: z.string().uuid().optional(), version: z.number().int().positive().default(1),
   place: placeSchema.extend({ id: z.string().uuid().optional() }),
   startsAt: localDateTime, endsAt: localDateTime,
   title: z.string().trim().min(1, "일정 제목을 입력해 주세요.").max(120),
   note: z.string().max(3000).default(""), markerStyle: z.enum(MARKER_STYLE_IDS).default(DEFAULT_MARKER_STYLE),
-}).refine((value) => value.endsAt > value.startsAt, "종료 시간은 시작 시간 이후여야 합니다.");
+}).refine((value) => value.endsAt > value.startsAt, {message:"종료 시간은 시작 시간 이후여야 합니다.",path:["endsAt"]});
 export const deleteScheduleSchema = z.object({ id: z.string().uuid(), version: z.number().int().positive() });
 
 export interface DaySegment { item: ScheduleItem; start: number; end: number; lane: number; lanes: number; order: number }

@@ -663,3 +663,58 @@ button, select { cursor: pointer; }
 .workspace-picker-option small { color: var(--muted-foreground); font-size: 12px; white-space: nowrap; }
 .workspace-picker-separator { height: 1px; background: var(--border); margin: 4px; }
 .workspace-picker-action { cursor: pointer; }
+
+/* Consistent recovery, search and photo controls. */
+.workspace-picker-search { display: block; width: calc(100% - 8px); margin: 4px; padding: 12px; min-height: 44px; border: 1px solid var(--border); border-radius: 6px; background: var(--background); color: var(--foreground); font: inherit; }
+.workspace-picker-empty { padding: 12px; color: var(--muted-foreground); font-size: 14px; }
+.record-search-controls { margin: 16px 0 12px; }
+.record-search-controls [role="group"] { width: 100%; }
+.record-search-controls button { flex: 1; }
+.record-query { display: flex; flex-wrap: wrap; gap: 8px; }
+.record-query input { flex: 1 1 150px; min-width: 0; }
+.record-filter-panel { display: flex; flex-direction: column; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+.filter-date-row { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+.filter-date-row input { min-width: 0; width: 100%; }
+.record-filter-panel fieldset { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.record-filter-panel legend { font-size: 13px; color: var(--muted-foreground); margin-bottom: 8px; }
+.record-filter-panel fieldset label { display: flex; align-items: center; gap: 8px; padding: 8px 10px; min-height: 44px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+.draft-list, .schedule-draft-list { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+.draft-list > div, .schedule-draft-list > div { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; background: var(--muted); border-radius: 8px; }
+.draft-list span, .schedule-draft-list span { width: 100%; font-size: 13px; overflow-wrap: anywhere; }
+.conflict-panel { padding: 16px; border: 1px solid var(--border); background: var(--muted); border-radius: 8px; }
+.conflict-panel p { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 14px; line-height: 1.6; }
+.undo-notice { position: fixed; bottom: max(24px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 90; display: flex; gap: 16px; align-items: center; width: max-content; max-width: calc(100% - 32px); padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow-popover); background: var(--popover); color: var(--popover-foreground); font-size: 14px; }
+.confirmation-dialog, .trash-dialog { width: min(480px, calc(100% - 32px)); max-height: calc(100dvh - 48px); overflow: auto; padding: 24px; border: 1px solid var(--border); border-radius: 12px; background: var(--background); color: var(--foreground); box-shadow: var(--shadow-popover); }
+.confirmation-dialog::backdrop, .trash-dialog::backdrop { background: rgb(0 0 0 / .45); }
+.confirmation-dialog h2, .trash-dialog h2 { margin: 0; font-size: 20px; font-weight: 600; }
+.confirmation-dialog p, .trash-dialog > p { margin: 16px 0 24px; font-size: 14px; line-height: 1.7; color: var(--muted-foreground); }
+.confirmation-dialog > div { display: flex; justify-content: flex-end; gap: 8px; }
+.trash-dialog header, .trash-dialog article { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.trash-dialog article { padding: 16px 0; border-top: 1px solid var(--border); }
+.trash-dialog article > div { min-width: 0; overflow-wrap: anywhere; }
+.trash-dialog article p { margin: 6px 0; font-size: 14px; }
+.trash-dialog small { color: var(--muted-foreground); }
+.photo-enlarge { display: block; width: 100%; height: 100%; padding: 0; border: 0; cursor: zoom-in; background: transparent; }
+.photo-enlarge:focus-visible { outline: 3px solid var(--ring); outline-offset: -3px; }
+.photo-lightbox { width: min(1100px, calc(100% - 32px)); max-height: calc(100dvh - 32px); padding: 16px; overflow: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--background); color: var(--foreground); }
+.photo-lightbox::backdrop { background: rgb(0 0 0 / .8); }
+.lightbox-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.lightbox-toolbar strong { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 14px; }
+.photo-lightbox > img { display: block; width: 100%; max-height: calc(100dvh - 190px); object-fit: contain; }
+.lightbox-navigation { display: flex; justify-content: center; gap: 12px; margin-top: 16px; }
+@media (max-width: 820px) {
+  .record-query input, .workspace-picker-search, .filter-date-row input { font-size: 16px; }
+  .record-query button, .draft-list button, .trash-dialog button, .confirmation-dialog button, .photo-lightbox button { min-height: 44px; }
+}
+
+.record-search-controls { margin: 8px 20px 12px; flex-shrink: 0; }
+.record-search-controls [role="radiogroup"] { display: flex; width: 100%; padding: 4px; gap: 4px; background: var(--muted); border-radius: 8px; }
+.record-search-controls button { flex: 1; min-height: 40px; border-radius: 6px; font-size: 13px; }
+.record-search-controls button[data-state="on"] { background: var(--card); box-shadow: 0 1px 3px rgb(0 0 0 / .08); }
+.record-query { margin: 0 20px 12px; flex-shrink: 0; }
+.record-filter-panel { margin: 0 8px 16px; padding-top: 8px; }
+.draft-list { margin: 8px; }
+@media (max-width: 820px) {
+  .record-search-controls button { min-height: 44px; }
+  .record-query { display: grid; grid-template-columns: minmax(0,1fr) auto; }
+}

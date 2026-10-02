@@ -40,6 +40,7 @@ export interface Visit {
   tags: string[];
   participants: Profile[];
   photoUrls: string[];
+  photoIds?: string[];
   markerStyle: MarkerStyle;
   version: number;
   deletedAt?: string | null;

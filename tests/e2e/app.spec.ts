@@ -77,8 +77,9 @@ test("group owner can delete an additional map", async ({ page }) => {
   await page.getByLabel("지도 이름").fill("삭제할 지도");
   await page.getByRole("button", { name: "지도 만들기" }).click();
   await page.getByRole("button", { name: "그룹 메뉴" }).click();
-  page.once("dialog", (dialog) => dialog.accept());
+
   await page.getByRole("button", { name: "현재 지도 삭제" }).click();
+  await page.getByRole("dialog", { name: "삭제 확인" }).getByRole("button", { name: "삭제",exact:true }).click();
   await expect(page.getByText("“삭제할 지도” 지도를 삭제했습니다.")).toBeVisible();
 });
 

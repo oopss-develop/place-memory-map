@@ -129,10 +129,14 @@ test("small phone form keeps save reachable and validation inside the dialog", a
   await page.getByLabel("무엇을 했나요?").fill("메모");
   await expect(save).toBeInViewport();
   await expect(page.getByLabel("기록 제목")).toHaveCSS("font-size", "16px");
-  // Native required validation passes, but the domain limit rejects a long title.
+  // Length limits prevent oversized titles; invalid tags get an error at the field.
   await page.getByLabel("기록 제목").fill("가".repeat(121));
+  await expect(page.getByLabel("기록 제목")).toHaveValue("가".repeat(120));
+  await page.getByLabel("태그",{exact:true}).fill("가".repeat(25));
   await save.click();
-  await expect(page.locator(".visit-dialog").getByRole("alert")).toBeInViewport();
+  await page.locator("#visit-field-6-error").scrollIntoViewIfNeeded();
+  await expect(page.locator("#visit-field-6-error")).toBeInViewport();
+  await page.getByLabel("태그",{exact:true}).fill("");
   await page.getByLabel("기록 제목").fill("작은 화면에서 남긴 기억");
   await save.click();
   await expect(page.locator(".visit-dialog")).toBeHidden();

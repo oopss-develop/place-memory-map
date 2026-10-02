@@ -18,7 +18,7 @@ interface VisitRow {
   id: string; group_id: string; visited_on: string; is_planned: boolean | null; title: string; note: string; rating: number; tags: string[]; marker_style: MarkerStyle | null; version: number;
   places: { id: string; provider: "kakao" | "manual"; provider_place_id: string | null; name: string; address: string; category: string; latitude: number | string; longitude: number | string };
   visit_participants: Array<{ profiles: { id: string; display_name: string } }>;
-  visit_photos: Array<{ storage_path: string; sort_order: number }>;
+  visit_photos: Array<{ id: string; deleted_at?: string | null; upload_state?: string; storage_path: string; sort_order: number }>;
 }
 
 export async function getDashboardData(supabase?: SupabaseClient, userId?: string): Promise<DashboardData> {
@@ -51,7 +51,7 @@ export async function getDashboardData(supabase?: SupabaseClient, userId?: strin
       .in("group_id", groupIds),
     supabase
       .from("visits")
-      .select("*, places(*), visit_participants(profiles(id,display_name)), visit_photos(storage_path,sort_order)")
+      .select("*, places(*), visit_participants(profiles(id,display_name)), visit_photos(id,storage_path,sort_order,deleted_at,upload_state)")
       .in("group_id", groupIds)
       .is("deleted_at", null)
       .order("visited_on", { ascending: false }),
@@ -73,12 +73,13 @@ export async function getDashboardData(supabase?: SupabaseClient, userId?: strin
     ((visitRows ?? []) as unknown as VisitRow[]).map(async (row) => {
       const signed = await Promise.all(
         (row.visit_photos ?? [])
+          .filter(photo => !photo.deleted_at && photo.upload_state !== "pending")
           .sort((a, b) => a.sort_order - b.sort_order)
           .map(async (photo) => {
             const { data } = await supabase.storage
               .from("visit-photos")
               .createSignedUrl(photo.storage_path, 3600);
-            return data?.signedUrl;
+            return { id: photo.id, url: data?.signedUrl };
           }),
       );
       return {
@@ -105,7 +106,8 @@ export async function getDashboardData(supabase?: SupabaseClient, userId?: strin
           displayName: p.profiles.display_name,
           initials: getMemberInitials(p.profiles.display_name),
         })),
-        photoUrls: signed.filter((url): url is string => Boolean(url)),
+        photoIds: signed.filter(photo => photo.url).map(photo => photo.id),
+        photoUrls: signed.flatMap(photo => photo.url ? [photo.url] : []),
         markerStyle: normalizeMarkerStyle(row.marker_style),
         version: row.version,
         updatedBy: "그룹 멤버",

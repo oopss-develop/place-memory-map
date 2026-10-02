@@ -12,8 +12,9 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "test:rls": "supabase test db",
-    "quality:app": "npm run typecheck && npm run lint && npm run test && npm run test:e2e && npm run build",
-    "quality": "npm run typecheck && npm run lint && npm run test && npm run test:rls && npm run test:e2e && npm run build"
+    "quality:app": "npm run typecheck && npm run lint && npm run test && npm run test:db:embedded && npm run test:e2e && npm run build",
+    "quality": "npm run typecheck && npm run lint && npm run test && npm run test:db:embedded && npm run test:rls && npm run test:e2e && npm run build",
+    "test:db:embedded": "node scripts/verify-visit-db.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -33,6 +34,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.8",
     "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",

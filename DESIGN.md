@@ -230,3 +230,7 @@ Time brushing previews a range before destination selection. Events expose selec
 - Don't introduce a separate color, typography, or control system for travel planning.
 - Don't infer reusable UI colors from preserved map tiles or pin assets.
 - Don't obscure inline errors or dismiss a form while saving.
+
+## Search, Recovery and Photos
+
+Workspace selectors share searchable menu content. Record search explicitly distinguishes new place discovery from stored records; detailed filters remain in the scrollable list area. Recovery banners, empty results, undo and save results use semantic status copy. Deletion uses one native confirmation dialog with an explicit destructive action. Photos open a keyboard-accessible enlargement dialog with navigation and individual deletion. Mobile travel defaults to spacious numbered daily itinerary rows with visible time, place, memo, overnight/overlap labels and 44px edit/map actions.
