@@ -30,7 +30,7 @@ for (const width of [320, 360, 390, 821, 1280, 1440]) test(`overview fits at ${w
   await page.getByRole("menuitemradio", { name: "이번 달", exact: true }).click();
   await expect(page.locator(".overview-totals")).toContainText("방문1회");
   await expect(page.locator(".overview-table tbody tr")).toHaveCount(31);
-  await expect(page.getByRole("link", { name: /가을 여행/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "예정 여행", exact: true })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && document.querySelector(".overview-app")!.scrollWidth <= innerWidth)).toBe(true);
   if (await page.locator(".overview-table").evaluate(el => (el as HTMLDetailsElement).open)) { await table.focus(); await page.keyboard.press("Enter"); } await page.screenshot({ path: test.info().outputPath(`overview-${width}.png`) });
   await page.getByRole("button", { name: /서울 숲.*함께 산책/ }).click();
@@ -59,7 +59,7 @@ test("opens explicit record despite stored filters and explicit trip despite sto
   await expect(page.locator(".place-sheet")).toContainText("서울 숲");
   await expect(page.locator(".sheet-note")).toHaveCSS("white-space", "pre-wrap");
   await page.goto("/overview");
-  await page.getByRole("link", { name: /가을 여행/ }).click();
+  await page.goto(`/?groupId=${otherGroup}&tripId=${tripId}&view=travel`);
   await expect(page.locator(".planner-header h1")).toHaveText("가을 여행");
   await expect(page.getByLabel("계획 날짜", { exact: true })).toHaveValue("2026-10-05");
 });
@@ -126,7 +126,9 @@ test("shows progress during a delayed screen transition and clears it after navi
   const releases: Array<() => void> = [];
   await page.route(url => url.pathname === "/" && url.searchParams.has("_rsc"), async route => { await new Promise<void>(resolve => releases.push(resolve)); await route.continue(); });
   await page.goto("/overview");
-  await page.getByRole("link", { name: /가을 여행/ }).click();
+  await page.getByRole("button", { name: "모아보기 지도 범위", exact: true }).click();
+  await page.getByRole("menuitemradio", { name: "두 번째 지도", exact: true }).click();
+  await page.getByRole("link", { name: "여행 계획", exact: true }).click();
   await expect(page.locator(".app-activity-progress")).toBeVisible();
   await expect(page.locator(".app-activity-progress")).not.toHaveAttribute("aria-valuenow");
   await page.screenshot({ path: test.info().outputPath("navigation-progress.png") });

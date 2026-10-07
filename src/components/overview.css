@@ -20,6 +20,7 @@
 .overview-totals strong { font-size:clamp(26px,4vw,42px); line-height:1.2; font-weight:600; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
 .overview-totals dd span { font-size:14px; }
 .overview-top-grid,.overview-bottom-grid { display:grid; gap:40px; grid-template-columns:minmax(0,2fr) minmax(240px,1fr); margin-top:36px; }
+.overview-bottom-grid:not(.has-detail) { grid-template-columns:minmax(0,1fr); }
 .overview-section { min-width:0; }
 .overview-section-heading { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:8px; margin-bottom:20px; }
 .overview-section h2 { font-size:17px; font-weight:600; }
@@ -52,7 +53,7 @@
 @media(max-width:360px) { .overview-shell { padding-inline:16px; }.overview-totals > div { padding-left:12px; }.overview-recent > li > button { gap:10px; }.overview-recent > li > button img { width:64px; height:56px; }.overview-bar-column small { font-size:10px; } }
 .overview-bottom-grid.has-detail { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
 .overview-aside { min-width:0; }
-.overview-aside > .visit-detail-card { position:sticky; top:16px; margin-bottom:32px; }
+.overview-aside > .visit-detail-card { position:sticky; top:16px; }
 .overview-more { width:100%; margin-top:16px; min-height:44px; }
 .overview-list-end { padding:16px 0; color:var(--muted-foreground); font-size:12px; text-align:center; }
 .visit-detail-card { width:100%; min-width:0; max-height:calc(100dvh - 48px); margin:0; padding:0; border:1px solid var(--border); border-radius:var(--radius-lg); background:var(--card); color:var(--foreground); overflow:auto; }
