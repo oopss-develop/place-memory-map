@@ -33,5 +33,5 @@ export function useActivityProgress(active: boolean, label = "불러오는 중")
 }
 export function LoadingActivity() {
   useActivityProgress(true, "화면 불러오는 중");
-  return <div className="route-loading-state" role="status">화면을 불러오는 중…</div>;
+  return null;
 }
