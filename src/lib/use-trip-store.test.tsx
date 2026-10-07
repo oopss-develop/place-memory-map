@@ -4,6 +4,33 @@ import { useTripStore } from "@/lib/use-trip-store";
 const trip = { id: "trip", groupId: "group", name: "Test", startDate: "2026-09-28", endDate: "2026-09-30", timeZone: "Asia/Seoul", version: 1 };
 const item = { id: "item", tripId: "trip", groupId: "group", place: { id: "place", name: "Place", address: "", category: "", latitude: 37, longitude: 127, provider: "manual" as const }, startsAt: "2026-09-28T09:00", endsAt: "2026-09-28T10:00", title: "Item", note: "", markerStyle: "black-9" as const, version: 1 };
 afterEach(() => vi.unstubAllGlobals());
+it("refreshes quietly on focus and shows loading for explicit refresh and trip changes", async () => {
+  let release: (() => void) | undefined;
+  let delayed = false;
+  vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+    if (delayed && !url.includes("/items")) await new Promise<void>(resolve => { release = resolve; });
+    return Response.json(url.includes("/items") ? { trip, items: [item] } : { trips: [trip] });
+  }));
+  const { result, rerender } = renderHook(({ selected }) => useTripStore("group", false, selected), { initialProps: { selected: "" } });
+  await waitFor(() => expect(result.current.ready).toBe(true));
+  delayed = true;
+  act(() => window.dispatchEvent(new Event("focus")));
+  expect(release).toBeDefined();
+  expect(result.current.loading).toBe(false);
+  await act(async () => { release?.(); });
+  let request: Promise<void>;
+  act(() => { request = result.current.refresh(); });
+  expect(result.current.loading).toBe(true);
+  const foregroundRelease = release;
+  act(() => window.dispatchEvent(new Event("focus")));
+  expect(release).toBe(foregroundRelease);
+  await act(async () => { release?.(); await request; });
+  expect(result.current.loading).toBe(false);
+  rerender({ selected: trip.id });
+  expect(result.current.loading).toBe(true);
+  await act(async () => { release?.(); });
+  expect(result.current.loading).toBe(false);
+});
 it("clears cached schedules when access is lost during the item request", async () => {
   let revoked = false;
   vi.stubGlobal("fetch", vi.fn(async (url: string) => {

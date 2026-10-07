@@ -18,6 +18,7 @@ export function useTripStore(groupId: string, demo: boolean, selectedTripId = ""
   const [busy, setBusy] = useState(false);
   const state = useRef(store);
   const writing = useRef(false);
+  const foregroundLoading = useRef(false);
   const revision = useRef(0);
   const key = demo ? `place-memory-trips-v1:${groupId}` : `${viewerId}:trips:${groupId}`;
   const pendingRequests = useRef(new Map<string, string>());
@@ -26,10 +27,11 @@ export function useTripStore(groupId: string, demo: boolean, selectedTripId = ""
     if (persist) localStorage.setItem(key, JSON.stringify(next));
     state.current = next; setStore(next);
   }, [key]);
-  const refresh = useCallback(async () => {
-    if (demo || writing.current) return;
+  const refresh = useCallback(async ({ background = false } = {}) => {
+    if (demo || writing.current || (background && foregroundLoading.current)) return;
     const requestRevision = ++revision.current;
-    setLoading(true);
+    foregroundLoading.current = !background;
+    setLoading(!background);
     try {
       const { trips } = await tripRequest(`/api/trips?groupId=${encodeURIComponent(groupId)}`);
       if (requestRevision !== revision.current || writing.current) return;
@@ -44,11 +46,11 @@ export function useTripStore(groupId: string, demo: boolean, selectedTripId = ""
         commit({ trips: [], items: [] }); setAccessLost(true); clearUserDrafts(viewerId);
       }
       throw error;
-    } finally { if (requestRevision === revision.current) setLoading(false); }
+    } finally { if (requestRevision === revision.current) { foregroundLoading.current = false; setLoading(false); } }
   }, [demo, groupId, selectedTripId, viewerId, commit]);
   useEffect(() => {
     let alive = true;
-    const invalidatePendingReads = () => { revision.current++; };
+    const invalidatePendingReads = () => { revision.current++; foregroundLoading.current = false; };
     async function init() {
       try {
         if (demo) {
@@ -59,7 +61,7 @@ export function useTripStore(groupId: string, demo: boolean, selectedTripId = ""
       finally { if (alive) setReady(true); }
     }
     void init();
-    const sync = () => { if (document.visibilityState === "visible" && navigator.onLine) void refresh().catch((error) => { if (alive) setError(error.message); }); };
+    const sync = () => { if (document.visibilityState === "visible" && navigator.onLine) void refresh({ background: true }).catch((error) => { if (alive) setError(error.message); }); };
     const interval = window.setInterval(sync, 10000);
     window.addEventListener("focus", sync); window.addEventListener("online", sync); document.addEventListener("visibilitychange", sync);
     return () => { alive = false; invalidatePendingReads(); clearInterval(interval); window.removeEventListener("focus", sync); window.removeEventListener("online", sync); document.removeEventListener("visibilitychange", sync); };
@@ -67,7 +69,7 @@ export function useTripStore(groupId: string, demo: boolean, selectedTripId = ""
 
   async function mutate(operation: () => Promise<void>) {
     if (writing.current) throw new Error("저장 중입니다. 잠시 기다려 주세요.");
-    writing.current = true; revision.current++; setLoading(false); setBusy(true);
+    writing.current = true; revision.current++; foregroundLoading.current = false; setLoading(false); setBusy(true);
     try { await operation(); }
     catch (error) {
       if ((error as { status?: number }).status === 409) {

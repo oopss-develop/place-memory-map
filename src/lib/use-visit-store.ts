@@ -13,12 +13,13 @@ export function useVisitStore(initialData: DashboardData, groupId: string, pause
   const [photoWarning, setPhotoWarning] = useState(initialData.photoWarning ?? "");
   const [loading, setLoading] = useState(false);
   const revision = useRef(0);
+  const foregroundLoading = useRef(false);
   const etag = useRef("");
   const photosIssuedAt = useRef(0);
   const controller = useRef<AbortController | null>(null);
   const current = useRef({ groupId, paused });
   useEffect(() => { current.current = { groupId, paused }; }, [groupId, paused]);
-  const setVisits = useCallback((value: SetStateAction<Visit[]>) => { revision.current++; controller.current?.abort(); setLoading(false); etag.current = ""; updateVisits(value); }, []);
+  const setVisits = useCallback((value: SetStateAction<Visit[]>) => { revision.current++; controller.current?.abort(); foregroundLoading.current = false; setLoading(false); etag.current = ""; updateVisits(value); }, []);
   useEffect(() => {
     const timer = setTimeout(() => {
       updateVisits(previous => preservePhotoUrls(previous, initialData.visits));
@@ -26,12 +27,13 @@ export function useVisitStore(initialData: DashboardData, groupId: string, pause
     }, 0);
     return () => clearTimeout(timer);
   }, [initialData]);
-  const refresh = useCallback(async (renewPhotos = false, force = false) => {
-    if (initialData.demoMode || !groupId || (current.current.paused && !force) || !navigator.onLine || document.visibilityState === "hidden") return;
+  const refresh = useCallback(async (renewPhotos = false, force = false, background = false) => {
+    if (initialData.demoMode || !groupId || (current.current.paused && !force) || !navigator.onLine || document.visibilityState === "hidden" || (background && foregroundLoading.current)) return;
     controller.current?.abort();
     const abort = new AbortController(); controller.current = abort;
     const requestRevision = ++revision.current;
-    setLoading(true);
+    foregroundLoading.current = !background;
+    setLoading(!background);
     try {
       const renew = renewPhotos || Date.now() - photosIssuedAt.current >= 3540000;
       const response = await fetch(`/api/dashboard?groupId=${encodeURIComponent(groupId)}${renew ? "&renewPhotos=true" : ""}`, { cache: "no-store", signal: abort.signal, headers: etag.current ? { "If-None-Match": etag.current } : {} });
@@ -52,15 +54,15 @@ export function useVisitStore(initialData: DashboardData, groupId: string, pause
       setGroups(data.groups); setMembers(data.members); setPhotoWarning(data.photoWarning ?? ""); setError("");
       etag.current = data.photoWarning ? "" : response.headers.get("ETag") ?? ""; photosIssuedAt.current = Date.now();
     } catch (error) { if (!abort.signal.aborted && requestRevision === revision.current) setError((error as Error).message || "연결을 확인하고 다시 시도해 주세요."); }
-    finally { if (requestRevision === revision.current) setLoading(false); }
+    finally { if (requestRevision === revision.current) { foregroundLoading.current = false; setLoading(false); } }
   }, [groupId, initialData.demoMode, viewerId]);
   useEffect(() => {
     etag.current = (initialData.activeGroupId ?? initialData.groups[0]?.id) === groupId ? initialData.etag ?? "" : ""; revision.current++;
     const timer = setTimeout(() => { if (!initialData.demoMode) void refresh(); }, 0);
-    const sync = () => { if (!navigator.onLine || document.visibilityState === "hidden") { revision.current++; controller.current?.abort(); setLoading(false); } else void refresh(); };
+    const sync = () => { if (!navigator.onLine || document.visibilityState === "hidden") { revision.current++; controller.current?.abort(); foregroundLoading.current = false; setLoading(false); } else void refresh(false, false, true); };
     const interval = setInterval(sync, 10000);
     window.addEventListener("focus", sync); window.addEventListener("online", sync); window.addEventListener("offline", sync); document.addEventListener("visibilitychange", sync);
-    const invalidate = () => { revision.current++; };
+    const invalidate = () => { revision.current++; foregroundLoading.current = false; };
     return () => { clearTimeout(timer); clearInterval(interval); invalidate(); controller.current?.abort(); window.removeEventListener("focus", sync); window.removeEventListener("online", sync); window.removeEventListener("offline", sync); document.removeEventListener("visibilitychange", sync); };
   }, [groupId, initialData.demoMode, initialData.activeGroupId, initialData.groups, initialData.etag, refresh]);
   return { visits, setVisits, groups, setGroups, members, refresh, error, photoWarning, loading };
