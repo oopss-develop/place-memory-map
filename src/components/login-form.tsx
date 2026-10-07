@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { useActivityProgress } from "./activity-progress";
 
 export function LoginForm({ next = "/", initialMessage = "" }: { next?: string; initialMessage?: string }) {
   const [showKeyword, setShowKeyword] = useState(false);
@@ -17,6 +18,7 @@ export function LoginForm({ next = "/", initialMessage = "" }: { next?: string; 
   const [pending, setPending] = useState(false);
   const [sent, setSent] = useState(false);
   const router = useRouter();
+  useActivityProgress(pending || sent, sent ? "로그인 후 화면 이동 중" : "로그인 중");
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();

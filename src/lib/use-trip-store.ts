@@ -12,6 +12,7 @@ export async function tripRequest(url: string, method = "GET", body?: unknown) {
 export function useTripStore(groupId: string, demo: boolean, selectedTripId = "", viewerId = "demo") {
   const [store, setStore] = useState<Store>({ trips: [], items: [] });
   const [ready, setReady] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [accessLost, setAccessLost] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -28,6 +29,7 @@ export function useTripStore(groupId: string, demo: boolean, selectedTripId = ""
   const refresh = useCallback(async () => {
     if (demo || writing.current) return;
     const requestRevision = ++revision.current;
+    setLoading(true);
     try {
       const { trips } = await tripRequest(`/api/trips?groupId=${encodeURIComponent(groupId)}`);
       if (requestRevision !== revision.current || writing.current) return;
@@ -42,7 +44,7 @@ export function useTripStore(groupId: string, demo: boolean, selectedTripId = ""
         commit({ trips: [], items: [] }); setAccessLost(true); clearUserDrafts(viewerId);
       }
       throw error;
-    }
+    } finally { if (requestRevision === revision.current) setLoading(false); }
   }, [demo, groupId, selectedTripId, viewerId, commit]);
   useEffect(() => {
     let alive = true;
@@ -65,7 +67,7 @@ export function useTripStore(groupId: string, demo: boolean, selectedTripId = ""
 
   async function mutate(operation: () => Promise<void>) {
     if (writing.current) throw new Error("저장 중입니다. 잠시 기다려 주세요.");
-    writing.current = true; revision.current++; setBusy(true);
+    writing.current = true; revision.current++; setLoading(false); setBusy(true);
     try { await operation(); }
     catch (error) {
       if ((error as { status?: number }).status === 409) {
@@ -122,5 +124,5 @@ export function useTripStore(groupId: string, demo: boolean, selectedTripId = ""
       }
     });
   }
-  return { ...store, ready, error, busy, accessLost, refresh, saveTrip, deleteTrip, saveItem, deleteItem };
+  return { ...store, ready, loading, error, busy, accessLost, refresh, saveTrip, deleteTrip, saveItem, deleteItem };
 }

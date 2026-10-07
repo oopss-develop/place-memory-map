@@ -18,7 +18,7 @@ export function useVisitStore(initialData: DashboardData, groupId: string, pause
   const controller = useRef<AbortController | null>(null);
   const current = useRef({ groupId, paused });
   useEffect(() => { current.current = { groupId, paused }; }, [groupId, paused]);
-  const setVisits = useCallback((value: SetStateAction<Visit[]>) => { revision.current++; etag.current = ""; updateVisits(value); }, []);
+  const setVisits = useCallback((value: SetStateAction<Visit[]>) => { revision.current++; controller.current?.abort(); setLoading(false); etag.current = ""; updateVisits(value); }, []);
   useEffect(() => {
     const timer = setTimeout(() => {
       updateVisits(previous => preservePhotoUrls(previous, initialData.visits));
@@ -31,6 +31,7 @@ export function useVisitStore(initialData: DashboardData, groupId: string, pause
     controller.current?.abort();
     const abort = new AbortController(); controller.current = abort;
     const requestRevision = ++revision.current;
+    setLoading(true);
     try {
       const renew = renewPhotos || Date.now() - photosIssuedAt.current >= 3540000;
       const response = await fetch(`/api/dashboard?groupId=${encodeURIComponent(groupId)}${renew ? "&renewPhotos=true" : ""}`, { cache: "no-store", signal: abort.signal, headers: etag.current ? { "If-None-Match": etag.current } : {} });
@@ -55,12 +56,12 @@ export function useVisitStore(initialData: DashboardData, groupId: string, pause
   }, [groupId, initialData.demoMode, viewerId]);
   useEffect(() => {
     etag.current = (initialData.activeGroupId ?? initialData.groups[0]?.id) === groupId ? initialData.etag ?? "" : ""; revision.current++;
-    const timer = setTimeout(() => { if (!initialData.demoMode) { setLoading(true); void refresh(); } }, 0);
-    const sync = () => { void refresh(); };
+    const timer = setTimeout(() => { if (!initialData.demoMode) void refresh(); }, 0);
+    const sync = () => { if (!navigator.onLine || document.visibilityState === "hidden") { revision.current++; controller.current?.abort(); setLoading(false); } else void refresh(); };
     const interval = setInterval(sync, 10000);
-    window.addEventListener("focus", sync); window.addEventListener("online", sync); document.addEventListener("visibilitychange", sync);
+    window.addEventListener("focus", sync); window.addEventListener("online", sync); window.addEventListener("offline", sync); document.addEventListener("visibilitychange", sync);
     const invalidate = () => { revision.current++; };
-    return () => { clearTimeout(timer); clearInterval(interval); invalidate(); controller.current?.abort(); window.removeEventListener("focus", sync); window.removeEventListener("online", sync); document.removeEventListener("visibilitychange", sync); };
+    return () => { clearTimeout(timer); clearInterval(interval); invalidate(); controller.current?.abort(); window.removeEventListener("focus", sync); window.removeEventListener("online", sync); window.removeEventListener("offline", sync); document.removeEventListener("visibilitychange", sync); };
   }, [groupId, initialData.demoMode, initialData.activeGroupId, initialData.groups, initialData.etag, refresh]);
   return { visits, setVisits, groups, setGroups, members, refresh, error, photoWarning, loading };
 }

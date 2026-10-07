@@ -240,7 +240,7 @@ test("theme choice is applied and remembered", async ({ page }) => {
   await page.getByRole("button", { name: "그룹 메뉴" }).click();
   await page.getByRole("button", { name: /테마 선택/ }).click();
   await page.getByRole("radio", { name: /다크/ }).click();
-  await expect(page.locator(".journal-app")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator(".journal-app:visible")).toHaveAttribute("data-theme", "dark");
   await page.reload();
   await expect(page.locator(".journal-app")).toHaveAttribute("data-theme", "dark");
 });
@@ -261,7 +261,7 @@ test("font preference loads the font, survives reload and remains independent of
   await page.getByRole("radio", { name: /다크/ }).click();
   await page.reload();
   await expect(page.locator("html")).toHaveAttribute("data-font", "nanum-square");
-  await expect(page.locator(".journal-app")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator(".journal-app:visible")).toHaveAttribute("data-theme", "dark");
   if (mobile) await page.getByRole("button", { name: "기록 목록 열기" }).click();
   await page.getByRole("button", { name: "그룹 메뉴" }).click();
   await page.getByRole("button", { name: /글꼴 선택/ }).click();

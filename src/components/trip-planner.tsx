@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import Link from "next/link";
+import Link from "./app-link";
 import { DesktopSidebarToggle, type useDesktopSidebar } from "./desktop-sidebar-toggle";
+import { useActivityProgress } from "./activity-progress";
 import { PanelDivider } from "@/components/panel-divider";
 import { TravelLayoutControl, useTravelLayout } from "@/components/travel-layout-control";
 import { CalendarDays, ChevronLeft, ChevronRight, Download, MapPin, Plus, Search, X, Menu, Settings } from "lucide-react";
@@ -85,10 +86,12 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
   const [query, setQuery] = useState("");
   const [plannedOnly, setPlannedOnly] = useState(false);
   const { results, setResults, searching, message: searchMessage, search, cancel: cancelSearch } = usePlaceSearch(query, provider, groupId, visits, Boolean(draft) && source === "search");
+  useActivityProgress(searching, "장소 검색 중");
   const [manual, setManual] = useState(false);
   const [carryVisit, setCarryVisit] = useState(initialVisit);
   const [savedRoute, setSavedRoute] = useState<{ key: string; route: TripRoute }>();
   const [routeBusy, setRouteBusy] = useState(false);
+  useActivityProgress(!store.ready || store.loading || busy || routeBusy, busy ? "여행 저장 중" : routeBusy ? "동선 불러오는 중" : "여행 불러오는 중");
   const [routeFeedback, setRouteFeedback] = useState<{ key: string; notice: string }>();
   const itemDialog = useRef<HTMLDialogElement>(null);
   const tripDialog = useRef<HTMLDialogElement>(null);

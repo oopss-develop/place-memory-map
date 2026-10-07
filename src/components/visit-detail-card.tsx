@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "./app-link";
 import { MapPin, Star, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+import { useActivityProgress } from "./activity-progress";
+import { Progress } from "./ui/progress";
 import type { Group, Visit } from "@/types/domain";
 
 interface Detail { visit: Visit; groupName: string; photoWarning?: string }
@@ -14,6 +16,7 @@ export function VisitDetailCard({ visitId, groupId, groups, demo, onClose }: { v
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [retry, setRetry] = useState(0);
+  useActivityProgress(loading, "방문 기록 불러오는 중");
   useEffect(() => {
     const element = dialog.current; element?.showModal();
   }, []);
@@ -25,6 +28,7 @@ export function VisitDetailCard({ visitId, groupId, groups, demo, onClose }: { v
       controller?.abort(); controller = new AbortController();
       const signal = controller.signal, current = ++revision;
       if (!navigator.onLine && !demo) { setLoading(false); setError("오프라인입니다. 연결이 돌아오면 다시 불러옵니다."); return; }
+      setLoading(true);
       try {
         let next: Detail;
         if (demo) {
@@ -62,6 +66,7 @@ export function VisitDetailCard({ visitId, groupId, groups, demo, onClose }: { v
   return <dialog ref={dialog} className="visit-detail-card" aria-labelledby="visit-detail-title" onClose={onClose} onClick={event => { if (event.target === event.currentTarget) { const rect = event.currentTarget.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) event.currentTarget.close(); } }}>
     <header className="visit-detail-header"><h2 id="visit-detail-title">방문 기록</h2><Button variant="ghost" size="icon" aria-label="방문 기록 닫기" autoFocus onClick={() => dialog.current?.close()}><X /></Button></header>
     <div className="visit-detail-body">
+      {loading && <Progress label="방문 기록 불러오는 중" />}
       {loading && !visit && <p role="status">기록을 불러오는 중…</p>}
       {error && <div className="visit-detail-warning" role="alert"><p>{error}</p><Button variant="outline" onClick={() => setRetry(value => value + 1)}>다시 시도</Button>{error.includes("로그인") && <Link href="/login?next=%2Foverview">로그인</Link>}</div>}
       {visit && <><div className="visit-detail-meta"><time>{visit.visitedOn}</time><span>{detail.groupName}</span>{visit.isPlanned && <Badge variant="outline">방문 예정</Badge>}</div><h3 className="visit-detail-place">{visit.place.name}</h3><p className="visit-detail-address"><MapPin size={16} aria-hidden="true" />{visit.place.address || "직접 지정한 위치"}</p>{visit.place.category && <p className="visit-detail-category">{visit.place.category}</p>}

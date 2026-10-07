@@ -5,10 +5,11 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { flushSync } from "react-dom";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Link from "./app-link";
 import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Filter, Globe2, List, LocateFixed, LogOut, Map as MapIcon, MapPin, Menu, Palette, Plus, Search, Trash2, Users, X, ZoomIn } from "lucide-react";
 import { KakaoMap, type MapAnchor } from "@/components/kakao-map";
 import { DesktopSidebarToggle, useDesktopSidebar } from "./desktop-sidebar-toggle";
+import { useActivityProgress } from "./activity-progress";
 import { TripPlanner } from "@/components/trip-planner";
 import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
@@ -117,7 +118,9 @@ export function MapJournal({ initialData, viewerId, viewerName, initialNavigatio
   const [groupBusy, setGroupBusy] = useState(false);
   const [groupError, setGroupError] = useState("");
   const { visits, setVisits, groups, setGroups, members, refresh: refreshVisits, error: dataError, photoWarning, loading: dataLoading } = useVisitStore(initialData, activeGroupId, Boolean(pendingAction || photoBusy || groupBusy), userKey);
+  useActivityProgress(dataLoading || Boolean(pendingAction) || photoBusy || groupBusy || trashLoading, pendingAction || photoBusy || groupBusy ? "기록 저장 중" : "기록 불러오는 중");
   const { results: searchResults, setResults: setSearchResults, message: searchMessage, setMessage: setSearchMessage, searching, search, cancel: cancelSearch } = usePlaceSearch(query, mapProvider, activeGroupId, visits, !plannerOpen && !draftPlace && searchMode === "places");
+  useActivityProgress(searching, "장소 검색 중");
   const { setLightbox, lightboxRef, lightboxOffset, setLightboxOffset, lightboxAspect, setLightboxAspect, lightboxDrag, photoView, setPhotoView, moveLightbox, showPhoto } = usePhotoViewer(visits, selectedId);
   const [currentLocation, setCurrentLocation] = useState<{ latitude: number; longitude: number }>();
   const [mapFocus, setMapFocus] = useState<{ latitude: number; longitude: number }>();

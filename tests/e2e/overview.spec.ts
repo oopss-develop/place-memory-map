@@ -68,7 +68,7 @@ test("reports deleted or inaccessible destinations and offers return navigation"
   await page.getByRole("link", { name: "모아보기로 돌아가기", exact: true }).click();
   await expect(page.getByRole("heading", { name: "모아보기", exact: true })).toBeVisible();
   await page.goto(`/?groupId=${otherGroup}&tripId=33333333-3333-4333-8333-333333333333&view=travel`);
-  await expect(page.locator(".planner-empty")).toContainText("삭제되었거나");
+  await expect(page.locator(".planner-empty").filter({ hasText: "삭제되었거나" })).toBeVisible();
 });
 test("fits at 200 percent zoom and supports keyboard navigation", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop");
@@ -79,4 +79,32 @@ test("fits at 200 percent zoom and supports keyboard navigation", async ({ page 
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && document.querySelector(".overview-shell")!.getBoundingClientRect().right <= innerWidth)).toBe(true);
   await page.locator(".overview-table summary").focus(); await page.keyboard.press("Enter");
   await expect(page.getByRole("table")).toBeVisible();
+});
+
+test("rows have rounded shadcn hover surfaces and arrow motion respects reduced motion", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop");
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/overview");
+  const row = page.getByRole("button", { name: /서울 숲.*함께 산책/ });
+  await row.hover();
+  await expect(row).toHaveCSS("border-radius", "8px");
+  const arrow = row.locator(".interactive-row-arrow");
+  await expect(arrow).toHaveCSS("transform", "matrix(1, 0, 0, 1, 4, 0)");
+  await page.screenshot({ path: test.info().outputPath("rounded-hover.png") });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await expect(arrow).toHaveCSS("transform", "none");
+});
+
+test("shows progress during a delayed screen transition and clears it after navigation", async ({ page }) => {
+  const releases: Array<() => void> = [];
+  await page.route(url => url.pathname === "/" && url.searchParams.has("_rsc"), async route => { await new Promise<void>(resolve => releases.push(resolve)); await route.continue(); });
+  await page.goto("/overview");
+  await page.getByRole("link", { name: /가을 여행/ }).click();
+  await expect(page.locator(".app-activity-progress")).toBeVisible();
+  await expect(page.locator(".app-activity-progress")).not.toHaveAttribute("aria-valuenow");
+  await page.screenshot({ path: test.info().outputPath("navigation-progress.png") });
+  await page.unrouteAll({ behavior: "ignoreErrors" });
+  releases.forEach(release => release());
+  await expect(page.locator(".planner-header h1")).toHaveText("가을 여행");
+  await expect(page.locator(".app-activity-progress")).toHaveCount(0);
 });

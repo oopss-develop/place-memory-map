@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Brand } from "@/components/brand";
+import { useActivityProgress } from "./activity-progress";
 
 export function GroupOnboarding() {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
+  useActivityProgress(pending, "지도 만드는 중");
   async function create(event: React.FormEvent) {
     event.preventDefault();
     if (!name.trim()) return;

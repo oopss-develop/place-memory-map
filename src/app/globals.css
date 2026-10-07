@@ -1,6 +1,18 @@
 @import "tailwindcss";
 @import "./timetable.css";
 
+.activity-progress { height:4px; overflow:hidden; border-radius:var(--radius-lg); background:var(--progress-track,var(--muted)); position:relative; width:100%; }
+.activity-progress-indicator { position:absolute; inset:0 auto 0 0; width:35%; border-radius:inherit; background:var(--progress-color,var(--primary)); animation:activity-progress-slide 1.2s ease-in-out infinite; }
+.app-activity-progress { position:fixed; z-index:9999; top:0; left:0; right:0; border-radius:0; pointer-events:none; }
+.route-loading-state { padding:32px; color:var(--muted-foreground); font-size:14px; }
+.interactive-row { border-radius:var(--radius-md); transition:background-color .15s ease,color .15s ease,box-shadow .15s ease; }
+.interactive-row:hover, .interactive-row:focus-visible { background:var(--accent); color:var(--accent-foreground); }
+.interactive-row:focus-visible { outline:none; box-shadow:0 0 0 3px var(--ring); }
+.interactive-row-arrow { flex-shrink:0; transition:transform .18s ease-out; }
+.interactive-row:hover .interactive-row-arrow, .interactive-row:focus-visible .interactive-row-arrow { transform:translateX(4px); }
+@keyframes activity-progress-slide { from { transform:translateX(-100%); } to { transform:translateX(390%); } }
+@media(prefers-reduced-motion:reduce) { .activity-progress-indicator { animation:none; width:100%; opacity:.65; }.interactive-row-arrow { transition:none; }.interactive-row:hover .interactive-row-arrow,.interactive-row:focus-visible .interactive-row-arrow { transform:none; } }
+
 @font-face { font-family: "NanumSquare"; src: url("/fonts/nanum-square/NanumSquareR.woff") format("woff"); font-weight: 400; font-style: normal; font-display: swap; }
 @font-face { font-family: "NanumSquare"; src: url("/fonts/nanum-square/NanumSquareB.woff") format("woff"); font-weight: 700; font-style: normal; font-display: swap; }
 @font-face { font-family: "NanumSquare"; src: url("/fonts/nanum-square/NanumSquareEB.woff") format("woff"); font-weight: 800; font-style: normal; font-display: swap; }

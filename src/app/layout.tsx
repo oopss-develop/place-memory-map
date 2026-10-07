@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Gowun_Batang, Noto_Sans_KR } from "next/font/google";
 import { PwaRegistration } from "@/components/pwa-registration";
 import { FontPreference } from "@/components/font-preference";
+import { ActivityProgressProvider } from "@/components/activity-progress";
 import "./globals.css";
 
 const sans = Noto_Sans_KR({
@@ -38,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ko"
       className={`${sans.variable} ${serif.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col"><FontPreference><PwaRegistration />{children}</FontPreference></body>
+      <body className="min-h-full flex flex-col"><FontPreference><ActivityProgressProvider><PwaRegistration />{children}</ActivityProgressProvider></FontPreference></body>
     </html>
   );
 }
