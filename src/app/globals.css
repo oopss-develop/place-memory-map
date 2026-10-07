@@ -165,8 +165,8 @@ button, select { cursor: pointer; }
 .search-popover span, .search-popover p { margin: 0; color: var(--ink-muted); font-size: 12px; }
 .search-popover p { padding: 11px 14px; }
 
-.filter-row { display: flex; width: 100%; align-items: center; min-height: 42px; overflow-x: auto; border-bottom: 1px solid var(--border); scrollbar-width: none; gap: 4px; padding: 0 20px 16px; }
-.filter-row button { white-space: nowrap; border: 1px solid transparent; color: var(--muted-foreground); background: transparent; transition: color .15s ease, background-color .15s ease, border-color .15s ease; min-height: 32px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; }
+.filter-row { display: flex; flex-wrap: wrap; width: 100%; min-width: 0; align-items: center; min-height: 42px; border-bottom: 1px solid var(--border); gap: 4px; padding: 0 20px 16px; }
+.filter-row button { max-width: 100%; white-space: normal; overflow-wrap: anywhere; height: auto; border: 1px solid transparent; color: var(--muted-foreground); background: transparent; transition: color .15s ease, background-color .15s ease, border-color .15s ease; min-height: 32px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 500; }
 .filter-row button:hover, .filter-row button.active { color: var(--foreground); background: var(--accent); border-color: var(--border); }
 .record-heading { display: flex; align-items: center; padding: 20px 20px 12px; }
 .record-heading h1 { margin: 0; line-height: 1.5; font-family: var(--font-sans), sans-serif; font-size: 16px; font-weight: 600; letter-spacing: -.02em; }
