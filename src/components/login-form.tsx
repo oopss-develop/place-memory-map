@@ -1,7 +1,7 @@
 "use client";
 
 import { apiRequest, jsonRequest } from "@/lib/api-request";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Mail, ArrowRight, LoaderCircle, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 
 export function LoginForm({ next = "/", initialMessage = "" }: { next?: string; initialMessage?: string }) {
   const [showKeyword, setShowKeyword] = useState(false);
+  const composingKeyword = useRef(false);
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState(initialMessage);
   const [pending, setPending] = useState(false);
@@ -19,6 +20,7 @@ export function LoginForm({ next = "/", initialMessage = "" }: { next?: string; 
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
+    if (composingKeyword.current || pending) return;
     setMessage("");
     setPending(true);
     try {
@@ -46,7 +48,11 @@ export function LoginForm({ next = "/", initialMessage = "" }: { next?: string; 
       </Field>
       <Field data-disabled={pending}>
         <FieldLabel htmlFor="member-keyword">키워드</FieldLabel>
-        <div className="keyword-input"><Input id="member-keyword" name="member-keyword" type={showKeyword ? "text" : "password"} placeholder="등록된 키워드" autoComplete="off" aria-describedby="login-message" maxLength={100} disabled={pending} required /><Button variant="ghost" size="icon" aria-label={showKeyword ? "키워드 숨기기" : "키워드 표시"} aria-pressed={showKeyword} disabled={pending} onClick={() => setShowKeyword(value => !value)}>{showKeyword ? <EyeOff /> : <Eye />}</Button></div>
+        <div className="keyword-input">
+          {/* Password inputs disable Korean IME in some browsers. Mask only the display. */}
+          <Input id="member-keyword" name="member-keyword" type="text" data-masked={!showKeyword} placeholder="등록된 키워드" autoComplete="off" autoCapitalize="none" autoCorrect="off" spellCheck={false} aria-describedby="login-message" maxLength={100} disabled={pending} required onCompositionStart={() => { composingKeyword.current = true; }} onCompositionEnd={() => { composingKeyword.current = false; }} />
+          <Button variant="ghost" size="icon" aria-label={showKeyword ? "키워드 숨기기" : "키워드 표시"} aria-pressed={showKeyword} disabled={pending} onClick={() => setShowKeyword(value => !value)}>{showKeyword ? <EyeOff /> : <Eye />}</Button>
+        </div>
       </Field>
       </FieldGroup>
       <Button type="submit" disabled={pending || sent} aria-busy={pending}>

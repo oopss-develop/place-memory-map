@@ -751,6 +751,7 @@ button, select { cursor: pointer; }
 .form-actions, .planner-form-actions { flex-wrap: wrap; }
 .keyword-input { display: flex; align-items: center; gap: 4px; }
 .keyword-input input { min-width: 0; flex: 1; }
+.keyword-input input[data-masked="true"] { -webkit-text-security: disc; }
 .active-filter-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 20px; max-height: 132px; overflow: auto; }
 .active-filter-chips button { white-space: normal; overflow-wrap: anywhere; height: auto; text-align: left; }
 .data-warning { padding: 12px; color: var(--foreground); background: var(--muted); border-radius: 8px; }
