@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("login uses the four-member email and keyword allowlist", async ({ page }) => {
   await page.goto("/login");
   await expect(page.getByLabel("등록된 이메일")).toHaveAttribute("type", "email");
-  await expect(page.getByLabel("키워드")).toBeVisible();
+  await expect(page.getByLabel("키워드", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "로그인", exact: true })).toBeVisible();
   await expect(page.getByText("등록된 이메일과 키워드를 입력해 주세요.")).toBeVisible();
 });

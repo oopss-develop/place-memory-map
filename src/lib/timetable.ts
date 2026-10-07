@@ -22,6 +22,7 @@ export function fitsTrip(item: Pick<ScheduleItem, "startsAt" | "endsAt">, trip: 
 const localDateTime = z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/, "날짜와 시간을 확인해 주세요.")
   .refine((value) => Number.isFinite(calendarMs(value)) && new Date(calendarMs(value)).toISOString().slice(0, 16) === value, "올바른 날짜와 시간을 입력해 주세요.");
 export const tripSchema = z.object({
+  requestId: z.string().uuid().optional(),
   id: z.string().uuid().optional(), groupId: z.string().uuid(),
   name: z.string().trim().min(1, "여행 이름을 입력해 주세요.").max(120),
   startDate: z.string().date(), endDate: z.string().date(),
@@ -29,6 +30,7 @@ export const tripSchema = z.object({
   version: z.number().int().positive().default(1),
 }).refine((value) => value.endDate >= value.startDate, {message:"종료일은 시작일 이후여야 합니다.",path:["endDate"]});
 export const scheduleSchema = z.object({
+  requestId: z.string().uuid().optional(),
   id: z.string().uuid().optional(), version: z.number().int().positive().default(1),
   place: placeSchema.extend({ id: z.string().uuid().optional() }),
   startsAt: localDateTime, endsAt: localDateTime,

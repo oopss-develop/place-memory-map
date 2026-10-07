@@ -5,7 +5,8 @@ import { CalendarDays, ChevronLeft, ChevronRight, Download, MapPin, Plus, Search
 import { KakaoMap } from "@/components/kakao-map";
 import { TimetableGrid } from "@/components/timetable-grid";
 import { addMinutes, daySegments, scheduleSchema, tripDates, tripSchema } from "@/lib/timetable";
-import { tripRequest, useTripStore } from "@/lib/use-trip-store";
+import { usePlaceSearch } from "@/lib/use-place-search";
+import { useTripStore } from "@/lib/use-trip-store";
 import { DEFAULT_MARKER_STYLE, normalizeMarkerStyle } from "@/lib/marker-styles";
 import { Field, FieldLabel, FieldGroup, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -16,21 +17,23 @@ import { Brand } from "@/components/brand";
 import { WorkspacePicker } from "@/components/workspace-picker";
 import { useConfirmation } from "@/components/confirmation";
 import { clearDraft, listDrafts, saveDraft, type SavedDraft } from "@/lib/drafts";
-import type { Group, KakaoPlaceResult, MapPoint, Place, ScheduleItem, Trip, TripRoute, Visit } from "@/types/domain";
+import type { Group, MapPoint, Place, ScheduleItem, Trip, TripRoute, Visit } from "@/types/domain";
 
-interface Draft { id?: string; version: number; startsAt: string; endsAt: string; title: string; note: string; place?: Place; newPlace: boolean; markerStyle: ScheduleItem["markerStyle"] }
+interface Draft { requestId?: string; id?: string; version: number; startsAt: string; endsAt: string; title: string; note: string; place?: Place; newPlace: boolean; markerStyle: ScheduleItem["markerStyle"] }
 const zoneOptions = ["Asia/Seoul", "Asia/Tokyo", "Asia/Shanghai", "Asia/Taipei", "Asia/Bangkok", "Asia/Singapore", "Asia/Dubai", "Europe/Paris", "Europe/London", "Europe/Rome", "America/New_York", "America/Los_Angeles", "Pacific/Honolulu", "Australia/Sydney"];
 
 export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, initialVisit, onGroup, onClose }: {
   viewerId?: string; groupId: string; groups: Group[]; visits: Visit[]; demo: boolean; initialVisit?: Visit; onGroup: (id: string) => void; onClose: () => void;
 }) {
-  const store = useTripStore(groupId, demo);
+  const [tripId, setTripId] = useState("");
+  const store = useTripStore(groupId, demo, tripId, viewerId);
   const confirmation = useConfirmation();
   const [itemDrafts, setItemDrafts] = useState<SavedDraft<{ tripId: string; draft: Draft }>[]>([]);
   const [conflict, setConflict] = useState(false);
   const [fieldErrors,setFieldErrors]=useState<Record<string,string>>({});
   const viewLoaded = useRef(false);
   const skipDraftSave = useRef(false);
+  const skipTripDraftSave = useRef(false);
   const [online, setOnline] = useState(true);
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -59,7 +62,6 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
     document.addEventListener("keydown", keydown);
     return () => { document.removeEventListener("keydown", keydown); if (!document.querySelector('.planner-dialog[open]')) navigationTrigger.current?.focus(); };
   }, [navigationOpen, isMobile]);
-  const [tripId, setTripId] = useState("");
   const trip = store.trips.find((value) => value.id === tripId) ?? store.trips[0];
   const [chosenDate, setChosenDate] = useState("");
   const date = trip && chosenDate >= trip.startDate && chosenDate <= trip.endDate ? chosenDate : trip?.startDate ?? "";
@@ -67,7 +69,7 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
   const [tab, setTab] = useState<"list" | "time" | "map">("time");
   const [provider, setProvider] = useState<"kakao" | "osm">("kakao");
   const [draft, setDraft] = useState<Draft>();
-  const [tripDraft, setTripDraft] = useState<(Omit<Trip, "id"> & { id?: string })>();
+  const [tripDraft, setTripDraft] = useState<(Omit<Trip, "id"> & { id?: string; requestId?: string })>();
   const [message, setMessage] = useState("");
   const [exporting, setExporting] = useState(false);
   const busy = store.busy || exporting;
@@ -76,9 +78,7 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
   const [source, setSource] = useState<"search" | "records">("search");
   const [query, setQuery] = useState("");
   const [plannedOnly, setPlannedOnly] = useState(false);
-  const [results, setResults] = useState<KakaoPlaceResult[]>([]);
-  const [searching, setSearching] = useState(false);
-  const searchEpoch = useRef(0);
+  const { results, setResults, searching, message: searchMessage, search, cancel: cancelSearch } = usePlaceSearch(query, provider, groupId, visits, Boolean(draft) && source === "search");
   const [manual, setManual] = useState(false);
   const [carryVisit, setCarryVisit] = useState(initialVisit);
   const [savedRoute, setSavedRoute] = useState<{ key: string; route: TripRoute }>();
@@ -124,7 +124,8 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
   }, [draft,trip,groupId,viewerId]);
   useEffect(() => { if (draft && !manual && !itemDialog.current?.open) itemDialog.current?.showModal(); }, [draft, manual]);
   useEffect(() => { if (tripDraft && !tripDialog.current?.open) tripDialog.current?.showModal(); }, [tripDraft]);
-  function clearItem() { setFieldErrors({}); setDraft(undefined); setManual(false); setFormError(""); searchEpoch.current++; setSearching(false); itemDialog.current?.close(); }
+  useEffect(() => { if (!store.accessLost) return; const timer = setTimeout(() => { skipDraftSave.current = true; skipTripDraftSave.current = true; setDraft(undefined); setTripDraft(undefined); itemDialog.current?.close(); tripDialog.current?.close(); }, 0); return () => clearTimeout(timer); }, [store.accessLost]);
+  function clearItem() { setFieldErrors({}); setDraft(undefined); setManual(false); setFormError(""); cancelSearch(); itemDialog.current?.close(); }
   function chooseDate(next: string) { setChosenDate(next); setPinChoices([]); }
   function chooseTrip(id: string) { setTripId(id); setChosenDate(""); setSelectedId(undefined); setPinChoices([]); }
   function chooseItem(item: ScheduleItem, fromMap = false) {
@@ -134,18 +135,28 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
   }
   function createDraft(start = `${date}T09:00`, end = addMinutes(start, 60)) {
     skipDraftSave.current=false; setConflict(false); setFormError(""); setQuery(""); setResults([]); setSource("search");
-    setDraft({ startsAt: start, endsAt: end, title: carryVisit?.place.name ?? "", note: "", place: carryVisit?.place, newPlace: false, markerStyle: carryVisit?.markerStyle ?? DEFAULT_MARKER_STYLE, version: 1 });
+    setDraft({ requestId: crypto.randomUUID(), startsAt: start, endsAt: end, title: carryVisit?.place.name ?? "", note: "", place: carryVisit?.place, newPlace: false, markerStyle: carryVisit?.markerStyle ?? DEFAULT_MARKER_STYLE, version: 1 });
   }
-  function editItem(item: ScheduleItem) { skipDraftSave.current=false; setConflict(false); setFormError(""); setQuery(""); setResults([]); setDraft({ ...item, newPlace: false }); }
+  function editItem(item: ScheduleItem) { skipDraftSave.current=false; setConflict(false); setFormError(""); setQuery(""); setResults([]); setDraft({ ...item, requestId: crypto.randomUUID(), newPlace: false }); }
+  useEffect(() => {
+    if (!tripDraft || skipTripDraftSave.current) return;
+    const key = viewerId + ":trip-draft:" + groupId + ":" + (tripDraft.id ?? "new");
+    const flush = () => { if (!skipTripDraftSave.current) saveDraft(key, tripDraft); };
+    const timer = setTimeout(flush, 500); window.addEventListener("pagehide", flush);
+    return () => { clearTimeout(timer); window.removeEventListener("pagehide", flush); flush(); };
+  }, [tripDraft, viewerId, groupId]);
   function openTrip(current?: Trip) {
     const today = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Seoul" });
-    setFormError(""); setTripDraft(current ? { ...current } : { groupId, name: "", startDate: today, endDate: today, timeZone: "Asia/Seoul", version: 1 });
+    skipTripDraftSave.current = false;
+    const saved = listDrafts<NonNullable<typeof tripDraft>>(viewerId + ":trip-draft:" + groupId + ":" + (current?.id ?? "new")).find(draft => draft.key === viewerId + ":trip-draft:" + groupId + ":" + (current?.id ?? "new"));
+    if (saved) { setTripDraft({ ...saved.data, requestId: saved.data.requestId ?? crypto.randomUUID() }); setFormError(""); return; }
+    setFormError(""); setTripDraft(current ? { ...current, requestId: crypto.randomUUID() } : { requestId: crypto.randomUUID(), groupId, name: "", startDate: today, endDate: today, timeZone: "Asia/Seoul", version: 1 });
   }
   async function saveTrip(event: React.FormEvent) {
     event.preventDefault(); if (!tripDraft) return;
     const parsed = tripSchema.safeParse(tripDraft);
     if (!parsed.success) { setFieldErrors(Object.fromEntries(parsed.error.issues.map(issue=>[issue.path.join(".") || "endDate",issue.message]))); return setFormError("입력 항목을 확인해 주세요."); }
-    try { const id = await store.saveTrip(parsed.data); if (id) chooseTrip(id); tripDialog.current?.close(); setTripDraft(undefined); setMessage("여행 시간표를 저장했어요."); }
+    try { const id = await store.saveTrip(parsed.data); if (id) chooseTrip(id); skipTripDraftSave.current = true; clearDraft(viewerId + ":trip-draft:" + groupId + ":" + (tripDraft.id ?? "new")); tripDialog.current?.close(); setTripDraft(undefined); setMessage("여행 시간표를 저장했어요."); }
     catch (error) { setFormError((error as Error).message); }
   }
   async function saveItem(event: React.FormEvent) {
@@ -164,15 +175,9 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
     try { await store.saveItem(trip, item); chooseItem(item); setMessage("일정 시간을 변경했어요."); }
     catch (error) { setMessage((error as Error).message); }
   }
-  async function searchPlaces(event: React.FormEvent) {
-    event.preventDefault(); if (query.trim().length < 2) return setFormError("두 글자 이상 입력해 주세요.");
-    const epoch = ++searchEpoch.current; setSearching(true); setFormError("");
-    try { const data = await tripRequest(`/api/places/search?q=${encodeURIComponent(query.trim())}&map=${provider}`); if (epoch === searchEpoch.current) { setResults(data.results); if (!data.results.length) setFormError("검색 결과가 없어요. 지도에서 직접 선택해 주세요."); } }
-    catch (error) { if (epoch === searchEpoch.current) setFormError(`${(error as Error).message} 지도에서 직접 선택할 수도 있어요.`); }
-    finally { if (epoch === searchEpoch.current) setSearching(false); }
-  }
+  async function searchPlaces(event: React.FormEvent) { event.preventDefault(); await search(); }
   function pickPlace(place: Place, newPlace: boolean, markerStyle = draft?.markerStyle ?? DEFAULT_MARKER_STYLE) {
-    setDraft((current) => current ? { ...current, place, newPlace, markerStyle, title: current.title || place.name } : current); setResults([]); setFormError("");
+    setDraft((current) => current ? { ...current, requestId: crypto.randomUUID(), place, newPlace, markerStyle, title: current.title || place.name } : current); setResults([]); setFormError("");
   }
   function manualPoint(latitude: number, longitude: number) {
     pickPlace({ id: crypto.randomUUID(), provider: "manual", name: "직접 선택한 장소", address: "", category: "직접 지정", latitude, longitude }, true); setManual(false);
@@ -259,11 +264,11 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
       <div className="planner-sidebar-footer"><Button variant="outline" onClick={() => { setNavigationOpen(false); openTrip(); }} disabled={!store.ready || busy}><Plus />새 여행</Button>{trip && <><Button variant="ghost" onClick={() => { setNavigationOpen(false); openTrip(trip); }} disabled={busy}><Settings />여행 설정</Button><Button variant="ghost" className="planner-export" onClick={() => void exportExcel()} disabled={busy || routeBusy || manual} aria-label="엑셀 다운로드" aria-busy={exporting}><Download />{exporting ? "저장 중…" : "엑셀 다운로드"}</Button></>}</div>
     </aside>
     <div className="planner-main" inert={isMobile && navigationOpen}>
-      <header className="planner-header"><div className="planner-heading"><Button variant="outline" className="planner-navigation-trigger" aria-label="여행 탐색 열기" aria-expanded={navigationOpen} aria-controls="planner-navigation" onClick={(event) => { navigationTrigger.current = event.currentTarget; setNavigationOpen(true); }}><Menu /></Button><div><h1>{trip?.name ?? "여행 계획"}</h1><p>{trip ? "시간표에서 일정을 정하고 지도에서 동선을 확인하세요." : "함께 떠날 여행의 장소와 시간을 계획하세요."}</p></div></div>{trip && <Button className="primary-button planner-add-schedule" onClick={() => createDraft()} disabled={busy}><Plus />일정 추가</Button>}</header>
+      <header className="planner-header"><Button variant="outline" className="planner-back-records" onClick={onClose}><ChevronLeft />기록으로</Button><div className="planner-heading"><Button variant="outline" className="planner-navigation-trigger" aria-label="여행 탐색 열기" aria-expanded={navigationOpen} aria-controls="planner-navigation" onClick={(event) => { navigationTrigger.current = event.currentTarget; setNavigationOpen(true); }}><Menu /></Button><div><h1>{trip?.name ?? "여행 계획"}</h1><p>{trip ? "시간표에서 일정을 정하고 지도에서 동선을 확인하세요." : "함께 떠날 여행의 장소와 시간을 계획하세요."}</p></div></div>{trip && <Button className="primary-button planner-add-schedule" onClick={() => createDraft()} disabled={busy}><Plus />일정 추가</Button>}</header>
     {!online && <div className="planner-message" role="status">오프라인 · 입력 내용은 초안으로 보관됩니다.</div>}
     {store.busy && <div className="saving-status" role="status">저장 중…</div>}
     {(message || store.error) && <div className={`planner-message ${store.error ? "has-error" : ""}`} role={store.error ? "alert" : "status"}>{store.error || message}<button aria-label="안내 닫기" onClick={() => setMessage("")}><X size={16} /></button>{store.error && <button onClick={() => void store.refresh().catch((error) => setMessage(error.message))}>다시 불러오기</button>}</div>}
-    {!store.ready ? <p className="planner-empty">여행을 불러오는 중…</p> : !trip ? <div className="planner-empty"><CalendarDays size={40} /><h2>함께 갈 곳, 시간표로 모아보세요.</h2><p>여행 기간을 정하고 빈 시간을 드래그하면<br />장소와 일정이 지도에 함께 남아요.</p>{carryVisit && <p>선택한 장소: {carryVisit.place.name}</p>}<button className="primary-button" onClick={() => openTrip()}>첫 여행 만들기</button></div> : <>
+    {!store.ready ? <p className="planner-empty">여행을 불러오는 중…</p> : !trip ? <div className="planner-empty"><CalendarDays size={40} /><h2>함께 갈 곳, 시간표로 모아보세요.</h2><p>{isMobile ? <>여행 기간을 정하고 일정을 추가하면<br />장소와 시간이 목록에 함께 남아요.</> : <>여행 기간을 정하고 빈 시간을 드래그하면<br />장소와 일정이 지도에 함께 남아요.</>}</p>{carryVisit && <p>선택한 장소: {carryVisit.place.name}</p>}<button className="primary-button" onClick={() => openTrip()}>첫 여행 만들기</button></div> : <>
       {carryVisit && <div className="planner-carry">{carryVisit.place.name}을 넣을 시간을 선택해 주세요.<button onClick={() => setCarryVisit(undefined)}>선택 취소</button></div>}
       <div className="planner-datebar"><strong className="planner-day-title">{date && new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`))}</strong><div className="planner-date-choice"><button aria-label="이전 날짜" disabled={busy || date <= trip.startDate} onClick={() => chooseDate(addMinutes(`${date}T00:00`, -1440).slice(0, 10))}><ChevronLeft size={17} /></button><label>날짜<input aria-label="계획 날짜" disabled={busy} type="date" min={trip.startDate} max={trip.endDate} value={date} onChange={(event) => { if (tripDates(trip).includes(event.target.value)) chooseDate(event.target.value); }} /></label><button aria-label="다음 날짜" disabled={busy || date >= trip.endDate} onClick={() => chooseDate(addMinutes(`${date}T00:00`, 1440).slice(0, 10))}><ChevronRight size={17} /></button></div><span className="planner-drag-hint">시간표를 드래그해 일정 추가</span><ToggleGroup className="planner-mobile-tabs" type="single" value={tab} disabled={busy} onValueChange={(value) => { if (value === "list" || value === "time" || value === "map") setTab(value); }} spacing={1} aria-label="계획 보기"><ToggleGroupItem value="list">일정 목록</ToggleGroupItem><ToggleGroupItem value="time">시간표</ToggleGroupItem><ToggleGroupItem value="map">지도</ToggleGroupItem></ToggleGroup></div>
       <div className={`planner-workspace view-${tab}`}>
@@ -282,10 +287,10 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
 
     </div>
     <dialog className="planner-dialog" ref={tripDialog} aria-label="여행 설정" onCancel={(event) => { if (busy) event.preventDefault(); else setTripDraft(undefined); }}>
-      {tripDraft && <form onSubmit={saveTrip}><h2>{tripDraft.id ? "여행 설정" : "새 여행 만들기"}</h2><Field><FieldLabel htmlFor="trip-field-1">여행 이름</FieldLabel><Input aria-invalid={Boolean(fieldErrors["name"])} aria-describedby={fieldErrors["name"] ? "trip-field-1-error" : undefined} id="trip-field-1" required maxLength={120} autoFocus value={tripDraft.name} onChange={(event) => setTripDraft({ ...tripDraft, name: event.target.value })} placeholder="예: 제주 2박 3일" /><FieldError id="trip-field-1-error">{fieldErrors["name"]}</FieldError></Field><FieldGroup className="planner-form-row"><Field><FieldLabel htmlFor="trip-field-2">시작일</FieldLabel><Input aria-invalid={Boolean(fieldErrors["startDate"])} aria-describedby={fieldErrors["startDate"] ? "trip-field-2-error" : undefined} id="trip-field-2" type="date" required value={tripDraft.startDate} onChange={(event) => setTripDraft({ ...tripDraft, startDate: event.target.value })} /><FieldError id="trip-field-2-error">{fieldErrors["startDate"]}</FieldError></Field><Field><FieldLabel htmlFor="trip-field-3">종료일</FieldLabel><Input aria-invalid={Boolean(fieldErrors["endDate"])} aria-describedby={fieldErrors["endDate"] ? "trip-field-3-error" : undefined} id="trip-field-3" type="date" required min={tripDraft.startDate} value={tripDraft.endDate} onChange={(event) => setTripDraft({ ...tripDraft, endDate: event.target.value })} /><FieldError id="trip-field-3-error">{fieldErrors["endDate"]}</FieldError></Field></FieldGroup><Field><FieldLabel htmlFor="trip-field-4">여행 시간대</FieldLabel><Input aria-invalid={Boolean(fieldErrors["timeZone"])} aria-describedby={fieldErrors["timeZone"] ? "trip-field-4-error" : undefined} id="trip-field-4" required list="trip-time-zones" value={tripDraft.timeZone} onChange={(event) => setTripDraft({ ...tripDraft, timeZone: event.target.value })} /><FieldError id="trip-field-4-error">{fieldErrors["timeZone"]}</FieldError></Field><datalist id="trip-time-zones">{zoneOptions.map((zone) => <option key={zone} value={zone} />)}</datalist><p>모든 멤버에게 이 여행의 현지 시각으로 보여요. 시간대를 바꿔도 입력한 시각은 유지돼요.</p>{formError && <p className="planner-error" role="alert">{formError}</p>}<div className="planner-form-actions">{tripDraft.id && <button type="button" className="danger-button" disabled={busy} onClick={async () => { if (!await confirmation.confirm("이 여행과 일정을 삭제할까요? 기존 방문 기록은 유지됩니다.")) return; try { await store.deleteTrip(tripDraft as Trip); for (const saved of listDrafts(viewerId+":schedule:"+groupId+":"+tripDraft.id+":")) clearDraft(saved.key); setTripDraft(undefined); tripDialog.current?.close(); } catch (error) { setFormError((error as Error).message); } }}>여행 삭제</button>}<button type="button" disabled={busy} onClick={() => { setTripDraft(undefined); tripDialog.current?.close(); }}>취소</button><button className="primary-button" disabled={busy} type="submit">{busy ? "저장 중…" : "여행 저장"}</button></div></form>}
+      {tripDraft && <form onSubmit={saveTrip} onChange={() => setTripDraft(current => current ? { ...current, requestId: crypto.randomUUID() } : current)}><h2>{tripDraft.id ? "여행 설정" : "새 여행 만들기"}</h2><Field><FieldLabel htmlFor="trip-field-1">여행 이름</FieldLabel><Input aria-invalid={Boolean(fieldErrors["name"])} aria-describedby={fieldErrors["name"] ? "trip-field-1-error" : undefined} id="trip-field-1" required maxLength={120} autoFocus value={tripDraft.name} onChange={(event) => setTripDraft({ ...tripDraft, name: event.target.value })} placeholder="예: 제주 2박 3일" /><FieldError id="trip-field-1-error">{fieldErrors["name"]}</FieldError></Field><FieldGroup className="planner-form-row"><Field><FieldLabel htmlFor="trip-field-2">시작일</FieldLabel><Input aria-invalid={Boolean(fieldErrors["startDate"])} aria-describedby={fieldErrors["startDate"] ? "trip-field-2-error" : undefined} id="trip-field-2" type="date" required value={tripDraft.startDate} onChange={(event) => setTripDraft({ ...tripDraft, startDate: event.target.value })} /><FieldError id="trip-field-2-error">{fieldErrors["startDate"]}</FieldError></Field><Field><FieldLabel htmlFor="trip-field-3">종료일</FieldLabel><Input aria-invalid={Boolean(fieldErrors["endDate"])} aria-describedby={fieldErrors["endDate"] ? "trip-field-3-error" : undefined} id="trip-field-3" type="date" required min={tripDraft.startDate} value={tripDraft.endDate} onChange={(event) => setTripDraft({ ...tripDraft, endDate: event.target.value })} /><FieldError id="trip-field-3-error">{fieldErrors["endDate"]}</FieldError></Field></FieldGroup><Field><FieldLabel htmlFor="trip-field-4">여행 시간대</FieldLabel><Input aria-invalid={Boolean(fieldErrors["timeZone"])} aria-describedby={fieldErrors["timeZone"] ? "trip-field-4-error" : undefined} id="trip-field-4" required list="trip-time-zones" value={tripDraft.timeZone} onChange={(event) => setTripDraft({ ...tripDraft, timeZone: event.target.value })} /><FieldError id="trip-field-4-error">{fieldErrors["timeZone"]}</FieldError></Field><datalist id="trip-time-zones">{zoneOptions.map((zone) => <option key={zone} value={zone} />)}</datalist><p>모든 멤버에게 이 여행의 현지 시각으로 보여요. 시간대를 바꿔도 입력한 시각은 유지돼요.</p>{formError && <p className="planner-error" role="alert">{formError}</p>}<div className="planner-form-actions">{tripDraft.id && <button type="button" className="danger-button" disabled={busy} onClick={async () => { if (!await confirmation.confirm("이 여행과 일정을 삭제할까요? 기존 방문 기록은 유지됩니다.")) return; try { await store.deleteTrip(tripDraft as Trip); for (const saved of listDrafts(viewerId+":schedule:"+groupId+":"+tripDraft.id+":")) clearDraft(saved.key); setTripDraft(undefined); tripDialog.current?.close(); } catch (error) { setFormError((error as Error).message); } }}>여행 삭제</button>}<button type="button" disabled={busy} onClick={() => { setTripDraft(undefined); tripDialog.current?.close(); }}>취소</button><button className="primary-button" disabled={busy} type="submit">{busy ? "저장 중…" : "여행 저장"}</button></div></form>}
     </dialog>
     <dialog className="planner-dialog" ref={itemDialog} aria-label="일정 편집" onCancel={(event) => { if (busy) event.preventDefault(); else clearItem(); }}>
-      {draft && <div><h2>{draft.id ? "일정 수정" : "일정 추가"}</h2><form id="schedule-form" onSubmit={saveItem} onChange={() => setFieldErrors({})}>
+      {draft && <div><h2>{draft.id ? "일정 수정" : "일정 추가"}</h2><form id="schedule-form" onSubmit={saveItem} onChange={() => { setFieldErrors({}); setDraft(current => current ? { ...current, requestId: crypto.randomUUID() } : current); }}>
         <FieldGroup className="planner-form-row"><Field><FieldLabel htmlFor="trip-field-5">시작 날짜와 시간</FieldLabel><Input aria-invalid={Boolean(fieldErrors["startsAt"])} aria-describedby={fieldErrors["startsAt"] ? "trip-field-5-error" : undefined} id="trip-field-5" aria-label="일정 시작" type="datetime-local" required value={draft.startsAt} onChange={(event) => setDraft({ ...draft, startsAt: event.target.value })} /><FieldError id="trip-field-5-error">{fieldErrors["startsAt"]}</FieldError></Field><Field><FieldLabel htmlFor="trip-field-6">종료 날짜와 시간</FieldLabel><Input aria-invalid={Boolean(fieldErrors["endsAt"])} aria-describedby={fieldErrors["endsAt"] ? "trip-field-6-error" : undefined} id="trip-field-6" aria-label="일정 종료" type="datetime-local" required value={draft.endsAt} onChange={(event) => setDraft({ ...draft, endsAt: event.target.value })} /><FieldError id="trip-field-6-error">{fieldErrors["endsAt"]}</FieldError></Field></FieldGroup>
         <Field><FieldLabel htmlFor="trip-field-7">일정 제목</FieldLabel><Input aria-invalid={Boolean(fieldErrors["title"])} aria-describedby={fieldErrors["title"] ? "trip-field-7-error" : undefined} id="trip-field-7" value={draft.title} maxLength={120} onChange={(event) => setDraft({ ...draft, title: event.target.value })} placeholder="장소 이름을 제목으로 사용할 수 있어요" /><FieldError id="trip-field-7-error">{fieldErrors["title"]}</FieldError></Field>
         {draft.place && <div className="planner-chosen-place"><MapPin size={18} /><div><strong>{draft.place.name}</strong><small>{draft.place.address || `${draft.place.latitude.toFixed(5)}, ${draft.place.longitude.toFixed(5)}`}</small></div><button type="button" onClick={() => setDraft({ ...draft, place: undefined })}>장소 변경</button></div>}
@@ -293,11 +298,11 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
         <Field><FieldLabel htmlFor="trip-field-9">메모</FieldLabel><Textarea aria-invalid={Boolean(fieldErrors["note"])} aria-describedby={fieldErrors["note"] ? "trip-field-9-error" : undefined} id="trip-field-9" value={draft.note} maxLength={3000} onChange={(event) => setDraft({ ...draft, note: event.target.value })} placeholder="예약 시간, 준비물 등을 적어두세요" /><FieldError id="trip-field-9-error">{fieldErrors["note"]}</FieldError></Field>
       </form>
       {!draft.place && <div className="planner-place-picker"><ToggleGroup className="planner-source-tabs" type="single" value={source} onValueChange={(value) => { if (value === "search" || value === "records") { setSource(value); setQuery(""); } }} spacing={1} aria-label="일정 장소 선택 방식"><ToggleGroupItem value="search">장소 검색</ToggleGroupItem><ToggleGroupItem value="records">기존 기록</ToggleGroupItem></ToggleGroup>
-        {source === "search" ? <><form className="planner-search" onSubmit={searchPlaces}><input aria-label="일정 장소 검색" value={query} onChange={(event) => { searchEpoch.current++; setSearching(false); setQuery(event.target.value); setResults([]); }} placeholder="장소, 도시, 주소" /><select aria-label="일정 검색 지역" value={provider} onChange={(event) => { searchEpoch.current++; setSearching(false); setResults([]); setProvider(event.target.value as "kakao" | "osm"); }}><option value="kakao">국내</option><option value="osm">해외</option></select><button disabled={searching}><Search size={16} />{searching ? "찾는 중" : "검색"}</button></form><div className="planner-search-results">{results.map((result) => <button key={result.id} onClick={() => pickPlace({ id: crypto.randomUUID(), provider: provider === "kakao" ? "kakao" : "manual", providerPlaceId: provider === "kakao" ? result.id : undefined, name: result.placeName, address: result.roadAddressName || result.addressName, category: result.categoryName, latitude: result.latitude, longitude: result.longitude }, true)}><strong>{result.placeName}</strong><small>{result.roadAddressName || result.addressName}</small></button>)}</div></> : <><input aria-label="일정에 넣을 기존 기록 검색" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="장소 또는 기록 제목" /><label className="planner-checkbox"><input type="checkbox" checked={plannedOnly} onChange={(event) => setPlannedOnly(event.target.checked)} />방문 예정만</label><div className="planner-search-results">{records.map((visit) => <button key={visit.id} onClick={() => pickPlace(visit.place, false, normalizeMarkerStyle(visit.markerStyle))}><strong>{visit.place.name}</strong><small>{visit.visitedOn} · {visit.title}{visit.isPlanned ? " · 방문 예정" : ""}</small></button>)}{!records.length && <p>선택할 기록이 없어요. 장소를 검색하거나 직접 선택해 주세요.</p>}</div></>}
-        <button className="planner-manual-button" onClick={() => { searchEpoch.current++; setSearching(false); setManual(true); setTab("map"); itemDialog.current?.close(); }}><MapPin size={16} />지도에서 직접 선택</button>
+        {source === "search" ? <><form className="planner-search" onSubmit={searchPlaces}><input aria-label="일정 장소 검색" value={query} onChange={(event) => { cancelSearch(); setQuery(event.target.value); setResults([]); }} placeholder="장소, 도시, 주소" /><select aria-label="일정 검색 지역" value={provider} onChange={(event) => { cancelSearch(); setResults([]); setProvider(event.target.value as "kakao" | "osm"); }}><option value="kakao">국내</option><option value="osm">해외</option></select><button disabled={searching}><Search size={16} />{searching ? "찾는 중" : "검색"}</button></form><div className="planner-search-results">{results.map((result) => <button key={result.id} onClick={() => pickPlace(result.existingPlace ?? { id: crypto.randomUUID(), provider: provider === "kakao" ? "kakao" : "manual", providerPlaceId: provider === "kakao" ? result.id : undefined, name: result.placeName, address: result.roadAddressName || result.addressName, category: result.categoryName, latitude: result.latitude, longitude: result.longitude }, !result.existingPlace)}><strong>{result.placeName}</strong><small>{result.roadAddressName || result.addressName}</small></button>)}</div></> : <><input aria-label="일정에 넣을 기존 기록 검색" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="장소 또는 기록 제목" /><label className="planner-checkbox"><input type="checkbox" checked={plannedOnly} onChange={(event) => setPlannedOnly(event.target.checked)} />방문 예정만</label><div className="planner-search-results">{records.map((visit) => <button key={visit.id} onClick={() => pickPlace(visit.place, false, normalizeMarkerStyle(visit.markerStyle))}><strong>{visit.place.name}</strong><small>{visit.visitedOn} · {visit.title}{visit.isPlanned ? " · 방문 예정" : ""}</small></button>)}{!records.length && <p>선택할 기록이 없어요. 장소를 검색하거나 직접 선택해 주세요.</p>}</div></>}
+        <button className="planner-manual-button" onClick={() => { cancelSearch(); setManual(true); setTab("map"); itemDialog.current?.close(); }}><MapPin size={16} />지도에서 직접 선택</button>
       </div>}
       {conflict && draft && <div className="conflict-panel"><strong>다른 멤버의 최신 내용</strong><p>{items.find(item => item.id===draft.id)?.title} · {items.find(item => item.id===draft.id)?.note}</p><Button variant="outline" onClick={() => { const latest=items.find(item => item.id===draft.id); if (latest) { setDraft({ ...draft,version:latest.version }); setConflict(false); setFormError("내 입력을 유지했습니다. 확인 후 저장해 주세요."); } }}>최신 버전 확인 후 내 입력 유지</Button></div>}
-      {formError && <p className="planner-error" role="alert">{formError}</p>}<div className="planner-form-actions">{draft.id && <button className="danger-button" disabled={busy} onClick={async () => { if (!trip || !await confirmation.confirm("이 일정을 삭제할까요?")) return; const item = items.find((value) => value.id === draft.id); if (!item) return; try { await store.deleteItem(trip, item); skipDraftSave.current=true; clearDraft(viewerId+":schedule:"+groupId+":"+trip.id+":"+item.id); clearItem(); setSelectedId(undefined); } catch (error) { setFormError((error as Error).message); } }}>일정 삭제</button>}<button disabled={busy} onClick={clearItem}>취소</button><button form="schedule-form" type="submit" className="primary-button" disabled={busy || conflict}>{busy ? "저장 중…" : "일정 저장"}</button></div></div>}
+      {searchMessage && <p className="planner-error" role="alert">{searchMessage}</p>}{formError && <p className="planner-error" role="alert">{formError}</p>}<div className="planner-form-actions">{draft.id && <button className="danger-button" disabled={busy} onClick={async () => { if (!trip || !await confirmation.confirm("이 일정을 삭제할까요?")) return; const item = items.find((value) => value.id === draft.id); if (!item) return; try { await store.deleteItem(trip, item); skipDraftSave.current=true; clearDraft(viewerId+":schedule:"+groupId+":"+trip.id+":"+item.id); clearItem(); setSelectedId(undefined); } catch (error) { setFormError((error as Error).message); } }}>일정 삭제</button>}<button disabled={busy} onClick={clearItem}>취소</button><button form="schedule-form" type="submit" className="primary-button" disabled={busy || conflict}>{busy ? "저장 중…" : "일정 저장"}</button></div></div>}
     </dialog>
     {confirmation.dialog}
   </section>;

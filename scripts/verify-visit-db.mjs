@@ -85,5 +85,34 @@ try {
   check((await query("select count(*)::int as count from storage.objects"))[0].count,0,"outsider cannot access private Storage paths");
   await identity(owner,"anon");
   await rejects("select public.save_visit($1::jsonb,$2,true)",[JSON.stringify(input),requestId],"42501");
+
+  await identity(owner);
+  const groupRequest="40000000-0000-4000-8000-000000000021";
+  const newGroup=(await query("select public.create_group_once('Retry map',$1) as id",[groupRequest]))[0].id;
+  check((await query("select public.create_group_once('Retry map',$1) as id",[groupRequest]))[0].id,newGroup,"map replay returns original ID");
+  const tripInput={groupId:group,name:"Retry trip",startDate:"2026-10-01",endDate:"2026-10-02",timeZone:"Asia/Seoul",version:1,requestId:"40000000-0000-4000-8000-000000000022"};
+  const savedTrip=(await query("select to_jsonb(public.save_trip($1::jsonb)) as trip",[JSON.stringify(tripInput)]))[0].trip;
+  check((await query("select to_jsonb(public.save_trip($1::jsonb)) as trip",[JSON.stringify(tripInput)]))[0].trip.id,savedTrip.id,"trip replay returns original ID");
+  const updateTrip={...tripInput,id:savedTrip.id,name:"Updated",requestId:"40000000-0000-4000-8000-000000000023"};
+  check((await query("select to_jsonb(public.save_trip($1::jsonb)) as trip",[JSON.stringify(updateTrip)]))[0].trip.version,2,"trip update increments once");
+  check((await query("select to_jsonb(public.save_trip($1::jsonb)) as trip",[JSON.stringify(updateTrip)]))[0].trip.version,2,"trip update replay does not increment");
+  const scheduleInput={startsAt:"2026-10-01T09:00",endsAt:"2026-10-01T10:00",title:"Retry stop",note:"",version:1,place:{provider:"manual",name:"Stop",latitude:37,longitude:127},requestId:"40000000-0000-4000-8000-000000000024"};
+  const scheduleId=(await query("select public.save_schedule_item($1,$2::jsonb) as id",[savedTrip.id,JSON.stringify(scheduleInput)]))[0].id;
+  const placeCount=await count("places");
+  check((await query("select public.save_schedule_item($1,$2::jsonb) as id",[savedTrip.id,JSON.stringify(scheduleInput)]))[0].id,scheduleId,"schedule replay returns original ID");
+  check(await count("places"),placeCount,"schedule retry creates no extra manual place");
+  const scheduleUpdate={...scheduleInput,id:scheduleId,title:"Updated stop",requestId:"40000000-0000-4000-8000-000000000025"};
+  await query("select public.save_schedule_item($1,$2::jsonb)",[savedTrip.id,JSON.stringify(scheduleUpdate)]);
+  await query("select public.save_schedule_item($1,$2::jsonb)",[savedTrip.id,JSON.stringify(scheduleUpdate)]);
+  check((await query("select version from public.schedule_items where id=$1",[scheduleId]))[0].version,2,"schedule update replay increments once");
+  const existingPlace=(await query("select place_id from public.schedule_items where id=$1",[scheduleId]))[0].place_id;
+  const beforeReuse=await count("places");
+  await save({...input,place:{...input.place,id:existingPlace}},"40000000-0000-4000-8000-000000000026");
+  check(await count("places"),beforeReuse,"manual visit reuses an existing place");
+  check(String((await query("select visit_count from public.dashboard_group_counts() where group_id=$1",[group]))[0].visit_count),String((await query("select count(*) as count from public.visits where group_id=$1 and deleted_at is null",[group]))[0].count),"dashboard counts use RLS-visible visits");
+  await identity(outsider);
+  await rejects("select public.save_trip($1::jsonb)",[JSON.stringify(tripInput)],"42501");
+  await rejects("select public.save_schedule_item($1,$2::jsonb)",[savedTrip.id,JSON.stringify(scheduleInput)],"42501");
+  check((await query("select count(*)::int as count from public.dashboard_group_counts()"))[0].count,0,"outsider cannot read map counts");
   console.log(`PostgreSQL verification: ${checks} checks passed (Auth/Storage fixtures).`);
 } finally { await db.close(); }

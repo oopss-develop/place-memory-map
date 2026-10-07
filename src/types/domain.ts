@@ -10,6 +10,7 @@ export interface Profile {
 }
 
 export interface Group {
+  visitCount?: number;
   id: string;
   name: string;
   role: MemberRole;
@@ -41,6 +42,7 @@ export interface Visit {
   participants: Profile[];
   photoUrls: string[];
   photoIds?: string[];
+  photoOrder?: string[];
   markerStyle: MarkerStyle;
   version: number;
   deletedAt?: string | null;

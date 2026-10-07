@@ -1,17 +1,11 @@
 import "server-only";
+import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { demoGroups, demoMembers, demoVisits } from "@/lib/demo-data";
 import { normalizeMarkerStyle, type MarkerStyle } from "@/lib/marker-styles";
 import { getMemberInitials } from "@/lib/member-initials";
 import type { Group, Profile, Visit } from "@/types/domain";
-
-export interface DashboardData {
-  groups: Group[];
-  members: Profile[];
-  visits: Visit[];
-  demoMode: boolean;
-}
-
+export interface DashboardData { groups: Group[]; members: Profile[]; visits: Visit[]; demoMode: boolean; activeGroupId?: string; photoWarning?: string; etag?: string; }
 interface MembershipRow { role: "owner" | "member"; groups: { id: string; name: string; created_by: string }; }
 interface MemberRow { group_id: string; profiles: { id: string; display_name: string }; }
 interface VisitRow {
@@ -21,67 +15,35 @@ interface VisitRow {
   visit_photos: Array<{ id: string; deleted_at?: string | null; upload_state?: string; storage_path: string; sort_order: number }>;
 }
 
-export async function getDashboardData(supabase?: SupabaseClient, userId?: string): Promise<DashboardData> {
-  if (!supabase || !userId) {
-    return { groups: demoGroups, members: demoMembers, visits: demoVisits, demoMode: true };
-  }
 
-  const { data: memberships, error: membershipError } = await supabase
-    .from("group_members")
-    .select("role, groups(id,name,created_by), profiles(id,display_name)")
-    .eq("user_id", userId);
-
-  if (membershipError) throw membershipError;
-  const membershipRows = (memberships ?? []) as unknown as MembershipRow[];
-  const groups: Group[] = membershipRows.map((row) => ({
-    id: row.groups.id,
-    name: row.groups.name,
-    role: row.role,
-    memberCount: 0,
-    ownerId: row.groups.created_by,
-  }));
-
-  if (!groups.length) return { groups: [], members: [], visits: [], demoMode: false };
-
-  const groupIds = groups.map((group) => group.id);
-  const [{ data: memberRows }, { data: visitRows, error: visitError }] = await Promise.all([
-    supabase
-      .from("group_members")
-      .select("group_id,profiles(id,display_name)")
-      .in("group_id", groupIds),
-    supabase
-      .from("visits")
-      .select("*, places(*), visit_participants(profiles(id,display_name)), visit_photos(id,storage_path,sort_order,deleted_at,upload_state)")
-      .in("group_id", groupIds)
-      .is("deleted_at", null)
-      .order("visited_on", { ascending: false }),
-  ]);
-  if (visitError) throw visitError;
-
-  const typedMemberRows = (memberRows ?? []) as unknown as MemberRow[];
-  const membersById = new Map<string, Profile>();
-  typedMemberRows.forEach((row) => {
-    membersById.set(row.profiles.id, {
-      id: row.profiles.id,
-      displayName: row.profiles.display_name,
-      initials: getMemberInitials(row.profiles.display_name),
-    });
-  });
-  const members = Array.from(membersById.values());
-
-  const visits: Visit[] = await Promise.all(
-    ((visitRows ?? []) as unknown as VisitRow[]).map(async (row) => {
-      const signed = await Promise.all(
-        (row.visit_photos ?? [])
-          .filter(photo => !photo.deleted_at && photo.upload_state !== "pending")
-          .sort((a, b) => a.sort_order - b.sort_order)
-          .map(async (photo) => {
-            const { data } = await supabase.storage
-              .from("visit-photos")
-              .createSignedUrl(photo.storage_path, 3600);
-            return { id: photo.id, url: data?.signedUrl };
-          }),
-      );
+export async function readPages<T>(query: (from: number, to: number) => PromiseLike<{ data: unknown[] | null; error: unknown }>): Promise<T[]> {
+ const rows: T[]=[];
+ for(let offset=0;;offset+=250){ const {data,error}=await query(offset,offset+249); if(error) throw error; rows.push(...(data??[]) as T[]); if(!data || data.length<250) return rows; }
+}
+export async function loadDashboardSnapshot(db:SupabaseClient,userId:string,requestedGroupId?:string){
+ const memberships=await readPages<MembershipRow>((from,to)=>db.from("group_members").select("role,groups(id,name,created_by)").eq("user_id",userId).order("group_id").range(from,to));
+ const groups:Group[]=memberships.map(row=>({id:row.groups.id,name:row.groups.name,role:row.role,memberCount:0,ownerId:row.groups.created_by,visitCount:0}));
+ const counts=await readPages<{group_id:string;visit_count:number;member_count:number}>((from,to)=>db.rpc("dashboard_group_counts").order("group_id").range(from,to));
+ for(const group of groups){const count=counts.find(row=>row.group_id===group.id);group.memberCount=Number(count?.member_count??0);group.visitCount=Number(count?.visit_count??0);}
+ const groupId=groups.some(group=>group.id===requestedGroupId)?requestedGroupId:groups[0]?.id;
+ if(requestedGroupId && !groups.some(group=>group.id===requestedGroupId)) throw Object.assign(new Error("이 지도의 접근 권한이 없어졌습니다."),{status:403});
+ const [memberRows,rows]=groupId ? await Promise.all([
+ readPages<MemberRow>((from,to)=>db.from("group_members").select("group_id,profiles(id,display_name)").eq("group_id",groupId).order("user_id").range(from,to)),
+ readPages<VisitRow>((from,to)=>db.from("visits").select("*,places(*),visit_participants(profiles(id,display_name)),visit_photos(id,storage_path,sort_order,deleted_at,upload_state)").eq("group_id",groupId).is("deleted_at",null).order("visited_on",{ascending:false}).order("id").range(from,to))
+ ]) : [[],[]];
+ const members:Profile[]=memberRows.map(row=>({id:row.profiles.id,displayName:row.profiles.display_name,initials:getMemberInitials(row.profiles.display_name)}));
+ const etag='"'+createHash("sha256").update(JSON.stringify({groups,members,rows})).digest("hex")+'"';
+ return {groups,members,rows,activeGroupId:groupId,etag};
+}
+export async function materializeDashboard(db:SupabaseClient,snapshot:Awaited<ReturnType<typeof loadDashboardSnapshot>>):Promise<DashboardData>{
+ const photos=snapshot.rows.flatMap(row=>(row.visit_photos??[]).filter(p=>!p.deleted_at&&p.upload_state!=="pending"));
+ const links=new Map<string,string>();let failed=false;
+ for(let offset=0;offset<photos.length;offset+=250){
+  const batch=photos.slice(offset,offset+250);
+  try{const {data,error}=await db.storage.from("visit-photos").createSignedUrls(batch.map(photo=>photo.storage_path),3600);if(error)failed=true;for(const [index,photo] of batch.entries()){const url=data?.[index]?.signedUrl;if(url)links.set(photo.id,url);else failed=true;}}catch{failed=true;}
+ }
+ const visits=snapshot.rows.map(row=>{
+ const signed=(row.visit_photos??[]).filter(photo=>links.has(photo.id)).sort((a,b)=>a.sort_order-b.sort_order).map(photo=>({id:photo.id,url:links.get(photo.id)}));
       return {
         id: row.id,
         groupId: row.group_id,
@@ -106,17 +68,17 @@ export async function getDashboardData(supabase?: SupabaseClient, userId?: strin
           displayName: p.profiles.display_name,
           initials: getMemberInitials(p.profiles.display_name),
         })),
+        photoOrder: (row.visit_photos ?? []).filter(photo => !photo.deleted_at && photo.upload_state !== "pending").sort((a,b) => a.sort_order - b.sort_order).map(photo => photo.id),
         photoIds: signed.filter(photo => photo.url).map(photo => photo.id),
         photoUrls: signed.flatMap(photo => photo.url ? [photo.url] : []),
         markerStyle: normalizeMarkerStyle(row.marker_style),
         version: row.version,
         updatedBy: "그룹 멤버",
       } satisfies Visit;
-    }),
-  );
-
-  const counts = new Map<string, number>();
-  typedMemberRows.forEach((row) => counts.set(row.group_id, (counts.get(row.group_id) ?? 0) + 1));
-  groups.forEach((group) => { group.memberCount = counts.get(group.id) ?? 0; });
-  return { groups, members, visits, demoMode: false };
+ });
+ return {groups:snapshot.groups,members:snapshot.members,visits,demoMode:false,activeGroupId:snapshot.activeGroupId,etag:snapshot.etag,photoWarning:failed?"일부 사진을 불러오지 못했습니다. 다시 시도해 주세요.":undefined};
+}
+export async function getDashboardData(db?:SupabaseClient,userId?:string):Promise<DashboardData>{
+ if(!db||!userId)return {groups:demoGroups,members:demoMembers,visits:demoVisits,demoMode:true,activeGroupId:demoGroups[0]?.id};
+ return materializeDashboard(db,await loadDashboardSnapshot(db,userId));
 }

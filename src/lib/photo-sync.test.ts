@@ -10,6 +10,12 @@ const record: Visit = {
   photoIds: ["p1", "p2"], photoUrls: [signed(3_600_000), signed(3_500_000)], markerStyle: "black-9", version: 1, updatedBy: "나",
 };
 describe("photo synchronization", () => {
+  it("keeps valid photos on a partial URL failure while removing deleted metadata", () => {
+    const incoming = { ...record, photoOrder: ["p2", "p3"], photoIds: ["p3"], photoUrls: [signed(3_600_000)] };
+    const [result] = preservePhotoUrls([record], [incoming], now);
+    expect(result.photoIds).toEqual(["p2", "p3"]);
+    expect(result.photoUrls).toEqual([record.photoUrls[1], incoming.photoUrls[0]]);
+  });
   it("keeps valid image URLs across polling and record edits", () => {
     const updated = { ...record, version: 2, title: "수정됨", photoUrls: [signed(3_610_000), signed(3_510_000)] };
     const [result] = preservePhotoUrls([record], [updated], now);

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getAccessWorkspaceUser } from "@/lib/access-workspace";
 import { createSharingAdmin, getSharingMemberIds, shareMapWithMembers } from "@/lib/shared-maps";
 
-const schema = z.object({ name: z.string().trim().min(2, "지도 이름을 두 글자 이상 입력해 주세요.").max(60) });
+const schema = z.object({ requestId: z.string().uuid().optional(), name: z.string().trim().min(2, "지도 이름을 두 글자 이상 입력해 주세요.").max(60) });
 
 export async function POST(request: Request) {
   const parsed = schema.safeParse(await request.json().catch(() => null));
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "지도 공유 설정을 확인하지 못했습니다." }, { status: 503 });
   }
 
-  const { data: groupId, error: createError } = await workspace.supabase.rpc("create_group", { group_name: parsed.data.name });
+  const { data: groupId, error: createError } = await workspace.supabase.rpc(parsed.data.requestId ? "create_group_once" : "create_group", { group_name: parsed.data.name, ...(parsed.data.requestId ? { request_id: parsed.data.requestId } : {}) });
   if (createError || !groupId) return NextResponse.json({ error: "지도를 만들지 못했습니다." }, { status: 400 });
   const { data: group, error: groupError } = await workspace.supabase.from("groups").select("id,name,created_by").eq("id", groupId).single();
   if (groupError || !group) return NextResponse.json({ error: "만든 지도를 불러오지 못했습니다." }, { status: 500 });
