@@ -26,7 +26,7 @@ export function completedPhotos(visit: OverviewVisit) {
 export function overviewVisit(visit: Visit): OverviewVisit {
   return { id: visit.id, groupId: visit.groupId, placeId: visit.place.id, placeName: visit.place.name, title: visit.title, visitedOn: visit.visitedOn, isPlanned: visit.isPlanned, deletedAt: visit.deletedAt, tags: visit.tags, photos: visit.photoUrls.map((url, index) => ({ id: visit.photoIds?.[index] ?? `${visit.id}:${index}`, url, order: index })) };
 }
-export function aggregateOverview(groups: Group[], visits: OverviewVisit[], trips: Array<Trip & { deletedAt?: string | null }>, period: OverviewPeriod, groupId?: string, now = new Date()): OverviewData {
+export function aggregateOverview(groups: Group[], visits: OverviewVisit[], trips: Array<Trip & { deletedAt?: string | null }>, period: OverviewPeriod, groupId?: string, now = new Date(), recentLimit = 6): OverviewData {
   const today = dateInZone(now);
   const year = Number(today.slice(0, 4)), month = Number(today.slice(5, 7));
   const allowed = new Set(groups.map(group => group.id));
@@ -45,7 +45,7 @@ export function aggregateOverview(groups: Group[], visits: OverviewVisit[], trip
     const date = period === "month" ? `${today.slice(0, 7)}-${String(index + 1).padStart(2, "0")}` : new Date(Date.UTC(year, period === "year" ? index : month - 12 + index, 1)).toISOString().slice(0, 7);
     return { date, label: period === "month" ? `${index + 1}일` : `${Number(date.slice(5, 7))}월`, count: counts.get(date) ?? 0 };
   });
-  const recentVisits = [...included].sort((a, b) => b.visitedOn.localeCompare(a.visitedOn) || a.id.localeCompare(b.id)).slice(0, 6).map(visit => ({ id: visit.id, groupId: visit.groupId, groupName: names.get(visit.groupId)!, placeName: visit.placeName, title: visit.title, visitedOn: visit.visitedOn, photoUrl: completedPhotos(visit)[0]?.url }));
+  const recentVisits = [...included].sort((a, b) => b.visitedOn.localeCompare(a.visitedOn) || a.id.localeCompare(b.id)).slice(0, recentLimit).map(visit => ({ id: visit.id, groupId: visit.groupId, groupName: names.get(visit.groupId)!, placeName: visit.placeName, title: visit.title, visitedOn: visit.visitedOn, photoUrl: completedPhotos(visit)[0]?.url }));
   const upcomingTrips = trips.filter(trip => inScope(trip.groupId) && !trip.deletedAt).flatMap(trip => {
     let localToday: string;
     try { localToday = dateInZone(now, trip.timeZone); } catch { localToday = today; }

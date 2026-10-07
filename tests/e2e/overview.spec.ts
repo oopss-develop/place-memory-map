@@ -34,7 +34,8 @@ for (const width of [320, 360, 390, 821, 1280, 1440]) test(`overview fits at ${w
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && document.querySelector(".overview-app")!.scrollWidth <= innerWidth)).toBe(true);
   if (await page.locator(".overview-table").evaluate(el => (el as HTMLDetailsElement).open)) { await table.focus(); await page.keyboard.press("Enter"); } await page.screenshot({ path: test.info().outputPath(`overview-${width}.png`) });
   await page.getByRole("button", { name: /서울 숲.*함께 산책/ }).click();
-  await expect(page.getByRole("dialog", { name: "방문 기록", exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "방문 기록", exact: true })).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(page.locator(".visit-detail-memory p")).toHaveCSS("white-space", "pre-wrap");
   expect(await page.locator(".visit-detail-card").evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
   await page.screenshot({ path: test.info().outputPath(`visit-card-${width}.png`) });
@@ -46,13 +47,13 @@ for (const width of [320, 360, 390, 821, 1280, 1440]) test(`overview fits at ${w
 test("opens explicit record despite stored filters and explicit trip despite stored selection", async ({ page }) => {
   await page.goto("/overview");
   await page.getByRole("button", { name: /서울 숲.*함께 산책/ }).click();
-  await expect(page.getByRole("dialog", { name: "방문 기록", exact: true })).toBeVisible();
+  await expect(page.getByRole("region", { name: "방문 기록", exact: true })).toBeVisible();
   await expect(page).toHaveURL(/\/overview$/);
   await expect(page.locator(".visit-detail-card")).toContainText("서울 숲");
   await expect(page.locator(".visit-detail-card")).toContainText("5.0");
   await expect(page.locator(".visit-detail-memory p")).toHaveText("첫 번째 줄\n\n두 번째 줄");
   await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(page.getByRole("region", { name: "방문 기록", exact: true })).toHaveCount(0);
   await page.goto(`/?groupId=${otherGroup}&visitId=${visitId}`);
   await expect(page.locator(".place-sheet")).toBeVisible();
   await expect(page.locator(".place-sheet")).toContainText("서울 숲");
@@ -69,6 +70,32 @@ test("reports deleted or inaccessible destinations and offers return navigation"
   await expect(page.getByRole("heading", { name: "모아보기", exact: true })).toBeVisible();
   await page.goto(`/?groupId=${otherGroup}&tripId=33333333-3333-4333-8333-333333333333&view=travel`);
   await expect(page.locator(".planner-empty").filter({ hasText: "삭제되었거나" })).toBeVisible();
+});
+
+test("opens detail inline or alongside records and progressively shows all visits", async ({ page }) => {
+  await page.addInitScript(visit => localStorage.setItem("place-memory-visits-v2", JSON.stringify(Array.from({ length: 15 }, (_, index) => ({ ...visit, id: `more-${String(index).padStart(2, "0")}`, title: `방문 ${index + 1}` })))), visit);
+  await page.goto("/overview");
+  await expect(page.locator(".overview-recent > li")).toHaveCount(6);
+  const first = page.getByRole("button", { name: /서울 숲.*방문 1 / });
+  await first.click();
+  await expect(first).toHaveAttribute("aria-expanded", "true");
+  const detail = page.getByRole("region", { name: "방문 기록", exact: true });
+  await expect(detail).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  const mobile = (page.viewportSize()?.width ?? 1000) <= 820;
+  await expect(page.locator(mobile ? ".overview-recent > li > .visit-detail-card" : ".overview-aside > .visit-detail-card")).toHaveCount(1);
+  await page.getByRole("button", { name: "방문 기록 더 보기", exact: true }).click();
+  await expect(page.locator(".overview-recent > li")).toHaveCount(12);
+  await expect(detail).toContainText("첫 번째 줄");
+  await page.getByRole("button", { name: "방문 기록 더 보기", exact: true }).click();
+  await expect(page.locator(".overview-recent > li")).toHaveCount(15);
+  await expect(page.getByRole("button", { name: "방문 기록 더 보기", exact: true })).toHaveCount(0);
+  await expect(page.locator(".overview-list-end")).toBeVisible();
+  await page.getByRole("button", { name: "방문 기록 닫기", exact: true }).click();
+  await expect(first).toBeFocused();
+  await page.getByRole("button", { name: "모아보기 기록 기간", exact: true }).click();
+  await page.getByRole("menuitemradio", { name: "이번 달", exact: true }).click();
+  await expect(page.locator(".overview-recent > li")).toHaveCount(6);
 });
 test("fits at 200 percent zoom and supports keyboard navigation", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop");

@@ -11,32 +11,32 @@ import type { Group, Visit } from "@/types/domain";
 
 interface Detail { visit: Visit; groupName: string; photoWarning?: string }
 export function VisitDetailCard({ visitId, groupId, groups, demo, onClose }: { visitId: string; groupId: string; groups: Group[]; demo: boolean; onClose: () => void }) {
-  const dialog = useRef<HTMLDialogElement>(null);
+  const panel = useRef<HTMLElement>(null);
   const [detail, setDetail] = useState<Detail>();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [retry, setRetry] = useState(0);
+  const groupName = groups.find(value => value.id === groupId)?.name;
   useActivityProgress(loading, "방문 기록 불러오는 중");
   useEffect(() => {
-    const element = dialog.current; element?.showModal();
+    panel.current?.focus({ preventScroll: true });
   }, []);
   useEffect(() => {
     let alive = true, revision = 0, etag = "", issuedAt = 0;
     let controller: AbortController | undefined;
-    const refresh = async () => {
+    const refresh = async (background = false) => {
       if (document.visibilityState === "hidden") return;
       controller?.abort(); controller = new AbortController();
       const signal = controller.signal, current = ++revision;
       if (!navigator.onLine && !demo) { setLoading(false); setError("오프라인입니다. 연결이 돌아오면 다시 불러옵니다."); return; }
-      setLoading(true);
+      if (!background) setLoading(true);
       try {
         let next: Detail;
         if (demo) {
           const records = JSON.parse(localStorage.getItem("place-memory-visits-v2") ?? "[]") as Visit[];
-          const group = groups.find(value => value.id === groupId);
           const visit = records.find(value => value.id === visitId && value.groupId === groupId && !value.deletedAt);
-          if (!group || !visit) throw Object.assign(new Error("이 기록은 삭제되었거나 접근 권한이 없습니다."), { status: 404 });
-          next = { visit, groupName: group.name };
+          if (!groupName || !visit) throw Object.assign(new Error("이 기록은 삭제되었거나 접근 권한이 없습니다."), { status: 404 });
+          next = { visit, groupName };
         } else {
           const renew = Date.now() - issuedAt >= 3540000;
           const response = await fetch(`/api/visits/${encodeURIComponent(visitId)}${renew ? "?renewPhotos=true" : ""}`, { cache: "no-store", signal, headers: etag ? { "If-None-Match": etag } : {} });
@@ -57,14 +57,14 @@ export function VisitDetailCard({ visitId, groupId, groups, demo, onClose }: { v
       } finally { if (alive && current === revision) setLoading(false); }
     };
     void refresh();
-    const sync = () => { if (document.visibilityState === "hidden" || !navigator.onLine) { revision++; controller?.abort(); } if (document.visibilityState !== "hidden") void refresh(); };
+    const sync = () => { if (document.visibilityState === "hidden" || !navigator.onLine) { revision++; controller?.abort(); setLoading(false); } if (document.visibilityState !== "hidden") void refresh(true); };
     const interval = setInterval(sync, 30000);
     window.addEventListener("focus", sync); window.addEventListener("online", sync); window.addEventListener("offline", sync); document.addEventListener("visibilitychange", sync);
     return () => { alive = false; revision++; controller?.abort(); clearInterval(interval); window.removeEventListener("focus", sync); window.removeEventListener("online", sync); window.removeEventListener("offline", sync); document.removeEventListener("visibilitychange", sync); };
-  }, [demo, groupId, groups, retry, visitId]);
+  }, [demo, groupId, groupName, retry, visitId]);
   const visit = detail?.visit;
-  return <dialog ref={dialog} className="visit-detail-card" aria-labelledby="visit-detail-title" onClose={onClose} onClick={event => { if (event.target === event.currentTarget) { const rect = event.currentTarget.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) event.currentTarget.close(); } }}>
-    <header className="visit-detail-header"><h2 id="visit-detail-title">방문 기록</h2><Button variant="ghost" size="icon" aria-label="방문 기록 닫기" autoFocus onClick={() => dialog.current?.close()}><X /></Button></header>
+  return <section ref={panel} id="overview-visit-detail" className="visit-detail-card" aria-labelledby="visit-detail-title" tabIndex={-1} onKeyDown={event => { if (event.key === "Escape") { event.stopPropagation(); onClose(); } }}>
+    <header className="visit-detail-header"><h2 id="visit-detail-title">방문 기록</h2><Button variant="ghost" size="icon" aria-label="방문 기록 닫기" onClick={onClose}><X /></Button></header>
     <div className="visit-detail-body">
       {loading && <Progress label="방문 기록 불러오는 중" />}
       {loading && !visit && <p role="status">기록을 불러오는 중…</p>}
@@ -77,5 +77,5 @@ export function VisitDetailCard({ visitId, groupId, groups, demo, onClose }: { v
         {visit.photoUrls.length > 0 && <section className="visit-detail-photos" aria-label="기록 사진"><h4>사진 {visit.photoUrls.length}장</h4>{visit.photoUrls.map((url, index) => <Image unoptimized key={visit.photoIds?.[index] ?? index} src={url} width={640} height={480} alt={`${visit.place.name} 방문 사진 ${index + 1}`} />)}</section>}
       </>}
     </div>
-  </dialog>;
+  </section>;
 }

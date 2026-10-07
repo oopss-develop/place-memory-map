@@ -31,3 +31,14 @@ it("shows ongoing trips first using each trip's timezone, regardless of visit pe
   const data = aggregateOverview(groups, [], [trip, { ...trip, id: "future", startDate: "2026-10-10", endDate: "2026-10-12" }, { ...trip, id: "past", timeZone: "Asia/Seoul" }, { ...trip, id: "deleted", deletedAt: "2026-10-01" }, { ...trip, groupId: "forbidden" }], "month", undefined, now);
   expect(data.upcomingTrips.map(value => value.id)).toEqual(["t", "future"]); expect(data.upcomingTrips[0].ongoing).toBe(true);
 });
+it("extends the latest list without changing statistics or including excluded visits", () => {
+  const records = Array.from({ length: 15 }, (_, index) => ({ ...visit, id: String(index).padStart(2, "0") }));
+  const excluded = [{ ...visit, id: "planned", isPlanned: true }, { ...visit, id: "deleted", deletedAt: "2026-10-01" }, { ...visit, id: "outside", groupId: "b" }];
+  const initial = aggregateOverview(groups, [...records, ...excluded], [], "month", "a", now);
+  const more = aggregateOverview(groups, [...records, ...excluded], [], "month", "a", now, 12);
+  const all = aggregateOverview(groups, [...records, ...excluded], [], "month", "a", now, 18);
+  expect(more.recentVisits.slice(0, 6)).toEqual(initial.recentVisits);
+  expect(more.recentVisits).toHaveLength(12);
+  expect(all.recentVisits).toHaveLength(15);
+  expect(all.totals).toEqual(initial.totals);
+});

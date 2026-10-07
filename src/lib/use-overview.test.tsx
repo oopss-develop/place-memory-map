@@ -63,3 +63,17 @@ it("shows an initial offline message and reloads on reconnect without leaving a 
   await waitFor(() => expect(result.current.data).toEqual(data));
   expect(result.current.error).toBeUndefined();
 });
+it("keeps existing records on load more failure and excludes the previous page ETag", async () => {
+  const fetchMock = vi.fn().mockResolvedValueOnce(Response.json(data, { headers: { ETag: '"six"' } })).mockRejectedValueOnce(new Error("network")).mockResolvedValueOnce(Response.json(data));
+  vi.stubGlobal("fetch", fetchMock);
+  const { result, rerender } = renderHook(({ limit }) => useOverview("user", false, undefined, "all", limit), { initialProps: { limit: 6 } });
+  await waitFor(() => expect(result.current.data).toBeTruthy());
+  rerender({ limit: 12 });
+  expect(result.current.data).toEqual(data);
+  await waitFor(() => expect(result.current.error).toBe("network"));
+  expect(result.current.data).toEqual(data);
+  expect(fetchMock.mock.calls[1][0]).toContain("recentLimit=12");
+  expect(fetchMock.mock.calls[1][1].headers["If-None-Match"]).toBeUndefined();
+  await act(async () => result.current.refresh());
+  expect(result.current.error).toBeUndefined();
+});
