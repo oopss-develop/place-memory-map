@@ -14,7 +14,7 @@ test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
 });
 
-for (const width of [320, 360, 390, 821, 1280, 1440]) test(`memories and questions fit at ${width}px`, async ({ page }, info) => {
+for (const width of [320, 360, 390, 821, 1280, 1440]) test(`record filters and editor fit at ${width}px`, async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "explicit viewport coverage");
   await page.setViewportSize({ width, height: 900 });
   await page.goto("/");
@@ -27,22 +27,17 @@ for (const width of [320, 360, 390, 821, 1280, 1440]) test(`memories and questio
   await expect(page.getByText("조건 적용 중", { exact: true })).toBeVisible();
   await expect(page.getByRole("radio", { name: "전체", exact: true })).toHaveAttribute("data-state", "off");
   await page.getByRole("button", { name: "상세 필터", exact: true }).click();
-  await page.getByRole("button", { name: "추억 한 장", exact: true }).click();
+  await expect(page.getByRole("button", { name: "추억 한 장", exact: true })).toHaveCount(0);
+  await page.locator(".date-group-toggle").click();
+  await page.locator(".record-item").first().click();
   await expect(page.locator(".place-sheet")).toBeVisible();
-  const first = await page.locator(".place-sheet h3").textContent();
-  await page.getByRole("button", { name: "상세 닫기", exact: true }).click();
-  if (width <= 820) await page.getByRole("button", { name: "기록 목록 열기" }).click();
-  await page.getByRole("radio", { name: "방문 예정", exact: true }).click();
-  await page.getByRole("button", { name: "추억 한 장", exact: true }).click();
-  await expect(page.locator(".place-sheet h3")).not.toHaveText(first!);
   await page.getByRole("button", { name: "수정", exact: true }).click();
   const note = page.getByLabel("무엇을 했나요?", { exact: true });
   await note.fill("한글 조합 입력을 유지해요");
-  await page.getByRole("button", { name: "다른 질문", exact: true }).click();
-  await expect(page.getByText("함께 나눈 이야기는?", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "다른 질문", exact: true })).toHaveCount(0);
   await expect(note).toHaveValue("한글 조합 입력을 유지해요");
   expect(await page.locator(".visit-dialog").evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
-  await page.screenshot({ path: test.info().outputPath("memory-question.png") });
+  await page.screenshot({ path: test.info().outputPath("record-editor.png") });
   await page.getByRole("button", { name: "취소", exact: true }).click();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
