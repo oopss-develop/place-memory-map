@@ -301,15 +301,17 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
       lastSelectionRequestRef.current = selectionRequest;
       onAnchorChange?.();
       if (!apiKey) {
+        let revealed = false;
         const frame = window.requestAnimationFrame(() => {
           const mapCanvas = ref.current?.parentElement;
           const marker = mapCanvas?.querySelector(`[data-visit-id="${selectedVisit.id}"]`) as HTMLElement | null;
           if (!mapCanvas || !marker) return;
+          revealed = true;
           const mapRect = mapCanvas.getBoundingClientRect();
           const markerRect = marker.getBoundingClientRect();
           onAnchorChange?.({ x: markerRect.left + markerRect.width / 2 - mapRect.left, y: markerRect.bottom - mapRect.top, topY: markerRect.top - mapRect.top });
         });
-        return () => window.cancelAnimationFrame(frame);
+        return () => { window.cancelAnimationFrame(frame); if (!revealed) { lastSelectedIdRef.current = undefined; lastSelectionRequestRef.current = -1; } };
       }
       let completed = false;
       const reveal = () => {
@@ -357,6 +359,7 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
         if (revealFrame !== undefined) window.cancelAnimationFrame(revealFrame);
         window.clearTimeout(fallbackTimer);
         if (!completed) window.kakao.maps.event.removeListener(mapRef.current, "idle", reveal);
+        if (!completed) { lastSelectedIdRef.current = undefined; lastSelectionRequestRef.current = -1; }
       };
     }
     lastSelectedIdRef.current = selectedId;

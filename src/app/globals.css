@@ -579,6 +579,12 @@ button, select { cursor: pointer; }
 .journal-view-switch { margin: 0 20px; padding: 4px; gap: 4px; border-bottom: 0; background: var(--muted); border-radius: 8px; }
 .journal-view-switch button { border: 1px solid transparent; color: var(--muted-foreground); background: transparent; min-height: 36px; font-size: 14px; font-weight: 500; border-radius: 6px; }
 .journal-view-switch button:hover { background: var(--accent); color: var(--accent-foreground); }
+.journal-view-switch, .planner-view-switch { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.journal-view-switch a, .planner-view-switch a { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 6px; border-radius: 6px; font-size: 14px; font-weight: 500; white-space: nowrap; color: var(--muted-foreground); text-decoration: none; }
+.journal-view-switch a:hover, .planner-view-switch a:hover { background: var(--accent); color: var(--accent-foreground); }
+.journal-view-switch a:focus-visible, .planner-view-switch a:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.navigation-error { position: absolute; z-index: 45; top: 80px; left: 16px; right: 16px; max-width: 460px; padding: 16px; background: var(--card); color: var(--foreground); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 16px rgb(0 0 0 / .12); }
+.navigation-error a { display: inline-block; padding: 12px 0; text-decoration: underline; }
 .map-topbar > *, .map-provider-switch, .add-pin-button { border: 1px solid var(--border); box-shadow: var(--shadow-popover); border-color: var(--border); border-radius: 8px; }
 .add-pin-button:hover { background: color-mix(in srgb, var(--primary) 85%, var(--background)); box-shadow: var(--shadow-popover); }
 .sheet-actions button { padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--background); font-size: 12px; font-weight: 500; min-height: 36px; justify-content: center; }

@@ -1,0 +1,67 @@
+import { expect, test } from "@playwright/test";
+const groupId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", otherGroup = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+const visitId = "11111111-1111-4111-8111-111111111111", tripId = "22222222-2222-4222-8222-222222222222";
+const visit = { id: visitId, groupId: otherGroup, place: { id: "place", provider: "manual", name: "서울 숲", address: "서울", category: "산책", latitude: 37.54, longitude: 127.04 }, visitedOn: "2026-10-01", isPlanned: false, title: "함께 산책", note: "기억", rating: 5, tags: ["산책"], participants: [], photoUrls: [], markerStyle: "black-9", version: 1, updatedBy: "나" };
+test.beforeEach(async ({ page }) => {
+  await page.clock.install({ time: new Date("2026-10-07T03:00:00Z") });
+  await page.addInitScript(({ visit, groupId, otherGroup, tripId }) => {
+    localStorage.setItem("place-memory-groups-v1", JSON.stringify([{ id: groupId, name: "첫 지도", role: "owner", memberCount: 4 }, { id: otherGroup, name: "두 번째 지도", role: "owner", memberCount: 4 }]));
+    localStorage.setItem("place-memory-visits-v2", JSON.stringify([visit, { ...visit, id: "repeat", title: "다시 산책", visitedOn: "2026-09-30" }, { ...visit, id: "planned", isPlanned: true }, { ...visit, id: "deleted", deletedAt: "2026-10-06" }]));
+    localStorage.setItem("place-memory-trips-v1:" + otherGroup, JSON.stringify({ trips: [{ id: tripId, groupId: otherGroup, name: "가을 여행", startDate: "2026-10-05", endDate: "2026-10-09", timeZone: "Asia/Seoul", version: 1 }], items: [] }));
+    localStorage.setItem("demo-viewer:trip-view:" + otherGroup, JSON.stringify({ tripId: "stale-trip", date: "2020-01-01", tab: "map" }));
+    localStorage.setItem("demo-viewer:record-view:" + otherGroup, JSON.stringify({ filters: { query: "숨기는 검색어", tags: [], status: "all" }, mode: "records" }));
+    localStorage.setItem("place-memory-theme-v1", "dark");
+    localStorage.setItem("place-memory-font-v1", "nanum-square");
+    localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true");
+  }, { visit, groupId, otherGroup, tripId });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+});
+for (const width of [320, 360, 390, 821, 1280, 1440]) test(`overview fits at ${width}px with keyboard table and period scope`, async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "explicit viewport coverage");
+  await page.setViewportSize({ width, height: 900 });
+  await page.goto("/overview");
+  await expect(page.getByRole("heading", { name: "모아보기", exact: true })).toBeVisible();
+  await expect(page.locator(".overview-totals")).toContainText("방문2회");
+  await expect(page.locator(".overview-totals")).toContainText("장소1곳");
+  await expect(page.locator(".overview-recent li")).toHaveCount(2);
+  const table = page.locator(".overview-table summary"); await table.focus(); await page.keyboard.press("Enter");
+  await expect(page.getByRole("table")).toBeVisible(); await expect(page.locator(".overview-table tbody tr")).toHaveCount(12);
+  await page.getByRole("button", { name: "모아보기 기록 기간", exact: true }).click();
+  await page.getByRole("menuitemradio", { name: "이번 달", exact: true }).click();
+  await expect(page.locator(".overview-totals")).toContainText("방문1회");
+  await expect(page.locator(".overview-table tbody tr")).toHaveCount(31);
+  await expect(page.getByRole("link", { name: /가을 여행/ })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && document.querySelector(".overview-app")!.scrollWidth <= innerWidth)).toBe(true);
+  if (await page.locator(".overview-table").evaluate(el => (el as HTMLDetailsElement).open)) { await table.focus(); await page.keyboard.press("Enter"); } await page.screenshot({ path: test.info().outputPath(`overview-${width}.png`) });
+  await page.getByRole("button", { name: "모아보기 지도 범위", exact: true }).click();
+  await page.getByRole("menuitemradio", { name: "첫 지도", exact: true }).click();
+  await expect(page.locator(".overview-totals")).toContainText("방문0회");
+});
+test("opens explicit record despite stored filters and explicit trip despite stored selection", async ({ page }) => {
+  await page.goto("/overview");
+  await page.getByRole("link", { name: /서울 숲.*함께 산책/ }).click();
+  await expect(page.locator(".place-sheet")).toBeVisible();
+  await expect(page.locator(".place-sheet")).toContainText("서울 숲");
+  await page.goto("/overview");
+  await page.getByRole("link", { name: /가을 여행/ }).click();
+  await expect(page.locator(".planner-header h1")).toHaveText("가을 여행");
+  await expect(page.getByLabel("계획 날짜", { exact: true })).toHaveValue("2026-10-05");
+});
+test("reports deleted or inaccessible destinations and offers return navigation", async ({ page }) => {
+  await page.goto(`/?groupId=${otherGroup}&visitId=33333333-3333-4333-8333-333333333333`);
+  await expect(page.locator(".navigation-error")).toContainText("삭제되었거나");
+  await page.getByRole("link", { name: "모아보기로 돌아가기", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "모아보기", exact: true })).toBeVisible();
+  await page.goto(`/?groupId=${otherGroup}&tripId=33333333-3333-4333-8333-333333333333&view=travel`);
+  await expect(page.locator(".planner-empty")).toContainText("삭제되었거나");
+});
+test("fits at 200 percent zoom and supports keyboard navigation", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop");
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/overview");
+  await expect(page.locator(".overview-totals")).toContainText("방문2회");
+  await page.evaluate(() => { document.documentElement.style.zoom = "2"; });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && document.querySelector(".overview-shell")!.getBoundingClientRect().right <= innerWidth)).toBe(true);
+  await page.locator(".overview-table summary").focus(); await page.keyboard.press("Enter");
+  await expect(page.getByRole("table")).toBeVisible();
+});

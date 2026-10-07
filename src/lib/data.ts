@@ -78,7 +78,7 @@ export async function materializeDashboard(db:SupabaseClient,snapshot:Awaited<Re
  });
  return {groups:snapshot.groups,members:snapshot.members,visits,demoMode:false,activeGroupId:snapshot.activeGroupId,etag:snapshot.etag,photoWarning:failed?"일부 사진을 불러오지 못했습니다. 다시 시도해 주세요.":undefined};
 }
-export async function getDashboardData(db?:SupabaseClient,userId?:string):Promise<DashboardData>{
+export async function getDashboardData(db?:SupabaseClient,userId?:string,groupId?:string):Promise<DashboardData>{
  if(!db||!userId)return {groups:demoGroups,members:demoMembers,visits:demoVisits,demoMode:true,activeGroupId:demoGroups[0]?.id};
- return materializeDashboard(db,await loadDashboardSnapshot(db,userId));
+ return materializeDashboard(db,await loadDashboardSnapshot(db,userId,groupId));
 }

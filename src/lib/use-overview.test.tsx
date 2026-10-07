@@ -1,0 +1,65 @@
+import { act, cleanup, renderHook, waitFor } from "@testing-library/react";
+import { afterEach, expect, it, vi } from "vitest";
+import { useOverview } from "./use-overview";
+import { aggregateOverview } from "./overview";
+const data = aggregateOverview([], [], [], "all");
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); vi.restoreAllMocks(); });
+it("cancels scope changes and ignores late responses even if abort is ignored", async () => {
+  let finish!: (response: Response) => void;
+  const fetchMock = vi.fn().mockImplementationOnce(() => new Promise<Response>(resolve => { finish = resolve; })).mockResolvedValue(Response.json({ ...data, groupId: "new", totals: { visits: 7, places: 1, photos: 0 } }));
+  vi.stubGlobal("fetch", fetchMock);
+  const { result, rerender } = renderHook(({ groupId }) => useOverview("user", false, groupId, "all"), { initialProps: { groupId: "old" } });
+  await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+  const signal = fetchMock.mock.calls[0][1].signal as AbortSignal;
+  rerender({ groupId: "new" });
+  expect(signal.aborted).toBe(true); expect(result.current.data).toBeUndefined();
+  await waitFor(() => expect(result.current.data?.totals.visits).toBe(7));
+  await act(async () => finish(Response.json({ ...data, groupId: "old" })));
+  expect(result.current.data?.groupId).toBe("new");
+});
+it("keeps data during background failure, but clears it when access is revoked", async () => {
+  const fetchMock = vi.fn().mockResolvedValueOnce(Response.json(data, { headers: { ETag: '"one"' } })).mockRejectedValueOnce(new Error("offline")) .mockResolvedValueOnce(new Response(null, { status: 403 }));
+  vi.stubGlobal("fetch", fetchMock);
+  const { result } = renderHook(() => useOverview("user", false, "group", "all"));
+  await waitFor(() => expect(result.current.data).toBeTruthy());
+  await act(async () => result.current.refresh());
+  expect(result.current.data).toEqual(data); expect(result.current.error).toBe("offline");
+  await act(async () => result.current.refresh());
+  expect(result.current.data).toBeUndefined(); expect(result.current.error).toContain("접근 권한");
+});
+it("reuses URLs on 304 and renews one minute before expiration", async () => {
+  const time = vi.spyOn(Date, "now").mockReturnValue(10000000);
+  const fetchMock = vi.fn().mockResolvedValueOnce(Response.json(data, { headers: { ETag: '"one"' } })).mockResolvedValueOnce(new Response(null, { status: 304 })).mockResolvedValueOnce(Response.json(data));
+  vi.stubGlobal("fetch", fetchMock);
+  const { result } = renderHook(() => useOverview("user", false, undefined, "all"));
+  await waitFor(() => expect(result.current.data).toBeTruthy());
+  time.mockReturnValue(10030000);
+  await act(async () => result.current.refresh());
+  expect(fetchMock.mock.calls[1][0]).not.toContain("renewPhotos");
+  expect(fetchMock.mock.calls[1][1].headers["If-None-Match"]).toBe('"one"');
+  expect(result.current.data).toEqual(data);
+  time.mockReturnValue(13540000);
+  await act(async () => result.current.refresh());
+  expect(fetchMock.mock.calls[2][0]).toContain("renewPhotos=true");
+});
+it("retries an initial failure and suspends requests while offline", async () => {
+  const fetchMock = vi.fn().mockRejectedValueOnce(new Error("network")).mockResolvedValue(Response.json(data));
+  vi.stubGlobal("fetch", fetchMock);
+  const { result } = renderHook(() => useOverview("user", false, undefined, "all"));
+  await waitFor(() => expect(result.current.error).toBe("network"));
+  expect(result.current.data).toBeUndefined();
+  vi.spyOn(navigator, "onLine", "get").mockReturnValueOnce(false);
+  await act(async () => result.current.refresh()); expect(fetchMock).toHaveBeenCalledTimes(1);
+  await act(async () => result.current.refresh()); expect(result.current.data).toEqual(data);
+});
+it("shows an initial offline message and reloads on reconnect without leaving a spinner", async () => {
+  const online = vi.spyOn(navigator, "onLine", "get").mockReturnValue(false);
+  const fetchMock = vi.fn().mockResolvedValue(Response.json(data)); vi.stubGlobal("fetch", fetchMock);
+  const { result } = renderHook(() => useOverview("user", false, undefined, "all"));
+  await waitFor(() => expect(result.current.error).toContain("오프라인"));
+  expect(result.current.loading).toBe(false); expect(fetchMock).not.toHaveBeenCalled();
+  online.mockReturnValue(true);
+  await act(async () => window.dispatchEvent(new Event("online")));
+  await waitFor(() => expect(result.current.data).toEqual(data));
+  expect(result.current.error).toBeUndefined();
+});

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import Link from "next/link";
 import { PanelDivider } from "@/components/panel-divider";
 import { TravelLayoutControl, useTravelLayout } from "@/components/travel-layout-control";
 import { CalendarDays, ChevronLeft, ChevronRight, Download, MapPin, Plus, Search, X, Menu, Settings } from "lucide-react";
@@ -24,10 +25,10 @@ import type { Group, MapPoint, Place, ScheduleItem, Trip, TripRoute, Visit } fro
 interface Draft { requestId?: string; id?: string; version: number; startsAt: string; endsAt: string; title: string; note: string; place?: Place; newPlace: boolean; markerStyle: ScheduleItem["markerStyle"] }
 const zoneOptions = ["Asia/Seoul", "Asia/Tokyo", "Asia/Shanghai", "Asia/Taipei", "Asia/Bangkok", "Asia/Singapore", "Asia/Dubai", "Europe/Paris", "Europe/London", "Europe/Rome", "America/New_York", "America/Los_Angeles", "Pacific/Honolulu", "Australia/Sydney"];
 
-export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, initialVisit, onGroup, onClose }: {
-  viewerId?: string; groupId: string; groups: Group[]; visits: Visit[]; demo: boolean; initialVisit?: Visit; onGroup: (id: string) => void; onClose: () => void;
+export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, initialVisit, initialTripId, onGroup, onClose }: {
+  viewerId?: string; groupId: string; groups: Group[]; visits: Visit[]; demo: boolean; initialVisit?: Visit; initialTripId?: string; onGroup: (id: string) => void; onClose: () => void;
 }) {
-  const [tripId, setTripId] = useState("");
+  const [tripId, setTripId] = useState(initialTripId ?? "");
   const layout = useTravelLayout(viewerId);
   const { timeWidth, mapHeight, resizeWidth: setTimeWidth, resizeHeight: setMapHeight } = layout;
   const store = useTripStore(groupId, demo, tripId, viewerId);
@@ -66,7 +67,7 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
     document.addEventListener("keydown", keydown);
     return () => { document.removeEventListener("keydown", keydown); if (!document.querySelector('.planner-dialog[open]')) navigationTrigger.current?.focus(); };
   }, [navigationOpen, isMobile]);
-  const trip = store.trips.find((value) => value.id === tripId) ?? store.trips[0];
+  const trip = store.trips.find((value) => value.id === tripId) ?? (initialTripId && tripId === initialTripId ? undefined : store.trips[0]);
   const [chosenDate, setChosenDate] = useState("");
   const date = trip && chosenDate >= trip.startDate && chosenDate <= trip.endDate ? chosenDate : trip?.startDate ?? "";
   const [selectedId, setSelectedId] = useState<string>();
@@ -112,11 +113,11 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
 
   useEffect(() => {
     const timer=setTimeout(() => { const media = window.matchMedia("(max-width: 820px)");
-    try { const saved = JSON.parse(localStorage.getItem(viewerId+":trip-view:"+groupId) ?? "null"); if (saved) { setTripId(saved.tripId ?? ""); setChosenDate(saved.date ?? ""); setTab(["list","time","map"].includes(saved.tab) ? saved.tab : media.matches ? "list" : "time"); } else setTab(media.matches ? "list" : "time"); } catch { setTab(media.matches ? "list" : "time"); }
+    try { const saved = JSON.parse(localStorage.getItem(viewerId+":trip-view:"+groupId) ?? "null"); if (saved && !initialTripId) { setTripId(saved.tripId ?? ""); setChosenDate(saved.date ?? ""); setTab(["list","time","map"].includes(saved.tab) ? saved.tab : media.matches ? "list" : "time"); } else setTab(media.matches ? "list" : "time"); } catch { setTab(media.matches ? "list" : "time"); }
     viewLoaded.current=true; },0);
     const sync = () => setOnline(navigator.onLine); sync(); window.addEventListener("online",sync); window.addEventListener("offline",sync);
     return () => { clearTimeout(timer); window.removeEventListener("online",sync); window.removeEventListener("offline",sync); };
-  }, [groupId,viewerId]);
+  }, [groupId,viewerId,initialTripId]);
   useEffect(() => { if (viewLoaded.current && store.ready && trip) { try { localStorage.setItem(viewerId+":trip-view:"+groupId,JSON.stringify({ tripId:trip.id,date,tab })); } catch {} } }, [trip,date,tab,store.ready,groupId,viewerId]);
   useEffect(() => { const timer=setTimeout(() => setItemDrafts(listDrafts<{ tripId: string; draft: Draft }>(viewerId+":schedule:"+groupId+":")),0); return () => clearTimeout(timer); }, [groupId,viewerId,draft]);
   useEffect(() => {
@@ -260,7 +261,7 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
       <div className="planner-sidebar-brand"><Brand compact /><Button className="planner-sidebar-close" variant="ghost" size="icon" aria-label="여행 탐색 닫기" onClick={() => setNavigationOpen(false)}><X /></Button></div>
       <div className="planner-sidebar-context">
         <div className="planner-picker-field"><span>함께 보는 지도</span><WorkspacePicker label="여행 계획 지도" value={groupId} options={groups.map(group => ({ value: group.id, label: group.name }))} disabled={busy} onChange={onGroup} /></div>
-        <nav className="planner-view-switch" aria-label="지도 보기 방식"><button disabled={busy} onClick={onClose}>기록</button><button aria-current="page">여행 계획</button></nav>
+        <nav className="planner-view-switch" aria-label="지도 보기 방식"><button disabled={busy} onClick={onClose}>기록</button><button aria-current="page">여행 계획</button><Link href="/overview">모아보기</Link></nav>
         {trip && <div className="planner-picker-field"><span>여행 선택</span><WorkspacePicker label="여행 선택" value={trip.id} options={store.trips.map(value => ({ value: value.id, label: value.name }))} disabled={busy} onChange={chooseTrip} /><p className="planner-trip-meta"><span>{trip.startDate} – {trip.endDate}</span><span>{trip.timeZone}</span></p></div>}
       </div>
       {trip && <div className="planner-day-navigation"><div className="record-heading"><div><h2>여행 일정</h2><p>{tripDates(trip).length}일 · {items.length}개 일정</p></div></div><nav className="planner-day-list" aria-label="여행 날짜">{tripDates(trip).map((day, index) => <button key={day} className={day === date ? "selected" : ""} aria-current={day === date ? "date" : undefined} disabled={busy} onClick={() => { chooseDate(day); setNavigationOpen(false); }}><span className="planner-day-icon"><CalendarDays size={18} /></span><span><strong>{index + 1}일차 <span>{new Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric", weekday: "short", timeZone: "UTC" }).format(new Date(day + "T00:00:00Z"))}</span></strong><small>{daySegments(items, day).length}개 일정</small></span></button>)}</nav></div>}
@@ -272,7 +273,7 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
     {!online && <div className="planner-message" role="status">오프라인 · 입력 내용은 초안으로 보관됩니다.</div>}
     {store.busy && <div className="saving-status" role="status">저장 중…</div>}
     {(message || store.error) && <div className={`planner-message ${store.error ? "has-error" : ""}`} role={store.error ? "alert" : "status"}>{store.error || message}<button aria-label="안내 닫기" onClick={() => setMessage("")}><X size={16} /></button>{store.error && <button onClick={() => void store.refresh().catch((error) => setMessage(error.message))}>다시 불러오기</button>}</div>}
-    {!store.ready ? <p className="planner-empty">여행을 불러오는 중…</p> : !trip ? <div className="planner-empty"><CalendarDays size={40} /><h2>함께 갈 곳, 시간표로 모아보세요.</h2><p>{isMobile ? <>여행 기간을 정하고 일정을 추가하면<br />장소와 시간이 목록에 함께 남아요.</> : <>여행 기간을 정하고 빈 시간을 드래그하면<br />장소와 일정이 지도에 함께 남아요.</>}</p>{carryVisit && <p>선택한 장소: {carryVisit.place.name}</p>}<button className="primary-button" onClick={() => openTrip()}>첫 여행 만들기</button></div> : <>
+    {!store.ready ? <p className="planner-empty">여행을 불러오는 중…</p> : !trip && initialTripId ? <div className="planner-empty" role="alert"><h2>이 여행은 삭제되었거나 접근 권한이 없습니다.</h2><Link href="/overview">모아보기로 돌아가기</Link></div> : !trip ? <div className="planner-empty"><CalendarDays size={40} /><h2>함께 갈 곳, 시간표로 모아보세요.</h2><p>{isMobile ? <>여행 기간을 정하고 일정을 추가하면<br />장소와 시간이 목록에 함께 남아요.</> : <>여행 기간을 정하고 빈 시간을 드래그하면<br />장소와 일정이 지도에 함께 남아요.</>}</p>{carryVisit && <p>선택한 장소: {carryVisit.place.name}</p>}<button className="primary-button" onClick={() => openTrip()}>첫 여행 만들기</button></div> : <>
       {carryVisit && <div className="planner-carry">{carryVisit.place.name}을 넣을 시간을 선택해 주세요.<button onClick={() => setCarryVisit(undefined)}>선택 취소</button></div>}
       <div className="planner-datebar"><strong className="planner-day-title">{date && new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric", weekday: "long", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`))}</strong><div className="planner-date-choice"><button aria-label="이전 날짜" disabled={busy || date <= trip.startDate} onClick={() => chooseDate(addMinutes(`${date}T00:00`, -1440).slice(0, 10))}><ChevronLeft size={17} /></button><label>날짜<input aria-label="계획 날짜" disabled={busy} type="date" min={trip.startDate} max={trip.endDate} value={date} onChange={(event) => { if (tripDates(trip).includes(event.target.value)) chooseDate(event.target.value); }} /></label><button aria-label="다음 날짜" disabled={busy || date >= trip.endDate} onClick={() => chooseDate(addMinutes(`${date}T00:00`, 1440).slice(0, 10))}><ChevronRight size={17} /></button></div><span className="planner-drag-hint">시간표를 드래그해 일정 추가</span><ToggleGroup className="planner-mobile-tabs" type="single" value={tab} disabled={busy} onValueChange={(value) => { if (value === "list" || value === "time" || value === "map") setTab(value); }} spacing={1} aria-label="계획 보기"><ToggleGroupItem value="list">일정 목록</ToggleGroupItem><ToggleGroupItem value="time">시간표</ToggleGroupItem><ToggleGroupItem value="map">지도</ToggleGroupItem></ToggleGroup></div>
       <div className={`planner-workspace view-${tab}`} style={{ "--time-weight": timeWidth, "--map-weight": 100 - timeWidth, "--map-height-weight": mapHeight, "--agenda-weight": 100 - mapHeight } as CSSProperties}>

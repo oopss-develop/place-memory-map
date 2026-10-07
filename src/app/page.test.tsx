@@ -20,14 +20,26 @@ afterEach(() => vi.unstubAllEnvs());
 
 describe("shared dashboard", () => {
   it("connects existing maps before loading records through the user's RLS session", async () => {
-    await Home();
+    await Home({});
     expect(mocks.sync.mock.invocationCallOrder[0]).toBeLessThan(mocks.dashboard.mock.invocationCallOrder[0]);
-    expect(mocks.dashboard).toHaveBeenCalledWith("user-session", "user1");
+    expect(mocks.dashboard).toHaveBeenCalledWith("user-session", "user1", undefined);
   });
 
   it("does not grant memberships before authentication", async () => {
     mocks.auth.mockResolvedValue(null);
-    await expect(Home()).rejects.toThrow("login redirect");
+    await expect(Home({})).rejects.toThrow("login redirect");
     expect(mocks.sync).not.toHaveBeenCalled();
+  });
+  it("loads an explicit map through RLS and passes the explicit visit selection", async () => {
+    const groupId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", visitId = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
+    const result = await Home({ searchParams: Promise.resolve({ groupId, visitId }) });
+    expect(mocks.dashboard).toHaveBeenCalledWith("user-session", "user1", groupId);
+    expect(result.props.initialNavigation).toEqual({ groupId, visitId });
+  });
+  it("provides a safe return message instead of exposing an inaccessible map", async () => {
+    mocks.dashboard.mockRejectedValueOnce(Object.assign(new Error("denied"), { status: 403 }));
+    const result = await Home({ searchParams: Promise.resolve({ groupId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", view: "travel" }) });
+    expect(result.props.initialNavigation).toEqual({ error: "이 지도는 삭제되었거나 접근 권한이 없습니다." });
+    expect(mocks.dashboard).toHaveBeenLastCalledWith("user-session", "user1");
   });
 });
