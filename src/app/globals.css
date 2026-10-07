@@ -756,6 +756,15 @@ button, select { cursor: pointer; }
 .keyword-input { display: flex; align-items: center; gap: 4px; }
 .keyword-input input { min-width: 0; flex: 1; }
 .keyword-input input[data-masked="true"] { -webkit-text-security: disc; }
+.memory-question { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; color: var(--muted-foreground); font-size: 13px; }
+.memory-question button { min-height: 44px; }
+.memory-picker { padding: 12px 20px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.memory-picker button { min-height: 44px; white-space: nowrap; }
+.memory-picker small { color: var(--muted-foreground); }
+.quick-filter-summary { padding: 8px 20px 0; margin: 0; font-size: 12px; color: var(--muted-foreground); }
+.memory-stamp { position: absolute; z-index: 8; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; color: var(--primary-foreground); background: var(--primary); pointer-events: none; transform: translate(-50%, -100%); animation: memory-stamp-in .55s cubic-bezier(.16, 1, .3, 1); }
+@keyframes memory-stamp-in { from { opacity: 0; transform: translate(-50%, -130%) scale(1.25); } to { opacity: 1; transform: translate(-50%, -100%) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .memory-stamp { animation: none; } }
 .active-filter-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 20px; max-height: 132px; overflow: auto; }
 .active-filter-chips button { white-space: normal; overflow-wrap: anywhere; height: auto; text-align: left; }
 .data-warning { padding: 12px; color: var(--foreground); background: var(--muted); border-radius: 8px; }

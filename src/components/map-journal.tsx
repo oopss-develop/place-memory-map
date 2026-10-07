@@ -19,6 +19,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
 import { QuickFilters } from "@/components/quick-filters";
+import { MemoryQuestion } from "@/components/memory-question";
+import { MemoryPicker } from "@/components/memory-picker";
+import { MemoryStamp } from "@/components/memory-stamp";
+import { memoryCandidates, pickMemory, quickFilterValue } from "@/lib/journal-delight";
+import { useMemoryReward } from "@/lib/use-memory-reward";
 import { Empty, EmptyHeader, EmptyTitle, EmptyDescription, EmptyContent } from "@/components/ui/empty";
 import { Brand } from "@/components/brand";
 import { WorkspacePicker } from "@/components/workspace-picker";
@@ -58,6 +63,9 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const router = useRouter();
   const confirmation = useConfirmation();
   const userKey = viewerId ?? "demo";
+  const reward = useMemoryReward(userKey);
+  const [memoryFocusId, setMemoryFocusId] = useState<string>();
+  const previousMemoryId = useRef<string | undefined>(undefined);
   const [filters, setFilters] = useState<VisitFilters>(EMPTY_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const filterStorageReady=useRef(false);
@@ -85,7 +93,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   const [query, setQuery] = useState("");
   const [manualMode, setManualMode] = useState(false);
   const [mapProvider, setMapProvider] = useState<MapProvider>("kakao");
-  const tag = filters.status === "planned" && !filters.tags.length ? "방문 예정" : filters.tags.length === 1 ? filters.tags[0] : "전체";
+  const tag = quickFilterValue(filters, filters.tags);
   const [mobileList, setMobileList] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [sheetExpanded, setSheetExpanded] = useState(false);
@@ -277,13 +285,13 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     if (!draftPlace) return;
     if (!requestIdRef.current) requestIdRef.current = crypto.randomUUID();
     const key = draftKey || userKey + ":visit:" + activeGroupId + ":" + (editing?.id ?? "new");
-    const data = { place: draftPlace, editing, fields: formValues(form), markerStyle, photoRequests: photoRequestsRef.current, requestId: requestIdRef.current, hadPhotos: Boolean((form.elements.namedItem("photos") as HTMLInputElement)?.files?.length || photoRetry) };
+    const data = { memoryRequestId: reward.pending.current?.requestId, place: draftPlace, editing, fields: formValues(form), markerStyle, photoRequests: photoRequestsRef.current, requestId: requestIdRef.current, hadPhotos: Boolean((form.elements.namedItem("photos") as HTMLInputElement)?.files?.length || photoRetry) };
     writeDraftNow.current = () => saveDraft(key, data);
     if (draftTimer.current) clearTimeout(draftTimer.current);
     draftTimer.current = setTimeout(() => { writeDraftNow.current?.(); }, 500);
   }
   function resumeVisit(saved: SavedDraft<VisitDraftData>) {
-    requestIdRef.current = saved.data.requestId; photoRequestsRef.current=saved.data.photoRequests ?? []; setDraftKey(saved.key); setRestoredFields(saved.data.fields); setMarkerStyle(saved.data.markerStyle); setEditing(saved.data.editing); setDraftPlace(saved.data.place); setFormError(saved.data.hadPhotos ? "초안을 복원했습니다. 업로드하지 않은 사진은 다시 선택해 주세요." : ""); setMobileList(false); dialogRef.current?.showModal();
+    reward.pending.current = saved.data.memoryRequestId && saved.data.editing ? { requestId: saved.data.memoryRequestId, visitId: saved.data.editing.id, groupId: saved.data.editing.groupId } : undefined; requestIdRef.current = saved.data.requestId; photoRequestsRef.current=saved.data.photoRequests ?? []; setDraftKey(saved.key); setRestoredFields(saved.data.fields); setMarkerStyle(saved.data.markerStyle); setEditing(saved.data.editing); setDraftPlace(saved.data.place); setFormError(saved.data.hadPhotos ? "초안을 복원했습니다. 업로드하지 않은 사진은 다시 선택해 주세요." : ""); setMobileList(false); dialogRef.current?.showModal();
   }
   function discardVisitDraft(key: string) { clearDraft(key); setVisitDrafts(current => current.filter(draft => draft.key !== key)); }
   async function openTrash() {
@@ -317,7 +325,11 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   }, [groupVisits, filters.sort]);
   const highlightedIds = useMemo(() => dateGroups.find((group) => group.date === selectedDateKey)?.visits.map((visit) => visit.id) ?? [], [dateGroups, selectedDateKey]);
   const allTags = useMemo(() => ["전체", "방문 예정", ...Array.from(new Set(visits.filter(visit => visit.groupId===activeGroupId && !visit.deletedAt).flatMap((visit) => visit.tags))).slice(0, 4)], [visits, activeGroupId]);
-  const selected = groupVisits.find((visit) => visit.id === selectedId);
+  const quickTag = allTags.includes(tag) ? tag : "";
+  const memories = memoryCandidates(visits, activeGroupId);
+  const focusedMemory = visits.find(visit => visit.id === memoryFocusId && visit.id === selectedId && visit.groupId === activeGroupId && !visit.deletedAt);
+  const mapVisits = focusedMemory && !groupVisits.some(visit => visit.id === focusedMemory.id) ? [...groupVisits, focusedMemory] : groupVisits;
+  const selected = mapVisits.find((visit) => visit.id === selectedId);
   const activeFilters = [
     ...(filters.query ? [{ label: `검색: ${filters.query}`, remove: () => setFilters(current => ({ ...current, query: "" })) }] : []),
     ...(filters.from ? [{ label: `시작: ${filters.from}`, remove: () => setFilters(current => ({ ...current, from: "" })) }] : []),
@@ -351,6 +363,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   }, [setSelectedAnchor]);
 
   const handleVisitSelect = useCallback((visit: Visit) => {
+    setMemoryFocusId(undefined);
     setNotice("");
     setMapFocus(undefined);
     setPulseLocation(undefined);
@@ -360,6 +373,14 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     setSelectedAnchor(undefined);
     setSelectionRequest((request) => request + 1);
   }, [setNotice, setPulseLocation, setSheetExpanded, setPhotoView, setSelectedId, setSelectedAnchor]);
+
+  function openMemory() {
+    if (dataLoading || pendingAction || photoBusy || groupBusy) return;
+    const visit = pickMemory(visits, activeGroupId, previousMemoryId.current);
+    if (!visit) return;
+    previousMemoryId.current = visit.id;
+    handleVisitSelect(visit); setMemoryFocusId(visit.id); setMobileList(false);
+  }
 
   useEffect(() => {
     if (!selectedId) return;
@@ -442,9 +463,9 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     setPulseLocation(location);
     setMobileList(false);
     setFormError("");
-    setSelectedId(undefined); setSelectedAnchor(undefined); setNotice(""); setDraftPlace(place); setEditing(null); setMarkerStyle(DEFAULT_MARKER_STYLE); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
+    setSelectedId(undefined); setSelectedAnchor(undefined); setNotice(""); reward.pending.current = undefined; setDraftPlace(place); setEditing(null); setMarkerStyle(DEFAULT_MARKER_STYLE); setManualMode(false); setSearchResults([]); dialogRef.current?.showModal();
   }
-  function openEdit(visit: Visit) { setFormError(""); setDraftPlace(visit.place); setEditing(visit); setMarkerStyle(normalizeMarkerStyle(visit.markerStyle)); dialogRef.current?.showModal(); }
+  function openEdit(visit: Visit) { reward.pending.current = undefined; setFormError(""); setDraftPlace(visit.place); setEditing(visit); setMarkerStyle(normalizeMarkerStyle(visit.markerStyle)); dialogRef.current?.showModal(); }
   function zoomToVisit(visit: Visit) {
     setMaxZoomRequest((current) => ({ latitude: visit.place.latitude, longitude: visit.place.longitude, request: (current?.request ?? 0) + 1 }));
   }
@@ -506,7 +527,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
     const form=dialogRef.current?.querySelector<HTMLFormElement>("form.visit-form"); if (!form) return;
     if (draftTimer.current) clearTimeout(draftTimer.current);
     const key=draftKey || userKey+":visit:"+activeGroupId+":new";
-    const data: VisitDraftData={ place:visit.place, editing:visit, fields:formValues(form), markerStyle:visit.markerStyle, requestId:crypto.randomUUID(), hadPhotos, photoRequests:photoRequestsRef.current };
+    const data: VisitDraftData={ place:visit.place, editing:visit, fields:formValues(form), markerStyle:visit.markerStyle, requestId:crypto.randomUUID(), hadPhotos, memoryRequestId: reward.pending.current?.requestId, photoRequests:photoRequestsRef.current };
     requestIdRef.current=data.requestId; writeDraftNow.current=()=>saveDraft(key,data); writeDraftNow.current();
   }
   async function uploadVisitPhotos(visit: Visit, files: Array<{ id: string; file: File }>) {
@@ -525,12 +546,14 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
   async function retryPhotos() {
     if (!photoRetry || pendingAction) return;
     setPendingAction("save");
-    try { if (await uploadVisitPhotos(photoRetry.visit, photoRetry.files)) { finishVisitSave(); setNotice("사진까지 모두 저장했습니다."); } } catch (error) { setFormError("기록은 저장되었습니다. 실패한 사진을 다시 올려주세요. "+(error as Error).message); } finally { setPendingAction(undefined); }
+    try { if (await uploadVisitPhotos(photoRetry.visit, photoRetry.files)) { setNotice(finishVisitSave() ? "오늘의 기억을 남겼어요" : "사진까지 모두 저장했습니다."); } } catch (error) { setFormError("기록은 저장되었습니다. 실패한 사진을 다시 올려주세요. "+(error as Error).message); } finally { setPendingAction(undefined); }
   }
   function finishVisitSave() {
+    const celebrated = reward.complete();
     if (draftTimer.current) clearTimeout(draftTimer.current); writeDraftNow.current = null; photoRequestsRef.current=[];
     clearDraft(draftKey || userKey + ":visit:" + activeGroupId + ":" + (editing?.id ?? "new")); clearDraft(userKey + ":visit:" + activeGroupId + ":new");
     dialogRef.current?.close();
+    return celebrated;
   }
   async function saveVisit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (!draftPlace || !activeGroup || pendingAction || photoRetry) return;
@@ -551,12 +574,14 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       let id = editing?.id ?? requestIdRef.current; let version = editing?.version ?? 1; let placeId = draftPlace.id;
       if (!initialData.demoMode) { try { const data = await apiRequest<{id: string; version: number; placeId?: string}>("/api/visits", jsonRequest(editing ? "PUT" : "POST", { ...parsed.data, requestId: requestIdRef.current })); id=data.id; version=data.version; placeId=data.placeId ?? placeId; } catch(error) { if ((error as {status?: number}).status === 409) { setVisitConflict(true); void refreshVisits(false,true); } throw error; } }
       const next: Visit = { id, groupId: activeGroup.id, place: { ...parsed.data.place, id: placeId }, visitedOn: parsed.data.visitedOn, isPlanned: parsed.data.isPlanned, title: parsed.data.title, note: parsed.data.note, rating: parsed.data.rating, tags: parsed.data.tags, participants: members.filter(member => participantIds.includes(member.id)), photoUrls: editing?.photoUrls ?? [], photoIds: editing?.photoIds ?? [], markerStyle, version, updatedBy: viewerName ?? "나" };
+      if (!editing && !next.isPlanned) reward.pending.current = { requestId: requestIdRef.current, visitId: id, groupId: activeGroup.id };
+      setMemoryFocusId(id);
       recordSaved=true; setVisits(current => [next, ...current.filter(item => item.id !== id)]); setEditing(next); setSelectedId(id); setSelectedDateKey(next.visitedOn); setSelectedAnchor(undefined); setSelectionRequest(value => value+1);
       if (prepared.length && !initialData.demoMode) {
         persistSavedVisit(next, true); setPhotoRetry({ visit: next, files: prepared }); (formElement.elements.namedItem("photos") as HTMLInputElement).value="";
         if (!await uploadVisitPhotos(next,prepared)) return;
       } else if (prepared.length) { const withPhotos={ ...next, photoUrls:[...next.photoUrls,...prepared.map(item => URL.createObjectURL(item.file))], photoIds:[...(next.photoIds ?? []),...prepared.map(item => item.id)] }; setVisits(current => current.map(item => item.id===id ? withPhotos : item)); }
-      setNotice("기록을 저장했습니다."); finishVisitSave();
+      setNotice(finishVisitSave() ? "오늘의 기억을 남겼어요" : "기록을 저장했습니다.");
     } catch (error) { setFormError((recordSaved ? "기록은 저장되었습니다. 실패한 사진을 다시 올려주세요. " : "")+(error as Error).message); } finally { setPendingAction(undefined); }
   }
   async function deleteVisit(visit: Visit) {
@@ -674,9 +699,9 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
         <header className="sidebar-header"><Brand compact /><button className="icon-button mobile-close" onClick={() => setMobileList(false)} aria-label="목록 닫기"><X size={20} /></button></header>
         <div className="group-row"><label id="group-label">함께 보는 지도</label><WorkspacePicker label="함께 보는 지도 선택" value={activeGroupId} options={groups.map(group => ({ value: group.id, label: group.name, detail: (group.id === activeGroupId && !dataLoading ? visits.filter(visit => visit.groupId === group.id && !visit.deletedAt).length : group.visitCount ?? 0) + "건" }))} onChange={chooseGroup} open={groupPickerOpen} onOpenChange={setGroupPickerOpen} action={{ label: "함께 보는 지도 추가", onClick: openCreateGroup }} /></div>
         <nav className="journal-view-switch" aria-label="지도 보기 방식"><button aria-pressed="true">기록</button><button onClick={() => { setPlannerVisit(undefined); setPlannerOpen(true); setMobileList(false); }}>여행 계획</button></nav><div className="record-search-controls"><ToggleGroup type="single" value={searchMode} onValueChange={value => { if (value === "places" || value === "records") setSearchMode(value); }} aria-label="검색 대상"><ToggleGroupItem value="places">새로운 장소</ToggleGroupItem><ToggleGroupItem value="records">저장된 기록</ToggleGroupItem></ToggleGroup></div>{searchMode === "records" && <div className="record-query"><Input aria-label="저장된 기록 검색" placeholder="장소, 제목, 메모, 주소" value={filters.query} onChange={event => setFilters(current => ({ ...current, query: event.target.value }))} /><Button variant="outline" onClick={() => setFiltersOpen(value => !value)} aria-expanded={filtersOpen}><Filter />상세 필터</Button></div>}<div className="search-area" hidden={searchMode !== "places"}><form className="place-search" role="search" onSubmit={searchPlaces}><Search size={19} aria-hidden="true" /><input ref={searchInputRef} type="search" enterKeyHint="search" value={query} onChange={(event) => { setQuery(event.target.value); setSearchResults([]); setSearchMessage(""); }} placeholder={mapProvider === "osm" ? "도시, 명소, 주소로 해외 검색" : "장소 이름으로 국내 검색"} aria-label="장소 검색" autoComplete="off" /><button type="submit" disabled={searching}>{searching ? "찾는 중" : "찾기"}</button></form>{(searchResults.length > 0 || searchMessage) && <div className="search-popover" aria-live="polite">{searchResults.map((result) => <button key={result.id} type="button" onClick={() => openForPlace(result.existingPlace ?? { id: crypto.randomUUID(), provider: mapProvider === "osm" ? "manual" : "kakao", providerPlaceId: mapProvider === "kakao" ? result.id : undefined, name: result.placeName, address: result.roadAddressName || result.addressName, category: result.categoryName, latitude: result.latitude, longitude: result.longitude })}><strong>{result.placeName}</strong><span>{result.roadAddressName || result.addressName}</span></button>)}{searchMessage && <p>{searchMessage}</p>}<button className="search-manual" type="button" onClick={startManualPin}>찾는 장소가 없나요? 지도에서 직접 선택</button></div>}</div>
-        <QuickFilters options={allTags} value={tag} onChange={value => setFilters(current => ({ ...current, status: value === "방문 예정" ? "planned" : "all", tags: value === "전체" || value === "방문 예정" ? [] : [value] }))} />
-        {activeFilters.length > 0 && <div className="active-filter-chips" aria-label="적용 중인 필터">{activeFilters.map(filter => <Button key={filter.label} size="sm" variant="outline" aria-label={`${filter.label} 필터 제거`} onClick={filter.remove}>{filter.label}<X /></Button>)}</div>}
-        <div className="record-heading"><div><h1>기록</h1><p>{groupVisits.length}개의 방문 기록</p></div></div>
+        <QuickFilters options={allTags} value={quickTag} onChange={value => setFilters(current => ({ ...current, status: value === "방문 예정" ? "planned" : "all", tags: value === "전체" || value === "방문 예정" ? [] : [value] }))} />
+        {!quickTag && <p className="quick-filter-summary">조건 적용 중</p>}{activeFilters.length > 0 && <div className="active-filter-chips" aria-label="적용 중인 필터">{activeFilters.map(filter => <Button key={filter.label} size="sm" variant="outline" aria-label={`${filter.label} 필터 제거`} onClick={filter.remove}>{filter.label}<X /></Button>)}</div>}
+        <MemoryPicker available={memories.length > 0} busy={dataLoading || Boolean(pendingAction) || photoBusy || groupBusy} onPick={openMemory} /><div className="record-heading"><div><h1>기록</h1><p>{groupVisits.length}개의 방문 기록</p></div></div>
         <div className="record-list">{dataLoading && <p role="status">기록을 불러오는 중…</p>}{(dataError || photoWarning) && <div className="data-warning" role="status"><p>{dataError || photoWarning}</p><Button variant="outline" onClick={() => void refreshVisits(true)}>다시 시도</Button></div>}
         {filtersOpen && <div className="record-filter-panel"><div className="filter-date-row"><Field><FieldLabel htmlFor="filter-from">시작일</FieldLabel><Input id="filter-from" type="date" value={filters.from} onChange={event => setFilters(current => ({ ...current, from: event.target.value }))} /></Field><Field><FieldLabel htmlFor="filter-to">종료일</FieldLabel><Input id="filter-to" type="date" min={filters.from} value={filters.to} onChange={event => setFilters(current => ({ ...current, to: event.target.value }))} /></Field></div><WorkspacePicker label="방문 상태" value={filters.status} options={[{value:"all",label:"방문 상태 전체"},{value:"visited",label:"방문 완료"},{value:"planned",label:"방문 예정"}]} onChange={value => setFilters(current => ({ ...current, status: value as VisitFilters["status"] }))} /><WorkspacePicker label="기록 정렬" value={filters.sort} options={[{value:"newest",label:"최신 방문순"},{value:"oldest",label:"오래된 방문순"},{value:"rating",label:"평점 높은 순"}]} onChange={value => setFilters(current => ({ ...current, sort: value as VisitFilters["sort"] }))} /><fieldset><legend>태그</legend>{Array.from(new Set(visits.filter(visit => visit.groupId===activeGroupId && !visit.deletedAt).flatMap(visit => visit.tags))).map(value => <label key={value}><input type="checkbox" checked={filters.tags.includes(value)} onChange={event => setFilters(current => ({ ...current, tags: event.target.checked ? [...current.tags,value] : current.tags.filter(tag => tag!==value) }))} />{value}</label>)}</fieldset><fieldset><legend>참여자</legend>{members.map(person => <label key={person.id}><input type="checkbox" checked={filters.participants.includes(person.id)} onChange={event => setFilters(current => ({ ...current, participants: event.target.checked ? [...current.participants,person.id] : current.participants.filter(id => id!==person.id) }))} />{person.displayName}</label>)}</fieldset><Button variant="ghost" onClick={() => { setFilters(EMPTY_FILTERS);  }}>필터 초기화</Button></div>}
         {visitDrafts.length>0 && <div className="draft-list">{visitDrafts.map(saved => <div key={saved.key}><span>작성 중인 기록 · {saved.data.fields.title?.[0] || "제목 없음"}</span><Button variant="outline" onClick={() => resumeVisit(saved)}>계속 작성</Button><Button variant="ghost" onClick={() => discardVisitDraft(saved.key)}>초안 삭제</Button></div>)}</div>}
@@ -685,7 +710,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
           {dateGroups.map(({ date, visits: dateVisits }) => {
             const active = selectedDateKey === date || searchMode === "records";
             return <section key={date} className={`date-group ${active ? "active" : ""}`}>
-              <button className="date-group-toggle" aria-expanded={active} aria-label={`${(date === "rating" ? "평점순" : formatDate(date))} 방문 기록 ${dateVisits.length}개 ${active ? "접기" : "펼치기"}`} onClick={() => { setSelectedDateKey(active ? undefined : date); if (!active && dateVisits[0]) handleVisitSelect(dateVisits[0]); }}><span><CalendarDays size={15} /><time>{date === "rating" ? "평점순" : formatDate(date)}</time>{dateVisits.some((visit) => visit.isPlanned) && <em>방문 예정</em>}</span><strong>{dateVisits.length}곳 <ChevronDown size={15} /></strong></button>
+              <button className="date-group-toggle" aria-expanded={active} aria-label={`${(date === "rating" ? "평점순" : formatDate(date))} 방문 기록 ${dateVisits.length}개 ${active ? "접기" : "펼치기"}`} onClick={() => { setSelectedDateKey(active ? undefined : date); if (!active && dateVisits[0]) handleVisitSelect(dateVisits[0]); }}><span><CalendarDays size={15} /><time>{date === "rating" ? "평점순" : formatDate(date)}</time>{dateVisits.some((visit) => visit.isPlanned) && <em>방문 예정</em>}</span><strong>방문 {dateVisits.length}회 <ChevronDown size={15} /></strong></button>
               {active && <div className="date-group-items">{dateVisits.map((visit) => <button key={visit.id} className={`record-item ${visit.isPlanned ? "planned" : ""} ${selectedId === visit.id ? "selected" : ""}`} aria-pressed={selectedId === visit.id} onClick={() => { handleVisitSelect(visit); setMobileList(false); }}><img className="record-marker" src={markerSvgData(visit.markerStyle)} alt="" /><div><strong>{visit.place.name}</strong><p>{visit.title}</p><div className="mini-meta"><span className="rating-summary" aria-label={`별점 ${formatRating(visit.rating)}점`}><SquareSparkIcon className="rating-square-spark" /> {formatRating(visit.rating)}</span><span><Users size={13} /> {visit.participants.length}</span>{visit.photoUrls.length > 0 && <span><Camera size={13} /> {visit.photoUrls.length}</span>}{visit.isPlanned && <span className="planned-label">방문 예정</span>}</div></div></button>)}</div>}
             </section>;
           })}
@@ -694,11 +719,11 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
       </aside>
 
       <section ref={mapStageRef} className="map-stage" inert={isMobile && mobileList} onPointerDown={closeGroupMenu}>
-        <KakaoMap key={mapProvider} visits={groupVisits} mapProvider={mapProvider} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} mapFocus={mapFocus} maxZoomRequest={maxZoomRequest} pulseLocation={pulseLocation} />
+        <KakaoMap key={mapProvider} visits={mapVisits} mapProvider={mapProvider} selectedId={selectedId} selectionRequest={selectionRequest} highlightedIds={highlightedIds} manualMode={manualMode} onSelect={handleVisitSelect} onAnchorChange={handleAnchorChange} onDismissPopup={handlePopupDismiss} onManualPoint={manualPoint} focusLocation={currentLocation} mapFocus={mapFocus} maxZoomRequest={maxZoomRequest} pulseLocation={pulseLocation} />
         <div className="map-topbar"><button className="icon-button mobile-list-button" onClick={() => openMobileList()} aria-label="기록 목록 열기" aria-controls="journal-sidebar" aria-expanded={mobileList}><List size={20} /></button><button className="mobile-search-button" onClick={() => openMobileList("search")}><Search size={18} /><span>장소 검색</span></button><div className="map-date"><CalendarDays size={16} /><span>{mapSummary}</span></div><button className="location-button" onClick={locateMe}><LocateFixed size={17} />내 위치</button></div>
         <ToggleGroup className="map-provider-switch" type="single" value={mapProvider} onValueChange={(value) => { if (value === "kakao" || value === "osm") changeMapProvider(value); }} spacing={1} aria-label="지도 선택"><ToggleGroupItem value="kakao"><MapIcon aria-hidden="true" />국내</ToggleGroupItem><ToggleGroupItem value="osm"><Globe2 aria-hidden="true" />해외</ToggleGroupItem></ToggleGroup>
         <button className={`add-pin-button ${manualMode ? "active" : ""}`} aria-label={manualMode ? "핀 추가 취소" : "지도에 핀 추가"} onClick={() => manualMode ? setManualMode(false) : startManualPin()}><Plus size={19} /><span>{manualMode ? "핀 추가 취소" : "지도에 핀 추가"}</span></button>
-        {selected && <article ref={sheetRef} aria-label={`${selected.place.name} 방문 기록`} className={`place-sheet ${activePhotoUrl ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""} ${sheetExpanded ? "is-expanded" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>
+        {reward.reward?.groupId === activeGroupId && reward.reward.visitId === selectedId && <MemoryStamp key={reward.reward.requestId} anchor={selectedAnchor} />}{selected && <article ref={sheetRef} aria-label={`${selected.place.name} 방문 기록`} className={`place-sheet ${activePhotoUrl ? "has-photo" : ""} ${popupPosition ? "is-positioned" : ""} ${sheetExpanded ? "is-expanded" : ""}`} data-placement={popupPosition?.placement} style={sheetStyle}>
           {pendingAction === "delete" && <div className="operation-progress" role="progressbar" aria-label="기록 삭제 중" />}
           <div className="sheet-toolbar">
             <button className="sheet-expand" type="button" aria-expanded={sheetExpanded} aria-controls="visit-detail-body" onClick={() => { setNotice(""); setSheetExpanded((value) => !value); }}><ChevronDown size={18} />{sheetExpanded ? "지도와 함께 보기" : "기록 크게 보기"}</button>
@@ -797,7 +822,7 @@ export function MapJournal({ initialData, viewerId, viewerName }: { initialData:
               {!MARKER_STYLE_IDS.includes(markerStyle) && <small className="marker-picker-hint">기존 사각 핀을 유지합니다. 원형 핀을 선택하면 변경돼요.</small>}
             </fieldset>
             <Field><FieldLabel htmlFor="visit-field-4">기록 제목</FieldLabel><Input aria-invalid={Boolean(fieldErrors["title"])} aria-describedby={fieldErrors["title"] ? "visit-field-4-error" : undefined} id="visit-field-4" name="title" maxLength={120} defaultValue={restoredFields?.title?.[0] ?? editing?.title} placeholder="그날을 한 문장으로" required /><FieldError id="visit-field-4-error">{fieldErrors["title"]}</FieldError></Field>
-            <Field><FieldLabel htmlFor="visit-field-5">무엇을 했나요?</FieldLabel><Textarea aria-invalid={Boolean(fieldErrors["note"])} aria-describedby={fieldErrors["note"] ? "visit-field-5-error" : undefined} id="visit-field-5" name="note" maxLength={3000} defaultValue={restoredFields?.note?.[0] ?? editing?.note} rows={4} placeholder="먹은 것, 나눈 이야기, 다시 오고 싶은 이유…" /><FieldError id="visit-field-5-error">{fieldErrors["note"]}</FieldError></Field>
+            <Field><FieldLabel htmlFor="visit-field-5">무엇을 했나요?</FieldLabel><MemoryQuestion /><Textarea aria-invalid={Boolean(fieldErrors["note"])} aria-describedby={fieldErrors["note"] ? "visit-field-5-error" : undefined} id="visit-field-5" name="note" aria-details="memory-question" maxLength={3000} defaultValue={restoredFields?.note?.[0] ?? editing?.note} rows={4} placeholder="먹은 것, 나눈 이야기, 다시 오고 싶은 이유…" /><FieldError id="visit-field-5-error">{fieldErrors["note"]}</FieldError></Field>
             <FieldGroup className="form-grid">
               <RatingPicker defaultValue={Number(restoredFields?.rating?.[0] ?? editing?.rating ?? 5)} />
               <Field><FieldLabel htmlFor="visit-field-6">태그</FieldLabel><Input aria-invalid={Boolean(fieldErrors["tags"])} aria-describedby={fieldErrors["tags"] ? "visit-field-6-error" : undefined} id="visit-field-6" name="tags" defaultValue={restoredFields?.tags?.[0] ?? editing?.tags.join(", ")} placeholder="데이트, 산책, 맛집" /><FieldError id="visit-field-6-error">{fieldErrors["tags"]}</FieldError></Field>

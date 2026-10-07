@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import { PanelDivider, usePanelSize } from "@/components/panel-divider";
+import { PanelDivider } from "@/components/panel-divider";
+import { TravelLayoutControl, useTravelLayout } from "@/components/travel-layout-control";
 import { CalendarDays, ChevronLeft, ChevronRight, Download, MapPin, Plus, Search, X, Menu, Settings } from "lucide-react";
 import { KakaoMap } from "@/components/kakao-map";
 import { TimetableGrid } from "@/components/timetable-grid";
@@ -27,8 +28,8 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
   viewerId?: string; groupId: string; groups: Group[]; visits: Visit[]; demo: boolean; initialVisit?: Visit; onGroup: (id: string) => void; onClose: () => void;
 }) {
   const [tripId, setTripId] = useState("");
-  const [timeWidth, setTimeWidth] = usePanelSize(`place-memory-panel-v1:${viewerId}:time-width`, 52);
-  const [mapHeight, setMapHeight] = usePanelSize(`place-memory-panel-v1:${viewerId}:map-height`, 62);
+  const layout = useTravelLayout(viewerId);
+  const { timeWidth, mapHeight, resizeWidth: setTimeWidth, resizeHeight: setMapHeight } = layout;
   const store = useTripStore(groupId, demo, tripId, viewerId);
   const confirmation = useConfirmation();
   const [itemDrafts, setItemDrafts] = useState<SavedDraft<{ tripId: string; draft: Draft }>[]>([]);
@@ -267,7 +268,7 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
       <div className="planner-sidebar-footer"><Button variant="outline" onClick={() => { setNavigationOpen(false); openTrip(); }} disabled={!store.ready || busy}><Plus />새 여행</Button>{trip && <><Button variant="ghost" onClick={() => { setNavigationOpen(false); openTrip(trip); }} disabled={busy}><Settings />여행 설정</Button><Button variant="ghost" className="planner-export" onClick={() => void exportExcel()} disabled={busy || routeBusy || manual} aria-label="엑셀 다운로드" aria-busy={exporting}><Download />{exporting ? "저장 중…" : "엑셀 다운로드"}</Button></>}</div>
     </aside>
     <div className="planner-main" inert={isMobile && navigationOpen}>
-      <header className="planner-header"><Button variant="outline" className="planner-back-records" onClick={onClose}><ChevronLeft />기록으로</Button><div className="planner-heading"><Button variant="outline" className="planner-navigation-trigger" aria-label="여행 탐색 열기" aria-expanded={navigationOpen} aria-controls="planner-navigation" onClick={(event) => { navigationTrigger.current = event.currentTarget; setNavigationOpen(true); }}><Menu /></Button><div><h1>{trip?.name ?? "여행 계획"}</h1><p>{trip ? "시간표에서 일정을 정하고 지도에서 동선을 확인하세요." : "함께 떠날 여행의 장소와 시간을 계획하세요."}</p></div></div>{trip && <Button className="primary-button planner-add-schedule" onClick={() => createDraft()} disabled={busy}><Plus />일정 추가</Button>}</header>
+      <header className="planner-header"><Button variant="outline" className="planner-back-records" onClick={onClose}><ChevronLeft />기록으로</Button><div className="planner-heading"><Button variant="outline" className="planner-navigation-trigger" aria-label="여행 탐색 열기" aria-expanded={navigationOpen} aria-controls="planner-navigation" onClick={(event) => { navigationTrigger.current = event.currentTarget; setNavigationOpen(true); }}><Menu /></Button><div><h1>{trip?.name ?? "여행 계획"}</h1><p>{trip ? "시간표에서 일정을 정하고 지도에서 동선을 확인하세요." : "함께 떠날 여행의 장소와 시간을 계획하세요."}</p></div></div>{trip && <TravelLayoutControl layout={layout} />}{trip && <Button className="primary-button planner-add-schedule" onClick={() => createDraft()} disabled={busy}><Plus />일정 추가</Button>}</header>
     {!online && <div className="planner-message" role="status">오프라인 · 입력 내용은 초안으로 보관됩니다.</div>}
     {store.busy && <div className="saving-status" role="status">저장 중…</div>}
     {(message || store.error) && <div className={`planner-message ${store.error ? "has-error" : ""}`} role={store.error ? "alert" : "status"}>{store.error || message}<button aria-label="안내 닫기" onClick={() => setMessage("")}><X size={16} /></button>{store.error && <button onClick={() => void store.refresh().catch((error) => setMessage(error.message))}>다시 불러오기</button>}</div>}

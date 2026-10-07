@@ -10,8 +10,9 @@ vi.mock("@/components/install-app-button",()=>({InstallAppButton:()=>null}));
 vi.mock("@/lib/images",()=>({prepareVisitImage:async(file:File)=>file}));
 import { MapJournal } from "./map-journal";
 const id="10000000-0000-4000-8000-000000000001";
+const savedVisit = { id, groupId: id, place: { id, provider: "manual" as const, name: "서울 숲", address: "", category: "", latitude: 37, longitude: 127 }, visitedOn: "2026-10-07", isPlanned: false, title: "산책", note: "메모", rating: 5, tags: [], participants: [], photoUrls: [], markerStyle: "black-9" as const, version: 1, updatedBy: "나" };
 beforeEach(()=>{
-  vi.clearAllMocks();localStorage.clear();
+  vi.clearAllMocks();localStorage.clear();sessionStorage.clear();
   vi.stubGlobal("fetch",mocks.fetch);
   vi.stubGlobal("ResizeObserver",class{observe(){} disconnect(){}});
   Object.defineProperty(window,"matchMedia",{configurable:true,value:()=>({matches:false,addEventListener(){},removeEventListener(){}})});
@@ -22,6 +23,27 @@ beforeEach(()=>{
   vi.stubGlobal("FormData",class extends NativeFormData{
     constructor(form?:HTMLFormElement){super(form);const input=form?.querySelector<HTMLInputElement>('input[name="photos"]');if(input?.files?.length){this.delete("photos");for(const file of Array.from(input.files))this.append("photos",file);}}
   });
+});
+it.each(["new", "planned", "edit"])("celebrates only a confirmed new completed visit (%s)", async kind => {
+  let first = true;
+  const requests: string[] = [];
+  mocks.fetch.mockImplementation(async (url: string, options: RequestInit) => {
+    if (url !== "/api/visits") return Response.json({ error: "unavailable" }, { status: 503 });
+    requests.push(JSON.parse(String(options.body)).requestId);
+    if (first) { first = false; throw new Error("response lost"); }
+    return Response.json({ id, version: 2, placeId: id });
+  });
+  render(<MapJournal viewerId={id} initialData={{ demoMode: false, groups: [{ id, name: "지도", role: "owner", memberCount: 1 }], members: [{ id, displayName: "나", initials: "나" }], visits: kind === "edit" ? [savedVisit] : [] }} />);
+  if (kind === "edit") { fireEvent.click(screen.getByText("테스트 기록 선택")); fireEvent.click(screen.getByRole("button", { name: "수정" })); }
+  else { fireEvent.click(screen.getByText("테스트 장소 선택")); fireEvent.change(screen.getByLabelText("장소 이름"), { target: { value: "서울 숲" } }); fireEvent.change(screen.getByLabelText("기록 제목"), { target: { value: "산책" } }); }
+  if (kind === "planned") fireEvent.click(document.querySelector<HTMLInputElement>('input[name="isPlanned"]')!);
+  fireEvent.submit(document.querySelector(".visit-form")!);
+  await waitFor(() => expect(screen.getByText(/연결하지 못했습니다/)).toBeInTheDocument());
+  expect(screen.queryByText("오늘의 기억을 남겼어요")).not.toBeInTheDocument();
+  fireEvent.submit(document.querySelector(".visit-form")!);
+  await waitFor(() => expect(screen.getByText(kind === "new" ? "오늘의 기억을 남겼어요" : "기록을 저장했습니다.")).toBeInTheDocument());
+  expect(requests).toHaveLength(2);
+  expect(requests[0]).toBe(requests[1]);
 });
 afterEach(()=>{cleanup();vi.unstubAllGlobals();});
 it("does not reload or remount displayed photos when synchronization renews signed URLs", async () => {
@@ -63,10 +85,11 @@ it("keeps the saved record and retries only failed photos with their original re
   fireEvent.submit(document.querySelector(".visit-form")!);
   await waitFor(()=>expect(screen.getByRole("button",{name:"실패한 사진 1장 다시 올리기"})).toBeEnabled());
   expect(screen.getByText("기록은 저장되었습니다. 실패한 사진을 다시 올려주세요.")).toBeInTheDocument();
+  expect(screen.queryByText("오늘의 기억을 남겼어요")).not.toBeInTheDocument();
   const draft=JSON.parse(localStorage.getItem(Object.keys(localStorage).find(key=>key.startsWith("place-memory-draft-v1:"))!)!);
   expect(draft.data.editing.id).toBe(id);expect(draft.data.fields.title).toEqual(["산책"]);expect(draft.data.photoRequests.map((photo:{id:string})=>photo.id)).toEqual([failedId]);
   fireEvent.click(screen.getByRole("button",{name:"실패한 사진 1장 다시 올리기"}));
-  await waitFor(()=>expect(screen.getByText("사진까지 모두 저장했습니다.")).toBeInTheDocument());
+  await waitFor(()=>expect(screen.getByText("오늘의 기억을 남겼어요")).toBeInTheDocument());
   expect(mocks.fetch.mock.calls.filter(call=>call[0]==="/api/visits")).toHaveLength(1);
   const retries=mocks.fetch.mock.calls.filter(call=>String(call[0]).endsWith("/photos"));expect(retries).toHaveLength(2);
   expect(JSON.parse(String((retries[1][1].body as FormData).get("photoIds")))).toEqual([failedId]);

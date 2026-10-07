@@ -325,6 +325,11 @@
 @media (max-width: 820px) { .trip-planner .itinerary-detail { align-items: flex-start; justify-content: flex-start; text-align: left; } .itinerary-detail time { font-weight: 400; } }
 
 .planner-back-records { display: none; }
+.travel-layout-control { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-left: auto; }
+.travel-layout-control .workspace-picker { width: 142px; }
+.travel-layout-control button { min-height: 44px; white-space: nowrap; }
+@media (min-width: 821px) { .planner-header { flex-wrap: wrap; } }
+@media (max-width: 820px) { .travel-layout-control { display: none; } }
 .panel-divider { display: none; }
 @media (min-width: 821px) {
   .planner-workspace { grid-template-columns: clamp(240px, calc((100% - 10px) * var(--time-weight, 52) / 100), calc(100% - 290px)) 10px minmax(0, 1fr); }
