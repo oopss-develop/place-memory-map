@@ -16,15 +16,27 @@ export function ActivityProgressProvider({ children }: { children: ReactNode }) 
   }), []);
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (busy) {
-        const activeScreen = Array.from(document.querySelectorAll(".journal-app")).find(screen => screen.getClientRects().length > 0);
-        const theme = getComputedStyle(activeScreen ?? document.documentElement);
-        setColors({ "--progress-color": theme.getPropertyValue("--primary"), "--progress-track": theme.getPropertyValue("--muted") } as CSSProperties);
-      }
       setVisible(busy);
     }, busy ? 120 : 0);
     return () => clearTimeout(timer);
   }, [busy]);
+  useEffect(() => {
+    if (!visible) return;
+    const syncColors = () => {
+      const activeScreen = Array.from(document.querySelectorAll(".journal-app")).find(screen => screen.getClientRects().length > 0);
+      const theme = getComputedStyle(activeScreen ?? document.documentElement);
+      const next = { "--progress-color": theme.getPropertyValue("--primary"), "--progress-track": theme.getPropertyValue("--muted") };
+      setColors(previous => {
+        const current = previous as typeof next | undefined;
+        return current?.["--progress-color"] === next["--progress-color"] && current?.["--progress-track"] === next["--progress-track"] ? previous : next as CSSProperties;
+      });
+    };
+    syncColors();
+    // The themed screen can change or finish mounting while a request is pending.
+    const observer = new MutationObserver(syncColors);
+    observer.observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ["data-theme", "class", "style", "hidden"] });
+    return () => observer.disconnect();
+  }, [visible]);
   return <ProgressContext.Provider value={update}>{visible && <Progress className="app-activity-progress" style={colors} label={Object.values(sources).at(-1) ?? "처리 중"} />}{children}</ProgressContext.Provider>;
 }
 export function useActivityProgress(active: boolean, label = "불러오는 중") {
