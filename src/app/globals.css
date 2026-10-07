@@ -121,6 +121,10 @@ button, input, textarea, select { font: inherit; }
 button, select { cursor: pointer; }
 ::selection { color: var(--primary-foreground); background: var(--primary); }
 :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+/* These controls provide their own ring, or use the surrounding input group ring. */
+[data-slot="input"]:focus-visible,
+[data-slot="textarea"]:focus-visible,
+[data-slot="input-group"] > [data-slot="input-group-control"]:focus-visible { outline: none; }
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-thumb { background: var(--input); border: 2px solid var(--background); border-radius: 8px; }
 
