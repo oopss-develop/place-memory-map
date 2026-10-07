@@ -68,6 +68,19 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
   const pulseMarkerStyle = selectedVisit?.markerStyle;
 
   useEffect(() => {
+    if (!ready || mapProvider === "osm" || !ref.current) return;
+    const observer = new ResizeObserver(() => {
+      const map = mapRef.current;
+      if (!map || !ref.current?.clientWidth || !ref.current.clientHeight) return;
+      const center = map.getCenter();
+      map.relayout();
+      map.setCenter(center);
+    });
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [ready, mapProvider]);
+
+  useEffect(() => {
     if (!apiKey || !ref.current || mapProvider === "osm") return;
     const timeout = window.setTimeout(() => setFailed(true), 12000);
     const boot = () => window.kakao?.maps.load(() => {

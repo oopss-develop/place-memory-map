@@ -60,6 +60,15 @@ export function OpenStreetMap<T extends MapPoint>({ visits, selectedId, manualMo
   const stateRef = useRef({ visits, selectedId, manualMode, onAnchorChange, onDismissPopup, onManualPoint });
 
   useEffect(() => {
+    if (!ready || !elementRef.current) return;
+    const observer = new ResizeObserver(() => {
+      if (elementRef.current?.clientWidth && elementRef.current.clientHeight) mapRef.current?.invalidateSize({ pan: false, debounceMoveend: true });
+    });
+    observer.observe(elementRef.current);
+    return () => observer.disconnect();
+  }, [ready]);
+
+  useEffect(() => {
     stateRef.current = { visits, selectedId, manualMode, onAnchorChange, onDismissPopup, onManualPoint };
   }, [manualMode, onAnchorChange, onDismissPopup, onManualPoint, selectedId, visits]);
 

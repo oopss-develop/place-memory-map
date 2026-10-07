@@ -325,6 +325,20 @@
 @media (max-width: 820px) { .trip-planner .itinerary-detail { align-items: flex-start; justify-content: flex-start; text-align: left; } .itinerary-detail time { font-weight: 400; } }
 
 .planner-back-records { display: none; }
+.panel-divider { display: none; }
+@media (min-width: 821px) {
+  .planner-workspace { grid-template-columns: clamp(240px, calc((100% - 10px) * var(--time-weight, 52) / 100), calc(100% - 290px)) 10px minmax(0, 1fr); }
+  .planner-map-panel { min-width: 0; }
+  .planner-map-panel .planner-map-canvas { flex: var(--map-height-weight, 62) 1 0; min-height: 200px; }
+  .planner-map-panel .planner-map-agenda { flex: var(--agenda-weight, 38) 1 0; min-height: 120px; max-height: none; }
+  .panel-divider { display: flex; flex-shrink: 0; align-items: center; justify-content: center; background: var(--muted); touch-action: none; user-select: none; }
+  .panel-divider.axis-x { width: 10px; cursor: col-resize; }
+  .panel-divider.axis-y { height: 10px; width: 100%; cursor: row-resize; }
+  .panel-divider span { width: 3px; height: 32px; border-radius: 2px; background: var(--muted-foreground); }
+  .panel-divider.axis-y span { width: 32px; height: 3px; }
+  .panel-divider:hover, .panel-divider[data-dragging="true"] { background: var(--accent); }
+  .panel-divider:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+}
 @media (max-width: 820px) {
  .trip-planner .planner-header { flex-wrap: wrap; }
  .trip-planner .planner-back-records { display: inline-flex; flex-shrink: 0; }
