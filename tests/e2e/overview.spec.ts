@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 const groupId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", otherGroup = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
 const visitId = "11111111-1111-4111-8111-111111111111", tripId = "22222222-2222-4222-8222-222222222222";
-const visit = { id: visitId, groupId: otherGroup, place: { id: "place", provider: "manual", name: "서울 숲", address: "서울", category: "산책", latitude: 37.54, longitude: 127.04 }, visitedOn: "2026-10-01", isPlanned: false, title: "함께 산책", note: "기억", rating: 5, tags: ["산책"], participants: [], photoUrls: [], markerStyle: "black-9", version: 1, updatedBy: "나" };
+const visit = { id: visitId, groupId: otherGroup, place: { id: "place", provider: "manual", name: "서울 숲", address: "서울", category: "산책", latitude: 37.54, longitude: 127.04 }, visitedOn: "2026-10-01", isPlanned: false, title: "함께 산책", note: "첫 번째 줄\n\n두 번째 줄", rating: 5, tags: ["산책"], participants: [], photoUrls: [], markerStyle: "black-9", version: 1, updatedBy: "나" };
 test.beforeEach(async ({ page }) => {
   await page.clock.install({ time: new Date("2026-10-07T03:00:00Z") });
   await page.addInitScript(({ visit, groupId, otherGroup, tripId }) => {
@@ -33,15 +33,30 @@ for (const width of [320, 360, 390, 821, 1280, 1440]) test(`overview fits at ${w
   await expect(page.getByRole("link", { name: /가을 여행/ })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && document.querySelector(".overview-app")!.scrollWidth <= innerWidth)).toBe(true);
   if (await page.locator(".overview-table").evaluate(el => (el as HTMLDetailsElement).open)) { await table.focus(); await page.keyboard.press("Enter"); } await page.screenshot({ path: test.info().outputPath(`overview-${width}.png`) });
+  await page.getByRole("button", { name: /서울 숲.*함께 산책/ }).click();
+  await expect(page.getByRole("dialog", { name: "방문 기록", exact: true })).toBeVisible();
+  await expect(page.locator(".visit-detail-memory p")).toHaveCSS("white-space", "pre-wrap");
+  expect(await page.locator(".visit-detail-card").evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+  await page.screenshot({ path: test.info().outputPath(`visit-card-${width}.png`) });
+  await page.getByRole("button", { name: "방문 기록 닫기", exact: true }).click();
   await page.getByRole("button", { name: "모아보기 지도 범위", exact: true }).click();
   await page.getByRole("menuitemradio", { name: "첫 지도", exact: true }).click();
   await expect(page.locator(".overview-totals")).toContainText("방문0회");
 });
 test("opens explicit record despite stored filters and explicit trip despite stored selection", async ({ page }) => {
   await page.goto("/overview");
-  await page.getByRole("link", { name: /서울 숲.*함께 산책/ }).click();
+  await page.getByRole("button", { name: /서울 숲.*함께 산책/ }).click();
+  await expect(page.getByRole("dialog", { name: "방문 기록", exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/overview$/);
+  await expect(page.locator(".visit-detail-card")).toContainText("서울 숲");
+  await expect(page.locator(".visit-detail-card")).toContainText("5.0");
+  await expect(page.locator(".visit-detail-memory p")).toHaveText("첫 번째 줄\n\n두 번째 줄");
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.goto(`/?groupId=${otherGroup}&visitId=${visitId}`);
   await expect(page.locator(".place-sheet")).toBeVisible();
   await expect(page.locator(".place-sheet")).toContainText("서울 숲");
+  await expect(page.locator(".sheet-note")).toHaveCSS("white-space", "pre-wrap");
   await page.goto("/overview");
   await page.getByRole("link", { name: /가을 여행/ }).click();
   await expect(page.locator(".planner-header h1")).toHaveText("가을 여행");

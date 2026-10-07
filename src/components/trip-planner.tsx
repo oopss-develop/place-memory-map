@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
+import { DesktopSidebarToggle, type useDesktopSidebar } from "./desktop-sidebar-toggle";
 import { PanelDivider } from "@/components/panel-divider";
 import { TravelLayoutControl, useTravelLayout } from "@/components/travel-layout-control";
 import { CalendarDays, ChevronLeft, ChevronRight, Download, MapPin, Plus, Search, X, Menu, Settings } from "lucide-react";
@@ -25,8 +26,8 @@ import type { Group, MapPoint, Place, ScheduleItem, Trip, TripRoute, Visit } fro
 interface Draft { requestId?: string; id?: string; version: number; startsAt: string; endsAt: string; title: string; note: string; place?: Place; newPlace: boolean; markerStyle: ScheduleItem["markerStyle"] }
 const zoneOptions = ["Asia/Seoul", "Asia/Tokyo", "Asia/Shanghai", "Asia/Taipei", "Asia/Bangkok", "Asia/Singapore", "Asia/Dubai", "Europe/Paris", "Europe/London", "Europe/Rome", "America/New_York", "America/Los_Angeles", "Pacific/Honolulu", "Australia/Sydney"];
 
-export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, initialVisit, initialTripId, onGroup, onClose }: {
-  viewerId?: string; groupId: string; groups: Group[]; visits: Visit[]; demo: boolean; initialVisit?: Visit; initialTripId?: string; onGroup: (id: string) => void; onClose: () => void;
+export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, initialVisit, initialTripId, sidebar, onGroup, onClose }: {
+  sidebar?: ReturnType<typeof useDesktopSidebar>; viewerId?: string; groupId: string; groups: Group[]; visits: Visit[]; demo: boolean; initialVisit?: Visit; initialTripId?: string; onGroup: (id: string) => void; onClose: () => void;
 }) {
   const [tripId, setTripId] = useState(initialTripId ?? "");
   const layout = useTravelLayout(viewerId);
@@ -255,10 +256,10 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
     } finally { setExporting(false); }
   }
 
-  return <section className={`trip-planner ${manual ? "is-manual" : ""}`} aria-label="여행 계획">
+  return <section className={`trip-planner ${sidebar?.collapsed ? "is-sidebar-collapsed" : ""} ${manual ? "is-manual" : ""}`} aria-label="여행 계획">
     {navigationOpen && <div className="planner-sidebar-backdrop" aria-hidden="true" onClick={() => setNavigationOpen(false)} />}
-    <aside ref={navigationRef} id="planner-navigation" className={`planner-sidebar ${navigationOpen ? "is-open" : ""}`} inert={isMobile && !navigationOpen} role={isMobile && navigationOpen ? "dialog" : undefined} aria-modal={isMobile && navigationOpen ? true : undefined} aria-label="여행 탐색">
-      <div className="planner-sidebar-brand"><Brand compact /><Button className="planner-sidebar-close" variant="ghost" size="icon" aria-label="여행 탐색 닫기" onClick={() => setNavigationOpen(false)}><X /></Button></div>
+    <aside ref={navigationRef} id="planner-navigation" className={`planner-sidebar ${navigationOpen ? "is-open" : ""}`} inert={isMobile ? !navigationOpen : sidebar?.collapsed} role={isMobile && navigationOpen ? "dialog" : undefined} aria-modal={isMobile && navigationOpen ? true : undefined} aria-label="여행 탐색">
+      <div className="planner-sidebar-brand"><Brand compact />{sidebar && <DesktopSidebarToggle collapsed={false} controls="planner-navigation" onChange={sidebar.setCollapsed} />}<Button className="planner-sidebar-close" variant="ghost" size="icon" aria-label="여행 탐색 닫기" onClick={() => setNavigationOpen(false)}><X /></Button></div>
       <div className="planner-sidebar-context">
         <div className="planner-picker-field"><span>함께 보는 지도</span><WorkspacePicker label="여행 계획 지도" value={groupId} options={groups.map(group => ({ value: group.id, label: group.name }))} disabled={busy} onChange={onGroup} /></div>
         <nav className="planner-view-switch" aria-label="지도 보기 방식"><button disabled={busy} onClick={onClose}>기록</button><button aria-current="page">여행 계획</button><Link href="/overview">모아보기</Link></nav>
@@ -269,7 +270,7 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
       <div className="planner-sidebar-footer"><Button variant="outline" onClick={() => { setNavigationOpen(false); openTrip(); }} disabled={!store.ready || busy}><Plus />새 여행</Button>{trip && <><Button variant="ghost" onClick={() => { setNavigationOpen(false); openTrip(trip); }} disabled={busy}><Settings />여행 설정</Button><Button variant="ghost" className="planner-export" onClick={() => void exportExcel()} disabled={busy || routeBusy || manual} aria-label="엑셀 다운로드" aria-busy={exporting}><Download />{exporting ? "저장 중…" : "엑셀 다운로드"}</Button></>}</div>
     </aside>
     <div className="planner-main" inert={isMobile && navigationOpen}>
-      <header className="planner-header"><Button variant="outline" className="planner-back-records" onClick={onClose}><ChevronLeft />기록으로</Button><div className="planner-heading"><Button variant="outline" className="planner-navigation-trigger" aria-label="여행 탐색 열기" aria-expanded={navigationOpen} aria-controls="planner-navigation" onClick={(event) => { navigationTrigger.current = event.currentTarget; setNavigationOpen(true); }}><Menu /></Button><div><h1>{trip?.name ?? "여행 계획"}</h1><p>{trip ? "시간표에서 일정을 정하고 지도에서 동선을 확인하세요." : "함께 떠날 여행의 장소와 시간을 계획하세요."}</p></div></div>{trip && <TravelLayoutControl layout={layout} />}{trip && <Button className="primary-button planner-add-schedule" onClick={() => createDraft()} disabled={busy}><Plus />일정 추가</Button>}</header>
+      <header className="planner-header">{sidebar?.collapsed && <DesktopSidebarToggle collapsed controls="planner-navigation" onChange={sidebar.setCollapsed} />}<Button variant="outline" className="planner-back-records" onClick={onClose}><ChevronLeft />기록으로</Button><div className="planner-heading"><Button variant="outline" className="planner-navigation-trigger" aria-label="여행 탐색 열기" aria-expanded={navigationOpen} aria-controls="planner-navigation" onClick={(event) => { navigationTrigger.current = event.currentTarget; setNavigationOpen(true); }}><Menu /></Button><div><h1>{trip?.name ?? "여행 계획"}</h1><p>{trip ? "시간표에서 일정을 정하고 지도에서 동선을 확인하세요." : "함께 떠날 여행의 장소와 시간을 계획하세요."}</p></div></div>{trip && <TravelLayoutControl layout={layout} />}{trip && <Button className="primary-button planner-add-schedule" onClick={() => createDraft()} disabled={busy}><Plus />일정 추가</Button>}</header>
     {!online && <div className="planner-message" role="status">오프라인 · 입력 내용은 초안으로 보관됩니다.</div>}
     {store.busy && <div className="saving-status" role="status">저장 중…</div>}
     {(message || store.error) && <div className={`planner-message ${store.error ? "has-error" : ""}`} role={store.error ? "alert" : "status"}>{store.error || message}<button aria-label="안내 닫기" onClick={() => setMessage("")}><X size={16} /></button>{store.error && <button onClick={() => void store.refresh().catch((error) => setMessage(error.message))}>다시 불러오기</button>}</div>}

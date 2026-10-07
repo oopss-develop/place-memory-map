@@ -82,3 +82,16 @@ export async function getDashboardData(db?:SupabaseClient,userId?:string,groupId
  if(!db||!userId)return {groups:demoGroups,members:demoMembers,visits:demoVisits,demoMode:true,activeGroupId:demoGroups[0]?.id};
  return materializeDashboard(db,await loadDashboardSnapshot(db,userId,groupId));
 }
+
+export async function loadVisitSnapshot(db: SupabaseClient, userId: string, visitId: string) {
+ const { data, error } = await db.from("visits").select("*,places(*),visit_participants(profiles(id,display_name)),visit_photos(id,storage_path,sort_order,deleted_at,upload_state)").eq("id", visitId).is("deleted_at", null).maybeSingle();
+ if (error) throw error;
+ if (!data) return null;
+ const row = data as unknown as VisitRow;
+ const membership = await db.from("group_members").select("role,groups(id,name,created_by)").eq("user_id", userId).eq("group_id", row.group_id).maybeSingle();
+ if (membership.error) throw membership.error;
+ if (!membership.data) return null;
+ const member = membership.data as unknown as MembershipRow;
+ const group: Group = { id: member.groups.id, name: member.groups.name, role: member.role, ownerId: member.groups.created_by, memberCount: 0 };
+ return { groups: [group], members: [], rows: [row], activeGroupId: row.group_id, etag: '"' + createHash("sha256").update(JSON.stringify({ row, group })).digest("hex") + '"' };
+}

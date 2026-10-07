@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { VisitDetailCard } from "./visit-detail-card";
 import { Brand } from "./brand";
 import { Button } from "./ui/button";
 import { WorkspacePicker } from "./workspace-picker";
@@ -18,6 +19,7 @@ export function VisitActivity({ data }: { data: OverviewData }) {
     <details className="overview-table"><summary>수치로 보기</summary><table><caption>{data.activityLabel}</caption><thead><tr><th scope="col">기간</th><th scope="col">방문 횟수</th></tr></thead><tbody>{data.activity.map(value => <tr key={value.date}><th scope="row">{value.date}</th><td>{value.count}회</td></tr>)}</tbody></table></details></section>;
 }
 export function OverviewScreen({ userId, demo = false }: { userId: string; demo?: boolean }) {
+  const [selectedVisit, setSelectedVisit] = useState<{ id: string; groupId: string }>();
   const [groupId, setGroupId] = useState<string>();
   const [period, setPeriod] = useState<OverviewPeriod>("all");
   const [theme, setTheme] = useState(DEFAULT_THEME);
@@ -33,7 +35,7 @@ export function OverviewScreen({ userId, demo = false }: { userId: string; demo?
     {data && <><dl className="overview-totals" aria-label="방문 완료 기록 요약">{([['장소', data.totals.places, '곳'], ['방문', data.totals.visits, '회'], ['사진', data.totals.photos, '장']] as const).map(([label, count, unit]) => <div key={label}><dt>{label}</dt><dd><strong>{count?.toLocaleString("ko-KR") ?? "—"}</strong><span>{unit}</span></dd></div>)}</dl><p className="overview-summary-note">방문 완료 기록 기준 · 방문 예정과 삭제한 기록 제외</p>
     {data.photoWarning && <div className="overview-warning" role="status"><p>{data.photoWarning}</p><Button variant="outline" disabled={loading} onClick={() => void refresh()}>사진 다시 불러오기</Button></div>}
     <div className="overview-top-grid"><VisitActivity data={data} /><section className="overview-section" aria-labelledby="tags-title"><div className="overview-section-heading"><h2 id="tags-title">자주 쓴 태그</h2><span>상위 5개</span></div>{data.tags.length ? <ol className="overview-tags">{data.tags.map(tag => <li key={tag.name}><span>{tag.name}</span><strong>방문 {tag.count}회</strong></li>)}</ol> : <p className="overview-empty">이 기간에 남긴 태그가 없어요.</p>}</section></div>
-    <div className="overview-bottom-grid"><section className="overview-section" aria-labelledby="recent-title"><div className="overview-section-heading"><h2 id="recent-title">최근 방문</h2><span>최신 6개</span></div>{data.recentVisits.length ? <ul className="overview-recent">{data.recentVisits.map(visit => <li key={visit.id}><Link href={`/?${new URLSearchParams({ groupId: visit.groupId, visitId: visit.id })}`}>{visit.photoUrl && <Image unoptimized src={visit.photoUrl} width={80} height={64} alt="" />}<div><strong>{visit.placeName}</strong>{visit.title && <span>{visit.title}</span>}<small>{visit.visitedOn} · {visit.groupName}</small></div><span className="overview-link-arrow" aria-hidden="true">→</span></Link></li>)}</ul> : <div className="overview-empty"><p>이 기간에 남긴 방문 기록이 없어요.</p><Link href={home}>지도에 기록 남기기 →</Link></div>}</section>
+    <div className="overview-bottom-grid"><section className="overview-section" aria-labelledby="recent-title"><div className="overview-section-heading"><h2 id="recent-title">최근 방문</h2><span>최신 6개</span></div>{data.recentVisits.length ? <ul className="overview-recent">{data.recentVisits.map(visit => <li key={visit.id}><button type="button" aria-haspopup="dialog" onClick={() => setSelectedVisit({ id: visit.id, groupId: visit.groupId })}>{visit.photoUrl && <Image unoptimized src={visit.photoUrl} width={80} height={64} alt="" />}<div><strong>{visit.placeName}</strong>{visit.title && <span>{visit.title}</span>}<small>{visit.visitedOn} · {visit.groupName}</small></div><span className="overview-link-arrow" aria-hidden="true">→</span></button></li>)}</ul> : <div className="overview-empty"><p>이 기간에 남긴 방문 기록이 없어요.</p><Link href={home}>지도에 기록 남기기 →</Link></div>}</section>
     <section className="overview-section" aria-labelledby="trips-title"><div className="overview-section-heading"><h2 id="trips-title">예정 여행</h2></div><p className="overview-summary-note">진행 중·예정 여행 · 기록 기간과 별도</p>{data.upcomingTrips.length ? <ul className="overview-trips">{data.upcomingTrips.map(trip => <li key={trip.id}><Link href={`/?${new URLSearchParams({ groupId: trip.groupId, tripId: trip.id, view: "travel" })}`}><small>{trip.ongoing ? "진행 중" : "예정"} · {trip.groupName}</small><strong>{trip.name}</strong><span>{trip.startDate} – {trip.endDate}</span></Link></li>)}</ul> : <div className="overview-empty"><p>진행 중이거나 예정된 여행이 없어요.</p><Link href={`${home}${groupId ? "&" : "?"}view=travel`}>여행 계획하기 →</Link></div>}</section></div></>}
-    </div></main>;
+    </div>{selectedVisit && <VisitDetailCard key={selectedVisit.id} visitId={selectedVisit.id} groupId={selectedVisit.groupId} groups={groups} demo={demo} onClose={() => setSelectedVisit(undefined)} />}</main>;
 }
