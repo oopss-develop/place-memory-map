@@ -27,6 +27,8 @@ export function useOverview(userId: string, demo: boolean, groupId: string | und
         if (groupId && !allowed.some(group => group.id === groupId)) throw Object.assign(new Error("이 지도의 접근 권한이 없습니다."), { status: 403 });
         const trips = allowed.flatMap(group => (JSON.parse(localStorage.getItem(`place-memory-trips-v1:${group.id}`) ?? "null") as { trips: Trip[] } | null)?.trips ?? []);
         data = aggregateOverview(allowed, (visits ?? demoVisits).map(overviewVisit), trips, period, groupId, new Date(), recentLimit);
+        const byId = new Map((visits ?? demoVisits).map(visit => [visit.id, visit]));
+        data.recentVisits = data.recentVisits.map(recent => ({ ...recent, visit: byId.get(recent.id) }));
       } else {
         const renew = Date.now() - cached.current.issuedAt >= 3540000;
         const params = new URLSearchParams({ period, recentLimit: String(recentLimit) });

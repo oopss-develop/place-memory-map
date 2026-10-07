@@ -11,7 +11,7 @@ export interface OverviewData {
   activity: Array<{ date: string; label: string; count: number }>;
   activityLabel: string;
   tags: Array<{ name: string; count: number }>;
-  recentVisits: Array<{ id: string; groupId: string; groupName: string; placeName: string; title: string; visitedOn: string; photoUrl?: string }>;
+  recentVisits: Array<{ id: string; groupId: string; groupName: string; placeName: string; title: string; visitedOn: string; photoUrl?: string; visit?: Visit }>;
   upcomingTrips: Array<Trip & { groupName: string; ongoing: boolean }>;
   photoWarning?: string;
 }

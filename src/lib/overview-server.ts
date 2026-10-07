@@ -2,8 +2,8 @@ import "server-only";
 import { createHash } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Group, Trip } from "@/types/domain";
-import { readPages } from "./data";
-import { aggregateOverview, completedPhotos, type OverviewPeriod, type OverviewVisit } from "./overview";
+import { readPages, materializeDashboard, type VisitRow } from "./data";
+import { aggregateOverview, type OverviewPeriod, type OverviewVisit } from "./overview";
 import { tripColumns } from "./trip-server";
 
 interface Membership { role: Group["role"]; groups: { id: string; name: string; created_by: string } }
@@ -29,24 +29,25 @@ export async function loadOverviewSnapshot(db: SupabaseClient, userId: string, p
   for (const photo of photos) { const list = byVisit.get(photo.visit_id) ?? []; list.push(photo); byVisit.set(photo.visit_id, list); }
   const visits: OverviewVisit[] = rows.map(row => ({ id: row.id, groupId: row.group_id, placeId: row.place_id, placeName: row.places.name, title: row.title, visitedOn: row.visited_on, isPlanned: row.is_planned, tags: row.tags ?? [], photos: (byVisit.get(row.id) ?? []).map(photo => ({ id: photo.id, path: photo.storage_path, order: photo.sort_order, deletedAt: photo.deleted_at, state: photo.upload_state })) }));
   const data = aggregateOverview(groups, visits, trips, period, groupId, now, recentLimit);
+  // Fetch full content only for the records already shown in the list.
+  const detailRows: VisitRow[] = [];
+  const recentIds = data.recentVisits.map(visit => visit.id);
+  for (let offset = 0; offset < recentIds.length; offset += 250) {
+    const batch = recentIds.slice(offset, offset + 250);
+    const details = await readPages<VisitRow>((from, to) => db.from("visits").select("*,places(*),visit_participants(profiles(id,display_name))").in("id", batch).in("group_id", ids).is("deleted_at", null).eq("is_planned", false).order("id").range(from, to));
+    detailRows.push(...details.map(row => ({ ...row, visit_photos: (byVisit.get(row.id) ?? []).map(photo => ({ ...photo })) })));
+  }
+  const found = new Set(detailRows.map(row => row.id));
+  data.recentVisits = data.recentVisits.filter(visit => found.has(visit.id));
   if (photoWarning) { data.photoWarning = photoWarning; data.totals.photos = null; }
-  const etag = '"' + createHash("sha256").update(JSON.stringify({ data, rows, photos })).digest("hex") + '"';
-  return { data, visits, etag };
+  const etag = '"' + createHash("sha256").update(JSON.stringify({ data, rows, photos, detailRows })).digest("hex") + '"';
+  return { data, visits, detailRows, etag };
 }
 export async function materializeOverview(db: SupabaseClient, snapshot: Awaited<ReturnType<typeof loadOverviewSnapshot>>) {
-  const data = { ...snapshot.data, recentVisits: snapshot.data.recentVisits.map(visit => ({ ...visit })) };
-  const byId = new Map(snapshot.visits.map(visit => [visit.id, visit]));
-  const requests = data.recentVisits.flatMap(visit => { const record = byId.get(visit.id); const photo = record && completedPhotos(record)[0]; return photo?.path ? [{ visitId: visit.id, path: photo.path }] : []; });
-  if (!requests.length) return data;
-  let failed = false;
-  for (let offset = 0; offset < requests.length; offset += 250) {
-    const batch = requests.slice(offset, offset + 250);
-    try {
-      const { data: links, error } = await db.storage.from("visit-photos").createSignedUrls(batch.map(request => request.path), 3600);
-      if (error) failed = true;
-      batch.forEach((request, index) => { const url = links?.[index]?.signedUrl; if (!url) failed = true; else data.recentVisits.find(visit => visit.id === request.visitId)!.photoUrl = url; });
-    } catch { failed = true; }
-  }
-  if (failed) data.photoWarning = "일부 사진을 불러오지 못했습니다. 통계와 기록은 계속 확인할 수 있어요.";
-  return data;
+  const details = await materializeDashboard(db, { groups: snapshot.data.groups, members: [], rows: snapshot.detailRows, activeGroupId: snapshot.data.groupId ?? "", etag: snapshot.etag });
+  const byId = new Map(details.visits.map(visit => [visit.id, visit]));
+  return { ...snapshot.data, photoWarning: snapshot.data.photoWarning ?? details.photoWarning, recentVisits: snapshot.data.recentVisits.map(recent => {
+    const visit = byId.get(recent.id);
+    return { ...recent, visit, photoUrl: visit?.photoUrls[0] };
+  }) };
 }
