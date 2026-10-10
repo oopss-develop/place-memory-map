@@ -821,3 +821,16 @@ button, select { cursor: pointer; }
  .journal-sidebar .record-list { flex: 0 0 auto; overflow: visible; }
  .journal-sidebar .sidebar-footer { position: sticky; bottom: 0; z-index: 3; background: var(--sidebar); }
 }
+.sticker-picker { min-width: 0; margin: 12px 0; padding: 10px; border: 1px solid var(--border); border-radius: 12px; }
+.sticker-series { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; max-width: 100%; }
+.sticker-series button { flex: 0 0 auto; min-height: 44px; padding: 8px 12px; border-radius: 10px; border: 1px solid #ddd; }
+.sticker-series button[aria-pressed="true"] { background: #e4eadf; border-color: #7b896b; }
+.sticker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px,1fr)); gap: 8px; max-height: 280px; overflow-y: auto; overscroll-behavior: contain; }
+.sticker-grid > button { min-width: 0; padding: 6px; border: 1px solid #ddd; border-radius: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; overflow-wrap: anywhere; }
+.sticker-image { display: inline-flex; max-width: 100%; width: 128px; flex-direction: column; align-items: center; gap: 4px; vertical-align: middle; }
+.sticker-image img { width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; }
+.sticker-grid .sticker-image { width: 80px; }
+.sticker-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+.sticker-controls .sticker-image { width: 80px; }
+.sticker-image button { min-height: 44px; padding: 6px 10px; border: 1px solid #ddd; border-radius: 8px; }
+.sticker-unavailable { color: #777; font-size: 12px; }

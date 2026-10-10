@@ -14,7 +14,10 @@
     "test:rls": "supabase test db",
     "quality:app": "npm run typecheck && npm run lint && npm run test && npm run test:db:embedded && npm run test:e2e && npm run build",
     "quality": "npm run typecheck && npm run lint && npm run test && npm run test:db:embedded && npm run test:rls && npm run test:e2e && npm run build",
-    "test:db:embedded": "node scripts/verify-visit-db.mjs"
+    "test:db:embedded": "node scripts/verify-visit-db.mjs",
+    "stickers:generate": "node scripts/generate-sticker-catalog.mjs",
+    "predev": "node scripts/generate-sticker-catalog.mjs",
+    "prebuild": "node scripts/generate-sticker-catalog.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

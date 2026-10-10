@@ -37,3 +37,37 @@ it("offers deletion only for the author's own comments and removes one after con
   expect(screen.getByText("다른 댓글")).toBeInTheDocument();
   expect(fetchMock.mock.calls[1][1].method).toBe("DELETE");
 });
+it("switches series, sends sticker-only and mixed comments, and preserves failed selections", async () => {
+  vi.stubGlobal("matchMedia", () => ({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() }));
+  const sticker = { id: "02_뚜냥/01_좋아요.png", name: "좋아요", src: "/good.png", animated: false };
+  const fetchMock = vi.fn().mockResolvedValueOnce(response({ comments: [] }))
+    .mockResolvedValueOnce(response({ series: [ { id: "01_우삼", name: "우삼", stickers: [] }, { id: "02_뚜냥", name: "뚜냥", stickers: [sticker] } ] }))
+    .mockRejectedValueOnce(new Error("offline"))
+    .mockResolvedValueOnce(response({ ok: true })).mockResolvedValueOnce(response({ comments: [{ id: "c", body: "", stickerId: sticker.id, sticker, authorName: "나", own: true, createdAt: "2026-10-10" }] }));
+  vi.stubGlobal("fetch", fetchMock); render(<VisitComments visitId="visit" />);
+  await screen.findByText("이 기록에 첫 댓글을 남겨 보세요.");
+  fireEvent.click(screen.getByRole("button", { name: "이모티콘 선택" }));
+  fireEvent.click(await screen.findByRole("button", { name: "뚜냥" }));
+  fireEvent.click(screen.getByRole("button", { name: "좋아요 선택" }));
+  fireEvent.click(screen.getByRole("button", { name: "댓글 등록" }));
+  await screen.findByRole("alert");
+  expect(screen.getByRole("button", { name: "선택 취소" })).toBeEnabled();
+  fireEvent.click(screen.getByRole("button", { name: "댓글 등록" }));
+  await screen.findByText("나");
+  expect(fetchMock.mock.calls[2][1].body).toBe(fetchMock.mock.calls[3][1].body);
+  expect(JSON.parse(fetchMock.mock.calls[2][1].body)).toMatchObject({ body: "", stickerId: sticker.id });
+  expect(screen.queryByRole("button", { name: "선택 취소" })).toBeNull();
+  fetchMock.mockResolvedValueOnce(response({ series: [{ id: "02_뚜냥", name: "뚜냥", stickers: [sticker] }] }));
+  fireEvent.click(screen.getByRole("button", { name: "이모티콘 선택" }));
+  fireEvent.click(await screen.findByRole("button", { name: "좋아요 선택" }));
+  fireEvent.change(screen.getByLabelText("댓글 남기기"), { target: { value: "함께" } });
+  fetchMock.mockResolvedValueOnce(response({ ok: true })).mockResolvedValueOnce(response({ comments: [] }));
+  fireEvent.click(screen.getByRole("button", { name: "댓글 등록" }));
+  await waitFor(() => expect(screen.getByLabelText("댓글 남기기")).toHaveValue(""));
+  expect(JSON.parse(fetchMock.mock.calls[6][1].body)).toMatchObject({ body: "함께", stickerId: sticker.id });
+});
+it("retains text and shows a fallback for removed stickers", async () => {
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(response({ comments: [{ id: "c", body: "기억", stickerId: "gone/a.png", sticker: null, authorName: "나", createdAt: "2026-10-10", own: false }] })));
+  render(<VisitComments visitId="visit" />);
+  await screen.findByText("사용할 수 없는 이모티콘"); expect(screen.getByText("기억")).toBeInTheDocument();
+});

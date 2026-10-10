@@ -2,6 +2,7 @@
 import { beforeEach, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({ auth: vi.fn(), rpc: vi.fn(), from: vi.fn() }));
 vi.mock("@/lib/access-workspace", () => ({ getAccessWorkspaceUser: mocks.auth }));
+vi.mock("@/lib/stickers", () => ({ resolveSticker: (id: string) => id === "01_우삼/01_안녕.png" ? { id, name: "안녕", src: "/hi.png", animated: false } : null }));
 import { GET, POST, DELETE } from "./route";
 const id = "10000000-0000-4000-8000-000000000001";
 const context = { params: Promise.resolve({ visitId: id }) };
@@ -37,4 +38,13 @@ it("does not return comments for a deleted or inaccessible visit", async () => {
   mocks.from.mockReturnValue(query);
   expect((await GET(request({}), context)).status).toBe(404);
   expect(mocks.from).toHaveBeenCalledTimes(1);
+});
+it("accepts catalog stickers alone and with text, rejecting unknown or unsafe identifiers", async () => {
+  for (const body of ["", " 안녕 "]) {
+    expect((await POST(request({ id, body, stickerId: "01_우삼/01_안녕.png" }), context)).status).toBe(200);
+    expect(mocks.rpc).toHaveBeenLastCalledWith("add_visit_comment", { target_visit: id, comment_id: id, comment_body: body.trim(), comment_sticker_id: "01_우삼/01_안녕.png" });
+  }
+  mocks.rpc.mockClear();
+  for (const stickerId of ["../hi.png", "a/b.gif", "/stickers/hi.png", "a/b.preview.png"]) expect((await POST(request({ id, stickerId }), context)).status).toBe(400);
+  expect(mocks.rpc).not.toHaveBeenCalled();
 });
