@@ -23,7 +23,11 @@ await sharp({ create: { width: 512, height: 512, channels: 3, background: "#a5ad
 
 // ICO supports PNG entries; include native sizes for browser and desktop tabs.
 const sizes = [16, 32, 48];
-const frames = await Promise.all(sizes.map(size => sharp(source).resize(size, size).png().toBuffer()));
+// Next.js's ICO decoder requires embedded PNGs to use RGBA (PNG color type 6).
+const frames = await Promise.all(sizes.map(size => sharp(source).resize(size, size).ensureAlpha().png().toBuffer()));
+for (const frame of frames) {
+  if (frame[25] !== 6) throw new Error("ICO frames must be RGBA PNG images");
+}
 const header = Buffer.alloc(6 + frames.length * 16);
 header.writeUInt16LE(1, 2);
 header.writeUInt16LE(frames.length, 4);
