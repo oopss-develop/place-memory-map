@@ -55,10 +55,10 @@ it("reads legacy text comments when only the sticker column is missing", async (
   const commentsQuery = { select, eq: () => commentsQuery, order: () => commentsQuery, range: page };
   select.mockReturnValue(commentsQuery);
   const visitQuery = { select: () => visitQuery, eq: () => visitQuery, is: () => visitQuery, maybeSingle: async () => ({ data: { id }, error: null }) };
-  mocks.from.mockImplementation(table => table === "visits" ? visitQuery : commentsQuery);
+  mocks.from.mockImplementation(table => table === "visits" ? visitQuery : table === "profiles" ? { select: () => ({ in: async () => ({ data: [{ id, display_name: "우삼" }], error: null }) }) } : commentsQuery);
   const result = await GET(request({}), context);
   expect(result.status).toBe(200);
-  expect(await result.json()).toMatchObject({ stickersAvailable: false, comments: [{ body: "이전 댓글", sticker: null }], warning: expect.stringContaining("202610100002_comment_stickers.sql") });
+  expect(await result.json()).toMatchObject({ stickersAvailable: false, comments: [{ body: "이전 댓글", sticker: null }], warning: expect.stringContaining("repair-comment-setup.sql") });
   expect(select.mock.calls[1][0]).not.toContain("sticker_id");
 });
 it("reports missing comment migrations instead of suggesting an ineffective retry", async () => {
@@ -71,5 +71,20 @@ it("reports missing comment migrations instead of suggesting an ineffective retr
     expect(await result.json()).toMatchObject({ code: "COMMENT_SCHEMA_MISSING", error: expect.stringContaining("Supabase SQL Editor") });
     mocks.rpc.mockResolvedValueOnce({ error: { code: "PGRST202" } });
     expect(await (await POST(request({ id, body: "hi" }), context)).json()).toMatchObject({ code: "COMMENT_SCHEMA_MISSING" });
+  } finally { log.mockRestore(); }
+});
+
+it("does not depend on a PostgREST relationship for author names", async () => {
+  const select = vi.fn();
+  const commentsQuery = { select, eq: () => commentsQuery, order: () => commentsQuery, range: async () => ({ data: [{ id, body: "댓글", author_id: id, created_at: "2026-10-11", sticker_id: null }], error: null }) };
+  select.mockReturnValue(commentsQuery);
+  const visitQuery = { select: () => visitQuery, eq: () => visitQuery, is: () => visitQuery, maybeSingle: async () => ({ data: { id }, error: null }) };
+  mocks.from.mockImplementation(table => table === "visits" ? visitQuery : table === "profiles" ? { select: () => ({ in: async () => ({ data: null, error: { code: "42501" } }) }) } : commentsQuery);
+  const log = vi.spyOn(console,"error").mockImplementation(() => {});
+  try {
+    const result = await GET(request({}),context);
+    expect(result.status).toBe(200);
+    expect(await result.json()).toMatchObject({ comments: [{ body: "댓글", authorName: "멤버" }] });
+    expect(select.mock.calls[0][0]).not.toContain("profiles(");
   } finally { log.mockRestore(); }
 });

@@ -10,3 +10,13 @@ select name, applied from (
 ) checks order by name;
 -- Run missing migration files in name order, then refresh the schema cache:
 notify pgrst, 'reload schema';
+
+-- Extra diagnostics: these do not expose comment contents or user identities.
+select has_table_privilege('authenticated','public.visit_comments','SELECT') as comments_select_allowed;
+select conname, pg_get_constraintdef(oid) as definition from pg_constraint
+where conrelid = to_regclass('public.visit_comments');
+select policyname,cmd,qual,with_check from pg_policies
+where schemaname='public' and tablename in ('visit_comments','comment_notifications');
+select to_regprocedure('public.add_visit_comment(uuid,uuid,text)') is not null as text_rpc_exists,
+  to_regprocedure('public.add_visit_comment(uuid,uuid,text,text)') is not null as sticker_rpc_exists,
+  to_regprocedure('public.delete_visit_comment(uuid,uuid)') is not null as delete_rpc_exists;

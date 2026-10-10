@@ -10,7 +10,7 @@ const createSchema = z.object({ id: uuid, body: z.string().trim().max(1000).defa
 type DbError = { code?: string; message?: string };
 const missingSchema = (error: DbError) => ["42P01", "42703", "PGRST200", "PGRST202", "PGRST204", "PGRST205"].includes(error.code ?? "");
 const missingStickerColumn = (error: DbError) => ["42703", "PGRST204"].includes(error.code ?? "") && /sticker_id/i.test(error.message ?? "");
-const schemaMessage = "댓글 DB 업데이트가 필요합니다. Supabase SQL Editor에서 202610100001_visit_comments.sql과 202610100002_comment_stickers.sql 중 아직 적용하지 않은 파일을 순서대로 실행해 주세요.";
+const schemaMessage = "댓글 DB 구조를 확인해 주세요. Supabase SQL Editor에서 repair-comment-setup.sql을 실행해 주세요. 기존 댓글은 유지됩니다.";
 const headers = { "Cache-Control": "private, no-store" };
 
 export async function GET(_request: Request, { params }: Context) {
@@ -25,7 +25,7 @@ export async function GET(_request: Request, { params }: Context) {
     const comments = [];
     let stickersAvailable = true;
     for (let offset = 0; ; offset += 250) {
-      const fetchPage = (withStickers: boolean) => auth.supabase.from("visit_comments").select(withStickers ? "id,body,sticker_id,author_id,created_at,profiles(display_name)" : "id,body,author_id,created_at,profiles(display_name)").eq("visit_id", visitId).order("created_at").order("id").range(offset, offset + 249);
+      const fetchPage = (withStickers: boolean) => auth.supabase.from("visit_comments").select(withStickers ? "id,body,sticker_id,author_id,created_at" : "id,body,author_id,created_at").eq("visit_id", visitId).order("created_at").order("id").range(offset, offset + 249);
       let result = await fetchPage(stickersAvailable);
       if (result.error && stickersAvailable && missingStickerColumn(result.error)) {
         stickersAvailable = false;
@@ -33,18 +33,27 @@ export async function GET(_request: Request, { params }: Context) {
       }
       const { data, error } = result;
       if (error) throw error;
-      type CommentRow = { id: string; body: string; sticker_id?: string | null; author_id: string; created_at: string; profiles: { display_name: string } | { display_name: string }[] | null };
-      for (const row of (data ?? []) as unknown as CommentRow[]) {
-        const profile = Array.isArray(row.profiles) ? row.profiles[0] : row.profiles;
-        comments.push({ id: row.id, body: row.body, stickerId: row.sticker_id ?? null, sticker: resolveSticker(row.sticker_id), authorName: profile?.display_name ?? "멤버", createdAt: row.created_at, own: row.author_id === auth.userId });
+      type CommentRow = { id: string; body: string; sticker_id?: string | null; author_id: string; created_at: string; profiles?: { display_name: string } | { display_name: string }[] | null };
+      const rows = (data ?? []) as unknown as CommentRow[];
+      const authors = [...new Set(rows.map(row => row.author_id))];
+      const names = new Map<string, string>();
+      if (authors.length) {
+        try {
+          const profiles = await auth.supabase.from("profiles").select("id,display_name").in("id", authors);
+          if (!profiles.error) for (const profile of profiles.data ?? []) names.set(profile.id, profile.display_name);
+          else console.error("[visit-comments] author lookup failed", { code: profiles.error.code });
+        } catch { console.error("[visit-comments] author lookup failed", { code: "NETWORK" }); }
+      }
+      for (const row of rows) {
+        comments.push({ id: row.id, body: row.body, stickerId: row.sticker_id ?? null, sticker: resolveSticker(row.sticker_id), authorName: names.get(row.author_id) ?? "멤버", createdAt: row.created_at, own: row.author_id === auth.userId });
       }
       if (!data || data.length < 250) break;
     }
-    return NextResponse.json({ comments, stickersAvailable, ...(!stickersAvailable ? { warning: "텍스트 댓글은 사용할 수 있어요. 이모티콘 댓글을 사용하려면 Supabase SQL Editor에서 202610100002_comment_stickers.sql을 적용해 주세요." } : {}) }, { headers });
+    return NextResponse.json({ comments, stickersAvailable, ...(!stickersAvailable ? { warning: "텍스트 댓글은 사용할 수 있어요. 이모티콘 댓글을 사용하려면 Supabase SQL Editor에서 repair-comment-setup.sql을 실행해 주세요." } : {}) }, { headers });
   } catch (reason) {
     const error = reason as DbError;
     console.error("[visit-comments] GET failed", { code: error.code ?? "UNKNOWN" });
-    return NextResponse.json({ error: missingSchema(error) ? schemaMessage : "댓글을 불러오지 못했습니다. 다시 시도해 주세요.", ...(missingSchema(error) ? { code: "COMMENT_SCHEMA_MISSING" } : {}) }, { status: 503, headers });
+    return NextResponse.json({ error: (missingSchema(error) ? schemaMessage : error.code === "42501" ? "댓글 조회 권한 설정을 확인해 주세요. Supabase SQL Editor에서 repair-comment-setup.sql을 실행해 주세요." : "댓글을 불러오지 못했습니다. 다시 시도해 주세요.") + (error.code ? ` (DB 코드: ${error.code})` : ""), ...(missingSchema(error) ? { code: "COMMENT_SCHEMA_MISSING" } : {}) }, { status: 503, headers });
   }
 }
 

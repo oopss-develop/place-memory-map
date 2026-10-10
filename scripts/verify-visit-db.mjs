@@ -54,6 +54,13 @@ try {
   const commentId="60000000-0000-4000-8000-000000000001";
   const addComment=(body="함께해서 좋았어요")=>query("select public.add_visit_comment($1,$2,$3) as comment",[visit.id,commentId,body]);
   await addComment(); await addComment();
+  const beforeRepair = await query("select id,body,sticker_id from public.visit_comments order by id");
+  const repairSql = await readFile("supabase/repair-comment-setup.sql","utf8");
+  await db.exec("reset role");
+  await db.exec(repairSql); await db.exec(repairSql);
+  await identity(owner);
+  check(await query("select id,body,sticker_id from public.visit_comments order by id"), beforeRepair, "repair is repeatable and preserves comments");
+  check(await count("comment_notifications"),1,"repair does not duplicate existing notifications");
   check(await count("visit_comments"),1,"comment retries create only one comment");
   await rejects("select public.add_visit_comment($1,$2,$3)",[visit.id,commentId,"changed"],"40001");
   await rejects("select public.add_visit_comment($1,$2,$3)",[visit.id,"60000000-0000-4000-8000-000000000002"," "],"22023");
