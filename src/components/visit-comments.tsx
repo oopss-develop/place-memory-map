@@ -9,6 +9,7 @@ import type { Sticker } from "@/lib/stickers";
 import { StickerPicker } from "./sticker-picker";
 import { StickerImage } from "./sticker-image";
 
+interface CommentsResult { comments: Comment[]; warning?: string; stickersAvailable?: boolean }
 interface Comment { stickerId?: string | null; sticker?: Sticker | null; id: string; body: string; authorName: string; createdAt: string; own: boolean }
 export function VisitComments({ visitId, demo = false }: { visitId: string; demo?: boolean }) {
   const inputId = useId();
@@ -20,20 +21,22 @@ export function VisitComments({ visitId, demo = false }: { visitId: string; demo
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [warning, setWarning] = useState("");
+  const [stickersAvailable, setStickersAvailable] = useState(true);
   const pending = useRef<{ id: string; body: string; stickerId: string | null } | null>(null);
   const mounted = useRef(true);
   const lock = useRef(false);
   const confirmation = useConfirmation();
   const url = `/api/visits/${visitId}/comments`;
   async function refresh(signal?: AbortSignal) {
-    const result = await apiRequest<{ comments: Comment[] }>(url, { signal });
-    if (mounted.current && !signal?.aborted) setComments(result.comments);
+    const result = await apiRequest<CommentsResult>(url, { signal });
+    if (mounted.current && !signal?.aborted) { setComments(result.comments); setWarning(result.warning ?? ""); setStickersAvailable(result.stickersAvailable !== false); }
   }
   useEffect(() => {
     mounted.current = true;
     if (demo) return () => { mounted.current = false; };
     const controller = new AbortController();
-    apiRequest<{ comments: Comment[] }>(url, { signal: controller.signal }).then(result => setComments(result.comments)).catch(reason => {
+    apiRequest<CommentsResult>(url, { signal: controller.signal }).then(result => { if (!controller.signal.aborted) { setComments(result.comments); setWarning(result.warning ?? ""); setStickersAvailable(result.stickersAvailable !== false); } }).catch(reason => {
       if (!controller.signal.aborted) setError((reason as Error).message);
     }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => { mounted.current = false; controller.abort(); };
@@ -87,8 +90,8 @@ export function VisitComments({ visitId, demo = false }: { visitId: string; demo
       {loading && <p role="status">댓글을 불러오는 중…</p>}
       {!loading && !error && !comments.length && <p className="visit-comments-muted">이 기록에 첫 댓글을 남겨 보세요.</p>}
       <ul className="visit-comments-list">{comments.map(comment => <li key={comment.id} id={`comment-${comment.id}`} tabIndex={-1}><div className="visit-comment-meta"><strong>{comment.authorName}</strong><time dateTime={comment.createdAt}>{new Date(comment.createdAt).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })}</time>{comment.own && <Button variant="ghost" size="sm" disabled={busy} onClick={() => void remove(comment.id)} aria-label={`${comment.authorName}님의 댓글 삭제`}>삭제</Button>}</div>{comment.body && <p>{comment.body}</p>}{comment.stickerId && (comment.sticker ? <StickerImage key={comment.sticker.src} sticker={comment.sticker} /> : <p className="sticker-unavailable">사용할 수 없는 이모티콘</p>)}</li>)}</ul>
-      <form onSubmit={send}><label htmlFor={inputId}>댓글 남기기</label><textarea id={inputId} value={draft} onChange={event => setDraft(event.target.value)} maxLength={1000} rows={3} disabled={busy} placeholder="함께한 순간에 대한 이야기를 남겨 주세요." /><div className="sticker-controls"><Button type="button" variant="ghost" disabled={busy} aria-expanded={picker} onClick={() => setPicker(!picker)}>{sticker ? "이모티콘 교체" : "이모티콘 선택"}</Button>{sticker && <><StickerImage key={sticker.src} sticker={sticker} /><Button type="button" variant="ghost" disabled={busy} onClick={() => { setSticker(null); setPicker(false); }}>선택 취소</Button></>}</div>{picker && !busy && <StickerPicker onSelect={selected => { setSticker(selected); setPicker(false); }} />}<div className="visit-comment-actions"><small>{draft.length}/1000</small><Button type="submit" disabled={busy || loading || (!draft.trim() && !sticker)}>{busy ? "처리 중…" : "댓글 등록"}</Button></div></form>
-      {error && <p role="alert" className="visit-comments-error">{error}</p>}{notice && <p role="status">{notice}</p>}
+      <form onSubmit={send}><label htmlFor={inputId}>댓글 남기기</label><textarea id={inputId} value={draft} onChange={event => setDraft(event.target.value)} maxLength={1000} rows={3} disabled={busy} placeholder="함께한 순간에 대한 이야기를 남겨 주세요." /><div className="sticker-controls"><Button type="button" variant="ghost" disabled={busy || !stickersAvailable} aria-expanded={picker} onClick={() => setPicker(!picker)}>{sticker ? "이모티콘 교체" : "이모티콘 선택"}</Button>{sticker && <><StickerImage key={sticker.src} sticker={sticker} /><Button type="button" variant="ghost" disabled={busy} onClick={() => { setSticker(null); setPicker(false); }}>선택 취소</Button></>}</div>{picker && !busy && <StickerPicker onSelect={selected => { setSticker(selected); setPicker(false); }} />}<div className="visit-comment-actions"><small>{draft.length}/1000</small><Button type="submit" disabled={busy || loading || (!draft.trim() && !sticker)}>{busy ? "처리 중…" : "댓글 등록"}</Button></div></form>
+      {warning && <p role="status" className="visit-comments-muted">{warning}</p>}{error && <p role="alert" className="visit-comments-error">{error}</p>}{notice && <p role="status">{notice}</p>}
     </>}{confirmation.dialog}
   </section>;
 }

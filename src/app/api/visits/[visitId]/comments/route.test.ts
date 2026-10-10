@@ -48,3 +48,28 @@ it("accepts catalog stickers alone and with text, rejecting unknown or unsafe id
   for (const stickerId of ["../hi.png", "a/b.gif", "/stickers/hi.png", "a/b.preview.png"]) expect((await POST(request({ id, stickerId }), context)).status).toBe(400);
   expect(mocks.rpc).not.toHaveBeenCalled();
 });
+it("reads legacy text comments when only the sticker column is missing", async () => {
+  const select = vi.fn();
+  const page = vi.fn().mockResolvedValueOnce({ data: null, error: { code: "42703", message: "column visit_comments.sticker_id does not exist" } })
+    .mockResolvedValueOnce({ data: [{ id, body: "이전 댓글", author_id: id, created_at: "2026-10-10", profiles: { display_name: "우삼" } }], error: null });
+  const commentsQuery = { select, eq: () => commentsQuery, order: () => commentsQuery, range: page };
+  select.mockReturnValue(commentsQuery);
+  const visitQuery = { select: () => visitQuery, eq: () => visitQuery, is: () => visitQuery, maybeSingle: async () => ({ data: { id }, error: null }) };
+  mocks.from.mockImplementation(table => table === "visits" ? visitQuery : commentsQuery);
+  const result = await GET(request({}), context);
+  expect(result.status).toBe(200);
+  expect(await result.json()).toMatchObject({ stickersAvailable: false, comments: [{ body: "이전 댓글", sticker: null }], warning: expect.stringContaining("202610100002_comment_stickers.sql") });
+  expect(select.mock.calls[1][0]).not.toContain("sticker_id");
+});
+it("reports missing comment migrations instead of suggesting an ineffective retry", async () => {
+  const query = { select: () => query, eq: () => query, is: () => query, maybeSingle: async () => ({ data: { id }, error: null }), order: () => query, range: async () => ({ data: null, error: { code: "PGRST205" } }) };
+  mocks.from.mockReturnValue(query);
+  const log = vi.spyOn(console,"error").mockImplementation(() => {});
+  try {
+    const result = await GET(request({}), context);
+    expect(result.status).toBe(503);
+    expect(await result.json()).toMatchObject({ code: "COMMENT_SCHEMA_MISSING", error: expect.stringContaining("Supabase SQL Editor") });
+    mocks.rpc.mockResolvedValueOnce({ error: { code: "PGRST202" } });
+    expect(await (await POST(request({ id, body: "hi" }), context)).json()).toMatchObject({ code: "COMMENT_SCHEMA_MISSING" });
+  } finally { log.mockRestore(); }
+});

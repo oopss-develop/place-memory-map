@@ -94,3 +94,11 @@ it("scrolls to the linked comment and marks it read only once it is visible", as
     expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ commentId: id });
   } finally { window.history.replaceState({}, "", "/"); }
 });
+it("keeps text comments usable while reporting a missing sticker migration", async () => {
+  vi.stubGlobal("fetch",vi.fn().mockResolvedValue(response({ comments: [], stickersAvailable: false, warning: "DB 업데이트 필요" })));
+  render(<VisitComments visitId="visit" />);
+  await screen.findByText("DB 업데이트 필요");
+  expect(screen.getByRole("button", { name: "이모티콘 선택" })).toBeDisabled();
+  fireEvent.change(screen.getByLabelText("댓글 남기기"), { target: { value: "텍스트 댓글" } });
+  expect(screen.getByRole("button", { name: "댓글 등록" })).toBeEnabled();
+});
