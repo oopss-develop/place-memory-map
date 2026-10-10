@@ -39,7 +39,13 @@ test("shows the comment section in overview and map details on phone and desktop
   await comments.getByRole("button", { name: "크게 보기" }).click();
   const full = page.getByRole("dialog", { name: "이모티콘 전체보기" });
   await expect(full).toBeVisible();
-  expect(await full.evaluate(el => el.getBoundingClientRect().width <= window.innerWidth)).toBe(true);
+  const placement = await full.evaluate(el => {
+    const rect = el.getBoundingClientRect();
+    return { x: Math.abs(rect.x + rect.width / 2 - window.innerWidth / 2), y: Math.abs(rect.y + rect.height / 2 - window.innerHeight / 2), fits: rect.width <= window.innerWidth && rect.height <= window.innerHeight };
+  });
+  expect(placement.fits).toBe(true);
+  expect(placement.x).toBeLessThanOrEqual(1);
+  expect(placement.y).toBeLessThanOrEqual(1);
   await full.getByRole("button", { name: "안녕0 선택", exact: true }).click();
   await expect(full).toHaveCount(0);
   await expect(comments.locator("img")).toHaveCount(1);

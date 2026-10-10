@@ -851,3 +851,12 @@ button, select { cursor: pointer; }
 .sticker-picker-expanded { border: none; margin: 0; padding: 16px; display: flex; flex-direction: column; max-height: calc(100dvh - 36px); }
 .sticker-picker-expanded .sticker-series { flex-shrink: 0; }
 .sticker-picker-expanded .sticker-grid { max-height: none; min-height: 0; overflow-y: auto; }
+/* Keep every modal centered, including dialogs added in future features. */
+dialog:modal {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100dvh - 32px);
+  border-radius: 12px;
+}
