@@ -40,7 +40,7 @@ export function OverviewScreen({ userId, demo = false }: { userId: string; demo?
   const choosePeriod = (value: string) => { setSelectedVisit(undefined); setRecentLimit(6); setPeriod(value as OverviewPeriod); };
   const closeDetail = () => { document.querySelector<HTMLButtonElement>(".overview-recent .interactive-row[aria-expanded='true']")?.focus(); setSelectedVisit(undefined); };
   const selectedRecord = data?.recentVisits.find(visit => visit.id === selectedVisit?.id && visit.groupId === selectedVisit.groupId);
-  const detail = selectedRecord?.visit && <VisitDetailCard key={selectedRecord.id} detail={{ visit: selectedRecord.visit, groupName: selectedRecord.groupName, photoWarning: data?.photoWarning }} onClose={closeDetail} onRetry={() => void refresh()} />;
+  const detail = selectedRecord?.visit && <VisitDetailCard demo={demo} key={selectedRecord.id} detail={{ visit: selectedRecord.visit, groupName: selectedRecord.groupName, photoWarning: data?.photoWarning }} onClose={closeDetail} onRetry={() => void refresh()} />;
   useEffect(() => {
     // Warm the browser's image cache for the records already loaded in this scope.
     const images = [...new Set(data?.recentVisits.flatMap(recent => recent.visit?.photoUrls ?? []) ?? [])].map(url => {
