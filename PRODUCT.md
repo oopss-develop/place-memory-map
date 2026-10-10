@@ -16,7 +16,7 @@ Couples and small private groups who want to remember places they visited togeth
 
 ## Product Purpose
 
-Place Memory Map turns shared place visits into a private, editable map journal. Success means a signed-in member can find or pin a place, attach a dated memory with companions and photos, and every member of the same group can see and maintain it without exposing it to outsiders.
+우뚜막 turns shared place visits into a private, editable map journal. Success means a signed-in member can find or pin a place, attach a dated memory with companions and photos, and every member of the same group can see and maintain it without exposing it to outsiders.
 
 ## Positioning
 
@@ -42,7 +42,7 @@ Members switch between private groups, search Korean businesses through Kakao, a
 
 ## Brand Commitments
 
-Product name: Place Memory Map. Korean is the primary interface language. The experience must use a clean, organized shadcn interface with neutral surfaces and consistent typography and component placement.
+Product name: 우뚜막. Korean is the primary interface language. The experience must use a clean, organized shadcn interface with neutral surfaces and consistent typography and component placement.
 
 ## Evidence on Hand
 

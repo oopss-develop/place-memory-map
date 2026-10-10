@@ -30,7 +30,7 @@ function setupSheet(sheet: ExcelJS.Worksheet, title: string, subtitle: string, c
   sheet.getCell(2, 1).font = { name: "맑은 고딕", size: 10, color: { argb: colors.ink } };
   sheet.getCell(2, 1).alignment = { wrapText: true, vertical: "middle" };
   sheet.getRow(2).height = 34;
-  sheet.headerFooter.oddFooter = "&LPlace Memory Map&R&P / &N";
+  sheet.headerFooter.oddFooter = "&L우뚜막&R&P / &N";
 }
 
 function header(sheet: ExcelJS.Worksheet, labels: string[]) {
@@ -61,7 +61,7 @@ function timeRange(item: ScheduleItem) {
 export function createTripWorkbook(trip: Trip, inputItems: ScheduleItem[], date: string, provider: "kakao" | "osm", mapImage: ExportMapImage) {
   const items = inputItems.filter((item) => item.tripId === trip.id).sort((a, b) => a.startsAt.localeCompare(b.startsAt) || a.id.localeCompare(b.id));
   const workbook = new ExcelJS.Workbook();
-  workbook.creator = "Place Memory Map";
+  workbook.creator = "우뚜막";
   const subtitle = `${trip.startDate} – ${trip.endDate} · 현지 시각 (${trip.timeZone}) · ${items.length}개 일정`;
   const dates = tripDates(trip);
   const plan = workbook.addWorksheet("여행 계획표");

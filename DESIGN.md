@@ -1,5 +1,5 @@
 ---
-name: Place Memory Map
+name: 우뚜막
 description: A clean, organized private map journal using shadcn/ui New York and Neutral surfaces.
 colors:
   primary: "#18181b"
@@ -109,7 +109,7 @@ components:
     rounded: "{rounded.sheet}"
     padding: "20px"
 ---
-# Design System: Place Memory Map
+# Design System: 우뚜막
 
 ## Overview
 

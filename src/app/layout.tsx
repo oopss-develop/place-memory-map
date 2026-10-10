@@ -19,10 +19,10 @@ const serif = Gowun_Batang({
 });
 
 export const metadata: Metadata = {
-  title: "Place Memory Map — 함께 남기는 장소 기록",
+  title: "우뚜막 — 함께 남기는 장소 기록",
   description: "커플과 작은 그룹을 위한 비공개 여행 기록 지도",
-  applicationName: "Place Memory Map",
-  appleWebApp: { capable: true, title: "Place Map", statusBarStyle: "default" },
+  applicationName: "우뚜막",
+  appleWebApp: { capable: true, title: "우뚜막", statusBarStyle: "default" },
   formatDetection: { telephone: false },
 };
 
