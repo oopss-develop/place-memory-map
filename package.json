@@ -16,8 +16,11 @@
     "quality": "npm run typecheck && npm run lint && npm run test && npm run test:db:embedded && npm run test:rls && npm run test:e2e && npm run build",
     "test:db:embedded": "node scripts/verify-visit-db.mjs",
     "stickers:generate": "node scripts/generate-sticker-catalog.mjs",
-    "predev": "node scripts/generate-sticker-catalog.mjs",
-    "prebuild": "node scripts/generate-sticker-catalog.mjs"
+    "predev": "node scripts/generate-sticker-catalog.mjs && node scripts/generate-backup-support.mjs",
+    "prebuild": "node scripts/generate-sticker-catalog.mjs && node scripts/generate-backup-support.mjs",
+    "backup:restore": "node scripts/restore-backup.mjs",
+    "backup:download": "node scripts/download-backup.mjs",
+    "test:backup": "node scripts/verify-backup-files.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -28,8 +31,10 @@
     "exceljs": "^4.4.0",
     "heic2any": "^0.0.4",
     "html-to-image": "^1.11.13",
+    "jszip": "^3.10.1",
     "lucide-react": "^1.46.0",
     "next": "16.3.5",
+    "pg": "^8.23.1",
     "radix-ui": "^1.6.7",
     "react": "19.2.8",
     "react-dom": "19.2.8",

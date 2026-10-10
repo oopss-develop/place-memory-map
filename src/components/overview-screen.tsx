@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ArrowRight, Plus } from "lucide-react";
 import { useActivityProgress } from "./activity-progress";
 import { VisitDetailCard } from "./visit-detail-card";
+import { WorkspaceBackup } from "./workspace-backup";
 import { CommentNotifications } from "./comment-notifications";
 import { Brand } from "./brand";
 import { Button } from "./ui/button";
@@ -53,7 +54,7 @@ export function OverviewScreen({ userId, demo = false }: { userId: string; demo?
   return <main className="journal-app overview-app" data-theme={theme}><div className="overview-shell">
     <header className="overview-header"><Link href="/" aria-label="기록 화면으로"><Brand compact /></Link><nav className="overview-nav" aria-label="지도 보기 방식"><Link href={home}>기록</Link><Link href={`${home}${groupId ? "&" : "?"}view=travel`}>여행 계획</Link><Link href="/overview" aria-current="page">모아보기</Link></nav></header>
     <div className="overview-title"><div><h1>모아보기</h1><p>함께 남긴 방문 기록을 한눈에.</p></div><Button variant="outline" disabled={loading} onClick={() => void refresh()}>{loading ? "불러오는 중…" : "새로고침"}</Button></div>
-    <div className="overview-notification-entry"><CommentNotifications demo={demo} /></div><div className="overview-controls"><div><label>지도 범위</label><WorkspacePicker label="모아보기 지도 범위" value={groupId ?? "all"} options={[{ value: "all", label: "전체 지도" }, ...groups.map(group => ({ value: group.id, label: group.name }))]} onChange={chooseGroup} /></div><div><label>기록 기간</label><WorkspacePicker label="모아보기 기록 기간" value={period} options={[{ value: "all", label: "전체 기간" }, { value: "year", label: "올해" }, { value: "month", label: "이번 달" }]} searchable={false} onChange={choosePeriod} /></div></div>
+    <div className="overview-notification-entry"><CommentNotifications demo={demo} /><WorkspaceBackup userId={userId} demo={demo} /></div><div className="overview-controls"><div><label>지도 범위</label><WorkspacePicker label="모아보기 지도 범위" value={groupId ?? "all"} options={[{ value: "all", label: "전체 지도" }, ...groups.map(group => ({ value: group.id, label: group.name }))]} onChange={chooseGroup} /></div><div><label>기록 기간</label><WorkspacePicker label="모아보기 기록 기간" value={period} options={[{ value: "all", label: "전체 기간" }, { value: "year", label: "올해" }, { value: "month", label: "이번 달" }]} searchable={false} onChange={choosePeriod} /></div></div>
     {error && <div className="overview-warning" role="alert"><p>{error}</p><Button variant="outline" onClick={() => void refresh()}>다시 시도</Button>{groupId && <Button variant="ghost" onClick={() => setGroupId(undefined)}>전체 지도로 돌아가기</Button>}<Link href="/">기록으로 돌아가기</Link>{error.includes("로그인") && <Link href="/login?next=%2Foverview">로그인</Link>}</div>}
     {!data && !error && <p className="overview-loading" role="status">방문 기록을 모으고 있어요…</p>}
     {data && <><dl className="overview-totals" aria-label="방문 완료 기록 요약">{([['장소', data.totals.places, '곳'], ['방문', data.totals.visits, '회'], ['사진', data.totals.photos, '장']] as const).map(([label, count, unit]) => <div key={label}><dt>{label}</dt><dd><strong>{count?.toLocaleString("ko-KR") ?? "—"}</strong><span>{unit}</span></dd></div>)}</dl><p className="overview-summary-note">방문 완료 기록 기준 · 방문 예정과 삭제한 기록 제외</p>

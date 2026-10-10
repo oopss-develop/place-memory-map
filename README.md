@@ -138,3 +138,8 @@ Docker 없는 환경에서는 `npm run test:db:embedded`로 전체 마이그레�
 배포 전 `supabase/migrations/202610100004_comment_notifications.sql`을 적용하세요. 기존 최근 30일 댓글도 목록에 추가됩니다. 원격 DB 적용은 별도로 필요합니다.
 
 댓글 테이블이 이미 있는데 댓글 조회가 실패하는 경우 생성용 마이그레이션을 다시 실행하지 말고 `supabase/repair-comment-setup.sql`을 SQL Editor에서 실행하세요. 기존 댓글·즐겨찾기·읽음 상태를 유지하며 반복 실행할 수 있습니다. 복구 SQL은 `node scripts/generate-comment-repair.mjs`로 원본 마이그레이션에서 재생성합니다. 구조·권한 확인용 SQL은 `supabase/check-comment-setup.sql`입니다. API 오류의 DB 코드는 추가 진단에 사용할 수 있습니다.
+
+
+### 전체 백업과 복원
+
+지도·여행·모아보기의 **전체 백업**에서 사진 원본과 기록·댓글·여행 일정·이모티콘을 ZIP으로 내려받습니다. 파일 검사, 오프라인 기록보기, 기존 데이터를 덮어쓰지 않는 PC 복원 도구와 대용량 폴더 백업 도구를 제공합니다. 배포 전에 `supabase/migrations/202610110001_workspace_backup.sql`을 적용하세요. [백업·복원 안내](docs/backup/README.md)를 확인하세요. 실제 운영 백업은 배포 후 버튼으로 직접 내려받아 보관해야 합니다.
