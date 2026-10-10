@@ -1,1 +1,2229 @@
-[]
+[
+  {
+    "id": "검은별",
+    "name": "검은별",
+    "stickers": [
+      {
+        "id": "검은별/검은별_검은_별_가_미소_짓는_0604.gif",
+        "name": "검은별_검은_별_가_미소_짓는_0604",
+        "src": "/stickers/%EA%B2%80%EC%9D%80%EB%B3%84/%EA%B2%80%EC%9D%80%EB%B3%84_%EA%B2%80%EC%9D%80_%EB%B3%84_%EA%B0%80_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0604.gif?v=36627e921336b98d",
+        "animated": true,
+        "previewSrc": "/sticker-previews/36627e921336b98d9d9c082412b5bf7ae38855ee4fc5dc780f5f2d02c5748f67.png"
+      },
+      {
+        "id": "검은별/검은별_검은_별_가_미소_짓는_0650.gif",
+        "name": "검은별_검은_별_가_미소_짓는_0650",
+        "src": "/stickers/%EA%B2%80%EC%9D%80%EB%B3%84/%EA%B2%80%EC%9D%80%EB%B3%84_%EA%B2%80%EC%9D%80_%EB%B3%84_%EA%B0%80_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0650.gif?v=18415b2fb9ef2984",
+        "animated": true,
+        "previewSrc": "/sticker-previews/18415b2fb9ef2984d3df3ad1d286affdb9e741a1a52ec837dc792a99523617fd.png"
+      },
+      {
+        "id": "검은별/검은별_분홍색_난간_위에_얌전히_앉아_있는_검은_별_0659.gif",
+        "name": "검은별_분홍색_난간_위에_얌전히_앉아_있는_검은_별_0659",
+        "src": "/stickers/%EA%B2%80%EC%9D%80%EB%B3%84/%EA%B2%80%EC%9D%80%EB%B3%84_%EB%B6%84%ED%99%8D%EC%83%89_%EB%82%9C%EA%B0%84_%EC%9C%84%EC%97%90_%EC%96%8C%EC%A0%84%ED%9E%88_%EC%95%89%EC%95%84_%EC%9E%88%EB%8A%94_%EA%B2%80%EC%9D%80_%EB%B3%84_0659.gif?v=0151ada6ae902b63",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0151ada6ae902b63033484063f02a40a1f3ed8d93bce05dcf52544e2d21b04ab.png"
+      },
+      {
+        "id": "검은별/검은별_핑크색_사스마타에_찔려_깜짝_놀란_몬스터의_0623.gif",
+        "name": "검은별_핑크색_사스마타에_찔려_깜짝_놀란_몬스터의_0623",
+        "src": "/stickers/%EA%B2%80%EC%9D%80%EB%B3%84/%EA%B2%80%EC%9D%80%EB%B3%84_%ED%95%91%ED%81%AC%EC%83%89_%EC%82%AC%EC%8A%A4%EB%A7%88%ED%83%80%EC%97%90_%EC%B0%94%EB%A0%A4_%EA%B9%9C%EC%A7%9D_%EB%86%80%EB%9E%80_%EB%AA%AC%EC%8A%A4%ED%84%B0%EC%9D%98_0623.gif?v=a0077ac6751e2658",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a0077ac6751e2658449698e6bef93ead84bab27b2eb4483efa0e8f9c4e83bdb7.png"
+      }
+    ]
+  },
+  {
+    "id": "기타",
+    "name": "기타",
+    "stickers": [
+      {
+        "id": "기타/기타_꽃_캐릭터가_주먹_쥐고_응원_0626.gif",
+        "name": "기타_꽃_캐릭터가_주먹_쥐고_응원_0626",
+        "src": "/stickers/%EA%B8%B0%ED%83%80/%EA%B8%B0%ED%83%80_%EA%BD%83_%EC%BA%90%EB%A6%AD%ED%84%B0%EA%B0%80_%EC%A3%BC%EB%A8%B9_%EC%A5%90%EA%B3%A0_%EC%9D%91%EC%9B%90_0626.gif?v=761cd5ff192bc0c4",
+        "animated": true,
+        "previewSrc": "/sticker-previews/761cd5ff192bc0c4a0433e04573f47e8b290f9d014078c29c730c6c8a33029b9.png"
+      },
+      {
+        "id": "기타/기타_책상_위에_놓인_풀뽑기_검정_5급_수험서_0713.gif",
+        "name": "기타_책상_위에_놓인_풀뽑기_검정_5급_수험서_0713",
+        "src": "/stickers/%EA%B8%B0%ED%83%80/%EA%B8%B0%ED%83%80_%EC%B1%85%EC%83%81_%EC%9C%84%EC%97%90_%EB%86%93%EC%9D%B8_%ED%92%80%EB%BD%91%EA%B8%B0_%EA%B2%80%EC%A0%95_5%EA%B8%89_%EC%88%98%ED%97%98%EC%84%9C_0713.gif?v=680f791b768e172e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/680f791b768e172eae4e0f076510eeb397ef8da28ded0ffbd9c89accc3ef8518.png"
+      }
+    ]
+  },
+  {
+    "id": "랏코",
+    "name": "랏코",
+    "stickers": [
+      {
+        "id": "랏코/랏코_검을_등에_메고_망토를_두른_채_늠름하게_걷는_2122.gif",
+        "name": "랏코_검을_등에_메고_망토를_두른_채_늠름하게_걷는_2122",
+        "src": "/stickers/%EB%9E%8F%EC%BD%94/%EB%9E%8F%EC%BD%94_%EA%B2%80%EC%9D%84_%EB%93%B1%EC%97%90_%EB%A9%94%EA%B3%A0_%EB%A7%9D%ED%86%A0%EB%A5%BC_%EB%91%90%EB%A5%B8_%EC%B1%84_%EB%8A%A0%EB%A6%84%ED%95%98%EA%B2%8C_%EA%B1%B7%EB%8A%94_2122.gif?v=33fa220441654271",
+        "animated": true,
+        "previewSrc": "/sticker-previews/33fa220441654271f9346f3ae51aec19baddc6c84289192a9f202c629035c08a.png"
+      },
+      {
+        "id": "랏코/랏코_딸기_파르페를_기대하며_행복해하는_2118.gif",
+        "name": "랏코_딸기_파르페를_기대하며_행복해하는_2118",
+        "src": "/stickers/%EB%9E%8F%EC%BD%94/%EB%9E%8F%EC%BD%94_%EB%94%B8%EA%B8%B0_%ED%8C%8C%EB%A5%B4%ED%8E%98%EB%A5%BC_%EA%B8%B0%EB%8C%80%ED%95%98%EB%A9%B0_%ED%96%89%EB%B3%B5%ED%95%B4%ED%95%98%EB%8A%94_2118.gif?v=f2773d757f4ae7e0",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f2773d757f4ae7e000c6f69577e67a8c4618f3654e1560944e717066cf227469.png"
+      },
+      {
+        "id": "랏코/랏코_목도리를_두르고_수줍게_달콤한_음료를_마시는_2116.gif",
+        "name": "랏코_목도리를_두르고_수줍게_달콤한_음료를_마시는_2116",
+        "src": "/stickers/%EB%9E%8F%EC%BD%94/%EB%9E%8F%EC%BD%94_%EB%AA%A9%EB%8F%84%EB%A6%AC%EB%A5%BC_%EB%91%90%EB%A5%B4%EA%B3%A0_%EC%88%98%EC%A4%8D%EA%B2%8C_%EB%8B%AC%EC%BD%A4%ED%95%9C_%EC%9D%8C%EB%A3%8C%EB%A5%BC_%EB%A7%88%EC%8B%9C%EB%8A%94_2116.gif?v=15a0a2829e42d418",
+        "animated": true,
+        "previewSrc": "/sticker-previews/15a0a2829e42d41862600361d3daed36c9366ebeb7d777b8d30c71d6525bb755.png"
+      },
+      {
+        "id": "랏코/랏코_털이_복슬복슬_부푼_나이프와_포크로_철판_요리를_먹는_2112.gif",
+        "name": "랏코_털이_복슬복슬_부푼_나이프와_포크로_철판_요리를_먹는_2112",
+        "src": "/stickers/%EB%9E%8F%EC%BD%94/%EB%9E%8F%EC%BD%94_%ED%84%B8%EC%9D%B4_%EB%B3%B5%EC%8A%AC%EB%B3%B5%EC%8A%AC_%EB%B6%80%ED%91%BC_%EB%82%98%EC%9D%B4%ED%94%84%EC%99%80_%ED%8F%AC%ED%81%AC%EB%A1%9C_%EC%B2%A0%ED%8C%90_%EC%9A%94%EB%A6%AC%EB%A5%BC_%EB%A8%B9%EB%8A%94_2112.gif?v=b2919c5c0cf6ff7c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/b2919c5c0cf6ff7cb9d14f90fab7a5b310491333fad800c582427ac3a51a4207.png"
+      }
+    ]
+  },
+  {
+    "id": "모몽가",
+    "name": "모몽가",
+    "stickers": [
+      {
+        "id": "모몽가/모몽가_가_눈물을_글썽이며_뒤돌아보는_슬픈_표정_2090.gif",
+        "name": "모몽가_가_눈물을_글썽이며_뒤돌아보는_슬픈_표정_2090",
+        "src": "/stickers/%EB%AA%A8%EB%AA%BD%EA%B0%80/%EB%AA%A8%EB%AA%BD%EA%B0%80_%EA%B0%80_%EB%88%88%EB%AC%BC%EC%9D%84_%EA%B8%80%EC%8D%BD%EC%9D%B4%EB%A9%B0_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EB%8A%94_%EC%8A%AC%ED%94%88_%ED%91%9C%EC%A0%95_2090.gif?v=377ce5b5f103b876",
+        "animated": true,
+        "previewSrc": "/sticker-previews/377ce5b5f103b8769e5d830d78b69be9f8254668f5e06429861db1eea8fe46cb.png"
+      },
+      {
+        "id": "모몽가/모몽가_눈물을_글썽이며_무서워서_땀을_흘리고_떠는_0259.gif",
+        "name": "모몽가_눈물을_글썽이며_무서워서_땀을_흘리고_떠는_0259",
+        "src": "/stickers/%EB%AA%A8%EB%AA%BD%EA%B0%80/%EB%AA%A8%EB%AA%BD%EA%B0%80_%EB%88%88%EB%AC%BC%EC%9D%84_%EA%B8%80%EC%8D%BD%EC%9D%B4%EB%A9%B0_%EB%AC%B4%EC%84%9C%EC%9B%8C%EC%84%9C_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EA%B3%A0_%EB%96%A0%EB%8A%94_0259.gif?v=6ad0ae25b2f8bd16",
+        "animated": true,
+        "previewSrc": "/sticker-previews/6ad0ae25b2f8bd16eb631e6b2a245341eecbfa32e7b138a6a4f284d30a33d44a.png"
+      },
+      {
+        "id": "모몽가/모몽가_볼을_붉히며_푹신한_꼬리를_흔드는_0212.gif",
+        "name": "모몽가_볼을_붉히며_푹신한_꼬리를_흔드는_0212",
+        "src": "/stickers/%EB%AA%A8%EB%AA%BD%EA%B0%80/%EB%AA%A8%EB%AA%BD%EA%B0%80_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%ED%91%B9%EC%8B%A0%ED%95%9C_%EA%BC%AC%EB%A6%AC%EB%A5%BC_%ED%9D%94%EB%93%9C%EB%8A%94_0212.gif?v=99d0f41989bc9c5d",
+        "animated": true,
+        "previewSrc": "/sticker-previews/99d0f41989bc9c5d1642d5a638755f243e030e806a3cd4abe940076b771a3a7d.png"
+      },
+      {
+        "id": "모몽가/모몽가_줄무늬_죄수복을_입고_밥그릇을_든_0618.gif",
+        "name": "모몽가_줄무늬_죄수복을_입고_밥그릇을_든_0618",
+        "src": "/stickers/%EB%AA%A8%EB%AA%BD%EA%B0%80/%EB%AA%A8%EB%AA%BD%EA%B0%80_%EC%A4%84%EB%AC%B4%EB%8A%AC_%EC%A3%84%EC%88%98%EB%B3%B5%EC%9D%84_%EC%9E%85%EA%B3%A0_%EB%B0%A5%EA%B7%B8%EB%A6%87%EC%9D%84_%EB%93%A0_0618.gif?v=eb1ff4029da3964e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/eb1ff4029da3964eda806130a026783e2cc3b591500343f118be4c5ba6e96003.png"
+      },
+      {
+        "id": "모몽가/모몽가_풀밭_위를_반짝이는_눈으로_신나게_미끄러지는_0189.gif",
+        "name": "모몽가_풀밭_위를_반짝이는_눈으로_신나게_미끄러지는_0189",
+        "src": "/stickers/%EB%AA%A8%EB%AA%BD%EA%B0%80/%EB%AA%A8%EB%AA%BD%EA%B0%80_%ED%92%80%EB%B0%AD_%EC%9C%84%EB%A5%BC_%EB%B0%98%EC%A7%9D%EC%9D%B4%EB%8A%94_%EB%88%88%EC%9C%BC%EB%A1%9C_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%AF%B8%EB%81%84%EB%9F%AC%EC%A7%80%EB%8A%94_0189.gif?v=68ede6f69521032b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/68ede6f69521032bc6bc117f73f7865de30552769aeae89f2ed587f8a09820b2.png"
+      },
+      {
+        "id": "모몽가/모몽가_핑크_하트_리본을_달고_깜찍하게_미소_짓는_0220.gif",
+        "name": "모몽가_핑크_하트_리본을_달고_깜찍하게_미소_짓는_0220",
+        "src": "/stickers/%EB%AA%A8%EB%AA%BD%EA%B0%80/%EB%AA%A8%EB%AA%BD%EA%B0%80_%ED%95%91%ED%81%AC_%ED%95%98%ED%8A%B8_%EB%A6%AC%EB%B3%B8%EC%9D%84_%EB%8B%AC%EA%B3%A0_%EA%B9%9C%EC%B0%8D%ED%95%98%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0220.gif?v=722beb0454ff3312",
+        "animated": true,
+        "previewSrc": "/sticker-previews/722beb0454ff3312dd9e61a5e1b33a999ecb21957c8a3ac50d629c1535c06baa.png"
+      },
+      {
+        "id": "모몽가/모몽가_하늘다람쥐가_나무_그루터기에_앉아_눈망울을_글썽이는_2091.gif",
+        "name": "모몽가_하늘다람쥐가_나무_그루터기에_앉아_눈망울을_글썽이는_2091",
+        "src": "/stickers/%EB%AA%A8%EB%AA%BD%EA%B0%80/%EB%AA%A8%EB%AA%BD%EA%B0%80_%ED%95%98%EB%8A%98%EB%8B%A4%EB%9E%8C%EC%A5%90%EA%B0%80_%EB%82%98%EB%AC%B4_%EA%B7%B8%EB%A3%A8%ED%84%B0%EA%B8%B0%EC%97%90_%EC%95%89%EC%95%84_%EB%88%88%EB%A7%9D%EC%9A%B8%EC%9D%84_%EA%B8%80%EC%8D%BD%EC%9D%B4%EB%8A%94_2091.gif?v=f819fd3cc6893d1d",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f819fd3cc6893d1d7c8b396ca204c7556fcb90b26e1249fe6d9d4d7a4502d8a9.png"
+      },
+      {
+        "id": "모몽가/모몽가_하늘다람쥐가_돌을_쥐고_미소_짓는_2096.gif",
+        "name": "모몽가_하늘다람쥐가_돌을_쥐고_미소_짓는_2096",
+        "src": "/stickers/%EB%AA%A8%EB%AA%BD%EA%B0%80/%EB%AA%A8%EB%AA%BD%EA%B0%80_%ED%95%98%EB%8A%98%EB%8B%A4%EB%9E%8C%EC%A5%90%EA%B0%80_%EB%8F%8C%EC%9D%84_%EC%A5%90%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_2096.gif?v=2cb6a9cdb57d7b43",
+        "animated": true,
+        "previewSrc": "/sticker-previews/2cb6a9cdb57d7b4343c75587e4e49d1baf35f80c8adcd413db9405bd51a2ae75.png"
+      }
+    ]
+  },
+  {
+    "id": "세이렌",
+    "name": "세이렌",
+    "stickers": [
+      {
+        "id": "세이렌/세이렌_두_손을_흔들며_밝게_미소_짓는_2232.gif",
+        "name": "세이렌_두_손을_흔들며_밝게_미소_짓는_2232",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%EB%91%90_%EC%86%90%EC%9D%84_%ED%9D%94%EB%93%A4%EB%A9%B0_%EB%B0%9D%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_2232.gif?v=47b2d9d882eacc3f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/47b2d9d882eacc3fb5af4d43998ca6399de3a7a61b4af6345649152ec1f7bd4e.png"
+      },
+      {
+        "id": "세이렌/세이렌_마이크를_잡고_즐겁게_노래_부르는_음표_2238.gif",
+        "name": "세이렌_마이크를_잡고_즐겁게_노래_부르는_음표_2238",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A5%BC_%EC%9E%A1%EA%B3%A0_%EC%A6%90%EA%B2%81%EA%B2%8C_%EB%85%B8%EB%9E%98_%EB%B6%80%EB%A5%B4%EB%8A%94_%EC%9D%8C%ED%91%9C_2238.gif?v=0fdb95521f2da331",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0fdb95521f2da33165bf49a6034ae244a93a3d6d031a7dd41c1400de3441d962.png"
+      },
+      {
+        "id": "세이렌/세이렌_물뿌리개로_화분의_꽃에_물을_주는_2233.gif",
+        "name": "세이렌_물뿌리개로_화분의_꽃에_물을_주는_2233",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%EB%AC%BC%EB%BF%8C%EB%A6%AC%EA%B0%9C%EB%A1%9C_%ED%99%94%EB%B6%84%EC%9D%98_%EA%BD%83%EC%97%90_%EB%AC%BC%EC%9D%84_%EC%A3%BC%EB%8A%94_2233.gif?v=59540d52b08f8d1d",
+        "animated": true,
+        "previewSrc": "/sticker-previews/59540d52b08f8d1d9b7ba912c5b4705c468443a42c65b64f74b48dc57582ac62.png"
+      },
+      {
+        "id": "세이렌/세이렌_베개를_꼭_안고_별과_달_아래서_잠든_2236.gif",
+        "name": "세이렌_베개를_꼭_안고_별과_달_아래서_잠든_2236",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%EB%B2%A0%EA%B0%9C%EB%A5%BC_%EA%BC%AD_%EC%95%88%EA%B3%A0_%EB%B3%84%EA%B3%BC_%EB%8B%AC_%EC%95%84%EB%9E%98%EC%84%9C_%EC%9E%A0%EB%93%A0_2236.gif?v=faab10677b070ea7",
+        "animated": true,
+        "previewSrc": "/sticker-previews/faab10677b070ea7804de1a5c29b829cd635a466ba9f6f51ecca73afc884a0c3.png"
+      },
+      {
+        "id": "세이렌/세이렌_빗속에서_파란_우산을_들고_미소_짓는_2235.gif",
+        "name": "세이렌_빗속에서_파란_우산을_들고_미소_짓는_2235",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%EB%B9%97%EC%86%8D%EC%97%90%EC%84%9C_%ED%8C%8C%EB%9E%80_%EC%9A%B0%EC%82%B0%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_2235.gif?v=7ff1849110d9973f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/7ff1849110d9973f1f04081f2b01fb8e7c196c6e6018134c6baa96ee19d0266a.png"
+      },
+      {
+        "id": "세이렌/세이렌_수영튜브를_타고_비치볼_놀이를_즐기는_2237.gif",
+        "name": "세이렌_수영튜브를_타고_비치볼_놀이를_즐기는_2237",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%EC%88%98%EC%98%81%ED%8A%9C%EB%B8%8C%EB%A5%BC_%ED%83%80%EA%B3%A0_%EB%B9%84%EC%B9%98%EB%B3%BC_%EB%86%80%EC%9D%B4%EB%A5%BC_%EC%A6%90%EA%B8%B0%EB%8A%94_2237.gif?v=976b3a819633a4ab",
+        "animated": true,
+        "previewSrc": "/sticker-previews/976b3a819633a4abdc2ed70fdd36b558e50c7e34ec0453d8ad58047536c51aee.png"
+      },
+      {
+        "id": "세이렌/세이렌_요리사_모자를_쓰고_빨간_냄비에_스튜를_끓이는_2234.gif",
+        "name": "세이렌_요리사_모자를_쓰고_빨간_냄비에_스튜를_끓이는_2234",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%EC%9A%94%EB%A6%AC%EC%82%AC_%EB%AA%A8%EC%9E%90%EB%A5%BC_%EC%93%B0%EA%B3%A0_%EB%B9%A8%EA%B0%84_%EB%83%84%EB%B9%84%EC%97%90_%EC%8A%A4%ED%8A%9C%EB%A5%BC_%EB%81%93%EC%9D%B4%EB%8A%94_2234.gif?v=e9fdf023fdc12e29",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e9fdf023fdc12e2927bfe4f35c0b5dae5fd9d277ec3fcb1471f615ec4f2f3e59.png"
+      },
+      {
+        "id": "세이렌/세이렌_인어_가_반짝이는_선물_상자를_열며_기뻐하는_2241.gif",
+        "name": "세이렌_인어_가_반짝이는_선물_상자를_열며_기뻐하는_2241",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%EC%9D%B8%EC%96%B4_%EA%B0%80_%EB%B0%98%EC%A7%9D%EC%9D%B4%EB%8A%94_%EC%84%A0%EB%AC%BC_%EC%83%81%EC%9E%90%EB%A5%BC_%EC%97%B4%EB%A9%B0_%EA%B8%B0%EB%BB%90%ED%95%98%EB%8A%94_2241.gif?v=4ec0d2b76a938735",
+        "animated": true,
+        "previewSrc": "/sticker-previews/4ec0d2b76a93873530e5d57606fd0b24bf7cc6ed3be7b8f38f22e93e275c95e6.png"
+      },
+      {
+        "id": "세이렌/세이렌_카레라이스를_맛있게_먹는_2242.gif",
+        "name": "세이렌_카레라이스를_맛있게_먹는_2242",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%EC%B9%B4%EB%A0%88%EB%9D%BC%EC%9D%B4%EC%8A%A4%EB%A5%BC_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EB%8A%94_2242.gif?v=732ebb47e3ec9ed6",
+        "animated": true,
+        "previewSrc": "/sticker-previews/732ebb47e3ec9ed62ba2776e4f6de01172492403be82649644d85837dcebd70b.png"
+      },
+      {
+        "id": "세이렌/세이렌_커다란_얼굴로_간식_먹기_2184.gif",
+        "name": "세이렌_커다란_얼굴로_간식_먹기_2184",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%EC%BB%A4%EB%8B%A4%EB%9E%80_%EC%96%BC%EA%B5%B4%EB%A1%9C_%EA%B0%84%EC%8B%9D_%EB%A8%B9%EA%B8%B0_2184.gif?v=ae782679b91226fc",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ae782679b91226fc117b808744eaa9b19aaeb77296ed1a42bac0b5dfbaa081c2.png"
+      },
+      {
+        "id": "세이렌/세이렌_핑크_하트를_꼭_안고_웃는_2239.gif",
+        "name": "세이렌_핑크_하트를_꼭_안고_웃는_2239",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%ED%95%91%ED%81%AC_%ED%95%98%ED%8A%B8%EB%A5%BC_%EA%BC%AD_%EC%95%88%EA%B3%A0_%EC%9B%83%EB%8A%94_2239.gif?v=c56ca596ab16aee1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c56ca596ab16aee13da66526e2ebff2bb8768a419bc5f7c771d988aee5c6d5ae.png"
+      },
+      {
+        "id": "세이렌/세이렌_화가_나서_주먹을_쥐고_소리치는_2231.gif",
+        "name": "세이렌_화가_나서_주먹을_쥐고_소리치는_2231",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%ED%99%94%EA%B0%80_%EB%82%98%EC%84%9C_%EC%A3%BC%EB%A8%B9%EC%9D%84_%EC%A5%90%EA%B3%A0_%EC%86%8C%EB%A6%AC%EC%B9%98%EB%8A%94_2231.gif?v=a9ede381177668c1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a9ede381177668c1796e542c82b6e56734eb19f42325dc01d0ef7b9f7fce9ae7.png"
+      },
+      {
+        "id": "세이렌/세이렌_환하게_웃으며_마라카스를_흔드는_2240.gif",
+        "name": "세이렌_환하게_웃으며_마라카스를_흔드는_2240",
+        "src": "/stickers/%EC%84%B8%EC%9D%B4%EB%A0%8C/%EC%84%B8%EC%9D%B4%EB%A0%8C_%ED%99%98%ED%95%98%EA%B2%8C_%EC%9B%83%EC%9C%BC%EB%A9%B0_%EB%A7%88%EB%9D%BC%EC%B9%B4%EC%8A%A4%EB%A5%BC_%ED%9D%94%EB%93%9C%EB%8A%94_2240.gif?v=083b02a1a90edb8f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/083b02a1a90edb8f4623df6093631cacca9ba2b851a77ef9bbe1ab16483f84ec.png"
+      }
+    ]
+  },
+  {
+    "id": "시사",
+    "name": "시사",
+    "stickers": [
+      {
+        "id": "시사/시사_기분_좋게_술_자격증_책을_들고_미소_짓는_2098.gif",
+        "name": "시사_기분_좋게_술_자격증_책을_들고_미소_짓는_2098",
+        "src": "/stickers/%EC%8B%9C%EC%82%AC/%EC%8B%9C%EC%82%AC_%EA%B8%B0%EB%B6%84_%EC%A2%8B%EA%B2%8C_%EC%88%A0_%EC%9E%90%EA%B2%A9%EC%A6%9D_%EC%B1%85%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_2098.gif?v=87d7f4e26009b229",
+        "animated": true,
+        "previewSrc": "/sticker-previews/87d7f4e26009b2294323d2c6289946eb74abf01cbd9fe66143cbb7402de39b87.png"
+      },
+      {
+        "id": "시사/시사_노란_갑옷_입고_웃기_2093.gif",
+        "name": "시사_노란_갑옷_입고_웃기_2093",
+        "src": "/stickers/%EC%8B%9C%EC%82%AC/%EC%8B%9C%EC%82%AC_%EB%85%B8%EB%9E%80_%EA%B0%91%EC%98%B7_%EC%9E%85%EA%B3%A0_%EC%9B%83%EA%B8%B0_2093.gif?v=088e52ab45d9390a",
+        "animated": true,
+        "previewSrc": "/sticker-previews/088e52ab45d9390a8e39fd2bd3d8ce2d6844fd36d9b7b0664244d8e4d991900e.png"
+      },
+      {
+        "id": "시사/시사_볼을_붉히며_행복하게_미소_짓고_빛나는_2092.gif",
+        "name": "시사_볼을_붉히며_행복하게_미소_짓고_빛나는_2092",
+        "src": "/stickers/%EC%8B%9C%EC%82%AC/%EC%8B%9C%EC%82%AC_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%ED%96%89%EB%B3%B5%ED%95%98%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EA%B3%A0_%EB%B9%9B%EB%82%98%EB%8A%94_2092.gif?v=fc2b5799e49e06a2",
+        "animated": true,
+        "previewSrc": "/sticker-previews/fc2b5799e49e06a2e5022e922a33c4169df90a8261fcb0277c37c573a1c7dee5.png"
+      },
+      {
+        "id": "시사/시사_야외에서_작은_병을_들고_의욕_넘치는_표정을_짓는_2104.gif",
+        "name": "시사_야외에서_작은_병을_들고_의욕_넘치는_표정을_짓는_2104",
+        "src": "/stickers/%EC%8B%9C%EC%82%AC/%EC%8B%9C%EC%82%AC_%EC%95%BC%EC%99%B8%EC%97%90%EC%84%9C_%EC%9E%91%EC%9D%80_%EB%B3%91%EC%9D%84_%EB%93%A4%EA%B3%A0_%EC%9D%98%EC%9A%95_%EB%84%98%EC%B9%98%EB%8A%94_%ED%91%9C%EC%A0%95%EC%9D%84_%EC%A7%93%EB%8A%94_2104.gif?v=3c5a921b63ade4c6",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3c5a921b63ade4c694f18e8c2554a8b9da8538e2ba8426ac6bf5ed1f1a99f1c0.png"
+      },
+      {
+        "id": "시사/시사_영양제_병을_두_손으로_쥐고_힘을_내는_2099.gif",
+        "name": "시사_영양제_병을_두_손으로_쥐고_힘을_내는_2099",
+        "src": "/stickers/%EC%8B%9C%EC%82%AC/%EC%8B%9C%EC%82%AC_%EC%98%81%EC%96%91%EC%A0%9C_%EB%B3%91%EC%9D%84_%EB%91%90_%EC%86%90%EC%9C%BC%EB%A1%9C_%EC%A5%90%EA%B3%A0_%ED%9E%98%EC%9D%84_%EB%82%B4%EB%8A%94_2099.gif?v=da1d062e4db591ab",
+        "animated": true,
+        "previewSrc": "/sticker-previews/da1d062e4db591abdd7351629b6ac7d38b186dd56c7b0b812320ede732b84bc2.png"
+      },
+      {
+        "id": "시사/시사_책_들고_폴짝_뛰기_2097.gif",
+        "name": "시사_책_들고_폴짝_뛰기_2097",
+        "src": "/stickers/%EC%8B%9C%EC%82%AC/%EC%8B%9C%EC%82%AC_%EC%B1%85_%EB%93%A4%EA%B3%A0_%ED%8F%B4%EC%A7%9D_%EB%9B%B0%EA%B8%B0_2097.gif?v=0cbcc41d8c66d894",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0cbcc41d8c66d894aa05f388527a50350664564841003c38d1690d1fe098e292.png"
+      },
+      {
+        "id": "시사/시사_책상에서_커피병을_들고_뺨을_붉히며_미소_짓는_2102.gif",
+        "name": "시사_책상에서_커피병을_들고_뺨을_붉히며_미소_짓는_2102",
+        "src": "/stickers/%EC%8B%9C%EC%82%AC/%EC%8B%9C%EC%82%AC_%EC%B1%85%EC%83%81%EC%97%90%EC%84%9C_%EC%BB%A4%ED%94%BC%EB%B3%91%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%BA%A8%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_2102.gif?v=53aa3642766623c7",
+        "animated": true,
+        "previewSrc": "/sticker-previews/53aa3642766623c7643ef8f4fa617188e5f71531bd41434712070496b7a47606.png"
+      }
+    ]
+  },
+  {
+    "id": "아노코",
+    "name": "아노코",
+    "stickers": [
+      {
+        "id": "아노코/아노코_뿔을_달고_당당하게_서_있는_2382.gif",
+        "name": "아노코_뿔을_달고_당당하게_서_있는_2382",
+        "src": "/stickers/%EC%95%84%EB%85%B8%EC%BD%94/%EC%95%84%EB%85%B8%EC%BD%94_%EB%BF%94%EC%9D%84_%EB%8B%AC%EA%B3%A0_%EB%8B%B9%EB%8B%B9%ED%95%98%EA%B2%8C_%EC%84%9C_%EC%9E%88%EB%8A%94_2382.gif?v=132caf7f6e0ba0c1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/132caf7f6e0ba0c117a45c01ec479f1c53c9344770a2b2b8b4bcbe5f27f98666.png"
+      },
+      {
+        "id": "아노코/아노코_손으로_입을_가리고_수줍게_미소_짓는_2378.gif",
+        "name": "아노코_손으로_입을_가리고_수줍게_미소_짓는_2378",
+        "src": "/stickers/%EC%95%84%EB%85%B8%EC%BD%94/%EC%95%84%EB%85%B8%EC%BD%94_%EC%86%90%EC%9C%BC%EB%A1%9C_%EC%9E%85%EC%9D%84_%EA%B0%80%EB%A6%AC%EA%B3%A0_%EC%88%98%EC%A4%8D%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_2378.gif?v=3f33b7f934ab59c6",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3f33b7f934ab59c6433f7ff73ceb0c0d62da08be2e8ebbb75347a40c951dbd2b.png"
+      },
+      {
+        "id": "아노코/아노코_양손으로_쿠키를_맛있게_먹고_있는_2379.gif",
+        "name": "아노코_양손으로_쿠키를_맛있게_먹고_있는_2379",
+        "src": "/stickers/%EC%95%84%EB%85%B8%EC%BD%94/%EC%95%84%EB%85%B8%EC%BD%94_%EC%96%91%EC%86%90%EC%9C%BC%EB%A1%9C_%EC%BF%A0%ED%82%A4%EB%A5%BC_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EA%B3%A0_%EC%9E%88%EB%8A%94_2379.gif?v=7abae23cd7ef1ac9",
+        "animated": true,
+        "previewSrc": "/sticker-previews/7abae23cd7ef1ac9407bf40dced390400e00dd1fcfe803172ae618fa3abdeff5.png"
+      },
+      {
+        "id": "아노코/아노코_어지러운_눈으로_볼을_붉히며_서_있는_2381.gif",
+        "name": "아노코_어지러운_눈으로_볼을_붉히며_서_있는_2381",
+        "src": "/stickers/%EC%95%84%EB%85%B8%EC%BD%94/%EC%95%84%EB%85%B8%EC%BD%94_%EC%96%B4%EC%A7%80%EB%9F%AC%EC%9A%B4_%EB%88%88%EC%9C%BC%EB%A1%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EC%84%9C_%EC%9E%88%EB%8A%94_2381.gif?v=de4427422f51e180",
+        "animated": true,
+        "previewSrc": "/sticker-previews/de4427422f51e1802bbec012e696f1dccf6f40164d390424041275f17a15c071.png"
+      },
+      {
+        "id": "아노코/아노코_혀를_내밀고_볼을_붉히는_2380.gif",
+        "name": "아노코_혀를_내밀고_볼을_붉히는_2380",
+        "src": "/stickers/%EC%95%84%EB%85%B8%EC%BD%94/%EC%95%84%EB%85%B8%EC%BD%94_%ED%98%80%EB%A5%BC_%EB%82%B4%EB%B0%80%EA%B3%A0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%8A%94_2380.gif?v=ef8372460c161b2b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ef8372460c161b2b2945117f723f69637b0020a5e2c84b3850828f599edb0e67.png"
+      }
+    ]
+  },
+  {
+    "id": "우사기",
+    "name": "우사기",
+    "stickers": [
+      {
+        "id": "우사기/우사기_깡총깡총_뛰기_0249.gif",
+        "name": "우사기_깡총깡총_뛰기_0249",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EA%B9%A1%EC%B4%9D%EA%B9%A1%EC%B4%9D_%EB%9B%B0%EA%B8%B0_0249.gif?v=db73e94286088434",
+        "animated": true,
+        "previewSrc": "/sticker-previews/db73e942860884348cd156d23dd0df65819b436f0c7fd3b90240fe0e98820fbf.png"
+      },
+      {
+        "id": "우사기/우사기_꼬리를_흔들며_볼을_붉히는_0608.gif",
+        "name": "우사기_꼬리를_흔들며_볼을_붉히는_0608",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EA%BC%AC%EB%A6%AC%EB%A5%BC_%ED%9D%94%EB%93%A4%EB%A9%B0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%8A%94_0608.gif?v=285e4d36f7067073",
+        "animated": true,
+        "previewSrc": "/sticker-previews/285e4d36f7067073376bd0910fa772afcf82c6303a6823f693e795ec28870a1f.png"
+      },
+      {
+        "id": "우사기/우사기_나무_옆에서_볼을_붉히며_바라보는_0233.gif",
+        "name": "우사기_나무_옆에서_볼을_붉히며_바라보는_0233",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%82%98%EB%AC%B4_%EC%98%86%EC%97%90%EC%84%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%B0%94%EB%9D%BC%EB%B3%B4%EB%8A%94_0233.gif?v=969b9151eabf2bbf",
+        "animated": true,
+        "previewSrc": "/sticker-previews/969b9151eabf2bbff330c20c7a6b220d41daf4492f0688419e8f8b91fd99304d.png"
+      },
+      {
+        "id": "우사기/우사기_노란_막대를_들고_신나게_웃는_0719.gif",
+        "name": "우사기_노란_막대를_들고_신나게_웃는_0719",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%85%B8%EB%9E%80_%EB%A7%89%EB%8C%80%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EC%9B%83%EB%8A%94_0719.gif?v=08c66a2794ec3f91",
+        "animated": true,
+        "previewSrc": "/sticker-previews/08c66a2794ec3f91c6a5e59fc0656539361dc51a996e9dc65b92a49677eab5de.png"
+      },
+      {
+        "id": "우사기/우사기_노란_옷을_입고_바닥을_빠르게_미끄러지는_0588.gif",
+        "name": "우사기_노란_옷을_입고_바닥을_빠르게_미끄러지는_0588",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%85%B8%EB%9E%80_%EC%98%B7%EC%9D%84_%EC%9E%85%EA%B3%A0_%EB%B0%94%EB%8B%A5%EC%9D%84_%EB%B9%A0%EB%A5%B4%EA%B2%8C_%EB%AF%B8%EB%81%84%EB%9F%AC%EC%A7%80%EB%8A%94_0588.gif?v=7bbaaf2943c3d746",
+        "animated": true,
+        "previewSrc": "/sticker-previews/7bbaaf2943c3d746aa75e1e176d8f5fde437239c892ac89554c4cf9a996077fb.png"
+      },
+      {
+        "id": "우사기/우사기_노란_잠옷을_입고_응원봉을_신나게_흔드는_0245.gif",
+        "name": "우사기_노란_잠옷을_입고_응원봉을_신나게_흔드는_0245",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%85%B8%EB%9E%80_%EC%9E%A0%EC%98%B7%EC%9D%84_%EC%9E%85%EA%B3%A0_%EC%9D%91%EC%9B%90%EB%B4%89%EC%9D%84_%EC%8B%A0%EB%82%98%EA%B2%8C_%ED%9D%94%EB%93%9C%EB%8A%94_0245.gif?v=0c6211eecec12b72",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0c6211eecec12b7223c9731078a0e5b86b1e066d365f672a40f4d1e34363fd4e.png"
+      },
+      {
+        "id": "우사기/우사기_돌아서_꼬리_흔들기_0230.gif",
+        "name": "우사기_돌아서_꼬리_흔들기_0230",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%8F%8C%EC%95%84%EC%84%9C_%EA%BC%AC%EB%A6%AC_%ED%9D%94%EB%93%A4%EA%B8%B0_0230.gif?v=ae68ee5015cdbe19",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ae68ee5015cdbe19b5a76fe90bf7a6b2ebaea331cbdbcd2dd76f6cc8a400b1e9.png"
+      },
+      {
+        "id": "우사기/우사기_둥근_꼬리를_보이며_아장아장_걸어가는_0714.gif",
+        "name": "우사기_둥근_꼬리를_보이며_아장아장_걸어가는_0714",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%91%A5%EA%B7%BC_%EA%BC%AC%EB%A6%AC%EB%A5%BC_%EB%B3%B4%EC%9D%B4%EB%A9%B0_%EC%95%84%EC%9E%A5%EC%95%84%EC%9E%A5_%EA%B1%B8%EC%96%B4%EA%B0%80%EB%8A%94_0714.gif?v=3730b06d23061ac7",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3730b06d23061ac753569d2cb3c7af71309cf18cfb081fd03caee902fce24f12.png"
+      },
+      {
+        "id": "우사기/우사기_뒤돌아_서서_몽실몽실한_꼬리와_엉덩이를_흔드는_0228.gif",
+        "name": "우사기_뒤돌아_서서_몽실몽실한_꼬리와_엉덩이를_흔드는_0228",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%92%A4%EB%8F%8C%EC%95%84_%EC%84%9C%EC%84%9C_%EB%AA%BD%EC%8B%A4%EB%AA%BD%EC%8B%A4%ED%95%9C_%EA%BC%AC%EB%A6%AC%EC%99%80_%EC%97%89%EB%8D%A9%EC%9D%B4%EB%A5%BC_%ED%9D%94%EB%93%9C%EB%8A%94_0228.gif?v=a84ad8e6ad8eb94e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a84ad8e6ad8eb94e5e2484e5b557069834f100f7fd6ee8032a3b32da1be9f475.png"
+      },
+      {
+        "id": "우사기/우사기_뒤집개를_들고_신나게_달려가는_0225.gif",
+        "name": "우사기_뒤집개를_들고_신나게_달려가는_0225",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%92%A4%EC%A7%91%EA%B0%9C%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%8B%AC%EB%A0%A4%EA%B0%80%EB%8A%94_0225.gif?v=4e205e0e90377322",
+        "animated": true,
+        "previewSrc": "/sticker-previews/4e205e0e9037732289892d94f8366b4faebf16b9550e9f70f855603fc8e8d831.png"
+      },
+      {
+        "id": "우사기/우사기_마법소녀_봉을_들고_반짝이며_신나게_웃는_토끼_2095.gif",
+        "name": "우사기_마법소녀_봉을_들고_반짝이며_신나게_웃는_토끼_2095",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%A7%88%EB%B2%95%EC%86%8C%EB%85%80_%EB%B4%89%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%B0%98%EC%A7%9D%EC%9D%B4%EB%A9%B0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EC%9B%83%EB%8A%94_%ED%86%A0%EB%81%BC_2095.gif?v=4353ed8baf8e2eb2",
+        "animated": true,
+        "previewSrc": "/sticker-previews/4353ed8baf8e2eb294deeca5e24cfbed3095474d274aafb2a24bcbaee7be8c6e.png"
+      },
+      {
+        "id": "우사기/우사기_막대기를_들고_신나게_달려가는_0619.gif",
+        "name": "우사기_막대기를_들고_신나게_달려가는_0619",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%A7%89%EB%8C%80%EA%B8%B0%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%8B%AC%EB%A0%A4%EA%B0%80%EB%8A%94_0619.gif?v=f97a0be5dcef9cbf",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f97a0be5dcef9cbfffda319c1401809e495100e46bf7070b5e7e7fd5c5fc8508.png"
+      },
+      {
+        "id": "우사기/우사기_맛있게_간식을_먹으며_꼬리를_흔드는_0628.gif",
+        "name": "우사기_맛있게_간식을_먹으며_꼬리를_흔드는_0628",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%A8%B9%EC%9C%BC%EB%A9%B0_%EA%BC%AC%EB%A6%AC%EB%A5%BC_%ED%9D%94%EB%93%9C%EB%8A%94_0628.gif?v=7ec965c531fd3349",
+        "animated": true,
+        "previewSrc": "/sticker-previews/7ec965c531fd33490aca2450f88776a8a98d7f13b752999e2a2140217751a354.png"
+      },
+      {
+        "id": "우사기/우사기_모몽가_옷_입고_밤하늘_날기_2188.gif",
+        "name": "우사기_모몽가_옷_입고_밤하늘_날기_2188",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%AA%A8%EB%AA%BD%EA%B0%80_%EC%98%B7_%EC%9E%85%EA%B3%A0_%EB%B0%A4%ED%95%98%EB%8A%98_%EB%82%A0%EA%B8%B0_2188.gif?v=82a50f54b111e759",
+        "animated": true,
+        "previewSrc": "/sticker-previews/82a50f54b111e7597b710bb514621c0b295ac5e49c98a744e127ad12339d894b.png"
+      },
+      {
+        "id": "우사기/우사기_바닥에_힘없이_엎드려_뻗어있는_0181.gif",
+        "name": "우사기_바닥에_힘없이_엎드려_뻗어있는_0181",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%B0%94%EB%8B%A5%EC%97%90_%ED%9E%98%EC%97%86%EC%9D%B4_%EC%97%8E%EB%93%9C%EB%A0%A4_%EB%BB%97%EC%96%B4%EC%9E%88%EB%8A%94_0181.gif?v=a74337edf6471b89",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a74337edf6471b89397e878c9e3564ab3101c0ad691f2d763d9d25550aa31444.png"
+      },
+      {
+        "id": "우사기/우사기_볼을_붉히며_가만히_서서_살짝_미소_짓는_0575.gif",
+        "name": "우사기_볼을_붉히며_가만히_서서_살짝_미소_짓는_0575",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EA%B0%80%EB%A7%8C%ED%9E%88_%EC%84%9C%EC%84%9C_%EC%82%B4%EC%A7%9D_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0575.gif?v=159eafa720f16cbc",
+        "animated": true,
+        "previewSrc": "/sticker-previews/159eafa720f16cbc1e1c917e460660d4c343af88374ec9e98b48a40eb6c5e529.png"
+      },
+      {
+        "id": "우사기/우사기_볼을_붉히며_살짝_뒤돌아보는_0695.gif",
+        "name": "우사기_볼을_붉히며_살짝_뒤돌아보는_0695",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EC%82%B4%EC%A7%9D_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EB%8A%94_0695.gif?v=468c5efe2c3a890a",
+        "animated": true,
+        "previewSrc": "/sticker-previews/468c5efe2c3a890ab369f353715c5167ad4614ffc8a46c4f94b4346b12946df4.png"
+      },
+      {
+        "id": "우사기/우사기_볼을_붉히며_옆을_돌아보는_0661.gif",
+        "name": "우사기_볼을_붉히며_옆을_돌아보는_0661",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EC%98%86%EC%9D%84_%EB%8F%8C%EC%95%84%EB%B3%B4%EB%8A%94_0661.gif?v=be4931bb2c325c57",
+        "animated": true,
+        "previewSrc": "/sticker-previews/be4931bb2c325c57eda49e8404c3ab076220532fbc6e6e305a017b1cfbe92151.png"
+      },
+      {
+        "id": "우사기/우사기_숟가락을_들고_신나게_음식을_먹는_0269.gif",
+        "name": "우사기_숟가락을_들고_신나게_음식을_먹는_0269",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%88%9F%EA%B0%80%EB%9D%BD%EC%9D%84_%EB%93%A4%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EC%9D%8C%EC%8B%9D%EC%9D%84_%EB%A8%B9%EB%8A%94_0269.gif?v=f9b9ad3e0a007cf1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f9b9ad3e0a007cf1e29fcb359c19134e59fbad499ef89b39b2e6a2ce103dae0e.png"
+      },
+      {
+        "id": "우사기/우사기_시원한_탄산_콜라를_맛있게_마시는_토끼_2085.gif",
+        "name": "우사기_시원한_탄산_콜라를_맛있게_마시는_토끼_2085",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%8B%9C%EC%9B%90%ED%95%9C_%ED%83%84%EC%82%B0_%EC%BD%9C%EB%9D%BC%EB%A5%BC_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A7%88%EC%8B%9C%EB%8A%94_%ED%86%A0%EB%81%BC_2085.gif?v=e0cd28c47809442e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e0cd28c47809442ea85342352d3a64275e188bcabfa5ab498e3bb5c496596c6d.png"
+      },
+      {
+        "id": "우사기/우사기_신나게_몸을_흔들며_웃고_있는_0227.gif",
+        "name": "우사기_신나게_몸을_흔들며_웃고_있는_0227",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%AA%B8%EC%9D%84_%ED%9D%94%EB%93%A4%EB%A9%B0_%EC%9B%83%EA%B3%A0_%EC%9E%88%EB%8A%94_0227.gif?v=7847cc74039b21f1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/7847cc74039b21f1d05f1d2225c7e3b903f92d8915d385d6eb722fbb863b83d0.png"
+      },
+      {
+        "id": "우사기/우사기_신나게_엉덩이와_꼬리를_흔드는_0197.gif",
+        "name": "우사기_신나게_엉덩이와_꼬리를_흔드는_0197",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EC%97%89%EB%8D%A9%EC%9D%B4%EC%99%80_%EA%BC%AC%EB%A6%AC%EB%A5%BC_%ED%9D%94%EB%93%9C%EB%8A%94_0197.gif?v=5b2f4f52c843478b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/5b2f4f52c843478b2da0d335c44b4a1c6b43bbb31303c4ee5fe59850562c98cc.png"
+      },
+      {
+        "id": "우사기/우사기_안경과_금목걸이를_차고_유쾌하게_웃는_2186.gif",
+        "name": "우사기_안경과_금목걸이를_차고_유쾌하게_웃는_2186",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%95%88%EA%B2%BD%EA%B3%BC_%EA%B8%88%EB%AA%A9%EA%B1%B8%EC%9D%B4%EB%A5%BC_%EC%B0%A8%EA%B3%A0_%EC%9C%A0%EC%BE%8C%ED%95%98%EA%B2%8C_%EC%9B%83%EB%8A%94_2186.gif?v=84ea43910d5307fa",
+        "animated": true,
+        "previewSrc": "/sticker-previews/84ea43910d5307fadca12d90cf9b70e140697a1be64bc7883758bb1a43d6c67e.png"
+      },
+      {
+        "id": "우사기/우사기_양손으로_브이를_하며_볼을_붉히는_0235.gif",
+        "name": "우사기_양손으로_브이를_하며_볼을_붉히는_0235",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%96%91%EC%86%90%EC%9C%BC%EB%A1%9C_%EB%B8%8C%EC%9D%B4%EB%A5%BC_%ED%95%98%EB%A9%B0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%8A%94_0235.gif?v=689e1dc06d0582e0",
+        "animated": true,
+        "previewSrc": "/sticker-previews/689e1dc06d0582e027d3d112ffa27ab9503c0b7ac158a68cc9d37dd79471066c.png"
+      },
+      {
+        "id": "우사기/우사기_어둠_속에서_눈으로_강렬한_빛을_비추는_0219.gif",
+        "name": "우사기_어둠_속에서_눈으로_강렬한_빛을_비추는_0219",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%96%B4%EB%91%A0_%EC%86%8D%EC%97%90%EC%84%9C_%EB%88%88%EC%9C%BC%EB%A1%9C_%EA%B0%95%EB%A0%AC%ED%95%9C_%EB%B9%9B%EC%9D%84_%EB%B9%84%EC%B6%94%EB%8A%94_0219.gif?v=3ed057a2d5a34f29",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3ed057a2d5a34f290225f4aa032f17bd03d3527eb5c7ef7446b428b24e200da0.png"
+      },
+      {
+        "id": "우사기/우사기_엎드려_둥근_등과_꼬리를_보여주는_0610.gif",
+        "name": "우사기_엎드려_둥근_등과_꼬리를_보여주는_0610",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%97%8E%EB%93%9C%EB%A0%A4_%EB%91%A5%EA%B7%BC_%EB%93%B1%EA%B3%BC_%EA%BC%AC%EB%A6%AC%EB%A5%BC_%EB%B3%B4%EC%97%AC%EC%A3%BC%EB%8A%94_0610.gif?v=ec3ecb1ecdda6474",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ec3ecb1ecdda6474923a5b9aaa18b17d30122ddcfdc0c2449d3fb6e6b6c94137.png"
+      },
+      {
+        "id": "우사기/우사기_잠옷을_입고_볼을_붉히며_체크_표시를_띄운_0665.gif",
+        "name": "우사기_잠옷을_입고_볼을_붉히며_체크_표시를_띄운_0665",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%9E%A0%EC%98%B7%EC%9D%84_%EC%9E%85%EA%B3%A0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EC%B2%B4%ED%81%AC_%ED%91%9C%EC%8B%9C%EB%A5%BC_%EB%9D%84%EC%9A%B4_0665.gif?v=f931809f0912cef1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f931809f0912cef11e4858938dc4a90a4933f947c92ef0bc91c84db9cd36a30a.png"
+      },
+      {
+        "id": "우사기/우사기_토끼가_들판에_서서_미소_짓고_있는_2101.gif",
+        "name": "우사기_토끼가_들판에_서서_미소_짓고_있는_2101",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%ED%86%A0%EB%81%BC%EA%B0%80_%EB%93%A4%ED%8C%90%EC%97%90_%EC%84%9C%EC%84%9C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EA%B3%A0_%EC%9E%88%EB%8A%94_2101.gif?v=4edb00770c7c2c83",
+        "animated": true,
+        "previewSrc": "/sticker-previews/4edb00770c7c2c83a145f8d919ad31a02b31ab6dc30758e855ffb72b2fd3d821.png"
+      },
+      {
+        "id": "우사기/우사기_팔짱을_끼고_위를_올려다보며_부끄러워하는_0217.gif",
+        "name": "우사기_팔짱을_끼고_위를_올려다보며_부끄러워하는_0217",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%ED%8C%94%EC%A7%B1%EC%9D%84_%EB%81%BC%EA%B3%A0_%EC%9C%84%EB%A5%BC_%EC%98%AC%EB%A0%A4%EB%8B%A4%EB%B3%B4%EB%A9%B0_%EB%B6%80%EB%81%84%EB%9F%AC%EC%9B%8C%ED%95%98%EB%8A%94_0217.gif?v=e082b967b4105e74",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e082b967b4105e749276d5862f0235f79771793356f418a739e53d7ac8218c1d.png"
+      },
+      {
+        "id": "우사기/우사기_팔짱을_끼고_자신감_넘치게_미소_짓는_0222.gif",
+        "name": "우사기_팔짱을_끼고_자신감_넘치게_미소_짓는_0222",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%ED%8C%94%EC%A7%B1%EC%9D%84_%EB%81%BC%EA%B3%A0_%EC%9E%90%EC%8B%A0%EA%B0%90_%EB%84%98%EC%B9%98%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0222.gif?v=e46577b8d5c44636",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e46577b8d5c44636a450b2d63a4727c4a9d1482ea8d7a05409b36bf6ea606dd3.png"
+      },
+      {
+        "id": "우사기/우사기_팔짱을_끼고_자신만만하게_미소_짓는_0246.gif",
+        "name": "우사기_팔짱을_끼고_자신만만하게_미소_짓는_0246",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%ED%8C%94%EC%A7%B1%EC%9D%84_%EB%81%BC%EA%B3%A0_%EC%9E%90%EC%8B%A0%EB%A7%8C%EB%A7%8C%ED%95%98%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0246.gif?v=15e93073ab7a4ada",
+        "animated": true,
+        "previewSrc": "/sticker-previews/15e93073ab7a4adafbf964f060615ae46efe27a0044928085118ff7441ab923b.png"
+      },
+      {
+        "id": "우사기/우사기_풀밭에_토끼처럼_웅크려_꼬리를_흔드는_0215.gif",
+        "name": "우사기_풀밭에_토끼처럼_웅크려_꼬리를_흔드는_0215",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%ED%92%80%EB%B0%AD%EC%97%90_%ED%86%A0%EB%81%BC%EC%B2%98%EB%9F%BC_%EC%9B%85%ED%81%AC%EB%A0%A4_%EA%BC%AC%EB%A6%AC%EB%A5%BC_%ED%9D%94%EB%93%9C%EB%8A%94_0215.gif?v=330bb925c2df5da4",
+        "animated": true,
+        "previewSrc": "/sticker-previews/330bb925c2df5da4d242ed221cfe748a4b430091cccec61aa824e4d9b07af313.png"
+      },
+      {
+        "id": "우사기/우사기_하얀_모자를_쓰고_작은_주머니를_든_채_신나게_몸을_흔드는_0195.gif",
+        "name": "우사기_하얀_모자를_쓰고_작은_주머니를_든_채_신나게_몸을_흔드는_0195",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%ED%95%98%EC%96%80_%EB%AA%A8%EC%9E%90%EB%A5%BC_%EC%93%B0%EA%B3%A0_%EC%9E%91%EC%9D%80_%EC%A3%BC%EB%A8%B8%EB%8B%88%EB%A5%BC_%EB%93%A0_%EC%B1%84_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%AA%B8%EC%9D%84_%ED%9D%94%EB%93%9C%EB%8A%94_0195.gif?v=f51a8c2dff448e87",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f51a8c2dff448e872d12cc3673c46405f5e8e28d96b57761912458fbb7fda4d1.png"
+      },
+      {
+        "id": "우사기/우사기_활짝_웃으며_혀를_내미는_클로즈업_0606.gif",
+        "name": "우사기_활짝_웃으며_혀를_내미는_클로즈업_0606",
+        "src": "/stickers/%EC%9A%B0%EC%82%AC%EA%B8%B0/%EC%9A%B0%EC%82%AC%EA%B8%B0_%ED%99%9C%EC%A7%9D_%EC%9B%83%EC%9C%BC%EB%A9%B0_%ED%98%80%EB%A5%BC_%EB%82%B4%EB%AF%B8%EB%8A%94_%ED%81%B4%EB%A1%9C%EC%A6%88%EC%97%85_0606.gif?v=306ba014903c9689",
+        "animated": true,
+        "previewSrc": "/sticker-previews/306ba014903c96898f66ee7763a6fa47bd2741666573f9097a69a66a5e1471cd.png"
+      }
+    ]
+  },
+  {
+    "id": "치이카와",
+    "name": "치이카와",
+    "stickers": [
+      {
+        "id": "치이카와/치이카와_간식_들고_그늘에서_돌아보기_0670.gif",
+        "name": "치이카와_간식_들고_그늘에서_돌아보기_0670",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EA%B0%84%EC%8B%9D_%EB%93%A4%EA%B3%A0_%EA%B7%B8%EB%8A%98%EC%97%90%EC%84%9C_%EB%8F%8C%EC%95%84%EB%B3%B4%EA%B8%B0_0670.gif?v=655047dc4728cfc5",
+        "animated": true,
+        "previewSrc": "/sticker-previews/655047dc4728cfc516988992b19b0072e177078c9b6fdbd0d1eb3f95eabf4cc1.png"
+      },
+      {
+        "id": "치이카와/치이카와_갈색_인형옷을_입고_방긋_미소_짓는_0252.gif",
+        "name": "치이카와_갈색_인형옷을_입고_방긋_미소_짓는_0252",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EA%B0%88%EC%83%89_%EC%9D%B8%ED%98%95%EC%98%B7%EC%9D%84_%EC%9E%85%EA%B3%A0_%EB%B0%A9%EA%B8%8B_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0252.gif?v=49da57a06efa5497",
+        "animated": true,
+        "previewSrc": "/sticker-previews/49da57a06efa54972fa965d622d5e35669ebd469beb18e69c086ec3ba43a55e5.png"
+      },
+      {
+        "id": "치이카와/치이카와_골판지_택배_상자를_들고_신나게_달려가는_0188.gif",
+        "name": "치이카와_골판지_택배_상자를_들고_신나게_달려가는_0188",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EA%B3%A8%ED%8C%90%EC%A7%80_%ED%83%9D%EB%B0%B0_%EC%83%81%EC%9E%90%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%8B%AC%EB%A0%A4%EA%B0%80%EB%8A%94_0188.gif?v=8965ae7f8c0d6eac",
+        "animated": true,
+        "previewSrc": "/sticker-previews/8965ae7f8c0d6eac60c4b6c4253ce3b6fec5449044f11ee9f26584a5e9d94a16.png"
+      },
+      {
+        "id": "치이카와/치이카와_곰인형을_안고_이불_속에서_행복하게_자는_0191.gif",
+        "name": "치이카와_곰인형을_안고_이불_속에서_행복하게_자는_0191",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EA%B3%B0%EC%9D%B8%ED%98%95%EC%9D%84_%EC%95%88%EA%B3%A0_%EC%9D%B4%EB%B6%88_%EC%86%8D%EC%97%90%EC%84%9C_%ED%96%89%EB%B3%B5%ED%95%98%EA%B2%8C_%EC%9E%90%EB%8A%94_0191.gif?v=adbad1caf3dd1bb8",
+        "animated": true,
+        "previewSrc": "/sticker-previews/adbad1caf3dd1bb84010b66d71f95467d848711fbefa6b15e03e49afdfd4a7c9.png"
+      },
+      {
+        "id": "치이카와/치이카와_구름_속에_파묻혀_땀을_흘리며_긴장한_표정을_짓는_0577.gif",
+        "name": "치이카와_구름_속에_파묻혀_땀을_흘리며_긴장한_표정을_짓는_0577",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EA%B5%AC%EB%A6%84_%EC%86%8D%EC%97%90_%ED%8C%8C%EB%AC%BB%ED%98%80_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EA%B8%B4%EC%9E%A5%ED%95%9C_%ED%91%9C%EC%A0%95%EC%9D%84_%EC%A7%93%EB%8A%94_0577.gif?v=0154d02448440b82",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0154d02448440b82462ad3fee360ac0ae2a6bea1d7c79dfb7e063751536146ef.png"
+      },
+      {
+        "id": "치이카와/치이카와_글썽이는_눈으로_수줍게_미소_짓는_0232.gif",
+        "name": "치이카와_글썽이는_눈으로_수줍게_미소_짓는_0232",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EA%B8%80%EC%8D%BD%EC%9D%B4%EB%8A%94_%EB%88%88%EC%9C%BC%EB%A1%9C_%EC%88%98%EC%A4%8D%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0232.gif?v=ae858e2dc4740961",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ae858e2dc4740961778d6e7aacf6b2c2fee830db8fef64819f55888511b15908.png"
+      },
+      {
+        "id": "치이카와/치이카와_긴장한_표정으로_빵을_먹고_있는_먹방_0574.gif",
+        "name": "치이카와_긴장한_표정으로_빵을_먹고_있는_먹방_0574",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EA%B8%B4%EC%9E%A5%ED%95%9C_%ED%91%9C%EC%A0%95%EC%9C%BC%EB%A1%9C_%EB%B9%B5%EC%9D%84_%EB%A8%B9%EA%B3%A0_%EC%9E%88%EB%8A%94_%EB%A8%B9%EB%B0%A9_0574.gif?v=6ab42aa0ebee87e2",
+        "animated": true,
+        "previewSrc": "/sticker-previews/6ab42aa0ebee87e21858c8b1e7954bbb0e5323ae14144543dbf333662196ebf4.png"
+      },
+      {
+        "id": "치이카와/치이카와_긴장해서_떨며_과자를_먹는_0642.gif",
+        "name": "치이카와_긴장해서_떨며_과자를_먹는_0642",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EA%B8%B4%EC%9E%A5%ED%95%B4%EC%84%9C_%EB%96%A8%EB%A9%B0_%EA%B3%BC%EC%9E%90%EB%A5%BC_%EB%A8%B9%EB%8A%94_0642.gif?v=506adbf326a45782",
+        "animated": true,
+        "previewSrc": "/sticker-previews/506adbf326a457826fbe5e927e7d3ca5387e4bdbc793720ede8c13609c4ee69a.png"
+      },
+      {
+        "id": "치이카와/치이카와_나무_그루터기_옆에서_자신만만한_표정을_짓는_0569.gif",
+        "name": "치이카와_나무_그루터기_옆에서_자신만만한_표정을_짓는_0569",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%82%98%EB%AC%B4_%EA%B7%B8%EB%A3%A8%ED%84%B0%EA%B8%B0_%EC%98%86%EC%97%90%EC%84%9C_%EC%9E%90%EC%8B%A0%EB%A7%8C%EB%A7%8C%ED%95%9C_%ED%91%9C%EC%A0%95%EC%9D%84_%EC%A7%93%EB%8A%94_0569.gif?v=436a714e95d7deb9",
+        "animated": true,
+        "previewSrc": "/sticker-previews/436a714e95d7deb980089dd7e1b4ae3ebad0d5f890ac4f3ca5fbc41bc66964de.png"
+      },
+      {
+        "id": "치이카와/치이카와_나무_그루터기에_앉아_콧노래를_흥얼거리는_뒷_0663.gif",
+        "name": "치이카와_나무_그루터기에_앉아_콧노래를_흥얼거리는_뒷_0663",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%82%98%EB%AC%B4_%EA%B7%B8%EB%A3%A8%ED%84%B0%EA%B8%B0%EC%97%90_%EC%95%89%EC%95%84_%EC%BD%A7%EB%85%B8%EB%9E%98%EB%A5%BC_%ED%9D%A5%EC%96%BC%EA%B1%B0%EB%A6%AC%EB%8A%94_%EB%92%B7_0663.gif?v=73c87ab90fcc7c84",
+        "animated": true,
+        "previewSrc": "/sticker-previews/73c87ab90fcc7c84d74e433594a7f23475ad296cebdebabd4700ffc75ea2807d.png"
+      },
+      {
+        "id": "치이카와/치이카와_나무_뒤에서_빼꼼_0238.gif",
+        "name": "치이카와_나무_뒤에서_빼꼼_0238",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%82%98%EB%AC%B4_%EB%92%A4%EC%97%90%EC%84%9C_%EB%B9%BC%EA%BC%BC_0238.gif?v=626a03222104e09e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/626a03222104e09eb6c4426048dae1c490575e956d37baa3600f984b3c56270c.png"
+      },
+      {
+        "id": "치이카와/치이카와_나이프와_포크를_들고_행복하게_식사하는_0680.gif",
+        "name": "치이카와_나이프와_포크를_들고_행복하게_식사하는_0680",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%82%98%EC%9D%B4%ED%94%84%EC%99%80_%ED%8F%AC%ED%81%AC%EB%A5%BC_%EB%93%A4%EA%B3%A0_%ED%96%89%EB%B3%B5%ED%95%98%EA%B2%8C_%EC%8B%9D%EC%82%AC%ED%95%98%EB%8A%94_0680.gif?v=25521deb768f975c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/25521deb768f975cccf52ce92decf6807f7db20c660be3fab4e31414fb81e960.png"
+      },
+      {
+        "id": "치이카와/치이카와_네잎클로버를_들고_수줍게_미소_짓는_0234.gif",
+        "name": "치이카와_네잎클로버를_들고_수줍게_미소_짓는_0234",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%84%A4%EC%9E%8E%ED%81%B4%EB%A1%9C%EB%B2%84%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EC%88%98%EC%A4%8D%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0234.gif?v=23af9d767d1f4e59",
+        "animated": true,
+        "previewSrc": "/sticker-previews/23af9d767d1f4e59ca91f9f3dbc0df1222431e5a09a65b02ad1f6208f7edbc38.png"
+      },
+      {
+        "id": "치이카와/치이카와_노란_응원_수술을_흔들며_신나게_춤추는_0264.gif",
+        "name": "치이카와_노란_응원_수술을_흔들며_신나게_춤추는_0264",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%85%B8%EB%9E%80_%EC%9D%91%EC%9B%90_%EC%88%98%EC%88%A0%EC%9D%84_%ED%9D%94%EB%93%A4%EB%A9%B0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EC%B6%A4%EC%B6%94%EB%8A%94_0264.gif?v=a73782821e3379fd",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a73782821e3379fda91078baea53b690cded7b7712b88eec20ed7fc85651fb76.png"
+      },
+      {
+        "id": "치이카와/치이카와_눈물_그렁그렁_화내며_떼쓰는_투정_0692.gif",
+        "name": "치이카와_눈물_그렁그렁_화내며_떼쓰는_투정_0692",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%88%88%EB%AC%BC_%EA%B7%B8%EB%A0%81%EA%B7%B8%EB%A0%81_%ED%99%94%EB%82%B4%EB%A9%B0_%EB%96%BC%EC%93%B0%EB%8A%94_%ED%88%AC%EC%A0%95_0692.gif?v=1c08d38c48a2a95e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/1c08d38c48a2a95ebd42aae46613966dbd4eebe9b5a24ab194bc936924c7e096.png"
+      },
+      {
+        "id": "치이카와/치이카와_눈물을_글썽이며_빵을_맛있게_먹는_0688.gif",
+        "name": "치이카와_눈물을_글썽이며_빵을_맛있게_먹는_0688",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%88%88%EB%AC%BC%EC%9D%84_%EA%B8%80%EC%8D%BD%EC%9D%B4%EB%A9%B0_%EB%B9%B5%EC%9D%84_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EB%8A%94_0688.gif?v=d12e5dddf5f28803",
+        "animated": true,
+        "previewSrc": "/sticker-previews/d12e5dddf5f28803a670d065dbfb8f3688b26880773388bc845a5c37b02bded1.png"
+      },
+      {
+        "id": "치이카와/치이카와_눈물이_그렁그렁한_채_올려다보는_0602.gif",
+        "name": "치이카와_눈물이_그렁그렁한_채_올려다보는_0602",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%88%88%EB%AC%BC%EC%9D%B4_%EA%B7%B8%EB%A0%81%EA%B7%B8%EB%A0%81%ED%95%9C_%EC%B1%84_%EC%98%AC%EB%A0%A4%EB%8B%A4%EB%B3%B4%EB%8A%94_0602.gif?v=190b5452b4c423d1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/190b5452b4c423d15dac7eab7d9e7ddaa98be2a5b4027f21da3adab7d29548ae.png"
+      },
+      {
+        "id": "치이카와/치이카와_눈을_반짝이며_노란_간식을_들고_있는_0617.gif",
+        "name": "치이카와_눈을_반짝이며_노란_간식을_들고_있는_0617",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%88%88%EC%9D%84_%EB%B0%98%EC%A7%9D%EC%9D%B4%EB%A9%B0_%EB%85%B8%EB%9E%80_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%93%A4%EA%B3%A0_%EC%9E%88%EB%8A%94_0617.gif?v=1038ce405ac11de8",
+        "animated": true,
+        "previewSrc": "/sticker-previews/1038ce405ac11de80e153a22d740a4c4fa0d2c4baded6ea2f0d399691ad9d101.png"
+      },
+      {
+        "id": "치이카와/치이카와_눈을_반짝이며_볼을_붉히는_0248.gif",
+        "name": "치이카와_눈을_반짝이며_볼을_붉히는_0248",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%88%88%EC%9D%84_%EB%B0%98%EC%A7%9D%EC%9D%B4%EB%A9%B0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%8A%94_0248.gif?v=0e83396da2515c24",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0e83396da2515c24d31b1c6a84c5bbabee320cfb480d5d4fdde900ae1f75e616.png"
+      },
+      {
+        "id": "치이카와/치이카와_도토리를_들고_행복하게_미소_짓는_0694.gif",
+        "name": "치이카와_도토리를_들고_행복하게_미소_짓는_0694",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%8F%84%ED%86%A0%EB%A6%AC%EB%A5%BC_%EB%93%A4%EA%B3%A0_%ED%96%89%EB%B3%B5%ED%95%98%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0694.gif?v=40143d0845dadd84",
+        "animated": true,
+        "previewSrc": "/sticker-previews/40143d0845dadd84ff3dcf801f9376bff82a88f33bc2d5f60ab439872da92ecb.png"
+      },
+      {
+        "id": "치이카와/치이카와_두_손으로_간식을_들고_맛있게_먹는_0647.gif",
+        "name": "치이카와_두_손으로_간식을_들고_맛있게_먹는_0647",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%91%90_%EC%86%90%EC%9C%BC%EB%A1%9C_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EB%8A%94_0647.gif?v=253601c0efd70522",
+        "animated": true,
+        "previewSrc": "/sticker-previews/253601c0efd70522a7ee0c9e0cadc76f0a1cdf4c3ab82f22dbff871dfa40331b.png"
+      },
+      {
+        "id": "치이카와/치이카와_둥근_귀_클로즈업_0589.gif",
+        "name": "치이카와_둥근_귀_클로즈업_0589",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%91%A5%EA%B7%BC_%EA%B7%80_%ED%81%B4%EB%A1%9C%EC%A6%88%EC%97%85_0589.gif?v=e78b9540d3f08909",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e78b9540d3f089094141e7c0672f1350d6723983d6be42e23999711049cdc45c.png"
+      },
+      {
+        "id": "치이카와/치이카와_뒤돌아_손_흔들기_0200.gif",
+        "name": "치이카와_뒤돌아_손_흔들기_0200",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%92%A4%EB%8F%8C%EC%95%84_%EC%86%90_%ED%9D%94%EB%93%A4%EA%B8%B0_0200.gif?v=d32d944420f34650",
+        "animated": true,
+        "previewSrc": "/sticker-previews/d32d944420f3465058d90a3bdb3e5c8d6803a8a81b9a7884f38448f490741c81.png"
+      },
+      {
+        "id": "치이카와/치이카와_뒤돌아보며_볼을_붉히고_미소_짓는_0651.gif",
+        "name": "치이카와_뒤돌아보며_볼을_붉히고_미소_짓는_0651",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EB%A9%B0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0651.gif?v=8df79504f6006c4e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/8df79504f6006c4e43ccc9904f72d8c3b49412823b0366b92a53cac084deba5b.png"
+      },
+      {
+        "id": "치이카와/치이카와_뒷이_푹신한_이불로_기어_들어가는_0717.gif",
+        "name": "치이카와_뒷이_푹신한_이불로_기어_들어가는_0717",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%92%B7%EC%9D%B4_%ED%91%B9%EC%8B%A0%ED%95%9C_%EC%9D%B4%EB%B6%88%EB%A1%9C_%EA%B8%B0%EC%96%B4_%EB%93%A4%EC%96%B4%EA%B0%80%EB%8A%94_0717.gif?v=3c3c2a4983375a6e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3c3c2a4983375a6e2a829409e81424fb67d696a59ae0c261fce196e37d7d7d57.png"
+      },
+      {
+        "id": "치이카와/치이카와_드넓은_잔디밭에_누워_먼_산을_바라보는_힐링_0615.gif",
+        "name": "치이카와_드넓은_잔디밭에_누워_먼_산을_바라보는_힐링_0615",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%93%9C%EB%84%93%EC%9D%80_%EC%9E%94%EB%94%94%EB%B0%AD%EC%97%90_%EB%88%84%EC%9B%8C_%EB%A8%BC_%EC%82%B0%EC%9D%84_%EB%B0%94%EB%9D%BC%EB%B3%B4%EB%8A%94_%ED%9E%90%EB%A7%81_0615.gif?v=57348ea9a273ed60",
+        "animated": true,
+        "previewSrc": "/sticker-previews/57348ea9a273ed60b31679821bf2bfe6a5b4d6dcf021791bb419bf7d42ec7abf.png"
+      },
+      {
+        "id": "치이카와/치이카와_따뜻한_잔을_품에_안고_행복하게_웃는_0660.gif",
+        "name": "치이카와_따뜻한_잔을_품에_안고_행복하게_웃는_0660",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%94%B0%EB%9C%BB%ED%95%9C_%EC%9E%94%EC%9D%84_%ED%92%88%EC%97%90_%EC%95%88%EA%B3%A0_%ED%96%89%EB%B3%B5%ED%95%98%EA%B2%8C_%EC%9B%83%EB%8A%94_0660.gif?v=966d0b944eb2e472",
+        "animated": true,
+        "previewSrc": "/sticker-previews/966d0b944eb2e47276f3b8f202fbeb692cfabe4f5296e9083e710c6c6818f261.png"
+      },
+      {
+        "id": "치이카와/치이카와_땀을_흘리며_긴장하는_0669.gif",
+        "name": "치이카와_땀을_흘리며_긴장하는_0669",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EA%B8%B4%EC%9E%A5%ED%95%98%EB%8A%94_0669.gif?v=108232cfdd62f835",
+        "animated": true,
+        "previewSrc": "/sticker-previews/108232cfdd62f835b976297dfb7d8ec5c3dd6f1e9c26e042db001ed3627585a7.png"
+      },
+      {
+        "id": "치이카와/치이카와_땀을_흘리며_긴장한_채_물을_마시는_0605.gif",
+        "name": "치이카와_땀을_흘리며_긴장한_채_물을_마시는_0605",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EA%B8%B4%EC%9E%A5%ED%95%9C_%EC%B1%84_%EB%AC%BC%EC%9D%84_%EB%A7%88%EC%8B%9C%EB%8A%94_0605.gif?v=09149f8f7c03e969",
+        "animated": true,
+        "previewSrc": "/sticker-previews/09149f8f7c03e969f18321f8c4c62f32c4be4d98af2e02b5ca5678dbbec47e8f.png"
+      },
+      {
+        "id": "치이카와/치이카와_땀을_흘리며_긴장한_채_열심히_달리는_0613.gif",
+        "name": "치이카와_땀을_흘리며_긴장한_채_열심히_달리는_0613",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EA%B8%B4%EC%9E%A5%ED%95%9C_%EC%B1%84_%EC%97%B4%EC%8B%AC%ED%9E%88_%EB%8B%AC%EB%A6%AC%EB%8A%94_0613.gif?v=c4f65cb76ae040e5",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c4f65cb76ae040e54147ba55084609aad7816b9441cd810d2c8fc8c5b3649a2c.png"
+      },
+      {
+        "id": "치이카와/치이카와_땀을_흘리며_긴장한_표정으로_빵을_먹는_0682.gif",
+        "name": "치이카와_땀을_흘리며_긴장한_표정으로_빵을_먹는_0682",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EA%B8%B4%EC%9E%A5%ED%95%9C_%ED%91%9C%EC%A0%95%EC%9C%BC%EB%A1%9C_%EB%B9%B5%EC%9D%84_%EB%A8%B9%EB%8A%94_0682.gif?v=3f84985d57943bd6",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3f84985d57943bd6ae8edb0d0b5d14cfd705b730ea1bc181a1fa44d8d9bc868a.png"
+      },
+      {
+        "id": "치이카와/치이카와_땀을_흘리며_당황한_표정으로_열심히_달리는_0712.gif",
+        "name": "치이카와_땀을_흘리며_당황한_표정으로_열심히_달리는_0712",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EB%8B%B9%ED%99%A9%ED%95%9C_%ED%91%9C%EC%A0%95%EC%9C%BC%EB%A1%9C_%EC%97%B4%EC%8B%AC%ED%9E%88_%EB%8B%AC%EB%A6%AC%EB%8A%94_0712.gif?v=68d9a13a8d003403",
+        "animated": true,
+        "previewSrc": "/sticker-previews/68d9a13a8d0034038dd41e08d7e1a65c646845a7dbc0e0405af4c7953db2d22b.png"
+      },
+      {
+        "id": "치이카와/치이카와_땀을_흘리며_버섯을_맛있게_먹는_0590.gif",
+        "name": "치이카와_땀을_흘리며_버섯을_맛있게_먹는_0590",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EB%B2%84%EC%84%AF%EC%9D%84_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EB%8A%94_0590.gif?v=871572e867d37329",
+        "animated": true,
+        "previewSrc": "/sticker-previews/871572e867d37329b3df6ff2f185d42b66a4f92a7c9059fe4e439fe95d081771.png"
+      },
+      {
+        "id": "치이카와/치이카와_땀을_흘리며_부끄러워하고_긴장한_0594.gif",
+        "name": "치이카와_땀을_흘리며_부끄러워하고_긴장한_0594",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EB%B6%80%EB%81%84%EB%9F%AC%EC%9B%8C%ED%95%98%EA%B3%A0_%EA%B8%B4%EC%9E%A5%ED%95%9C_0594.gif?v=95e28a2ca015ee23",
+        "animated": true,
+        "previewSrc": "/sticker-previews/95e28a2ca015ee234e47deb61a11da6def5c4ab3cd4989975d21ff21af746692.png"
+      },
+      {
+        "id": "치이카와/치이카와_뜨거운_음식을_젓가락으로_집어_맛있게_먹는_0183.gif",
+        "name": "치이카와_뜨거운_음식을_젓가락으로_집어_맛있게_먹는_0183",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%9C%A8%EA%B1%B0%EC%9A%B4_%EC%9D%8C%EC%8B%9D%EC%9D%84_%EC%A0%93%EA%B0%80%EB%9D%BD%EC%9C%BC%EB%A1%9C_%EC%A7%91%EC%96%B4_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EB%8A%94_0183.gif?v=9a4bc6f7129a43fa",
+        "animated": true,
+        "previewSrc": "/sticker-previews/9a4bc6f7129a43fa90d502d4eaf4a1f0672ab31884fa6610c8401cc60d59eb20.png"
+      },
+      {
+        "id": "치이카와/치이카와_문_앞에서_빼꼼_나오기_0697.gif",
+        "name": "치이카와_문_앞에서_빼꼼_나오기_0697",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%AC%B8_%EC%95%9E%EC%97%90%EC%84%9C_%EB%B9%BC%EA%BC%BC_%EB%82%98%EC%98%A4%EA%B8%B0_0697.gif?v=77a1052b4f2a7bc9",
+        "animated": true,
+        "previewSrc": "/sticker-previews/77a1052b4f2a7bc93d95c5b8185ec784006ba06138003ac3b0f192efdf464360.png"
+      },
+      {
+        "id": "치이카와/치이카와_바위_위에_동그랗게_웅크리고_누워있는_뒷_2094.gif",
+        "name": "치이카와_바위_위에_동그랗게_웅크리고_누워있는_뒷_2094",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B0%94%EC%9C%84_%EC%9C%84%EC%97%90_%EB%8F%99%EA%B7%B8%EB%9E%97%EA%B2%8C_%EC%9B%85%ED%81%AC%EB%A6%AC%EA%B3%A0_%EB%88%84%EC%9B%8C%EC%9E%88%EB%8A%94_%EB%92%B7_2094.gif?v=e08cd12408a50c49",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e08cd12408a50c497dd2bf477c84d1dc9682043a6f89800918ae615fbcd59a86.png"
+      },
+      {
+        "id": "치이카와/치이카와_반짝이는_눈으로_위를_올려다보는_반응_0675.gif",
+        "name": "치이카와_반짝이는_눈으로_위를_올려다보는_반응_0675",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B0%98%EC%A7%9D%EC%9D%B4%EB%8A%94_%EB%88%88%EC%9C%BC%EB%A1%9C_%EC%9C%84%EB%A5%BC_%EC%98%AC%EB%A0%A4%EB%8B%A4%EB%B3%B4%EB%8A%94_%EB%B0%98%EC%9D%91_0675.gif?v=c1713f2005ca921b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c1713f2005ca921b1cb1df89121b5a10155bf5dd8b2af6ad6b206ea98827459a.png"
+      },
+      {
+        "id": "치이카와/치이카와_밤_잔디밭에서_엎드려_웅크리고_숨어있는_장면_0636.gif",
+        "name": "치이카와_밤_잔디밭에서_엎드려_웅크리고_숨어있는_장면_0636",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B0%A4_%EC%9E%94%EB%94%94%EB%B0%AD%EC%97%90%EC%84%9C_%EC%97%8E%EB%93%9C%EB%A0%A4_%EC%9B%85%ED%81%AC%EB%A6%AC%EA%B3%A0_%EC%88%A8%EC%96%B4%EC%9E%88%EB%8A%94_%EC%9E%A5%EB%A9%B4_0636.gif?v=217ed804e3827edf",
+        "animated": true,
+        "previewSrc": "/sticker-previews/217ed804e3827edf20a6a4a6a9c6738bb8fd3d444ccb49dbc64ecd8cf98d6575.png"
+      },
+      {
+        "id": "치이카와/치이카와_버섯_모자_쓰고_포자_뿜기_0646.gif",
+        "name": "치이카와_버섯_모자_쓰고_포자_뿜기_0646",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B2%84%EC%84%AF_%EB%AA%A8%EC%9E%90_%EC%93%B0%EA%B3%A0_%ED%8F%AC%EC%9E%90_%EB%BF%9C%EA%B8%B0_0646.gif?v=3e1041e905c12dec",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3e1041e905c12decd8e14c953c20f0a679f9c8d977cd380cac75e1eaa3900e58.png"
+      },
+      {
+        "id": "치이카와/치이카와_볼을_붉히고_눈을_반짝이며_젓가락을_든_0257.gif",
+        "name": "치이카와_볼을_붉히고_눈을_반짝이며_젓가락을_든_0257",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EA%B3%A0_%EB%88%88%EC%9D%84_%EB%B0%98%EC%A7%9D%EC%9D%B4%EB%A9%B0_%EC%A0%93%EA%B0%80%EB%9D%BD%EC%9D%84_%EB%93%A0_0257.gif?v=c1366e3477a34f33",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c1366e3477a34f33fb4ea86ff53ee5b58bf176dfdd2d4ef014a6b3d2900960aa.png"
+      },
+      {
+        "id": "치이카와/치이카와_볼을_붉히고_식은땀을_흘리며_긴장한_0639.gif",
+        "name": "치이카와_볼을_붉히고_식은땀을_흘리며_긴장한_0639",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EA%B3%A0_%EC%8B%9D%EC%9D%80%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EA%B8%B4%EC%9E%A5%ED%95%9C_0639.gif?v=c22a78e0fbfda1a4",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c22a78e0fbfda1a4f1f3d6bace4c6bb48d00b5840c4c7c4076653badbbcb6bec.png"
+      },
+      {
+        "id": "치이카와/치이카와_볼을_붉히며_돌아보는_0723.gif",
+        "name": "치이카와_볼을_붉히며_돌아보는_0723",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%8F%8C%EC%95%84%EB%B3%B4%EB%8A%94_0723.gif?v=5d536cc9595a0029",
+        "animated": true,
+        "previewSrc": "/sticker-previews/5d536cc9595a0029f29f6eb6ed6024ced0a0837b1ea542ec9c80312c08d1f19e.png"
+      },
+      {
+        "id": "치이카와/치이카와_볼을_붉히며_뒤돌아보는_엉덩이와_꼬리_0266.gif",
+        "name": "치이카와_볼을_붉히며_뒤돌아보는_엉덩이와_꼬리_0266",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EB%8A%94_%EC%97%89%EB%8D%A9%EC%9D%B4%EC%99%80_%EA%BC%AC%EB%A6%AC_0266.gif?v=5d5242d41b8decf3",
+        "animated": true,
+        "previewSrc": "/sticker-previews/5d5242d41b8decf37ee4738bdcbd180174f3ccef2d8fbde7c7d9ef446989fb68.png"
+      },
+      {
+        "id": "치이카와/치이카와_볼을_붉히며_반짝이는_눈으로_미소_짓는_0686.gif",
+        "name": "치이카와_볼을_붉히며_반짝이는_눈으로_미소_짓는_0686",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%B0%98%EC%A7%9D%EC%9D%B4%EB%8A%94_%EB%88%88%EC%9C%BC%EB%A1%9C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0686.gif?v=cefe7f21fee708ef",
+        "animated": true,
+        "previewSrc": "/sticker-previews/cefe7f21fee708ef2d28c2c7bad39911b865d3cd27284bb11d42cf53b6c9b65b.png"
+      },
+      {
+        "id": "치이카와/치이카와_볼을_붉히며_사랑스럽게_미소_짓는_0600.gif",
+        "name": "치이카와_볼을_붉히며_사랑스럽게_미소_짓는_0600",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EC%82%AC%EB%9E%91%EC%8A%A4%EB%9F%BD%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0600.gif?v=893dc8c99ab26a8f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/893dc8c99ab26a8f3b51f99035ea1484c714549383667f57c4684ead02b28b2f.png"
+      },
+      {
+        "id": "치이카와/치이카와_볼을_붉히며_활짝_웃는_얼굴_클로즈업_0702.gif",
+        "name": "치이카와_볼을_붉히며_활짝_웃는_얼굴_클로즈업_0702",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%ED%99%9C%EC%A7%9D_%EC%9B%83%EB%8A%94_%EC%96%BC%EA%B5%B4_%ED%81%B4%EB%A1%9C%EC%A6%88%EC%97%85_0702.gif?v=e61184c7dccbf32e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e61184c7dccbf32e50b5c210e11faf06758b1aea9394abdaa8da8c59ad03d4d9.png"
+      },
+      {
+        "id": "치이카와/치이카와_분홍색_곰_모자를_쓰고_눈을_감고_미소_짓는_0666.gif",
+        "name": "치이카와_분홍색_곰_모자를_쓰고_눈을_감고_미소_짓는_0666",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%84%ED%99%8D%EC%83%89_%EA%B3%B0_%EB%AA%A8%EC%9E%90%EB%A5%BC_%EC%93%B0%EA%B3%A0_%EB%88%88%EC%9D%84_%EA%B0%90%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0666.gif?v=45b7ff24c811aff1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/45b7ff24c811aff11e9b9bf615edfb3ac340363852701ba9aeea09f9e391c75c.png"
+      },
+      {
+        "id": "치이카와/치이카와_분홍색_곰_옷을_입고_눈웃음_짓는_0598.gif",
+        "name": "치이카와_분홍색_곰_옷을_입고_눈웃음_짓는_0598",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%84%ED%99%8D%EC%83%89_%EA%B3%B0_%EC%98%B7%EC%9D%84_%EC%9E%85%EA%B3%A0_%EB%88%88%EC%9B%83%EC%9D%8C_%EC%A7%93%EB%8A%94_0598.gif?v=970f5e28d705c376",
+        "animated": true,
+        "previewSrc": "/sticker-previews/970f5e28d705c376b1b986cdbd9898a939cf663e928bf864a543cce2d1b9d63d.png"
+      },
+      {
+        "id": "치이카와/치이카와_분홍색_곰_파자마를_입고_뒤돌아보는_뒷_0706.gif",
+        "name": "치이카와_분홍색_곰_파자마를_입고_뒤돌아보는_뒷_0706",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%84%ED%99%8D%EC%83%89_%EA%B3%B0_%ED%8C%8C%EC%9E%90%EB%A7%88%EB%A5%BC_%EC%9E%85%EA%B3%A0_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EB%8A%94_%EB%92%B7_0706.gif?v=3d7717fff83a249b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3d7717fff83a249b069ba220d94f3cf2c87a46c275831e78f98b963f1fb7cfb7.png"
+      },
+      {
+        "id": "치이카와/치이카와_분홍색_곰돌이_잠옷을_입고_미소_짓는_0668.gif",
+        "name": "치이카와_분홍색_곰돌이_잠옷을_입고_미소_짓는_0668",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%84%ED%99%8D%EC%83%89_%EA%B3%B0%EB%8F%8C%EC%9D%B4_%EC%9E%A0%EC%98%B7%EC%9D%84_%EC%9E%85%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0668.gif?v=ee61bc732b54616d",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ee61bc732b54616d131874123315ec41beb78ae23921e9eea906615c3ff66fec.png"
+      },
+      {
+        "id": "치이카와/치이카와_분홍색_싹둑창을_들고_힘차게_뛰어가는_0710.gif",
+        "name": "치이카와_분홍색_싹둑창을_들고_힘차게_뛰어가는_0710",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%84%ED%99%8D%EC%83%89_%EC%8B%B9%EB%91%91%EC%B0%BD%EC%9D%84_%EB%93%A4%EA%B3%A0_%ED%9E%98%EC%B0%A8%EA%B2%8C_%EB%9B%B0%EC%96%B4%EA%B0%80%EB%8A%94_0710.gif?v=74afc30af81f130b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/74afc30af81f130bc0ce148fd83b7b0563e5e868665ffaa5504e00cbfd2c173b.png"
+      },
+      {
+        "id": "치이카와/치이카와_분홍색_알람_시계_옆에서_곤히_잠든_0591.gif",
+        "name": "치이카와_분홍색_알람_시계_옆에서_곤히_잠든_0591",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%84%ED%99%8D%EC%83%89_%EC%95%8C%EB%9E%8C_%EC%8B%9C%EA%B3%84_%EC%98%86%EC%97%90%EC%84%9C_%EA%B3%A4%ED%9E%88_%EC%9E%A0%EB%93%A0_0591.gif?v=2e926f6a66a6953e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/2e926f6a66a6953e6d4be54c919c7fa7752bc0a47fd45498455e68b48fdc7c18.png"
+      },
+      {
+        "id": "치이카와/치이카와_분홍색_알람_시계를_소중하게_안고_웃는_0677.gif",
+        "name": "치이카와_분홍색_알람_시계를_소중하게_안고_웃는_0677",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%84%ED%99%8D%EC%83%89_%EC%95%8C%EB%9E%8C_%EC%8B%9C%EA%B3%84%EB%A5%BC_%EC%86%8C%EC%A4%91%ED%95%98%EA%B2%8C_%EC%95%88%EA%B3%A0_%EC%9B%83%EB%8A%94_0677.gif?v=0ea65d4b87f0bf9b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0ea65d4b87f0bf9bc5ef7b4dcf7545c32b08ceb0b3fb6c875de8082b459af4a5.png"
+      },
+      {
+        "id": "치이카와/치이카와_분홍색_알람시계를_보며_식은땀을_흘리고_당황하는_0672.gif",
+        "name": "치이카와_분홍색_알람시계를_보며_식은땀을_흘리고_당황하는_0672",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%84%ED%99%8D%EC%83%89_%EC%95%8C%EB%9E%8C%EC%8B%9C%EA%B3%84%EB%A5%BC_%EB%B3%B4%EB%A9%B0_%EC%8B%9D%EC%9D%80%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EA%B3%A0_%EB%8B%B9%ED%99%A9%ED%95%98%EB%8A%94_0672.gif?v=22b06cc493dbc628",
+        "animated": true,
+        "previewSrc": "/sticker-previews/22b06cc493dbc62819195c26437abf80705bd88de24a59c7661692497a635384.png"
+      },
+      {
+        "id": "치이카와/치이카와_분홍색_잠옷을_입고_활짝_웃고_있는_0653.gif",
+        "name": "치이카와_분홍색_잠옷을_입고_활짝_웃고_있는_0653",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%84%ED%99%8D%EC%83%89_%EC%9E%A0%EC%98%B7%EC%9D%84_%EC%9E%85%EA%B3%A0_%ED%99%9C%EC%A7%9D_%EC%9B%83%EA%B3%A0_%EC%9E%88%EB%8A%94_0653.gif?v=a0570705d695b8fc",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a0570705d695b8fc0153527b8d1e502a60e28c05e3d59edcfef6554323aa5590.png"
+      },
+      {
+        "id": "치이카와/치이카와_분홍색_파자마를_입고_초롱초롱한_눈으로_바라보는_0583.gif",
+        "name": "치이카와_분홍색_파자마를_입고_초롱초롱한_눈으로_바라보는_0583",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%84%ED%99%8D%EC%83%89_%ED%8C%8C%EC%9E%90%EB%A7%88%EB%A5%BC_%EC%9E%85%EA%B3%A0_%EC%B4%88%EB%A1%B1%EC%B4%88%EB%A1%B1%ED%95%9C_%EB%88%88%EC%9C%BC%EB%A1%9C_%EB%B0%94%EB%9D%BC%EB%B3%B4%EB%8A%94_0583.gif?v=f99503ca3aa16b45",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f99503ca3aa16b4550d980e04731c7ab6655038d609d9942a00469902bab4eae.png"
+      },
+      {
+        "id": "치이카와/치이카와_불붙어_탄_마시멜로를_들고_눈물_흘리며_달리는_0193.gif",
+        "name": "치이카와_불붙어_탄_마시멜로를_들고_눈물_흘리며_달리는_0193",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%88%EB%B6%99%EC%96%B4_%ED%83%84_%EB%A7%88%EC%8B%9C%EB%A9%9C%EB%A1%9C%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EB%88%88%EB%AC%BC_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EB%8B%AC%EB%A6%AC%EB%8A%94_0193.gif?v=023c0a0a320ed9d3",
+        "animated": true,
+        "previewSrc": "/sticker-previews/023c0a0a320ed9d33d83198932622c2cc5f4c049f1bb8cd2e8c7d1be5f4c01f5.png"
+      },
+      {
+        "id": "치이카와/치이카와_불붙은_마시멜로_들고_달리기_0211.gif",
+        "name": "치이카와_불붙은_마시멜로_들고_달리기_0211",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EB%B6%88%EB%B6%99%EC%9D%80_%EB%A7%88%EC%8B%9C%EB%A9%9C%EB%A1%9C_%EB%93%A4%EA%B3%A0_%EB%8B%AC%EB%A6%AC%EA%B8%B0_0211.gif?v=4a6f62c8538a409f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/4a6f62c8538a409f38244ec72b75f10eac56307fb3115ba6678786595f3f7e24.png"
+      },
+      {
+        "id": "치이카와/치이카와_수줍게_미소_지으며_손을_흔들어_인사하는_0209.gif",
+        "name": "치이카와_수줍게_미소_지으며_손을_흔들어_인사하는_0209",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%88%98%EC%A4%8D%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%80%EC%9C%BC%EB%A9%B0_%EC%86%90%EC%9D%84_%ED%9D%94%EB%93%A4%EC%96%B4_%EC%9D%B8%EC%82%AC%ED%95%98%EB%8A%94_0209.gif?v=d6859f4df413c1e7",
+        "animated": true,
+        "previewSrc": "/sticker-previews/d6859f4df413c1e7cdc4030f08f010527c2afef904db73fd98cccefaa1008976.png"
+      },
+      {
+        "id": "치이카와/치이카와_수줍게_볼을_붉히며_눈을_감고_걷는_0231.gif",
+        "name": "치이카와_수줍게_볼을_붉히며_눈을_감고_걷는_0231",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%88%98%EC%A4%8D%EA%B2%8C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%88%88%EC%9D%84_%EA%B0%90%EA%B3%A0_%EA%B1%B7%EB%8A%94_0231.gif?v=64a6ac3f9aa62e6b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/64a6ac3f9aa62e6b589bcc992cfd7481c035718cbee63f606a5409698a941318.png"
+      },
+      {
+        "id": "치이카와/치이카와_식은땀을_흘리며_긴장한_얼굴로_어색하게_웃는_0624.gif",
+        "name": "치이카와_식은땀을_흘리며_긴장한_얼굴로_어색하게_웃는_0624",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%8B%9D%EC%9D%80%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EA%B8%B4%EC%9E%A5%ED%95%9C_%EC%96%BC%EA%B5%B4%EB%A1%9C_%EC%96%B4%EC%83%89%ED%95%98%EA%B2%8C_%EC%9B%83%EB%8A%94_0624.gif?v=b2cab38080a71a37",
+        "animated": true,
+        "previewSrc": "/sticker-previews/b2cab38080a71a37ddfcdbf04e6561a4cf85e7f333654fa9c859895a251ffe6e.png"
+      },
+      {
+        "id": "치이카와/치이카와_식은땀을_흘리며_도라야키를_먹는_0721.gif",
+        "name": "치이카와_식은땀을_흘리며_도라야키를_먹는_0721",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%8B%9D%EC%9D%80%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EB%8F%84%EB%9D%BC%EC%95%BC%ED%82%A4%EB%A5%BC_%EB%A8%B9%EB%8A%94_0721.gif?v=4a7314d2071e0063",
+        "animated": true,
+        "previewSrc": "/sticker-previews/4a7314d2071e0063f81543288c62616d424902717da12f503a16ba57357049f0.png"
+      },
+      {
+        "id": "치이카와/치이카와_식은땀을_흘리며_초조하게_과자를_먹는_0687.gif",
+        "name": "치이카와_식은땀을_흘리며_초조하게_과자를_먹는_0687",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%8B%9D%EC%9D%80%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EC%B4%88%EC%A1%B0%ED%95%98%EA%B2%8C_%EA%B3%BC%EC%9E%90%EB%A5%BC_%EB%A8%B9%EB%8A%94_0687.gif?v=278e558e3beb8c04",
+        "animated": true,
+        "previewSrc": "/sticker-previews/278e558e3beb8c0422a8bbe6a729cc60a34a8b5fd7eaa2837267834556120341.png"
+      },
+      {
+        "id": "치이카와/치이카와_식탁_위_음식을_땀_흘리며_긴장한_표정으로_보는_0573.gif",
+        "name": "치이카와_식탁_위_음식을_땀_흘리며_긴장한_표정으로_보는_0573",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%8B%9D%ED%83%81_%EC%9C%84_%EC%9D%8C%EC%8B%9D%EC%9D%84_%EB%95%80_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EA%B8%B4%EC%9E%A5%ED%95%9C_%ED%91%9C%EC%A0%95%EC%9C%BC%EB%A1%9C_%EB%B3%B4%EB%8A%94_0573.gif?v=1a2ac17e44391271",
+        "animated": true,
+        "previewSrc": "/sticker-previews/1a2ac17e443912717ac6208d9b5189618891126ded5b528f5ad5704bca336732.png"
+      },
+      {
+        "id": "치이카와/치이카와_신나게_택배_박스를_들고_걸어가는_0180.gif",
+        "name": "치이카와_신나게_택배_박스를_들고_걸어가는_0180",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%8B%A0%EB%82%98%EA%B2%8C_%ED%83%9D%EB%B0%B0_%EB%B0%95%EC%8A%A4%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EA%B1%B8%EC%96%B4%EA%B0%80%EB%8A%94_0180.gif?v=39631c0d7a535d65",
+        "animated": true,
+        "previewSrc": "/sticker-previews/39631c0d7a535d656daae4d29f011a4c4c81096c4a19fec2cd31f3681758e127.png"
+      },
+      {
+        "id": "치이카와/치이카와_안절부절못하며_초조해하는_반응_0270.gif",
+        "name": "치이카와_안절부절못하며_초조해하는_반응_0270",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%95%88%EC%A0%88%EB%B6%80%EC%A0%88%EB%AA%BB%ED%95%98%EB%A9%B0_%EC%B4%88%EC%A1%B0%ED%95%B4%ED%95%98%EB%8A%94_%EB%B0%98%EC%9D%91_0270.gif?v=3aa0173c83181128",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3aa0173c83181128d3e0f54a8b370e3b39a2aa15da83cbc7db08384da4e7d2ff.png"
+      },
+      {
+        "id": "치이카와/치이카와_야외에서_볼을_붉히며_수줍게_미소_짓는_0595.gif",
+        "name": "치이카와_야외에서_볼을_붉히며_수줍게_미소_짓는_0595",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%95%BC%EC%99%B8%EC%97%90%EC%84%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EC%88%98%EC%A4%8D%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0595.gif?v=280418c804110d38",
+        "animated": true,
+        "previewSrc": "/sticker-previews/280418c804110d38d728126dce4e0a8bd80a7c621a9168a6e93a87e752aa81b4.png"
+      },
+      {
+        "id": "치이카와/치이카와_얌전히_앉아_간식을_먹는_0627.gif",
+        "name": "치이카와_얌전히_앉아_간식을_먹는_0627",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%96%8C%EC%A0%84%ED%9E%88_%EC%95%89%EC%95%84_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%A8%B9%EB%8A%94_0627.gif?v=89a4b95466b497d1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/89a4b95466b497d13c618925e4d070e28a7d3f2b19a0cd9b77cb6aa32a1952a6.png"
+      },
+      {
+        "id": "치이카와/치이카와_양손으로_간식을_들고_볼을_붉히는_0635.gif",
+        "name": "치이카와_양손으로_간식을_들고_볼을_붉히는_0635",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%96%91%EC%86%90%EC%9C%BC%EB%A1%9C_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%8A%94_0635.gif?v=5bce4743a12e5b00",
+        "animated": true,
+        "previewSrc": "/sticker-previews/5bce4743a12e5b00925dd124b174e8fa2ae7b814fea68e894f832220f81057d2.png"
+      },
+      {
+        "id": "치이카와/치이카와_양손으로_하늘색_간식을_들고_맛있게_먹는_0720.gif",
+        "name": "치이카와_양손으로_하늘색_간식을_들고_맛있게_먹는_0720",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%96%91%EC%86%90%EC%9C%BC%EB%A1%9C_%ED%95%98%EB%8A%98%EC%83%89_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EB%8A%94_0720.gif?v=1c0b9cf6ce723b47",
+        "animated": true,
+        "previewSrc": "/sticker-previews/1c0b9cf6ce723b479d523ba801b145cf81c20780d11f3181e4f985d809ecc472.png"
+      },
+      {
+        "id": "치이카와/치이카와_얼굴_클로즈업_떨고_있는_표정_0715.gif",
+        "name": "치이카와_얼굴_클로즈업_떨고_있는_표정_0715",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%96%BC%EA%B5%B4_%ED%81%B4%EB%A1%9C%EC%A6%88%EC%97%85_%EB%96%A8%EA%B3%A0_%EC%9E%88%EB%8A%94_%ED%91%9C%EC%A0%95_0715.gif?v=b5547dfb43e44ea5",
+        "animated": true,
+        "previewSrc": "/sticker-previews/b5547dfb43e44ea53bf8536167740f5d9c386847136948159623f529e5be7961.png"
+      },
+      {
+        "id": "치이카와/치이카와_오리_알람시계_옆에서_폭신한_이불을_덮고_자는_0708.gif",
+        "name": "치이카와_오리_알람시계_옆에서_폭신한_이불을_덮고_자는_0708",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%98%A4%EB%A6%AC_%EC%95%8C%EB%9E%8C%EC%8B%9C%EA%B3%84_%EC%98%86%EC%97%90%EC%84%9C_%ED%8F%AD%EC%8B%A0%ED%95%9C_%EC%9D%B4%EB%B6%88%EC%9D%84_%EB%8D%AE%EA%B3%A0_%EC%9E%90%EB%8A%94_0708.gif?v=111f7da6e16fe810",
+        "animated": true,
+        "previewSrc": "/sticker-previews/111f7da6e16fe81059daed4ddc8d7c0c5e017e9f559aa4911a30f43be620daf9.png"
+      },
+      {
+        "id": "치이카와/치이카와_울리는_알람_시계를_들고_당황해서_땀을_흘리는_0704.gif",
+        "name": "치이카와_울리는_알람_시계를_들고_당황해서_땀을_흘리는_0704",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%9A%B8%EB%A6%AC%EB%8A%94_%EC%95%8C%EB%9E%8C_%EC%8B%9C%EA%B3%84%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EB%8B%B9%ED%99%A9%ED%95%B4%EC%84%9C_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%8A%94_0704.gif?v=08ca7f38a8d7273c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/08ca7f38a8d7273c724d2d73059ba6e5db03be2345aed81d7fb1f51b686d80d0.png"
+      },
+      {
+        "id": "치이카와/치이카와_의욕_넘치는_표정으로_깡충깡충_뛰는_0237.gif",
+        "name": "치이카와_의욕_넘치는_표정으로_깡충깡충_뛰는_0237",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%9D%98%EC%9A%95_%EB%84%98%EC%B9%98%EB%8A%94_%ED%91%9C%EC%A0%95%EC%9C%BC%EB%A1%9C_%EA%B9%A1%EC%B6%A9%EA%B9%A1%EC%B6%A9_%EB%9B%B0%EB%8A%94_0237.gif?v=d564339f4c5b496c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/d564339f4c5b496c11f1fd76a744bd696012c9f5fbdb3f65206c78a90a71316d.png"
+      },
+      {
+        "id": "치이카와/치이카와_이불_속에_웅크리고_누워_눈을_깜빡이는_0684.gif",
+        "name": "치이카와_이불_속에_웅크리고_누워_눈을_깜빡이는_0684",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%9D%B4%EB%B6%88_%EC%86%8D%EC%97%90_%EC%9B%85%ED%81%AC%EB%A6%AC%EA%B3%A0_%EB%88%84%EC%9B%8C_%EB%88%88%EC%9D%84_%EA%B9%9C%EB%B9%A1%EC%9D%B4%EB%8A%94_0684.gif?v=f3586b573554ea69",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f3586b573554ea69b624db63355206b2d57cff3ff3f3082656ca384bfe689105.png"
+      },
+      {
+        "id": "치이카와/치이카와_이불_속에서_행복하게_잠든_0601.gif",
+        "name": "치이카와_이불_속에서_행복하게_잠든_0601",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%9D%B4%EB%B6%88_%EC%86%8D%EC%97%90%EC%84%9C_%ED%96%89%EB%B3%B5%ED%95%98%EA%B2%8C_%EC%9E%A0%EB%93%A0_0601.gif?v=d0bff3e278ed7b1d",
+        "animated": true,
+        "previewSrc": "/sticker-previews/d0bff3e278ed7b1dbb8ad0cc0499abe6786c37aaace0f2e847749eaba1b7fe09.png"
+      },
+      {
+        "id": "치이카와/치이카와_이불을_덮고_행복하게_미소_지으며_자는_0667.gif",
+        "name": "치이카와_이불을_덮고_행복하게_미소_지으며_자는_0667",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%9D%B4%EB%B6%88%EC%9D%84_%EB%8D%AE%EA%B3%A0_%ED%96%89%EB%B3%B5%ED%95%98%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%80%EC%9C%BC%EB%A9%B0_%EC%9E%90%EB%8A%94_0667.gif?v=150718336bfc4d71",
+        "animated": true,
+        "previewSrc": "/sticker-previews/150718336bfc4d71a93a057b16dac05155ef434758a406185edf29ae8cdfff01.png"
+      },
+      {
+        "id": "치이카와/치이카와_자신감_넘치는_표정으로_뒤돌아보는_0634.gif",
+        "name": "치이카와_자신감_넘치는_표정으로_뒤돌아보는_0634",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%9E%90%EC%8B%A0%EA%B0%90_%EB%84%98%EC%B9%98%EB%8A%94_%ED%91%9C%EC%A0%95%EC%9C%BC%EB%A1%9C_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EB%8A%94_0634.gif?v=c8538fee320e7614",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c8538fee320e76147e983b8aee5c5056d1f6756a4da5e58549ccf1bfdc1da26b.png"
+      },
+      {
+        "id": "치이카와/치이카와_작은_가방을_손에_들고_풀밭에서_바라보는_0585.gif",
+        "name": "치이카와_작은_가방을_손에_들고_풀밭에서_바라보는_0585",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%9E%91%EC%9D%80_%EA%B0%80%EB%B0%A9%EC%9D%84_%EC%86%90%EC%97%90_%EB%93%A4%EA%B3%A0_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%EB%B0%94%EB%9D%BC%EB%B3%B4%EB%8A%94_0585.gif?v=8d2cc1d3b7804025",
+        "animated": true,
+        "previewSrc": "/sticker-previews/8d2cc1d3b78040253b881cf4e02018fe7a967d26771e79653092145384440578.png"
+      },
+      {
+        "id": "치이카와/치이카와_작은_버섯을_들고_긴장해서_땀을_흘리며_부끄러워하는_0584.gif",
+        "name": "치이카와_작은_버섯을_들고_긴장해서_땀을_흘리며_부끄러워하는_0584",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%9E%91%EC%9D%80_%EB%B2%84%EC%84%AF%EC%9D%84_%EB%93%A4%EA%B3%A0_%EA%B8%B4%EC%9E%A5%ED%95%B4%EC%84%9C_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EB%B6%80%EB%81%84%EB%9F%AC%EC%9B%8C%ED%95%98%EB%8A%94_0584.gif?v=fd886dd06f0b5a21",
+        "animated": true,
+        "previewSrc": "/sticker-previews/fd886dd06f0b5a2197e63edbfc9c147cb642279f85fbd51a6a308670e3c9a5f2.png"
+      },
+      {
+        "id": "치이카와/치이카와_잔디밭_통나무_나이테_위에_서_있는_0607.gif",
+        "name": "치이카와_잔디밭_통나무_나이테_위에_서_있는_0607",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%9E%94%EB%94%94%EB%B0%AD_%ED%86%B5%EB%82%98%EB%AC%B4_%EB%82%98%EC%9D%B4%ED%85%8C_%EC%9C%84%EC%97%90_%EC%84%9C_%EC%9E%88%EB%8A%94_0607.gif?v=fe2b5473810f525a",
+        "animated": true,
+        "previewSrc": "/sticker-previews/fe2b5473810f525a3ee5e0712013135ec4e6f649dd7c95bb8ce9e9e6a57253cd.png"
+      },
+      {
+        "id": "치이카와/치이카와_초록색_모자를_쓰고_손을_흔드는_0184.gif",
+        "name": "치이카와_초록색_모자를_쓰고_손을_흔드는_0184",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%B4%88%EB%A1%9D%EC%83%89_%EB%AA%A8%EC%9E%90%EB%A5%BC_%EC%93%B0%EA%B3%A0_%EC%86%90%EC%9D%84_%ED%9D%94%EB%93%9C%EB%8A%94_0184.gif?v=f87244b82e0a92e1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f87244b82e0a92e1ddd006db736e4b799a16a57af873457b9dd10966c973743f.png"
+      },
+      {
+        "id": "치이카와/치이카와_초롱초롱한_눈으로_작은_상자를_바라보는_0649.gif",
+        "name": "치이카와_초롱초롱한_눈으로_작은_상자를_바라보는_0649",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%B4%88%EB%A1%B1%EC%B4%88%EB%A1%B1%ED%95%9C_%EB%88%88%EC%9C%BC%EB%A1%9C_%EC%9E%91%EC%9D%80_%EC%83%81%EC%9E%90%EB%A5%BC_%EB%B0%94%EB%9D%BC%EB%B3%B4%EB%8A%94_0649.gif?v=16e1fac797b105f7",
+        "animated": true,
+        "previewSrc": "/sticker-previews/16e1fac797b105f7d0a381fdeefdb8e9773679bc96c0e184152ef30edb370cbf.png"
+      },
+      {
+        "id": "치이카와/치이카와_총을_들고_결의에_찬_화난_표정을_짓는_밈_0208.gif",
+        "name": "치이카와_총을_들고_결의에_찬_화난_표정을_짓는_밈_0208",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%EC%B4%9D%EC%9D%84_%EB%93%A4%EA%B3%A0_%EA%B2%B0%EC%9D%98%EC%97%90_%EC%B0%AC_%ED%99%94%EB%82%9C_%ED%91%9C%EC%A0%95%EC%9D%84_%EC%A7%93%EB%8A%94_%EB%B0%88_0208.gif?v=d2968b1c18c279c9",
+        "animated": true,
+        "previewSrc": "/sticker-previews/d2968b1c18c279c94956153c30c87db77673e6a1672e4f9684dd384ebc7b5776.png"
+      },
+      {
+        "id": "치이카와/치이카와_택배_상자_들고_넘어지기_0210.gif",
+        "name": "치이카와_택배_상자_들고_넘어지기_0210",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%83%9D%EB%B0%B0_%EC%83%81%EC%9E%90_%EB%93%A4%EA%B3%A0_%EB%84%98%EC%96%B4%EC%A7%80%EA%B8%B0_0210.gif?v=f8a1a6e613e5be64",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f8a1a6e613e5be6466eab8c616876774e6d769479e60e629805aefe7434530a4.png"
+      },
+      {
+        "id": "치이카와/치이카와_택배_상자_들고_달리기_0256.gif",
+        "name": "치이카와_택배_상자_들고_달리기_0256",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%83%9D%EB%B0%B0_%EC%83%81%EC%9E%90_%EB%93%A4%EA%B3%A0_%EB%8B%AC%EB%A6%AC%EA%B8%B0_0256.gif?v=74aa34f5e6a6289b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/74aa34f5e6a6289b5144fcd45d9006546bfc4754f91cb1a02e97f469133745f8.png"
+      },
+      {
+        "id": "치이카와/치이카와_파티_고깔모자를_쓰고_축하하는_0226.gif",
+        "name": "치이카와_파티_고깔모자를_쓰고_축하하는_0226",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%8C%8C%ED%8B%B0_%EA%B3%A0%EA%B9%94%EB%AA%A8%EC%9E%90%EB%A5%BC_%EC%93%B0%EA%B3%A0_%EC%B6%95%ED%95%98%ED%95%98%EB%8A%94_0226.gif?v=bba711bdebd233e4",
+        "animated": true,
+        "previewSrc": "/sticker-previews/bba711bdebd233e425e81984dafa5acfb841d30347956a99f46bbd2f5d401138.png"
+      },
+      {
+        "id": "치이카와/치이카와_편안하게_곤히_잠들어_있는_얼굴_0699.gif",
+        "name": "치이카와_편안하게_곤히_잠들어_있는_얼굴_0699",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%8E%B8%EC%95%88%ED%95%98%EA%B2%8C_%EA%B3%A4%ED%9E%88_%EC%9E%A0%EB%93%A4%EC%96%B4_%EC%9E%88%EB%8A%94_%EC%96%BC%EA%B5%B4_0699.gif?v=db39d5d2bdd1a2c8",
+        "animated": true,
+        "previewSrc": "/sticker-previews/db39d5d2bdd1a2c81d9756039348fbe355124b9881ea1ed18c0a32a745a4c9b1.png"
+      },
+      {
+        "id": "치이카와/치이카와_포근한_이불_속에서_미소_지으며_잠자는_0671.gif",
+        "name": "치이카와_포근한_이불_속에서_미소_지으며_잠자는_0671",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%8F%AC%EA%B7%BC%ED%95%9C_%EC%9D%B4%EB%B6%88_%EC%86%8D%EC%97%90%EC%84%9C_%EB%AF%B8%EC%86%8C_%EC%A7%80%EC%9C%BC%EB%A9%B0_%EC%9E%A0%EC%9E%90%EB%8A%94_0671.gif?v=417b9c3b4d0df9b6",
+        "animated": true,
+        "previewSrc": "/sticker-previews/417b9c3b4d0df9b675f96d3e95110491d5cca1f5c1d75031085b8b34f738debc.png"
+      },
+      {
+        "id": "치이카와/치이카와_폭신한_구름_쿠션_위에_누워_행복하게_미소_짓는_0632.gif",
+        "name": "치이카와_폭신한_구름_쿠션_위에_누워_행복하게_미소_짓는_0632",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%8F%AD%EC%8B%A0%ED%95%9C_%EA%B5%AC%EB%A6%84_%EC%BF%A0%EC%85%98_%EC%9C%84%EC%97%90_%EB%88%84%EC%9B%8C_%ED%96%89%EB%B3%B5%ED%95%98%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0632.gif?v=c02f98b8067a34e7",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c02f98b8067a34e741a7ff42c7ecbae6225d24c7d9b1db58338c1d8f35431a0d.png"
+      },
+      {
+        "id": "치이카와/치이카와_폭신한_이불_속에서_행복하게_잠든_0711.gif",
+        "name": "치이카와_폭신한_이불_속에서_행복하게_잠든_0711",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%8F%AD%EC%8B%A0%ED%95%9C_%EC%9D%B4%EB%B6%88_%EC%86%8D%EC%97%90%EC%84%9C_%ED%96%89%EB%B3%B5%ED%95%98%EA%B2%8C_%EC%9E%A0%EB%93%A0_0711.gif?v=d82d28fff2cdbc2c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/d82d28fff2cdbc2ca2a92da67093c1dfa24eb6d24f6fa63a7986cd8a5a913442.png"
+      },
+      {
+        "id": "치이카와/치이카와_푸른_하늘_아래서_볼을_붉히며_고개를_내미는_0654.gif",
+        "name": "치이카와_푸른_하늘_아래서_볼을_붉히며_고개를_내미는_0654",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%91%B8%EB%A5%B8_%ED%95%98%EB%8A%98_%EC%95%84%EB%9E%98%EC%84%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EA%B3%A0%EA%B0%9C%EB%A5%BC_%EB%82%B4%EB%AF%B8%EB%8A%94_0654.gif?v=ec6679c3d17d8988",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ec6679c3d17d8988302bf5bf0739004465d607cc4dfc70d5b1984ddf2427d29d.png"
+      },
+      {
+        "id": "치이카와/치이카와_풀밭에_누워_쉬기_0587.gif",
+        "name": "치이카와_풀밭에_누워_쉬기_0587",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%92%80%EB%B0%AD%EC%97%90_%EB%88%84%EC%9B%8C_%EC%89%AC%EA%B8%B0_0587.gif?v=11397dde0016115c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/11397dde0016115c9e083b58ec30d6ce51b74697eab2d3bf374688e5d324e753.png"
+      },
+      {
+        "id": "치이카와/치이카와_풀밭에서_동그란_뒤태를_보이며_몸을_흔드는_0581.gif",
+        "name": "치이카와_풀밭에서_동그란_뒤태를_보이며_몸을_흔드는_0581",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%EB%8F%99%EA%B7%B8%EB%9E%80_%EB%92%A4%ED%83%9C%EB%A5%BC_%EB%B3%B4%EC%9D%B4%EB%A9%B0_%EB%AA%B8%EC%9D%84_%ED%9D%94%EB%93%9C%EB%8A%94_0581.gif?v=b943a3aac05ecfa0",
+        "animated": true,
+        "previewSrc": "/sticker-previews/b943a3aac05ecfa07da9f24c8959101922a73e9b42a9fc2493a8beab58217f88.png"
+      },
+      {
+        "id": "치이카와/치이카와_풀밭에서_땀을_흘리며_긴장한_표정의_0726.gif",
+        "name": "치이카와_풀밭에서_땀을_흘리며_긴장한_표정의_0726",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%EB%95%80%EC%9D%84_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EA%B8%B4%EC%9E%A5%ED%95%9C_%ED%91%9C%EC%A0%95%EC%9D%98_0726.gif?v=afc04ab5ac2b18a7",
+        "animated": true,
+        "previewSrc": "/sticker-previews/afc04ab5ac2b18a7aca83f36975547088aeb0e9873c0ab1d5a0de027a4e1f7fb.png"
+      },
+      {
+        "id": "치이카와/치이카와_풀밭에서_볼을_붉히며_기분_좋게_웃는_0586.gif",
+        "name": "치이카와_풀밭에서_볼을_붉히며_기분_좋게_웃는_0586",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EA%B8%B0%EB%B6%84_%EC%A2%8B%EA%B2%8C_%EC%9B%83%EB%8A%94_0586.gif?v=3d9544e6b410f660",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3d9544e6b410f66095f498c730478909f195dba04b635623afa4119ff8f39b52.png"
+      },
+      {
+        "id": "치이카와/치이카와_풀밭에서_볼을_붉히며_다정하게_미소_짓는_0690.gif",
+        "name": "치이카와_풀밭에서_볼을_붉히며_다정하게_미소_짓는_0690",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%8B%A4%EC%A0%95%ED%95%98%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0690.gif?v=c37d99f0ede485d3",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c37d99f0ede485d3b7b2c9a923e050c50f5d437ea0089b2034a5edb684cdd492.png"
+      },
+      {
+        "id": "치이카와/치이카와_풀밭에서_볼을_붉히며_행복하게_웃고_있는_0683.gif",
+        "name": "치이카와_풀밭에서_볼을_붉히며_행복하게_웃고_있는_0683",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%ED%96%89%EB%B3%B5%ED%95%98%EA%B2%8C_%EC%9B%83%EA%B3%A0_%EC%9E%88%EB%8A%94_0683.gif?v=9fe55e02569d5d47",
+        "animated": true,
+        "previewSrc": "/sticker-previews/9fe55e02569d5d47397da894e26a6c27d760686657a739de6596e86f2882abd3.png"
+      },
+      {
+        "id": "치이카와/치이카와_풀밭에서_부끄러운_듯_미소_짓는_0629.gif",
+        "name": "치이카와_풀밭에서_부끄러운_듯_미소_짓는_0629",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%EB%B6%80%EB%81%84%EB%9F%AC%EC%9A%B4_%EB%93%AF_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0629.gif?v=e97f0f33017063d0",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e97f0f33017063d00996731475b71dd761618d789cd6e59e1b5520974575167f.png"
+      },
+      {
+        "id": "치이카와/치이카와_풀밭에서_풀을_들고_수줍게_미소_짓는_0689.gif",
+        "name": "치이카와_풀밭에서_풀을_들고_수줍게_미소_짓는_0689",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%ED%92%80%EC%9D%84_%EB%93%A4%EA%B3%A0_%EC%88%98%EC%A4%8D%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0689.gif?v=e3284d8e01e93589",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e3284d8e01e9358938c97da0021353623256f8d0b5bbc6b02cf5fbe6373fe3a0.png"
+      },
+      {
+        "id": "치이카와/치이카와_핑크_가_아래에서_머리를_쏙_내미는_깜찍한_0571.gif",
+        "name": "치이카와_핑크_가_아래에서_머리를_쏙_내미는_깜찍한_0571",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%95%91%ED%81%AC_%EA%B0%80_%EC%95%84%EB%9E%98%EC%97%90%EC%84%9C_%EB%A8%B8%EB%A6%AC%EB%A5%BC_%EC%8F%99_%EB%82%B4%EB%AF%B8%EB%8A%94_%EA%B9%9C%EC%B0%8D%ED%95%9C_0571.gif?v=5c4fb85129116f84",
+        "animated": true,
+        "previewSrc": "/sticker-previews/5c4fb85129116f84c402c758101433ce9bb216657e0b08ce2f26ceea8b6b8c16.png"
+      },
+      {
+        "id": "치이카와/치이카와_핑크_수면잠옷을_입고_방긋_미소_짓는_0681.gif",
+        "name": "치이카와_핑크_수면잠옷을_입고_방긋_미소_짓는_0681",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%95%91%ED%81%AC_%EC%88%98%EB%A9%B4%EC%9E%A0%EC%98%B7%EC%9D%84_%EC%9E%85%EA%B3%A0_%EB%B0%A9%EA%B8%8B_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0681.gif?v=f8f3f9f5ee47644d",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f8f3f9f5ee47644d809e2ae0bd8dffdd5e9ffdd888d62d7d2dcfbb18713bc0c8.png"
+      },
+      {
+        "id": "치이카와/치이카와_핑크_토벌봉_옆에_누워_겁먹고_떠는_0696.gif",
+        "name": "치이카와_핑크_토벌봉_옆에_누워_겁먹고_떠는_0696",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%95%91%ED%81%AC_%ED%86%A0%EB%B2%8C%EB%B4%89_%EC%98%86%EC%97%90_%EB%88%84%EC%9B%8C_%EA%B2%81%EB%A8%B9%EA%B3%A0_%EB%96%A0%EB%8A%94_0696.gif?v=dba3511ea0c58f5b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/dba3511ea0c58f5b9382919cab28313ab9c62f44e2d0100c5d320fd3f48648fc.png"
+      },
+      {
+        "id": "치이카와/치이카와_핑크_파자마를_입고_신나게_점프하는_0703.gif",
+        "name": "치이카와_핑크_파자마를_입고_신나게_점프하는_0703",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%95%91%ED%81%AC_%ED%8C%8C%EC%9E%90%EB%A7%88%EB%A5%BC_%EC%9E%85%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EC%A0%90%ED%94%84%ED%95%98%EB%8A%94_0703.gif?v=10fa79f21d874cfb",
+        "animated": true,
+        "previewSrc": "/sticker-previews/10fa79f21d874cfb72455f0b6bbc20d94d50fac413d72bf5c156d35da22ec3ea.png"
+      },
+      {
+        "id": "치이카와/치이카와_핑크색_곰돌이_가방을_들고_걷는_0186.gif",
+        "name": "치이카와_핑크색_곰돌이_가방을_들고_걷는_0186",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%95%91%ED%81%AC%EC%83%89_%EA%B3%B0%EB%8F%8C%EC%9D%B4_%EA%B0%80%EB%B0%A9%EC%9D%84_%EB%93%A4%EA%B3%A0_%EA%B1%B7%EB%8A%94_0186.gif?v=eb93684c764834f0",
+        "animated": true,
+        "previewSrc": "/sticker-previews/eb93684c764834f0d481bedc54ba5b965f7422b105ae5a62c0cd0b9a2e8a45fb.png"
+      },
+      {
+        "id": "치이카와/치이카와_핑크색_곰돌이_잠옷을_입고_앙증맞은_뒤태를_보여주는_0570.gif",
+        "name": "치이카와_핑크색_곰돌이_잠옷을_입고_앙증맞은_뒤태를_보여주는_0570",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%95%91%ED%81%AC%EC%83%89_%EA%B3%B0%EB%8F%8C%EC%9D%B4_%EC%9E%A0%EC%98%B7%EC%9D%84_%EC%9E%85%EA%B3%A0_%EC%95%99%EC%A6%9D%EB%A7%9E%EC%9D%80_%EB%92%A4%ED%83%9C%EB%A5%BC_%EB%B3%B4%EC%97%AC%EC%A3%BC%EB%8A%94_0570.gif?v=e050bd09cd98df43",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e050bd09cd98df4394ceca0c507485573e2d7fa5d48c42ad74b60d60b447d575.png"
+      },
+      {
+        "id": "치이카와/치이카와_핑크색_롤리팝_사탕을_들고_신나게_달리는_0268.gif",
+        "name": "치이카와_핑크색_롤리팝_사탕을_들고_신나게_달리는_0268",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%95%91%ED%81%AC%EC%83%89_%EB%A1%A4%EB%A6%AC%ED%8C%9D_%EC%82%AC%ED%83%95%EC%9D%84_%EB%93%A4%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%8B%AC%EB%A6%AC%EB%8A%94_0268.gif?v=186347d9d7fe086d",
+        "animated": true,
+        "previewSrc": "/sticker-previews/186347d9d7fe086db4ec2b90193626649dff0142442185f3ed62ee29d418838d.png"
+      },
+      {
+        "id": "치이카와/치이카와_핑크색_잠옷을_입고_해맑게_미소_짓는_0691.gif",
+        "name": "치이카와_핑크색_잠옷을_입고_해맑게_미소_짓는_0691",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%95%91%ED%81%AC%EC%83%89_%EC%9E%A0%EC%98%B7%EC%9D%84_%EC%9E%85%EA%B3%A0_%ED%95%B4%EB%A7%91%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0691.gif?v=10e22381c4dd0493",
+        "animated": true,
+        "previewSrc": "/sticker-previews/10e22381c4dd04938d25a2e8ac59cc089ed4c56202902fd725bdf6cd0a8b002b.png"
+      },
+      {
+        "id": "치이카와/치이카와_핑크색_토벌봉을_들고_신나게_달려가는_0637.gif",
+        "name": "치이카와_핑크색_토벌봉을_들고_신나게_달려가는_0637",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%95%91%ED%81%AC%EC%83%89_%ED%86%A0%EB%B2%8C%EB%B4%89%EC%9D%84_%EB%93%A4%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%8B%AC%EB%A0%A4%EA%B0%80%EB%8A%94_0637.gif?v=1b458eed96a90918",
+        "animated": true,
+        "previewSrc": "/sticker-previews/1b458eed96a909181ad1576c9f5c59e274b57e6b1401208185dfa891b75e9460.png"
+      },
+      {
+        "id": "치이카와/치이카와_햇볕에_타서_분홍색이_된_뒷_0655.gif",
+        "name": "치이카와_햇볕에_타서_분홍색이_된_뒷_0655",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%96%87%EB%B3%95%EC%97%90_%ED%83%80%EC%84%9C_%EB%B6%84%ED%99%8D%EC%83%89%EC%9D%B4_%EB%90%9C_%EB%92%B7_0655.gif?v=a883116875c033bc",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a883116875c033bcbe899281abceeef77adde8b968a611efd4a640f9fcddc665.png"
+      },
+      {
+        "id": "치이카와/치이카와_행복하게_도넛을_맛있게_먹는_0664.gif",
+        "name": "치이카와_행복하게_도넛을_맛있게_먹는_0664",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%96%89%EB%B3%B5%ED%95%98%EA%B2%8C_%EB%8F%84%EB%84%9B%EC%9D%84_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EB%8A%94_0664.gif?v=797fb00c2420a20b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/797fb00c2420a20bca1612a986589b158dcc78919b8ddc90faf415c3c0b3237f.png"
+      },
+      {
+        "id": "치이카와/치이카와_헤어밴드를_쓰고_핑크색_책상에서_열심히_공책에_글씨_쓰는_0652.gif",
+        "name": "치이카와_헤어밴드를_쓰고_핑크색_책상에서_열심히_공책에_글씨_쓰는_0652",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%97%A4%EC%96%B4%EB%B0%B4%EB%93%9C%EB%A5%BC_%EC%93%B0%EA%B3%A0_%ED%95%91%ED%81%AC%EC%83%89_%EC%B1%85%EC%83%81%EC%97%90%EC%84%9C_%EC%97%B4%EC%8B%AC%ED%9E%88_%EA%B3%B5%EC%B1%85%EC%97%90_%EA%B8%80%EC%94%A8_%EC%93%B0%EB%8A%94_0652.gif?v=a83786c6018b4dcc",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a83786c6018b4dcc04589d2cbbf653ac5568bad056f250716c2f3114d73241f5.png"
+      },
+      {
+        "id": "치이카와/치이카와_황금색_피규어를_소중하게_들고_기뻐하는_0251.gif",
+        "name": "치이카와_황금색_피규어를_소중하게_들고_기뻐하는_0251",
+        "src": "/stickers/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80_%ED%99%A9%EA%B8%88%EC%83%89_%ED%94%BC%EA%B7%9C%EC%96%B4%EB%A5%BC_%EC%86%8C%EC%A4%91%ED%95%98%EA%B2%8C_%EB%93%A4%EA%B3%A0_%EA%B8%B0%EB%BB%90%ED%95%98%EB%8A%94_0251.gif?v=81aad1c86a710a49",
+        "animated": true,
+        "previewSrc": "/sticker-previews/81aad1c86a710a49d2fd2e214b1e85800f5de295c0c123f34e4db5cda843a5d7.png"
+      }
+    ]
+  },
+  {
+    "id": "카니",
+    "name": "카니",
+    "stickers": [
+      {
+        "id": "카니/카니_게_머리띠를_착용하고_수줍게_볼을_붉히는_2111.gif",
+        "name": "카니_게_머리띠를_착용하고_수줍게_볼을_붉히는_2111",
+        "src": "/stickers/%EC%B9%B4%EB%8B%88/%EC%B9%B4%EB%8B%88_%EA%B2%8C_%EB%A8%B8%EB%A6%AC%EB%9D%A0%EB%A5%BC_%EC%B0%A9%EC%9A%A9%ED%95%98%EA%B3%A0_%EC%88%98%EC%A4%8D%EA%B2%8C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%8A%94_2111.gif?v=d0a8ed02c8fb09da",
+        "animated": true,
+        "previewSrc": "/sticker-previews/d0a8ed02c8fb09dae45deead7e57e42295fca5c4bbe7c9796e359a031bf635bc.png"
+      },
+      {
+        "id": "카니/카니_귀엽고_진지한_표정으로_볼을_붉히는_2115.gif",
+        "name": "카니_귀엽고_진지한_표정으로_볼을_붉히는_2115",
+        "src": "/stickers/%EC%B9%B4%EB%8B%88/%EC%B9%B4%EB%8B%88_%EA%B7%80%EC%97%BD%EA%B3%A0_%EC%A7%84%EC%A7%80%ED%95%9C_%ED%91%9C%EC%A0%95%EC%9C%BC%EB%A1%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%8A%94_2115.gif?v=6489ca55bf54007f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/6489ca55bf54007faaacf46b563a412a4db1e8e0adae3dbd1fd9d72631d75504.png"
+      },
+      {
+        "id": "카니/카니_긴장해서_땀을_삐질_흘리며_곁눈질하는_표정_2114.gif",
+        "name": "카니_긴장해서_땀을_삐질_흘리며_곁눈질하는_표정_2114",
+        "src": "/stickers/%EC%B9%B4%EB%8B%88/%EC%B9%B4%EB%8B%88_%EA%B8%B4%EC%9E%A5%ED%95%B4%EC%84%9C_%EB%95%80%EC%9D%84_%EC%82%90%EC%A7%88_%ED%9D%98%EB%A6%AC%EB%A9%B0_%EA%B3%81%EB%88%88%EC%A7%88%ED%95%98%EB%8A%94_%ED%91%9C%EC%A0%95_2114.gif?v=44ca93e44e031f85",
+        "animated": true,
+        "previewSrc": "/sticker-previews/44ca93e44e031f858a3216189e8ba912c0ef455f3826d18eb70714b9618c3ee4.png"
+      },
+      {
+        "id": "카니/카니_꽃게_머리띠_쓰고_뒤돌아보기_2113.gif",
+        "name": "카니_꽃게_머리띠_쓰고_뒤돌아보기_2113",
+        "src": "/stickers/%EC%B9%B4%EB%8B%88/%EC%B9%B4%EB%8B%88_%EA%BD%83%EA%B2%8C_%EB%A8%B8%EB%A6%AC%EB%9D%A0_%EC%93%B0%EA%B3%A0_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EA%B8%B0_2113.gif?v=520cb9a418642148",
+        "animated": true,
+        "previewSrc": "/sticker-previews/520cb9a41864214890221062c51416b3e9e62460d574609ab3f2c1a5675f3833.png"
+      },
+      {
+        "id": "카니/카니_눈을_감고_미소_지으며_볼을_붉히는_2120.gif",
+        "name": "카니_눈을_감고_미소_지으며_볼을_붉히는_2120",
+        "src": "/stickers/%EC%B9%B4%EB%8B%88/%EC%B9%B4%EB%8B%88_%EB%88%88%EC%9D%84_%EA%B0%90%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%80%EC%9C%BC%EB%A9%B0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%8A%94_2120.gif?v=5a39c07e31410013",
+        "animated": true,
+        "previewSrc": "/sticker-previews/5a39c07e3141001316b7c474f6452b3b564752fb17825bdc026e3a6523de7838.png"
+      },
+      {
+        "id": "카니/카니_분홍_꽃게_머리띠를_하고_당당하게_서_있는_2109.gif",
+        "name": "카니_분홍_꽃게_머리띠를_하고_당당하게_서_있는_2109",
+        "src": "/stickers/%EC%B9%B4%EB%8B%88/%EC%B9%B4%EB%8B%88_%EB%B6%84%ED%99%8D_%EA%BD%83%EA%B2%8C_%EB%A8%B8%EB%A6%AC%EB%9D%A0%EB%A5%BC_%ED%95%98%EA%B3%A0_%EB%8B%B9%EB%8B%B9%ED%95%98%EA%B2%8C_%EC%84%9C_%EC%9E%88%EB%8A%94_2109.gif?v=8474fb521a69ad55",
+        "animated": true,
+        "previewSrc": "/sticker-previews/8474fb521a69ad5542958e1925df3d7855fcf9d97b4085e4d46917ed6c34cfed.png"
+      },
+      {
+        "id": "카니/카니_책_가판대_앞에서_수줍게_두_손을_모으고_미소_짓는_2106.gif",
+        "name": "카니_책_가판대_앞에서_수줍게_두_손을_모으고_미소_짓는_2106",
+        "src": "/stickers/%EC%B9%B4%EB%8B%88/%EC%B9%B4%EB%8B%88_%EC%B1%85_%EA%B0%80%ED%8C%90%EB%8C%80_%EC%95%9E%EC%97%90%EC%84%9C_%EC%88%98%EC%A4%8D%EA%B2%8C_%EB%91%90_%EC%86%90%EC%9D%84_%EB%AA%A8%EC%9C%BC%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_2106.gif?v=8323f5a04942c614",
+        "animated": true,
+        "previewSrc": "/sticker-previews/8323f5a04942c614775093c8de305eddac7af7507c6913d4704e1148398814f1.png"
+      },
+      {
+        "id": "카니/카니_책_들고_떨며_뒤돌아보기_2108.gif",
+        "name": "카니_책_들고_떨며_뒤돌아보기_2108",
+        "src": "/stickers/%EC%B9%B4%EB%8B%88/%EC%B9%B4%EB%8B%88_%EC%B1%85_%EB%93%A4%EA%B3%A0_%EB%96%A8%EB%A9%B0_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EA%B8%B0_2108.gif?v=2bd51b6ee35834d7",
+        "animated": true,
+        "previewSrc": "/sticker-previews/2bd51b6ee35834d759c55d8b1a4b3962cfc99d6948e8080bbecac2fc7db73b04.png"
+      },
+      {
+        "id": "카니/카니_책을_손에_들고_활짝_웃고_있는_2105.gif",
+        "name": "카니_책을_손에_들고_활짝_웃고_있는_2105",
+        "src": "/stickers/%EC%B9%B4%EB%8B%88/%EC%B9%B4%EB%8B%88_%EC%B1%85%EC%9D%84_%EC%86%90%EC%97%90_%EB%93%A4%EA%B3%A0_%ED%99%9C%EC%A7%9D_%EC%9B%83%EA%B3%A0_%EC%9E%88%EB%8A%94_2105.gif?v=c0c1a076de4b023e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c0c1a076de4b023e40a06cc53d0c40055f3514fa002c3db42e75303e533b12ab.png"
+      },
+      {
+        "id": "카니/카니_풀밭_위에서_볼을_붉히며_기분_좋게_움직이는_2121.gif",
+        "name": "카니_풀밭_위에서_볼을_붉히며_기분_좋게_움직이는_2121",
+        "src": "/stickers/%EC%B9%B4%EB%8B%88/%EC%B9%B4%EB%8B%88_%ED%92%80%EB%B0%AD_%EC%9C%84%EC%97%90%EC%84%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EA%B8%B0%EB%B6%84_%EC%A2%8B%EA%B2%8C_%EC%9B%80%EC%A7%81%EC%9D%B4%EB%8A%94_2121.gif?v=ee4531f7445a310c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ee4531f7445a310c6e16bd477b702f92634359c8d41777e59845cbcf2528d689.png"
+      }
+    ]
+  },
+  {
+    "id": "쿠리만쥬",
+    "name": "쿠리만쥬",
+    "stickers": [
+      {
+        "id": "쿠리만쥬/쿠리만쥬_김이_모락모락_나는_따뜻한_국을_들고_있는_2086.gif",
+        "name": "쿠리만쥬_김이_모락모락_나는_따뜻한_국을_들고_있는_2086",
+        "src": "/stickers/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC_%EA%B9%80%EC%9D%B4_%EB%AA%A8%EB%9D%BD%EB%AA%A8%EB%9D%BD_%EB%82%98%EB%8A%94_%EB%94%B0%EB%9C%BB%ED%95%9C_%EA%B5%AD%EC%9D%84_%EB%93%A4%EA%B3%A0_%EC%9E%88%EB%8A%94_2086.gif?v=fecd58b806b68111",
+        "animated": true,
+        "previewSrc": "/sticker-previews/fecd58b806b681113558a544d9d4bc5e65b6ca57bd41e715d73ab0c162f966b6.png"
+      },
+      {
+        "id": "쿠리만쥬/쿠리만쥬_따끈따끈하고_맛있는_피자를_한_입_베어_무는_먹방_2087.gif",
+        "name": "쿠리만쥬_따끈따끈하고_맛있는_피자를_한_입_베어_무는_먹방_2087",
+        "src": "/stickers/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC_%EB%94%B0%EB%81%88%EB%94%B0%EB%81%88%ED%95%98%EA%B3%A0_%EB%A7%9B%EC%9E%88%EB%8A%94_%ED%94%BC%EC%9E%90%EB%A5%BC_%ED%95%9C_%EC%9E%85_%EB%B2%A0%EC%96%B4_%EB%AC%B4%EB%8A%94_%EB%A8%B9%EB%B0%A9_2087.gif?v=f4bdb0e1fdb30abe",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f4bdb0e1fdb30abec4cffd0f006582aec40e6766559b4764f8ca9dc626522481.png"
+      },
+      {
+        "id": "쿠리만쥬/쿠리만쥬_숲에서_신나게_굴을_들고_먹으려는_2084.gif",
+        "name": "쿠리만쥬_숲에서_신나게_굴을_들고_먹으려는_2084",
+        "src": "/stickers/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC_%EC%88%B2%EC%97%90%EC%84%9C_%EC%8B%A0%EB%82%98%EA%B2%8C_%EA%B5%B4%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%A8%B9%EC%9C%BC%EB%A0%A4%EB%8A%94_2084.gif?v=1cd88eb244da549c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/1cd88eb244da549c30fa3ff52b6b62548daace9e8e4880f0367a63075c13f6c2.png"
+      },
+      {
+        "id": "쿠리만쥬/쿠리만쥬_시원한_레몬_음료_잔을_들고_있는_2088.gif",
+        "name": "쿠리만쥬_시원한_레몬_음료_잔을_들고_있는_2088",
+        "src": "/stickers/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC_%EC%8B%9C%EC%9B%90%ED%95%9C_%EB%A0%88%EB%AA%AC_%EC%9D%8C%EB%A3%8C_%EC%9E%94%EC%9D%84_%EB%93%A4%EA%B3%A0_%EC%9E%88%EB%8A%94_2088.gif?v=9b0716cb193f4ccd",
+        "animated": true,
+        "previewSrc": "/sticker-previews/9b0716cb193f4ccdad313ba93259d90e94eddea0ffade63330521d022e90bbe1.png"
+      },
+      {
+        "id": "쿠리만쥬/쿠리만쥬_음식을_초롱초롱한_눈으로_바라보는_2089.gif",
+        "name": "쿠리만쥬_음식을_초롱초롱한_눈으로_바라보는_2089",
+        "src": "/stickers/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC_%EC%9D%8C%EC%8B%9D%EC%9D%84_%EC%B4%88%EB%A1%B1%EC%B4%88%EB%A1%B1%ED%95%9C_%EB%88%88%EC%9C%BC%EB%A1%9C_%EB%B0%94%EB%9D%BC%EB%B3%B4%EB%8A%94_2089.gif?v=c9d341eb65cc5a9e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c9d341eb65cc5a9e52cedeba765f886a8917eb88b27a521ac3dfc68337baccbc.png"
+      },
+      {
+        "id": "쿠리만쥬/쿠리만쥬_주전자로_찻잔에_따뜻한_차를_따르는_2103.gif",
+        "name": "쿠리만쥬_주전자로_찻잔에_따뜻한_차를_따르는_2103",
+        "src": "/stickers/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC_%EC%A3%BC%EC%A0%84%EC%9E%90%EB%A1%9C_%EC%B0%BB%EC%9E%94%EC%97%90_%EB%94%B0%EB%9C%BB%ED%95%9C_%EC%B0%A8%EB%A5%BC_%EB%94%B0%EB%A5%B4%EB%8A%94_2103.gif?v=c5218ca7986ab708",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c5218ca7986ab708de4588e86d02d3036798d255802f8ec7b5c6d91f2fe6a39c.png"
+      },
+      {
+        "id": "쿠리만쥬/쿠리만쥬_캔음료를_들고_간식을_맛있게_먹는_2083.gif",
+        "name": "쿠리만쥬_캔음료를_들고_간식을_맛있게_먹는_2083",
+        "src": "/stickers/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC_%EC%BA%94%EC%9D%8C%EB%A3%8C%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EB%8A%94_2083.gif?v=5a6287235500a8ce",
+        "animated": true,
+        "previewSrc": "/sticker-previews/5a6287235500a8cea6e950b734608ea37078ee71311284bee8ee90bcf56df7e8.png"
+      },
+      {
+        "id": "쿠리만쥬/쿠리만쥬_테이블에_앉아_술과_안주를_기다리는_2185.gif",
+        "name": "쿠리만쥬_테이블에_앉아_술과_안주를_기다리는_2185",
+        "src": "/stickers/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC_%ED%85%8C%EC%9D%B4%EB%B8%94%EC%97%90_%EC%95%89%EC%95%84_%EC%88%A0%EA%B3%BC_%EC%95%88%EC%A3%BC%EB%A5%BC_%EA%B8%B0%EB%8B%A4%EB%A6%AC%EB%8A%94_2185.gif?v=a6a58e2b60b3ac91",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a6a58e2b60b3ac91ccf35734e9d27b0fd7048dbeed3014c30fbd3680fd598736.png"
+      }
+    ]
+  },
+  {
+    "id": "하치와레",
+    "name": "하치와레",
+    "stickers": [
+      {
+        "id": "하치와레/하치와레_가방을_메고_볼을_붉히며_뒤돌아보는_0678.gif",
+        "name": "하치와레_가방을_메고_볼을_붉히며_뒤돌아보는_0678",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%B0%80%EB%B0%A9%EC%9D%84_%EB%A9%94%EA%B3%A0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EB%8A%94_0678.gif?v=24c0e0e8e274e5b4",
+        "animated": true,
+        "previewSrc": "/sticker-previews/24c0e0e8e274e5b42ccbe8600e110a2f84c5af9b4281d42ffef6c4b949277128.png"
+      },
+      {
+        "id": "하치와레/하치와레_가방을_메고_살짝_뒤돌아보는_0641.gif",
+        "name": "하치와레_가방을_메고_살짝_뒤돌아보는_0641",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%B0%80%EB%B0%A9%EC%9D%84_%EB%A9%94%EA%B3%A0_%EC%82%B4%EC%A7%9D_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EB%8A%94_0641.gif?v=61b9bd73410b82d0",
+        "animated": true,
+        "previewSrc": "/sticker-previews/61b9bd73410b82d0c071c35af563cdfd4381335a798c19eac241778f26a342f5.png"
+      },
+      {
+        "id": "하치와레/하치와레_간식을_들고_뒤돌아보는_0622.gif",
+        "name": "하치와레_간식을_들고_뒤돌아보는_0622",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EB%8A%94_0622.gif?v=08ba4b5f3844b60a",
+        "animated": true,
+        "previewSrc": "/sticker-previews/08ba4b5f3844b60a70bf11bb526439f495a008bb61f411313f5c46fa2206ea55.png"
+      },
+      {
+        "id": "하치와레/하치와레_간식을_맛있게_먹으며_활짝_웃는_0673.gif",
+        "name": "하치와레_간식을_맛있게_먹으며_활짝_웃는_0673",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EC%9C%BC%EB%A9%B0_%ED%99%9C%EC%A7%9D_%EC%9B%83%EB%8A%94_0673.gif?v=949fed0fbb6abbac",
+        "animated": true,
+        "previewSrc": "/sticker-previews/949fed0fbb6abbacc7b6aa7edb28ad2a5eda83751491586506991720acdd1b49.png"
+      },
+      {
+        "id": "하치와레/하치와레_간식을_손에_꼭_쥐고_신나게_달려가는_0621.gif",
+        "name": "하치와레_간식을_손에_꼭_쥐고_신나게_달려가는_0621",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%B0%84%EC%8B%9D%EC%9D%84_%EC%86%90%EC%97%90_%EA%BC%AD_%EC%A5%90%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%8B%AC%EB%A0%A4%EA%B0%80%EB%8A%94_0621.gif?v=171e5577ed9d669f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/171e5577ed9d669fcd718b76502589820544249424a30c2f640db7d3923cfa71.png"
+      },
+      {
+        "id": "하치와레/하치와레_고개를_갸웃하며_기뻐하는_표정_0262.gif",
+        "name": "하치와레_고개를_갸웃하며_기뻐하는_표정_0262",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%B3%A0%EA%B0%9C%EB%A5%BC_%EA%B0%B8%EC%9B%83%ED%95%98%EB%A9%B0_%EA%B8%B0%EB%BB%90%ED%95%98%EB%8A%94_%ED%91%9C%EC%A0%95_0262.gif?v=57243c11987b43a1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/57243c11987b43a1ad57e046b04a61ed998d000bfdb29760ce95e716711614c7.png"
+      },
+      {
+        "id": "하치와레/하치와레_기분_좋게_미소_지으며_신나게_걸어가는_0709.gif",
+        "name": "하치와레_기분_좋게_미소_지으며_신나게_걸어가는_0709",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%B8%B0%EB%B6%84_%EC%A2%8B%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%80%EC%9C%BC%EB%A9%B0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EA%B1%B8%EC%96%B4%EA%B0%80%EB%8A%94_0709.gif?v=17ab38a5de75f2b3",
+        "animated": true,
+        "previewSrc": "/sticker-previews/17ab38a5de75f2b34d7a79ce4911ee1aab5bee7a12df4e4f485a449f3498f745.png"
+      },
+      {
+        "id": "하치와레/하치와레_깡총깡총_뛰기_0179.gif",
+        "name": "하치와레_깡총깡총_뛰기_0179",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%B9%A1%EC%B4%9D%EA%B9%A1%EC%B4%9D_%EB%9B%B0%EA%B8%B0_0179.gif?v=b4c5870a99757417",
+        "animated": true,
+        "previewSrc": "/sticker-previews/b4c5870a9975741754499f661e587cc0fae1ec4a4e1990f95ed8abba4ba14ebf.png"
+      },
+      {
+        "id": "하치와레/하치와레_꽃게_머리띠_쓰고_뒤돌아보기_2117.gif",
+        "name": "하치와레_꽃게_머리띠_쓰고_뒤돌아보기_2117",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%BD%83%EA%B2%8C_%EB%A8%B8%EB%A6%AC%EB%9D%A0_%EC%93%B0%EA%B3%A0_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EA%B8%B0_2117.gif?v=d95678344c942e91",
+        "animated": true,
+        "previewSrc": "/sticker-previews/d95678344c942e9189d2d40a4aabcae29e1a111e1ef9590f3d2095dde666df88.png"
+      },
+      {
+        "id": "하치와레/하치와레_꽃게_머리띠_쓰고_미소_2119.gif",
+        "name": "하치와레_꽃게_머리띠_쓰고_미소_2119",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%BD%83%EA%B2%8C_%EB%A8%B8%EB%A6%AC%EB%9D%A0_%EC%93%B0%EA%B3%A0_%EB%AF%B8%EC%86%8C_2119.gif?v=32e17656bb7240d2",
+        "animated": true,
+        "previewSrc": "/sticker-previews/32e17656bb7240d240c86ada40eab599c0d3907d920452e48e10fc0b5b38b673.png"
+      },
+      {
+        "id": "하치와레/하치와레_꽃게_머리띠_쓰고_웃기_2107.gif",
+        "name": "하치와레_꽃게_머리띠_쓰고_웃기_2107",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%BD%83%EA%B2%8C_%EB%A8%B8%EB%A6%AC%EB%9D%A0_%EC%93%B0%EA%B3%A0_%EC%9B%83%EA%B8%B0_2107.gif?v=667d8133b9d62e0e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/667d8133b9d62e0eb86765962d89b8594baaa3b5b9729cba37211b9fd305cac7.png"
+      },
+      {
+        "id": "하치와레/하치와레_눈_감고_활짝_웃기_0253.gif",
+        "name": "하치와레_눈_감고_활짝_웃기_0253",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%88%88_%EA%B0%90%EA%B3%A0_%ED%99%9C%EC%A7%9D_%EC%9B%83%EA%B8%B0_0253.gif?v=ddfe5ce465474ce0",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ddfe5ce465474ce04d94c19c8b3841efb7a3b52169c047838fdcd8dc68afeaaa.png"
+      },
+      {
+        "id": "하치와레/하치와레_눈을_감고_사랑스럽게_방긋_미소_짓는_0597.gif",
+        "name": "하치와레_눈을_감고_사랑스럽게_방긋_미소_짓는_0597",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%88%88%EC%9D%84_%EA%B0%90%EA%B3%A0_%EC%82%AC%EB%9E%91%EC%8A%A4%EB%9F%BD%EA%B2%8C_%EB%B0%A9%EA%B8%8B_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0597.gif?v=14a3064a53ae944e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/14a3064a53ae944e04603a2711ebc7db9325b4da4ea2676c199c26b10ceb323c.png"
+      },
+      {
+        "id": "하치와레/하치와레_눈을_감고_활짝_웃으며_한_발로_춤추는_0582.gif",
+        "name": "하치와레_눈을_감고_활짝_웃으며_한_발로_춤추는_0582",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%88%88%EC%9D%84_%EA%B0%90%EA%B3%A0_%ED%99%9C%EC%A7%9D_%EC%9B%83%EC%9C%BC%EB%A9%B0_%ED%95%9C_%EB%B0%9C%EB%A1%9C_%EC%B6%A4%EC%B6%94%EB%8A%94_0582.gif?v=225a050102200403",
+        "animated": true,
+        "previewSrc": "/sticker-previews/225a050102200403d820752aac41b86c2321205b194dfe388edee75b5197df98.png"
+      },
+      {
+        "id": "하치와레/하치와레_눈을_반짝이며_신나게_몸을_흔드는_0192.gif",
+        "name": "하치와레_눈을_반짝이며_신나게_몸을_흔드는_0192",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%88%88%EC%9D%84_%EB%B0%98%EC%A7%9D%EC%9D%B4%EB%A9%B0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%AA%B8%EC%9D%84_%ED%9D%94%EB%93%9C%EB%8A%94_0192.gif?v=acdd99cf0b543715",
+        "animated": true,
+        "previewSrc": "/sticker-previews/acdd99cf0b543715246bee5c9b68af08e9a2db42b979a335b1da2ac92a485734.png"
+      },
+      {
+        "id": "하치와레/하치와레_도토리를_손에_쥐고_잔디밭에_누워_미소_짓는_0596.gif",
+        "name": "하치와레_도토리를_손에_쥐고_잔디밭에_누워_미소_짓는_0596",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%8F%84%ED%86%A0%EB%A6%AC%EB%A5%BC_%EC%86%90%EC%97%90_%EC%A5%90%EA%B3%A0_%EC%9E%94%EB%94%94%EB%B0%AD%EC%97%90_%EB%88%84%EC%9B%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0596.gif?v=720a6709a073f1ee",
+        "animated": true,
+        "previewSrc": "/sticker-previews/720a6709a073f1ee9cb0c92de15451f9a258eafe8a2664868992553b529e4b45.png"
+      },
+      {
+        "id": "하치와레/하치와레_뒤돌아_꼬리_흔들기_0685.gif",
+        "name": "하치와레_뒤돌아_꼬리_흔들기_0685",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%92%A4%EB%8F%8C%EC%95%84_%EA%BC%AC%EB%A6%AC_%ED%9D%94%EB%93%A4%EA%B8%B0_0685.gif?v=0fea117d8365aac8",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0fea117d8365aac8fb142b3689c372a58b66d1fb1ea9bf8de2ffad50ec0e1140.png"
+      },
+      {
+        "id": "하치와레/하치와레_맛있는_슈크림_디저트를_먹으며_볼을_빵빵하게_채운_0218.gif",
+        "name": "하치와레_맛있는_슈크림_디저트를_먹으며_볼을_빵빵하게_채운_0218",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%A7%9B%EC%9E%88%EB%8A%94_%EC%8A%88%ED%81%AC%EB%A6%BC_%EB%94%94%EC%A0%80%ED%8A%B8%EB%A5%BC_%EB%A8%B9%EC%9C%BC%EB%A9%B0_%EB%B3%BC%EC%9D%84_%EB%B9%B5%EB%B9%B5%ED%95%98%EA%B2%8C_%EC%B1%84%EC%9A%B4_0218.gif?v=2f705e2d14d8e497",
+        "animated": true,
+        "previewSrc": "/sticker-previews/2f705e2d14d8e497b0189b28cdd2fbbb1dc379fc7a9c7ed2d0ff3c1f623a6bd1.png"
+      },
+      {
+        "id": "하치와레/하치와레_반짝이는_눈으로_밤을_들고_기뻐하는_0576.gif",
+        "name": "하치와레_반짝이는_눈으로_밤을_들고_기뻐하는_0576",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%B0%98%EC%A7%9D%EC%9D%B4%EB%8A%94_%EB%88%88%EC%9C%BC%EB%A1%9C_%EB%B0%A4%EC%9D%84_%EB%93%A4%EA%B3%A0_%EA%B8%B0%EB%BB%90%ED%95%98%EB%8A%94_0576.gif?v=40aa9911d684b1c2",
+        "animated": true,
+        "previewSrc": "/sticker-previews/40aa9911d684b1c28ccd9161e6372bac7908ca25d831993db4e4af367f268a85.png"
+      },
+      {
+        "id": "하치와레/하치와레_볼을_붉히며_방긋_웃는_클로즈업_0620.gif",
+        "name": "하치와레_볼을_붉히며_방긋_웃는_클로즈업_0620",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%B0%A9%EA%B8%8B_%EC%9B%83%EB%8A%94_%ED%81%B4%EB%A1%9C%EC%A6%88%EC%97%85_0620.gif?v=f91ec04509762ea8",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f91ec04509762ea837b03e82c3daad3764b06d3a4d8278227e6ec68b0c80d2c9.png"
+      },
+      {
+        "id": "하치와레/하치와레_비_오는_날_몸을_움츠리고_서_있는_0199.gif",
+        "name": "하치와레_비_오는_날_몸을_움츠리고_서_있는_0199",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%B9%84_%EC%98%A4%EB%8A%94_%EB%82%A0_%EB%AA%B8%EC%9D%84_%EC%9B%80%EC%B8%A0%EB%A6%AC%EA%B3%A0_%EC%84%9C_%EC%9E%88%EB%8A%94_0199.gif?v=90dd11d29261ed01",
+        "animated": true,
+        "previewSrc": "/sticker-previews/90dd11d29261ed01ef415b52f6f887c6434303b98f2433ebbe7196a24406a4cd.png"
+      },
+      {
+        "id": "하치와레/하치와레_사스마타를_들고_지쳤지만_뿌듯하게_미소_지으며_걷는_0580.gif",
+        "name": "하치와레_사스마타를_들고_지쳤지만_뿌듯하게_미소_지으며_걷는_0580",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%82%AC%EC%8A%A4%EB%A7%88%ED%83%80%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EC%A7%80%EC%B3%A4%EC%A7%80%EB%A7%8C_%EB%BF%8C%EB%93%AF%ED%95%98%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%80%EC%9C%BC%EB%A9%B0_%EA%B1%B7%EB%8A%94_0580.gif?v=267bd7c0edbf363f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/267bd7c0edbf363fef7b51cde1141faa36c37bbdd5ad9fd7cba39010dd36f656.png"
+      },
+      {
+        "id": "하치와레/하치와레_숟가락과_그릇을_들고_맛있게_식사하는_0658.gif",
+        "name": "하치와레_숟가락과_그릇을_들고_맛있게_식사하는_0658",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%88%9F%EA%B0%80%EB%9D%BD%EA%B3%BC_%EA%B7%B8%EB%A6%87%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EC%8B%9D%EC%82%AC%ED%95%98%EB%8A%94_0658.gif?v=38054a06eb5bc527",
+        "animated": true,
+        "previewSrc": "/sticker-previews/38054a06eb5bc5278e7614b28d382cc8040840ec29746c9fd67c47317b13aa79.png"
+      },
+      {
+        "id": "하치와레/하치와레_식빵을_굽듯_웅크리고_볼을_붉히며_미소_짓는_0239.gif",
+        "name": "하치와레_식빵을_굽듯_웅크리고_볼을_붉히며_미소_짓는_0239",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%8B%9D%EB%B9%B5%EC%9D%84_%EA%B5%BD%EB%93%AF_%EC%9B%85%ED%81%AC%EB%A6%AC%EA%B3%A0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0239.gif?v=f6cdc246546c462f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f6cdc246546c462fec20e1327f37fdfb6e14ddbd689134fd4675d7fcd27c6ec4.png"
+      },
+      {
+        "id": "하치와레/하치와레_신나게_노래를_부르며_스텝을_밟는_0213.gif",
+        "name": "하치와레_신나게_노래를_부르며_스텝을_밟는_0213",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%85%B8%EB%9E%98%EB%A5%BC_%EB%B6%80%EB%A5%B4%EB%A9%B0_%EC%8A%A4%ED%85%9D%EC%9D%84_%EB%B0%9F%EB%8A%94_0213.gif?v=0497f1a5745a9795",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0497f1a5745a9795d4b81edbad02543d692901a29a6d0a78d529c135d81390f5.png"
+      },
+      {
+        "id": "하치와레/하치와레_신나서_꼬리를_흔들며_날아가는_0214.gif",
+        "name": "하치와레_신나서_꼬리를_흔들며_날아가는_0214",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%8B%A0%EB%82%98%EC%84%9C_%EA%BC%AC%EB%A6%AC%EB%A5%BC_%ED%9D%94%EB%93%A4%EB%A9%B0_%EB%82%A0%EC%95%84%EA%B0%80%EB%8A%94_0214.gif?v=bdfacf14148f3d90",
+        "animated": true,
+        "previewSrc": "/sticker-previews/bdfacf14148f3d90c1a8aa8884edfbc73c877f27013948af8cf4d6125a5f7a13.png"
+      },
+      {
+        "id": "하치와레/하치와레_야외_풀숲에서_미소를_지으며_즐겁게_기타를_연주하는_0255.gif",
+        "name": "하치와레_야외_풀숲에서_미소를_지으며_즐겁게_기타를_연주하는_0255",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%95%BC%EC%99%B8_%ED%92%80%EC%88%B2%EC%97%90%EC%84%9C_%EB%AF%B8%EC%86%8C%EB%A5%BC_%EC%A7%80%EC%9C%BC%EB%A9%B0_%EC%A6%90%EA%B2%81%EA%B2%8C_%EA%B8%B0%ED%83%80%EB%A5%BC_%EC%97%B0%EC%A3%BC%ED%95%98%EB%8A%94_0255.gif?v=dea26c9b35e7e0eb",
+        "animated": true,
+        "previewSrc": "/sticker-previews/dea26c9b35e7e0ebe5bc8a798bc6ea0d69612a2f750bacef0cec65de4364c557.png"
+      },
+      {
+        "id": "하치와레/하치와레_야외에서_열매_옆에_서서_사랑스럽게_미소_짓는_0638.gif",
+        "name": "하치와레_야외에서_열매_옆에_서서_사랑스럽게_미소_짓는_0638",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%95%BC%EC%99%B8%EC%97%90%EC%84%9C_%EC%97%B4%EB%A7%A4_%EC%98%86%EC%97%90_%EC%84%9C%EC%84%9C_%EC%82%AC%EB%9E%91%EC%8A%A4%EB%9F%BD%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0638.gif?v=363a3159da526b36",
+        "animated": true,
+        "previewSrc": "/sticker-previews/363a3159da526b363ebbd100afdf0d35b0e4c5875924a358035baa9453f65aa1.png"
+      },
+      {
+        "id": "하치와레/하치와레_엎드려_꼬리_흔들기_0243.gif",
+        "name": "하치와레_엎드려_꼬리_흔들기_0243",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%97%8E%EB%93%9C%EB%A0%A4_%EA%BC%AC%EB%A6%AC_%ED%9D%94%EB%93%A4%EA%B8%B0_0243.gif?v=9056eb37abcb46be",
+        "animated": true,
+        "previewSrc": "/sticker-previews/9056eb37abcb46bedcbf27429ea4258d10881402ac947ae70cf9a676cc98b648.png"
+      },
+      {
+        "id": "하치와레/하치와레_웃으며_맛있는_간식을_먹는_0644.gif",
+        "name": "하치와레_웃으며_맛있는_간식을_먹는_0644",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%9B%83%EC%9C%BC%EB%A9%B0_%EB%A7%9B%EC%9E%88%EB%8A%94_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%A8%B9%EB%8A%94_0644.gif?v=c9a1bd60ccae653d",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c9a1bd60ccae653d65ef2147812972d641b8f95c11263a57ed0bdbe30d5a7c9d.png"
+      },
+      {
+        "id": "하치와레/하치와레_웅크려_꼬리_흔들기_0201.gif",
+        "name": "하치와레_웅크려_꼬리_흔들기_0201",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%9B%85%ED%81%AC%EB%A0%A4_%EA%BC%AC%EB%A6%AC_%ED%9D%94%EB%93%A4%EA%B8%B0_0201.gif?v=fe5ff5019d3b5238",
+        "animated": true,
+        "previewSrc": "/sticker-previews/fe5ff5019d3b523871de71a729c74843998b66c423e46edac8d487e0c825b45b.png"
+      },
+      {
+        "id": "하치와레/하치와레_이불을_덮고_웅크려_곤히_자고_있는_0207.gif",
+        "name": "하치와레_이불을_덮고_웅크려_곤히_자고_있는_0207",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%9D%B4%EB%B6%88%EC%9D%84_%EB%8D%AE%EA%B3%A0_%EC%9B%85%ED%81%AC%EB%A0%A4_%EA%B3%A4%ED%9E%88_%EC%9E%90%EA%B3%A0_%EC%9E%88%EB%8A%94_0207.gif?v=9c143852bd3ecebb",
+        "animated": true,
+        "previewSrc": "/sticker-previews/9c143852bd3ecebb175cc78d8fee8a35478434f548b2cd8e12a14adebfb25cc9.png"
+      },
+      {
+        "id": "하치와레/하치와레_익살스럽고_얼빡_표정_0645.gif",
+        "name": "하치와레_익살스럽고_얼빡_표정_0645",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%9D%B5%EC%82%B4%EC%8A%A4%EB%9F%BD%EA%B3%A0_%EC%96%BC%EB%B9%A1_%ED%91%9C%EC%A0%95_0645.gif?v=5d9851e7bff109d1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/5d9851e7bff109d102a61914f508dfdc2c387e16c58b8bde8b8b7882ed5141a8.png"
+      },
+      {
+        "id": "하치와레/하치와레_진지하게_팬케이크_먹기_0612.gif",
+        "name": "하치와레_진지하게_팬케이크_먹기_0612",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%A7%84%EC%A7%80%ED%95%98%EA%B2%8C_%ED%8C%AC%EC%BC%80%EC%9D%B4%ED%81%AC_%EB%A8%B9%EA%B8%B0_0612.gif?v=ce3bcc2f4cbc177e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ce3bcc2f4cbc177ed97868ca31d4b2d7e2d8b134d2a52b7a5ebf8e3e87d5a96f.png"
+      },
+      {
+        "id": "하치와레/하치와레_진지한_표정으로_피라미드_책을_열심히_읽는_0247.gif",
+        "name": "하치와레_진지한_표정으로_피라미드_책을_열심히_읽는_0247",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%A7%84%EC%A7%80%ED%95%9C_%ED%91%9C%EC%A0%95%EC%9C%BC%EB%A1%9C_%ED%94%BC%EB%9D%BC%EB%AF%B8%EB%93%9C_%EC%B1%85%EC%9D%84_%EC%97%B4%EC%8B%AC%ED%9E%88_%EC%9D%BD%EB%8A%94_0247.gif?v=c1907ab3754272a7",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c1907ab3754272a75862d417a6f8e6af075138bc04fce89210afb533d7766abc.png"
+      },
+      {
+        "id": "하치와레/하치와레_초롱초롱한_눈으로_볼을_붉히며_기쁘게_손을_흔드는_0260.gif",
+        "name": "하치와레_초롱초롱한_눈으로_볼을_붉히며_기쁘게_손을_흔드는_0260",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%B4%88%EB%A1%B1%EC%B4%88%EB%A1%B1%ED%95%9C_%EB%88%88%EC%9C%BC%EB%A1%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EA%B8%B0%EC%81%98%EA%B2%8C_%EC%86%90%EC%9D%84_%ED%9D%94%EB%93%9C%EB%8A%94_0260.gif?v=13823376ffc0c505",
+        "animated": true,
+        "previewSrc": "/sticker-previews/13823376ffc0c5057c9cf749758da74cd88603a7f1f4ce9d90a34e0d49e994a8.png"
+      },
+      {
+        "id": "하치와레/하치와레_촉촉한_눈망울로_볼을_붉히며_미소_짓는_0630.gif",
+        "name": "하치와레_촉촉한_눈망울로_볼을_붉히며_미소_짓는_0630",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%B4%89%EC%B4%89%ED%95%9C_%EB%88%88%EB%A7%9D%EC%9A%B8%EB%A1%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0630.gif?v=a09cb4309e288fe1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a09cb4309e288fe18bee36f7fa5fc7807eacb1c2395ad4696f3e00879c38453d.png"
+      },
+      {
+        "id": "하치와레/하치와레_턱을_괴고_볼을_붉히며_생각하는_0616.gif",
+        "name": "하치와레_턱을_괴고_볼을_붉히며_생각하는_0616",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%84%B1%EC%9D%84_%EA%B4%B4%EA%B3%A0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EC%83%9D%EA%B0%81%ED%95%98%EB%8A%94_0616.gif?v=1ce970da59906afc",
+        "animated": true,
+        "previewSrc": "/sticker-previews/1ce970da59906afc0f18d9c0d3945b8d516bba88e621e1690617077857311817.png"
+      },
+      {
+        "id": "하치와레/하치와레_파란_고양이_귀_머리띠를_쓰고_미소_짓는_0705.gif",
+        "name": "하치와레_파란_고양이_귀_머리띠를_쓰고_미소_짓는_0705",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%8C%8C%EB%9E%80_%EA%B3%A0%EC%96%91%EC%9D%B4_%EA%B7%80_%EB%A8%B8%EB%A6%AC%EB%9D%A0%EB%A5%BC_%EC%93%B0%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0705.gif?v=4cfe50be4ed43dc8",
+        "animated": true,
+        "previewSrc": "/sticker-previews/4cfe50be4ed43dc830ba2630646c4ae7eac737b104953eb7f393512bd7a2798f.png"
+      },
+      {
+        "id": "하치와레/하치와레_파란_고양이_모자를_쓰고_활짝_웃는_0656.gif",
+        "name": "하치와레_파란_고양이_모자를_쓰고_활짝_웃는_0656",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%8C%8C%EB%9E%80_%EA%B3%A0%EC%96%91%EC%9D%B4_%EB%AA%A8%EC%9E%90%EB%A5%BC_%EC%93%B0%EA%B3%A0_%ED%99%9C%EC%A7%9D_%EC%9B%83%EB%8A%94_0656.gif?v=a62b4d2fab99ee12",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a62b4d2fab99ee1269476ca97f86e16874778045a8be7b08e697ca3a3b27ed5a.png"
+      },
+      {
+        "id": "하치와레/하치와레_파란_토벌봉을_들고_미소_짓는_손가락_인형_0609.gif",
+        "name": "하치와레_파란_토벌봉을_들고_미소_짓는_손가락_인형_0609",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%8C%8C%EB%9E%80_%ED%86%A0%EB%B2%8C%EB%B4%89%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_%EC%86%90%EA%B0%80%EB%9D%BD_%EC%9D%B8%ED%98%95_0609.gif?v=89c8070ed5d59b13",
+        "animated": true,
+        "previewSrc": "/sticker-previews/89c8070ed5d59b13eed2cb5eee1a1014caf1e82ff6f698fccb07a1bb3d62abc1.png"
+      },
+      {
+        "id": "하치와레/하치와레_파란_파우치를_꼭_쥐고_결의에_찬_표정을_짓는_0700.gif",
+        "name": "하치와레_파란_파우치를_꼭_쥐고_결의에_찬_표정을_짓는_0700",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%8C%8C%EB%9E%80_%ED%8C%8C%EC%9A%B0%EC%B9%98%EB%A5%BC_%EA%BC%AD_%EC%A5%90%EA%B3%A0_%EA%B2%B0%EC%9D%98%EC%97%90_%EC%B0%AC_%ED%91%9C%EC%A0%95%EC%9D%84_%EC%A7%93%EB%8A%94_0700.gif?v=b1952cff6ded0ed1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/b1952cff6ded0ed19249fc165a572f337c75c1a1841c30a7e6098bde15037fb2.png"
+      },
+      {
+        "id": "하치와레/하치와레_포근한_솜에_싸여_사스마타를_든_0599.gif",
+        "name": "하치와레_포근한_솜에_싸여_사스마타를_든_0599",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%8F%AC%EA%B7%BC%ED%95%9C_%EC%86%9C%EC%97%90_%EC%8B%B8%EC%97%AC_%EC%82%AC%EC%8A%A4%EB%A7%88%ED%83%80%EB%A5%BC_%EB%93%A0_0599.gif?v=27014601f2e23c6c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/27014601f2e23c6c97d096897732262e92615a92001d50cc967726d8947bf8ea.png"
+      },
+      {
+        "id": "하치와레/하치와레_푸른_사스마타를_쥐고_미소_짓는_0701.gif",
+        "name": "하치와레_푸른_사스마타를_쥐고_미소_짓는_0701",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%91%B8%EB%A5%B8_%EC%82%AC%EC%8A%A4%EB%A7%88%ED%83%80%EB%A5%BC_%EC%A5%90%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0701.gif?v=affb4bdf127783ce",
+        "animated": true,
+        "previewSrc": "/sticker-previews/affb4bdf127783ce8e387012b59a6eda0560b27339ae664b8613979bca4ddace.png"
+      },
+      {
+        "id": "하치와레/하치와레_풀밭에_엎드려_돌아보기_0611.gif",
+        "name": "하치와레_풀밭에_엎드려_돌아보기_0611",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%92%80%EB%B0%AD%EC%97%90_%EC%97%8E%EB%93%9C%EB%A0%A4_%EB%8F%8C%EC%95%84%EB%B3%B4%EA%B8%B0_0611.gif?v=4c47d9296b171f6e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/4c47d9296b171f6e18ac0c6e920d0ab10ed70bd23f7c6be2769912c69be40442.png"
+      },
+      {
+        "id": "하치와레/하치와레_풀밭에서_반짝이는_눈으로_작은_풀을_바라보는_0643.gif",
+        "name": "하치와레_풀밭에서_반짝이는_눈으로_작은_풀을_바라보는_0643",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%EB%B0%98%EC%A7%9D%EC%9D%B4%EB%8A%94_%EB%88%88%EC%9C%BC%EB%A1%9C_%EC%9E%91%EC%9D%80_%ED%92%80%EC%9D%84_%EB%B0%94%EB%9D%BC%EB%B3%B4%EB%8A%94_0643.gif?v=946265c9e9bd9e9e",
+        "animated": true,
+        "previewSrc": "/sticker-previews/946265c9e9bd9e9edd98a031756dc6b66c13c9d041f1083f8b4594ba1b622615.png"
+      },
+      {
+        "id": "하치와레/하치와레_풀밭에서_볼을_붉히며_뒤돌아보는_뒷_0592.gif",
+        "name": "하치와레_풀밭에서_볼을_붉히며_뒤돌아보는_뒷_0592",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%92%A4%EB%8F%8C%EC%95%84%EB%B3%B4%EB%8A%94_%EB%92%B7_0592.gif?v=579abd0a9406fd29",
+        "animated": true,
+        "previewSrc": "/sticker-previews/579abd0a9406fd2969c2c8b48990a6cb0b50ceadbbf378064fe9d2fb4b98d8b9.png"
+      },
+      {
+        "id": "하치와레/하치와레_풀밭에서_수줍게_얼굴을_붉히며_클로버를_든_0679.gif",
+        "name": "하치와레_풀밭에서_수줍게_얼굴을_붉히며_클로버를_든_0679",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%EC%88%98%EC%A4%8D%EA%B2%8C_%EC%96%BC%EA%B5%B4%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%ED%81%B4%EB%A1%9C%EB%B2%84%EB%A5%BC_%EB%93%A0_0679.gif?v=e394aa4ec15cb951",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e394aa4ec15cb9510e941cb85106b130ec50ee5df8f063dc21340df5bc008ea7.png"
+      },
+      {
+        "id": "하치와레/하치와레_풀밭에서_신나게_깡총거리며_춤추는_0236.gif",
+        "name": "하치와레_풀밭에서_신나게_깡총거리며_춤추는_0236",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%92%80%EB%B0%AD%EC%97%90%EC%84%9C_%EC%8B%A0%EB%82%98%EA%B2%8C_%EA%B9%A1%EC%B4%9D%EA%B1%B0%EB%A6%AC%EB%A9%B0_%EC%B6%A4%EC%B6%94%EB%8A%94_0236.gif?v=e75382cd7ac8e258",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e75382cd7ac8e2583056a84fffffcd558f10e355466ab486bda40fe03307f69c.png"
+      },
+      {
+        "id": "하치와레/하치와레_하늘색_후드_잠옷을_입고_책을_읽으며_기뻐하는_0693.gif",
+        "name": "하치와레_하늘색_후드_잠옷을_입고_책을_읽으며_기뻐하는_0693",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%95%98%EB%8A%98%EC%83%89_%ED%9B%84%EB%93%9C_%EC%9E%A0%EC%98%B7%EC%9D%84_%EC%9E%85%EA%B3%A0_%EC%B1%85%EC%9D%84_%EC%9D%BD%EC%9C%BC%EB%A9%B0_%EA%B8%B0%EB%BB%90%ED%95%98%EB%8A%94_0693.gif?v=773ca4765cf02e12",
+        "animated": true,
+        "previewSrc": "/sticker-previews/773ca4765cf02e121023ef3bcd966d9104ed1d7727a381fe4a1c7d2fd3ef70f1.png"
+      },
+      {
+        "id": "하치와레/하치와레_하트_요술봉을_들고_볼을_붉히며_미소_짓는_0203.gif",
+        "name": "하치와레_하트_요술봉을_들고_볼을_붉히며_미소_짓는_0203",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%95%98%ED%8A%B8_%EC%9A%94%EC%88%A0%EB%B4%89%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0203.gif?v=2c94cd9cbbb00bf1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/2c94cd9cbbb00bf1c49777dd5b564ae998abcc3a0b84cccebe3ef7f10b4871ae.png"
+      },
+      {
+        "id": "하치와레/하치와레_한_손에_쏙_안겨_바라보는_0657.gif",
+        "name": "하치와레_한_손에_쏙_안겨_바라보는_0657",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%95%9C_%EC%86%90%EC%97%90_%EC%8F%99_%EC%95%88%EA%B2%A8_%EB%B0%94%EB%9D%BC%EB%B3%B4%EB%8A%94_0657.gif?v=0f6f1ca2e6072d99",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0f6f1ca2e6072d998dc40c5909ec51f2a8e49b856562d6d2d1d4fb108ea1c152.png"
+      },
+      {
+        "id": "하치와레/하치와레_혀_내밀기_0206.gif",
+        "name": "하치와레_혀_내밀기_0206",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%98%80_%EB%82%B4%EB%B0%80%EA%B8%B0_0206.gif?v=aa747c81181d69be",
+        "animated": true,
+        "previewSrc": "/sticker-previews/aa747c81181d69beb6222cab421a6afd7dcea0b342f38d7f14ff92890ec03820.png"
+      },
+      {
+        "id": "하치와레/하치와레_혀를_내밀고_볼을_붉히며_애교부리는_0229.gif",
+        "name": "하치와레_혀를_내밀고_볼을_붉히며_애교부리는_0229",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%98%80%EB%A5%BC_%EB%82%B4%EB%B0%80%EA%B3%A0_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EC%95%A0%EA%B5%90%EB%B6%80%EB%A6%AC%EB%8A%94_0229.gif?v=533504b61518611f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/533504b61518611fe661ecc80a03961a1a153734640f3ec38cb82410015f51bf.png"
+      },
+      {
+        "id": "하치와레/하치와레_혀를_쏙_내밀고_수줍게_웃는_0261.gif",
+        "name": "하치와레_혀를_쏙_내밀고_수줍게_웃는_0261",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%98%80%EB%A5%BC_%EC%8F%99_%EB%82%B4%EB%B0%80%EA%B3%A0_%EC%88%98%EC%A4%8D%EA%B2%8C_%EC%9B%83%EB%8A%94_0261.gif?v=37a202bf9d11fc41",
+        "animated": true,
+        "previewSrc": "/sticker-previews/37a202bf9d11fc41fbf3ce3843821ad8160329769efc58bda65a1f7d7cefdfc9.png"
+      },
+      {
+        "id": "하치와레/하치와레_활짝_웃으며_기뻐하는_0204.gif",
+        "name": "하치와레_활짝_웃으며_기뻐하는_0204",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%99%9C%EC%A7%9D_%EC%9B%83%EC%9C%BC%EB%A9%B0_%EA%B8%B0%EB%BB%90%ED%95%98%EB%8A%94_0204.gif?v=5bdde1fe1f38a69a",
+        "animated": true,
+        "previewSrc": "/sticker-previews/5bdde1fe1f38a69a58e555d0b87c2ee3f7d3396ac457e425fe1186b7d4bd462e.png"
+      },
+      {
+        "id": "하치와레/하치와레_후드를_쓰고_열심히_책을_읽으며_공부하는_0614.gif",
+        "name": "하치와레_후드를_쓰고_열심히_책을_읽으며_공부하는_0614",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%9B%84%EB%93%9C%EB%A5%BC_%EC%93%B0%EA%B3%A0_%EC%97%B4%EC%8B%AC%ED%9E%88_%EC%B1%85%EC%9D%84_%EC%9D%BD%EC%9C%BC%EB%A9%B0_%EA%B3%B5%EB%B6%80%ED%95%98%EB%8A%94_0614.gif?v=a4f159f511f7f917",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a4f159f511f7f91713f11eefd52698c140dea846a990f4ef846e05c1483c968a.png"
+      },
+      {
+        "id": "하치와레/하치와레_흰_망토를_두르고_파란_사스마타를_든_0633.gif",
+        "name": "하치와레_흰_망토를_두르고_파란_사스마타를_든_0633",
+        "src": "/stickers/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88/%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%9D%B0_%EB%A7%9D%ED%86%A0%EB%A5%BC_%EB%91%90%EB%A5%B4%EA%B3%A0_%ED%8C%8C%EB%9E%80_%EC%82%AC%EC%8A%A4%EB%A7%88%ED%83%80%EB%A5%BC_%EB%93%A0_0633.gif?v=4320dd4a4bb51b96",
+        "animated": true,
+        "previewSrc": "/sticker-previews/4320dd4a4bb51b962e27de34ae230769298e3016b7ec5299d63e95b3de4ed690.png"
+      }
+    ]
+  },
+  {
+    "id": "함께_등장",
+    "name": "함께_등장",
+    "stickers": [
+      {
+        "id": "함께_등장/랏코-갑옷씨_갑옷씨_옆에서_가시_갑옷_입기_2110.gif",
+        "name": "랏코-갑옷씨_갑옷씨_옆에서_가시_갑옷_입기_2110",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EB%9E%8F%EC%BD%94-%EA%B0%91%EC%98%B7%EC%94%A8_%EA%B0%91%EC%98%B7%EC%94%A8_%EC%98%86%EC%97%90%EC%84%9C_%EA%B0%80%EC%8B%9C_%EA%B0%91%EC%98%B7_%EC%9E%85%EA%B8%B0_2110.gif?v=dc10cabb94186502",
+        "animated": true,
+        "previewSrc": "/sticker-previews/dc10cabb94186502e09d1b815dbbdbf7118541bce6910a0511d166ede9f78246.png"
+      },
+      {
+        "id": "함께_등장/세이렌-치이카와-하치와레-우사기_친구들_앞에서_노래하고_눈빛_바꾸기_2187.gif",
+        "name": "세이렌-치이카와-하치와레-우사기_친구들_앞에서_노래하고_눈빛_바꾸기_2187",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%84%B8%EC%9D%B4%EB%A0%8C-%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88-%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%B9%9C%EA%B5%AC%EB%93%A4_%EC%95%9E%EC%97%90%EC%84%9C_%EB%85%B8%EB%9E%98%ED%95%98%EA%B3%A0_%EB%88%88%EB%B9%9B_%EB%B0%94%EA%BE%B8%EA%B8%B0_2187.gif?v=c2d8edfd89cf8588",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c2d8edfd89cf85881ecc50c7b26deae84c2ea6d14d0a2237513d2b8bc749b492.png"
+      },
+      {
+        "id": "함께_등장/우사기-하치와레_곁에서_앙증맞게_발을_구르며_힘차게_달리는_0722.gif",
+        "name": "우사기-하치와레_곁에서_앙증맞게_발을_구르며_힘차게_달리는_0722",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%9A%B0%EC%82%AC%EA%B8%B0-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%B3%81%EC%97%90%EC%84%9C_%EC%95%99%EC%A6%9D%EB%A7%9E%EA%B2%8C_%EB%B0%9C%EC%9D%84_%EA%B5%AC%EB%A5%B4%EB%A9%B0_%ED%9E%98%EC%B0%A8%EA%B2%8C_%EB%8B%AC%EB%A6%AC%EB%8A%94_0722.gif?v=90054de5c84bdd3c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/90054de5c84bdd3cf9b88faaedff8306cc5a3991d1eb11c0ed969ff18200c20a.png"
+      },
+      {
+        "id": "함께_등장/우사기-하치와레_등을_보이고_엉덩이를_흔드는_0572.gif",
+        "name": "우사기-하치와레_등을_보이고_엉덩이를_흔드는_0572",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%9A%B0%EC%82%AC%EA%B8%B0-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%93%B1%EC%9D%84_%EB%B3%B4%EC%9D%B4%EA%B3%A0_%EC%97%89%EB%8D%A9%EC%9D%B4%EB%A5%BC_%ED%9D%94%EB%93%9C%EB%8A%94_0572.gif?v=d42bd8a36b754184",
+        "animated": true,
+        "previewSrc": "/sticker-previews/d42bd8a36b75418427aef30a9fbb256ccbf500c9c9f6541784066ee4a17afa5a.png"
+      },
+      {
+        "id": "함께_등장/우사기-하치와레_볼을_붉히고_서_있는_0625.gif",
+        "name": "우사기-하치와레_볼을_붉히고_서_있는_0625",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%9A%B0%EC%82%AC%EA%B8%B0-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EA%B3%A0_%EC%84%9C_%EC%9E%88%EB%8A%94_0625.gif?v=3b393ecf106ecc1c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3b393ecf106ecc1c180018575b41f49a8ca916b3cfc36e7e80928eefb11ac82b.png"
+      },
+      {
+        "id": "함께_등장/우사기-하치와레_신나게_뒤돌아서_엉덩이와_꼬리를_흔드는_0265.gif",
+        "name": "우사기-하치와레_신나게_뒤돌아서_엉덩이와_꼬리를_흔드는_0265",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%9A%B0%EC%82%AC%EA%B8%B0-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%92%A4%EB%8F%8C%EC%95%84%EC%84%9C_%EC%97%89%EB%8D%A9%EC%9D%B4%EC%99%80_%EA%BC%AC%EB%A6%AC%EB%A5%BC_%ED%9D%94%EB%93%9C%EB%8A%94_0265.gif?v=0ef8afa6c657898d",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0ef8afa6c657898dcc08bf93db0c752057c24d1d31ceee1606fb62aae17d59d3.png"
+      },
+      {
+        "id": "함께_등장/우사기-하치와레_야외에서_환하게_웃고_있는_0631.gif",
+        "name": "우사기-하치와레_야외에서_환하게_웃고_있는_0631",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%9A%B0%EC%82%AC%EA%B8%B0-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%95%BC%EC%99%B8%EC%97%90%EC%84%9C_%ED%99%98%ED%95%98%EA%B2%8C_%EC%9B%83%EA%B3%A0_%EC%9E%88%EB%8A%94_0631.gif?v=452b53e1bb800c01",
+        "animated": true,
+        "previewSrc": "/sticker-previews/452b53e1bb800c011b6ddc8e7b809b217668f6d2c7f181260e0459b082e43721.png"
+      },
+      {
+        "id": "함께_등장/우사기-하치와레_탁자에_엎드린_우사기와_하치와레_0603.gif",
+        "name": "우사기-하치와레_탁자에_엎드린_우사기와_하치와레_0603",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%9A%B0%EC%82%AC%EA%B8%B0-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%83%81%EC%9E%90%EC%97%90_%EC%97%8E%EB%93%9C%EB%A6%B0_%EC%9A%B0%EC%82%AC%EA%B8%B0%EC%99%80_%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_0603.gif?v=b88df1b652ae4e4b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/b88df1b652ae4e4bac7df27916b44aa8c010a681b91cb3c169717cf0800ff1b2.png"
+      },
+      {
+        "id": "함께_등장/우사기-하치와레_테이블_옆에서_꼬리를_흔들며_기대에_찬_표정을_짓는_0724.gif",
+        "name": "우사기-하치와레_테이블_옆에서_꼬리를_흔들며_기대에_찬_표정을_짓는_0724",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%9A%B0%EC%82%AC%EA%B8%B0-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%85%8C%EC%9D%B4%EB%B8%94_%EC%98%86%EC%97%90%EC%84%9C_%EA%BC%AC%EB%A6%AC%EB%A5%BC_%ED%9D%94%EB%93%A4%EB%A9%B0_%EA%B8%B0%EB%8C%80%EC%97%90_%EC%B0%AC_%ED%91%9C%EC%A0%95%EC%9D%84_%EC%A7%93%EB%8A%94_0724.gif?v=0aba3a092c5452d1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/0aba3a092c5452d107907adf03bf10b106d04624903b70edfbdde9943b7e9573.png"
+      },
+      {
+        "id": "함께_등장/우사기-하치와레_하치와레_옆에서_걷기_0725.gif",
+        "name": "우사기-하치와레_하치와레_옆에서_걷기_0725",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%9A%B0%EC%82%AC%EA%B8%B0-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%98%86%EC%97%90%EC%84%9C_%EA%B1%B7%EA%B8%B0_0725.gif?v=f1bbe8022262e2cf",
+        "animated": true,
+        "previewSrc": "/sticker-previews/f1bbe8022262e2cf32fa24c185bbaef5af38ec948d8fb6f95b258d9ba70c0f55.png"
+      },
+      {
+        "id": "함께_등장/치이카와-우사기_꼬리를_흔들며_엉덩이를_뽐내는_0662.gif",
+        "name": "치이카와-우사기_꼬리를_흔들며_엉덩이를_뽐내는_0662",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%EC%9A%B0%EC%82%AC%EA%B8%B0_%EA%BC%AC%EB%A6%AC%EB%A5%BC_%ED%9D%94%EB%93%A4%EB%A9%B0_%EC%97%89%EB%8D%A9%EC%9D%B4%EB%A5%BC_%EB%BD%90%EB%82%B4%EB%8A%94_0662.gif?v=ccb89ca8ef964a34",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ccb89ca8ef964a349251083a55ec8796d72e09621e8b0e295baaf4320b50d518.png"
+      },
+      {
+        "id": "함께_등장/치이카와-우사기_노란_파자마_모자를_쓰고_신나게_고개를_흔드는_0674.gif",
+        "name": "치이카와-우사기_노란_파자마_모자를_쓰고_신나게_고개를_흔드는_0674",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%85%B8%EB%9E%80_%ED%8C%8C%EC%9E%90%EB%A7%88_%EB%AA%A8%EC%9E%90%EB%A5%BC_%EC%93%B0%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EA%B3%A0%EA%B0%9C%EB%A5%BC_%ED%9D%94%EB%93%9C%EB%8A%94_0674.gif?v=45355f5604ff9700",
+        "animated": true,
+        "previewSrc": "/sticker-previews/45355f5604ff9700754bf4f3c1b7b2f107265cacef627f13b0ec983beab5618e.png"
+      },
+      {
+        "id": "함께_등장/치이카와-우사기_음식을_볼_가득_넣고_맛있게_먹는_0640.gif",
+        "name": "치이카와-우사기_음식을_볼_가득_넣고_맛있게_먹는_0640",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%9D%8C%EC%8B%9D%EC%9D%84_%EB%B3%BC_%EA%B0%80%EB%93%9D_%EB%84%A3%EA%B3%A0_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EB%8A%94_0640.gif?v=282d82ee834992e9",
+        "animated": true,
+        "previewSrc": "/sticker-previews/282d82ee834992e9134bdffe98a6e63889a0fbf193b58951dc7b608ed015302a.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_가방_메고_함께_걷기_0579.gif",
+        "name": "치이카와-하치와레_가방_메고_함께_걷기_0579",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%B0%80%EB%B0%A9_%EB%A9%94%EA%B3%A0_%ED%95%A8%EA%BB%98_%EA%B1%B7%EA%B8%B0_0579.gif?v=2ec530db6224a44a",
+        "animated": true,
+        "previewSrc": "/sticker-previews/2ec530db6224a44a95e53f4c21c8fc07b94db80db395fdcbedbc2b8172da2829.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_김이_나는_냄비_속에_쏙_들어가_있는_0242.gif",
+        "name": "치이카와-하치와레_김이_나는_냄비_속에_쏙_들어가_있는_0242",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EA%B9%80%EC%9D%B4_%EB%82%98%EB%8A%94_%EB%83%84%EB%B9%84_%EC%86%8D%EC%97%90_%EC%8F%99_%EB%93%A4%EC%96%B4%EA%B0%80_%EC%9E%88%EB%8A%94_0242.gif?v=b79837b219361f0c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/b79837b219361f0c5b44505233d81a4c5dfb60a38b3f48ee25350c8026d3e976.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_나란히_서서_수줍게_미소_짓는_0267.gif",
+        "name": "치이카와-하치와레_나란히_서서_수줍게_미소_짓는_0267",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%82%98%EB%9E%80%ED%9E%88_%EC%84%9C%EC%84%9C_%EC%88%98%EC%A4%8D%EA%B2%8C_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0267.gif?v=217118ea664c6283",
+        "animated": true,
+        "previewSrc": "/sticker-previews/217118ea664c6283e0ee0ce78edec1d0b90e43fc089806e3ed960aa5a763f6d1.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_나란히_서서_활짝_웃는_0198.gif",
+        "name": "치이카와-하치와레_나란히_서서_활짝_웃는_0198",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%82%98%EB%9E%80%ED%9E%88_%EC%84%9C%EC%84%9C_%ED%99%9C%EC%A7%9D_%EC%9B%83%EB%8A%94_0198.gif?v=4f35034798d063e0",
+        "animated": true,
+        "previewSrc": "/sticker-previews/4f35034798d063e0fe71539b4e9f904e4e8ec866a96d554626419fff32880731.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_나란히_앉아_간식을_맛있게_먹는_0578.gif",
+        "name": "치이카와-하치와레_나란히_앉아_간식을_맛있게_먹는_0578",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%82%98%EB%9E%80%ED%9E%88_%EC%95%89%EC%95%84_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EB%8A%94_0578.gif?v=941059337eb355a8",
+        "animated": true,
+        "previewSrc": "/sticker-previews/941059337eb355a83e62946491d8c28d52c110e76689a538e9a14f28a7e22c93.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_나란히_웃으며_달리기_0185.gif",
+        "name": "치이카와-하치와레_나란히_웃으며_달리기_0185",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%82%98%EB%9E%80%ED%9E%88_%EC%9B%83%EC%9C%BC%EB%A9%B0_%EB%8B%AC%EB%A6%AC%EA%B8%B0_0185.gif?v=407eafdab505209b",
+        "animated": true,
+        "previewSrc": "/sticker-previews/407eafdab505209bbf69028bfb7495913f56bd9ab7c827eb7e37fd56c6c6a216.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_벚꽃_잎이_흩날리는_푸른_하늘과_들판_풍경_0716.gif",
+        "name": "치이카와-하치와레_벚꽃_잎이_흩날리는_푸른_하늘과_들판_풍경_0716",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%B2%9A%EA%BD%83_%EC%9E%8E%EC%9D%B4_%ED%9D%A9%EB%82%A0%EB%A6%AC%EB%8A%94_%ED%91%B8%EB%A5%B8_%ED%95%98%EB%8A%98%EA%B3%BC_%EB%93%A4%ED%8C%90_%ED%92%8D%EA%B2%BD_0716.gif?v=dfe0394c37263b87",
+        "animated": true,
+        "previewSrc": "/sticker-previews/dfe0394c37263b87eb28dac4e5c3a8622c0f4b0e98fb0fb270574342314e12de.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_볼을_붉히며_나란히_미소_짓는_0263.gif",
+        "name": "치이카와-하치와레_볼을_붉히며_나란히_미소_짓는_0263",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EB%B3%BC%EC%9D%84_%EB%B6%89%ED%9E%88%EB%A9%B0_%EB%82%98%EB%9E%80%ED%9E%88_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0263.gif?v=03704be4f80464d2",
+        "animated": true,
+        "previewSrc": "/sticker-previews/03704be4f80464d2583190c70a96d4be4833a99633e3b34ce730630c1c117b0f.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_사이좋게_팬케이크를_먹는_0648.gif",
+        "name": "치이카와-하치와레_사이좋게_팬케이크를_먹는_0648",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%82%AC%EC%9D%B4%EC%A2%8B%EA%B2%8C_%ED%8C%AC%EC%BC%80%EC%9D%B4%ED%81%AC%EB%A5%BC_%EB%A8%B9%EB%8A%94_0648.gif?v=76b1f901edbe4b0c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/76b1f901edbe4b0c0b56b48c7b520354ea5b1f9844e7cd10ae46ef918957ee80.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_시계를_구경하는_장면_0698.gif",
+        "name": "치이카와-하치와레_시계를_구경하는_장면_0698",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%8B%9C%EA%B3%84%EB%A5%BC_%EA%B5%AC%EA%B2%BD%ED%95%98%EB%8A%94_%EC%9E%A5%EB%A9%B4_0698.gif?v=ab563a3a2b06556d",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ab563a3a2b06556d3482154c2adb3e2806e9127720de353e0c2b3c9ff8269ce4.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_신나게_몸을_흔들며_춤추는_0202.gif",
+        "name": "치이카와-하치와레_신나게_몸을_흔들며_춤추는_0202",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%AA%B8%EC%9D%84_%ED%9D%94%EB%93%A4%EB%A9%B0_%EC%B6%A4%EC%B6%94%EB%8A%94_0202.gif?v=27811786022c4e76",
+        "animated": true,
+        "previewSrc": "/sticker-previews/27811786022c4e76f283b039b3d56f1fb53cd363e0c2cee02c92c79b92aaf46f.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_신나게_웃으며_달리는_0221.gif",
+        "name": "치이카와-하치와레_신나게_웃으며_달리는_0221",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%8B%A0%EB%82%98%EA%B2%8C_%EC%9B%83%EC%9C%BC%EB%A9%B0_%EB%8B%AC%EB%A6%AC%EB%8A%94_0221.gif?v=c394cb11baec07a0",
+        "animated": true,
+        "previewSrc": "/sticker-previews/c394cb11baec07a097028fdf2ee0727b63444c1de3a0b1397e1794c872ed6783.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_야외에서_소프트아이스크림을_들고_미소_짓는_0190.gif",
+        "name": "치이카와-하치와레_야외에서_소프트아이스크림을_들고_미소_짓는_0190",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%95%BC%EC%99%B8%EC%97%90%EC%84%9C_%EC%86%8C%ED%94%84%ED%8A%B8%EC%95%84%EC%9D%B4%EC%8A%A4%ED%81%AC%EB%A6%BC%EC%9D%84_%EB%93%A4%EA%B3%A0_%EB%AF%B8%EC%86%8C_%EC%A7%93%EB%8A%94_0190.gif?v=d1311c64eff27f07",
+        "animated": true,
+        "previewSrc": "/sticker-previews/d1311c64eff27f07fecc056414c1c0dde242adccc79bb595ad8e21485ee83700.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_옆에_친구_두고_신나게_걷기_0676.gif",
+        "name": "치이카와-하치와레_옆에_친구_두고_신나게_걷기_0676",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%98%86%EC%97%90_%EC%B9%9C%EA%B5%AC_%EB%91%90%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EA%B1%B7%EA%B8%B0_0676.gif?v=7c255ed34b64079f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/7c255ed34b64079f19429e37e854ceadbeaf6bafa7b500e41e671a71be0ecb63.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_카메라_앞에서_하치와레_포즈_0593.gif",
+        "name": "치이카와-하치와레_카메라_앞에서_하치와레_포즈_0593",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%EC%B9%B4%EB%A9%94%EB%9D%BC_%EC%95%9E%EC%97%90%EC%84%9C_%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%8F%AC%EC%A6%88_0593.gif?v=b9b6194fbd7789f3",
+        "animated": true,
+        "previewSrc": "/sticker-previews/b9b6194fbd7789f305db413f36ff441c0ce40ecca0f859042081c9da636dbad5.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_함께_간식을_먹으며_신난_0187.gif",
+        "name": "치이카와-하치와레_함께_간식을_먹으며_신난_0187",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%95%A8%EA%BB%98_%EA%B0%84%EC%8B%9D%EC%9D%84_%EB%A8%B9%EC%9C%BC%EB%A9%B0_%EC%8B%A0%EB%82%9C_0187.gif?v=28b0c3610460c042",
+        "animated": true,
+        "previewSrc": "/sticker-previews/28b0c3610460c0423a5afa1b0fba04b59c8454dcb56819220c2a0c5997d00831.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_함께_리코더를_들고_기뻐하는_0196.gif",
+        "name": "치이카와-하치와레_함께_리코더를_들고_기뻐하는_0196",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%95%A8%EA%BB%98_%EB%A6%AC%EC%BD%94%EB%8D%94%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EA%B8%B0%EB%BB%90%ED%95%98%EB%8A%94_0196.gif?v=a95278513be428b6",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a95278513be428b6657e1a51a78fb758a1f86297cc62315be479a10458b2a0b9.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레_활짝_웃으며_점프하는_0244.gif",
+        "name": "치이카와-하치와레_활짝_웃으며_점프하는_0244",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88_%ED%99%9C%EC%A7%9D_%EC%9B%83%EC%9C%BC%EB%A9%B0_%EC%A0%90%ED%94%84%ED%95%98%EB%8A%94_0244.gif?v=a6ea79b179715b2c",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a6ea79b179715b2c55255e8e944a6addf8a23a1b7ebb6ea036e62cfc5f247d9c.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레-우사기_거대한_팬케이크_위에서_낮잠_자는_0223.gif",
+        "name": "치이카와-하치와레-우사기_거대한_팬케이크_위에서_낮잠_자는_0223",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88-%EC%9A%B0%EC%82%AC%EA%B8%B0_%EA%B1%B0%EB%8C%80%ED%95%9C_%ED%8C%AC%EC%BC%80%EC%9D%B4%ED%81%AC_%EC%9C%84%EC%97%90%EC%84%9C_%EB%82%AE%EC%9E%A0_%EC%9E%90%EB%8A%94_0223.gif?v=a6ff1c55f46939d1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a6ff1c55f46939d1e040590b8cf5531cb6f0674aacbd8ee75ff6f4cbdbcb5e75.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레-우사기_무기를_든_걱정스러운_풀밭_0718.gif",
+        "name": "치이카와-하치와레-우사기_무기를_든_걱정스러운_풀밭_0718",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88-%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%AC%B4%EA%B8%B0%EB%A5%BC_%EB%93%A0_%EA%B1%B1%EC%A0%95%EC%8A%A4%EB%9F%AC%EC%9A%B4_%ED%92%80%EB%B0%AD_0718.gif?v=3ef460051d83520f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/3ef460051d83520f144036ee18657f8638bb83dcc54d0728f7791e5bba616afc.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레-우사기_벽_뒤에서_셋이_빼꼼_0254.gif",
+        "name": "치이카와-하치와레-우사기_벽_뒤에서_셋이_빼꼼_0254",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88-%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%B2%BD_%EB%92%A4%EC%97%90%EC%84%9C_%EC%85%8B%EC%9D%B4_%EB%B9%BC%EA%BC%BC_0254.gif?v=a872920d0d33fe48",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a872920d0d33fe48d446f92b8de079e2b616521d20b21a6882c9cddb4c9f915f.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레-우사기_비장한_표정으로_엄지척을_하는_0241.gif",
+        "name": "치이카와-하치와레-우사기_비장한_표정으로_엄지척을_하는_0241",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88-%EC%9A%B0%EC%82%AC%EA%B8%B0_%EB%B9%84%EC%9E%A5%ED%95%9C_%ED%91%9C%EC%A0%95%EC%9C%BC%EB%A1%9C_%EC%97%84%EC%A7%80%EC%B2%99%EC%9D%84_%ED%95%98%EB%8A%94_0241.gif?v=e5e45439c513d967",
+        "animated": true,
+        "previewSrc": "/sticker-previews/e5e45439c513d9675d67e4d3c85e5946a9cd8b50312ae9f5a953c6679fe3f898.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레-우사기_왕관을_쓰고_도넛을_맛있게_먹는_0216.gif",
+        "name": "치이카와-하치와레-우사기_왕관을_쓰고_도넛을_맛있게_먹는_0216",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88-%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%99%95%EA%B4%80%EC%9D%84_%EC%93%B0%EA%B3%A0_%EB%8F%84%EB%84%9B%EC%9D%84_%EB%A7%9B%EC%9E%88%EA%B2%8C_%EB%A8%B9%EB%8A%94_0216.gif?v=448e62f450e37778",
+        "animated": true,
+        "previewSrc": "/sticker-previews/448e62f450e377787f9c1535d8e487029dd4388996b270cd326c13a0d9c94008.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레-우사기_친구들_사이에서_식탁_앞_긴장_0707.gif",
+        "name": "치이카와-하치와레-우사기_친구들_사이에서_식탁_앞_긴장_0707",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88-%EC%9A%B0%EC%82%AC%EA%B8%B0_%EC%B9%9C%EA%B5%AC%EB%93%A4_%EC%82%AC%EC%9D%B4%EC%97%90%EC%84%9C_%EC%8B%9D%ED%83%81_%EC%95%9E_%EA%B8%B4%EC%9E%A5_0707.gif?v=ac60c9f94dcbca67",
+        "animated": true,
+        "previewSrc": "/sticker-previews/ac60c9f94dcbca67cd99e7c069a113f5713daedc26e10e0c0873669d7034bcf6.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레-우사기_택배_상자_들고_달리기_0177.gif",
+        "name": "치이카와-하치와레-우사기_택배_상자_들고_달리기_0177",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88-%EC%9A%B0%EC%82%AC%EA%B8%B0_%ED%83%9D%EB%B0%B0_%EC%83%81%EC%9E%90_%EB%93%A4%EA%B3%A0_%EB%8B%AC%EB%A6%AC%EA%B8%B0_0177.gif?v=32871ff369f2e76f",
+        "animated": true,
+        "previewSrc": "/sticker-previews/32871ff369f2e76f29fb4f0171ad16a6063a19db2407a878b3d2eeb79fbd5ae7.png"
+      },
+      {
+        "id": "함께_등장/치이카와-하치와레-우사기_택배_상자를_들고_신나게_달리는_0258.gif",
+        "name": "치이카와-하치와레-우사기_택배_상자를_들고_신나게_달리는_0258",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%B9%98%EC%9D%B4%EC%B9%B4%EC%99%80-%ED%95%98%EC%B9%98%EC%99%80%EB%A0%88-%EC%9A%B0%EC%82%AC%EA%B8%B0_%ED%83%9D%EB%B0%B0_%EC%83%81%EC%9E%90%EB%A5%BC_%EB%93%A4%EA%B3%A0_%EC%8B%A0%EB%82%98%EA%B2%8C_%EB%8B%AC%EB%A6%AC%EB%8A%94_0258.gif?v=b75a9c2cd1f35617",
+        "animated": true,
+        "previewSrc": "/sticker-previews/b75a9c2cd1f35617d51da9a36d19db63c541a93db807fb8025d6c52ba301fc98.png"
+      },
+      {
+        "id": "함께_등장/쿠리만쥬-모몽가_모몽가_옆에서_뒤돌아_간식_먹기_2100.gif",
+        "name": "쿠리만쥬-모몽가_모몽가_옆에서_뒤돌아_간식_먹기_2100",
+        "src": "/stickers/%ED%95%A8%EA%BB%98_%EB%93%B1%EC%9E%A5/%EC%BF%A0%EB%A6%AC%EB%A7%8C%EC%A5%AC-%EB%AA%A8%EB%AA%BD%EA%B0%80_%EB%AA%A8%EB%AA%BD%EA%B0%80_%EC%98%86%EC%97%90%EC%84%9C_%EB%92%A4%EB%8F%8C%EC%95%84_%EA%B0%84%EC%8B%9D_%EB%A8%B9%EA%B8%B0_2100.gif?v=a8f90416d16558b1",
+        "animated": true,
+        "previewSrc": "/sticker-previews/a8f90416d16558b1116f92b85f576280c7323d687d91f7bdfcf2470869939eb1.png"
+      }
+    ]
+  }
+]

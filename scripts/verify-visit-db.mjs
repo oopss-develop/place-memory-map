@@ -36,6 +36,18 @@ try {
   await query("insert into public.groups(id,name,created_by) values($1,'SQL verification',$2)",[group,owner]);
   await query("insert into public.group_members(group_id,user_id,role) values($1,$2,'owner')",[group,owner]);
   await identity(owner);
+  await query("insert into public.sticker_favorites(sticker_id) values($1)",["series/hi.gif"]);
+  check(await count("sticker_favorites"),1,"owner sees own sticker favorites");
+  await identity(outsider);
+  check(await count("sticker_favorites"),0,"favorites are private to each user");
+  await rejects("insert into public.sticker_favorites(user_id,sticker_id) values($1,$2)",[owner,"series/other.gif"],"42501");
+  await query("delete from public.sticker_favorites where user_id=$1",[owner]);
+  await query("insert into public.sticker_favorites(sticker_id) values($1)",["series/hi.gif"]);
+  check(await count("sticker_favorites"),1,"different users may favorite the same sticker");
+  await identity(owner);
+  check(await count("sticker_favorites"),1,"another user cannot delete owner's favorite");
+  await query("delete from public.sticker_favorites where user_id=$1",[owner]);
+  check(await count("sticker_favorites"),0,"owner can remove favorite");
   const input={groupId:group,place:{provider:"manual",name:"Reliable memory",address:"Seoul",category:"walk",latitude:37,longitude:127},visitedOn:"2026-10-01",isPlanned:false,title:"Memory",note:"Note",rating:5,tags:["walk"],markerStyle:"black-9",participantIds:[owner],version:1};
   const save=async(body,key=requestId,creating=true)=>(await query("select public.save_visit($1::jsonb,$2::uuid,$3) as result",[JSON.stringify(body),key,creating]))[0].result;
   const visit=await save(input);

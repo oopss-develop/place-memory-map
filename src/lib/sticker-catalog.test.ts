@@ -21,3 +21,13 @@ it("scans immediate series, sorts numeric names, excludes previews and versions 
     expect((await scanStickers(root)).map(s => s.name)).toEqual(["뚜냥"]);
   } finally { await rm(root, { recursive: true }); }
 });
+
+it("generates a still preview when a GIF has no companion", async () => {
+  const root = await mkdtemp(join(tmpdir(), "gif-preview-"));
+  try {
+    await mkdir(join(root,"series"));
+    await writeFile(join(root,"series/hi.gif"), Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", "base64"));
+    const result = await scanStickers(root, { previewRoot: join(root,"output") });
+    expect(result[0].stickers[0].previewSrc).toMatch(/^\/sticker-previews\/[a-f0-9]+\.png$/);
+  } finally { await rm(root, { recursive: true }); }
+});
