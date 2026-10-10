@@ -71,3 +71,26 @@ it("retains text and shows a fallback for removed stickers", async () => {
   render(<VisitComments visitId="visit" />);
   await screen.findByText("사용할 수 없는 이모티콘"); expect(screen.getByText("기억")).toBeInTheDocument();
 });
+it("scrolls to the linked comment and marks it read only once it is visible", async () => {
+  const id = "10000000-0000-4000-8000-000000000001";
+  window.history.replaceState({}, "", `/?commentId=${id}`);
+  const scroll = vi.fn();
+  HTMLElement.prototype.scrollIntoView = scroll;
+  let observerCallback: IntersectionObserverCallback | undefined;
+  vi.stubGlobal("IntersectionObserver", class {
+    constructor(callback: IntersectionObserverCallback) { observerCallback = callback; }
+    observe = vi.fn(); disconnect = vi.fn();
+  });
+  const fetchMock = vi.fn().mockResolvedValueOnce(response({ comments: [{ id, body: "목표 댓글", authorName: "뚜냥", createdAt: "2026-10-10", own: false }] })).mockResolvedValueOnce(response({ ok: true }));
+  vi.stubGlobal("fetch",fetchMock);
+  try {
+    render(<VisitComments visitId="visit" />);
+    await screen.findByText("목표 댓글");
+    await waitFor(() => expect(scroll).toHaveBeenCalled());
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    observerCallback?.([{ isIntersecting: true } as IntersectionObserverEntry], {} as IntersectionObserver);
+    await screen.findByText("댓글 알림을 확인했어요.");
+    expect(fetchMock.mock.calls[1][0]).toBe("/api/comment-notifications");
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ commentId: id });
+  } finally { window.history.replaceState({}, "", "/"); }
+});

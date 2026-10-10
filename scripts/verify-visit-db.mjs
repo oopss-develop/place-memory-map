@@ -82,6 +82,23 @@ try {
   await query("insert into public.group_members(group_id,user_id,role) values($1,$2,'member')",[group,outsider]);
   await identity(outsider);
   check(await count("visit_comments"),1,"group member can read comments");
+  const noticeId="60000000-0000-4000-8000-000000000004";
+  await query("select public.add_visit_comment($1,$2,$3)",[visit.id,noticeId,"새 소식"]);
+  await query("select public.add_visit_comment($1,$2,$3)",[visit.id,noticeId,"새 소식"]);
+  check(await count("comment_notifications"),1,"own activity logged once across retries");
+  check((await query("select * from public.list_comment_notifications()"))[0].own,true,"own comments appear in recent activity");
+  await query("update public.comment_notifications set read_at=now() where user_id=$1",[owner]);
+  await rejects("insert into public.comment_notifications(user_id,comment_id) values($1,$2)",[outsider,commentId],"42501");
+  await identity(owner);
+  check((await query("select count(*)::int as n from public.comment_notifications where read_at is null"))[0].n,1,"partner receives one unread notification");
+  check((await query("select * from public.list_comment_notifications()"))[0].comment_id,noticeId,"new unread comment listed first");
+  await query("update public.comment_notifications set read_at=now() where comment_id=$1",[noticeId]);
+  check((await query("select count(*)::int as n from public.comment_notifications where read_at is null"))[0].n,0,"read notification removed from unread list");
+  check((await query("select * from public.list_comment_notifications()")).length,2,"reading keeps recent comment history");
+  await identity(outsider);
+  await query("select public.delete_visit_comment($1,$2)",[visit.id,noticeId]);
+  check(await count("comment_notifications"),0,"deleted comment removes its notification");
+
   await rejects("select public.delete_visit_comment($1,$2)",[visit.id,commentId],"42501");
   await rejects("insert into public.visit_comments(id,visit_id,author_id,body) values($1,$2,$3,'spoof')",["60000000-0000-4000-8000-000000000002",visit.id,owner],"42501");
   await identity(owner);

@@ -17,6 +17,19 @@ test("shows the comment section in overview and map details on phone and desktop
   await page.route("**/api/stickers", route => route.fulfill({ json: { signedIn: true, favorites: [], series: Array.from({ length: 24 }, (_, i) => ({ id: String(i), name: i === 0 ? "우삼" : i === 1 ? "뚜냥" : "시리즈" + i, stickers: Array.from({ length: 20 }, (_, j) => ({ id: i + "/" + j + ".gif", name: "안녕" + j, src: "/stickers/fixture.gif?v=1", previewSrc: "/stickers/fixture.gif?v=preview", animated: true })) })) } }));
   await page.route("**/stickers/fixture.gif?*", route => route.fulfill({ contentType: "image/gif", body: Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7", "base64") }));
   await page.goto("/overview");
+  await page.getByRole("button", { name: "댓글 알림" }).click();
+  const notifications = page.getByRole("dialog", { name: "댓글 알림과 최근 댓글" });
+  await expect(notifications).toBeVisible();
+  const notificationPosition = await notifications.evaluate(el => {
+    const rect = el.getBoundingClientRect();
+    return { x: Math.abs(rect.x + rect.width / 2 - window.innerWidth / 2), y: Math.abs(rect.y + rect.height / 2 - window.innerHeight / 2), fits: rect.width <= window.innerWidth && rect.height <= window.innerHeight };
+  });
+  expect(notificationPosition.fits).toBe(true);
+  expect(notificationPosition.x).toBeLessThanOrEqual(1);
+  expect(notificationPosition.y).toBeLessThanOrEqual(1);
+  await notifications.getByRole("button", { name: "최근 댓글" }).click();
+  await notifications.getByRole("button", { name: "닫기" }).click();
+  await expect(notifications).toHaveCount(0);
   await page.getByRole("button", { name: /서울 숲.*함께 산책/ }).click();
   const comments = page.getByRole("region", { name: "기록 댓글" });
   await expect(comments).toContainText("로그인하고 저장소를 연결하면 댓글을 남길 수 있어요.");
