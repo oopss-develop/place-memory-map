@@ -103,7 +103,7 @@ export function InstallAppButton({ autoPrompt = false, suppressAutoPrompt = fals
     return (
       <section className="install-prompt" role="dialog" aria-modal="false" aria-labelledby="install-prompt-title">
         <button className="install-prompt-close" type="button" onClick={dismissPrompt} aria-label="앱 설치 안내 닫기"><X size={19} /></button>
-        <div className="install-prompt-icon" aria-hidden="true"><img src="/app-icon-192.png?v=3" alt="" /></div>
+        <div className="install-prompt-icon" aria-hidden="true"><img src="/app-icon-192.png?v=4" alt="" /></div>
         <div className="install-prompt-copy">
           <h2 id="install-prompt-title">{isKakao ? "외부 브라우저에서 설치해 주세요" : "앱으로 설치해서 사용해 보세요"}</h2>
           <p>{isKakao ? "카카오톡 안에서는 앱 설치가 지원되지 않아요. 브라우저로 열면 바로 설치할 수 있어요." : "홈 화면에서 앱처럼 바로 열고, 함께 남긴 장소를 더 빠르게 확인할 수 있어요."}</p>

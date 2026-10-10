@@ -13,9 +13,9 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "ko",
     orientation: "portrait-primary",
     icons: [
-      { src: "/app-icon-192.png?v=3", sizes: "192x192", type: "image/png", purpose: "any" },
-      { src: "/app-icon-512.png?v=3", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/app-icon-maskable-512.png?v=3", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/app-icon-192.png?v=4", sizes: "192x192", type: "image/png", purpose: "any" },
+      { src: "/app-icon-512.png?v=4", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/app-icon-maskable-512.png?v=4", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }

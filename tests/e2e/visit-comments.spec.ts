@@ -27,7 +27,7 @@ test("shows the comment section in overview and map details on phone and desktop
 
 test("keeps long record details scrollable through the comment section", async ({ page }, info) => {
   const mobile = info.project.name === "mobile";
-  await page.setViewportSize({ width: mobile ? 390 : 1280, height: 600 });
+  await page.setViewportSize({ width: mobile ? 320 : 1280, height: 600 });
   await page.addInitScript(({ groupId, visitId }) => {
     localStorage.setItem("place-memory-groups-v1", JSON.stringify([{ id: groupId, name: "우리 지도", role: "owner", memberCount: 2 }]));
     localStorage.setItem("place-memory-visits-v2", JSON.stringify([{
@@ -60,6 +60,12 @@ test("keeps long record details scrollable through the comment section", async (
     expect(withinMap).toBe(true);
   }
   await checkScroll();
+  const actionLayout = await page.locator(".sheet-actions").evaluate(element => {
+    const bounds = element.getBoundingClientRect();
+    const buttons = [...element.querySelectorAll("button")].map(button => button.getBoundingClientRect());
+    return buttons.length === 3 && buttons.every(button => Math.abs(button.top - buttons[0].top) < 1 && Math.abs(button.height - buttons[0].height) < 1 && button.left >= bounds.left && button.right <= bounds.right + 1);
+  });
+  expect(actionLayout).toBe(true);
   if (mobile) {
     await page.getByRole("button", { name: "기록 크게 보기" }).click();
     await checkScroll();
