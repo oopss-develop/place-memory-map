@@ -372,6 +372,8 @@ button, select { cursor: pointer; }
 
 .place-sheet { position: absolute; z-index: 6; top: 0; left: 0; overflow: visible; visibility: hidden; border: 0; animation: bubble-in .22s cubic-bezier(.2,.8,.2,1); border-color: var(--border); background: var(--card); width: min(380px, calc(100% - 48px)); border-radius: 12px; box-shadow: var(--shadow-overlay); }
 .place-sheet.is-positioned { visibility: visible; }
+.place-sheet { display: flex; flex-direction: column; max-height: calc(100% - 48px); }
+.sheet-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; border-radius: inherit; }
 .operation-progress { position: absolute; z-index: 4; top: 0; right: 0; left: 0; height: 3px; overflow: hidden; background: var(--paper-deep); }
 .operation-progress::after { position: absolute; top: 0; bottom: 0; left: -35%; width: 35%; content: ""; background: var(--vermilion); animation: operation-progress 1.1s ease-in-out infinite; }
 @keyframes operation-progress { 0% { transform: translateX(0); } 100% { transform: translateX(385%); } }
