@@ -37,3 +37,46 @@ test("shows ordered segment estimates, same-place stays and return trips after r
   await page.getByRole("button", {name:"동선 숨기기",exact:true}).click();
   await expect(legs).toHaveCount(0);
 });
+
+
+test("moves agenda beside the map, remembers width and falls back on narrow screens", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "desktop side layout");
+  await page.setViewportSize({width:1920,height:900});
+  await page.getByRole("button",{name:"보기 설정",exact:true}).click();
+  await page.getByRole("button",{name:"방문 순서 위치",exact:true}).click();
+  await page.getByRole("menuitemradio",{name:"지도 오른쪽",exact:true}).click();
+  await page.getByRole("button",{name:"보기 설정 닫기",exact:true}).click();
+  const divider=page.getByRole("separator",{name:"지도와 방문 순서 너비 조절",exact:true});
+  await expect(divider).toHaveAttribute("aria-orientation","vertical");
+  const canvas=page.locator(".planner-map-canvas");
+  const agenda=page.locator(".planner-map-agenda");
+  const mapBox=(await canvas.boundingBox())!;
+  const agendaBox=(await agenda.boundingBox())!;
+  expect(agendaBox.x).toBeGreaterThan(mapBox.x+mapBox.width);
+  expect(Math.abs(agendaBox.y-mapBox.y)).toBeLessThan(2);
+  await expect(page.locator(".planner-route-leg").nth(1)).toHaveText("자동차 약 15분 · 12.0km");
+  await divider.focus(); await page.keyboard.press("Shift+ArrowLeft");
+  await expect(divider).toHaveAttribute("aria-valuenow","50");
+  await page.screenshot({path:info.outputPath("agenda-right.png")});
+  await page.reload();
+  await page.getByRole("button",{name:"여행 계획",exact:true}).filter({visible:true}).click();
+  await expect(divider).toHaveAttribute("aria-valuenow","50");
+  await page.setViewportSize({width:1024,height:900});
+  await expect(page.getByRole("separator",{name:"지도와 일정 목록 높이 조절",exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await page.setViewportSize({width:390,height:844});
+  await page.getByRole("radio",{name:"지도",exact:true}).click();
+  await expect(page.getByRole("separator")).toHaveCount(0);
+  const mobileMap=(await canvas.boundingBox())!;
+  expect((await agenda.boundingBox())!.y).toBeGreaterThanOrEqual(mobileMap.y+mobileMap.height-1);
+  await page.setViewportSize({width:1920,height:900});
+  await expect(divider).toBeVisible();
+  await page.getByRole("button",{name:"보기 설정",exact:true}).click();
+  await page.getByRole("button",{name:"크기 초기화",exact:true}).click();
+  await expect(divider).toHaveAttribute("aria-valuenow","60");
+  await page.getByRole("button",{name:"방문 순서 위치",exact:true}).click();
+  await page.getByRole("menuitemradio",{name:"지도 아래",exact:true}).click();
+  await page.getByRole("button",{name:"보기 설정 닫기",exact:true}).click();
+  await expect(divider).toHaveCount(0);
+  await expect(page.getByRole("separator",{name:"지도와 일정 목록 높이 조절",exact:true})).toBeVisible();
+});
