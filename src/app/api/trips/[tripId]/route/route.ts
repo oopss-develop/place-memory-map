@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getAccessWorkspaceUser } from "@/lib/access-workspace";
-import { routeSignature, sampleRoutePoints, type RouteStop } from "@/lib/trip-route";
+import { routeSignature, sampleRoutePoints } from "@/lib/trip-route";
+import { orderedRouteStops, routeLegs } from "@/lib/trip-route-segments";
 import { tripError } from "@/lib/trip-server";
-import type { TripRoute } from "@/types/domain";
+import type { TripRoute, TripRouteLeg } from "@/types/domain";
 
 export const runtime = "nodejs";
 type Context = { params: Promise<{ tripId: string }> };
@@ -28,23 +29,18 @@ async function loadStops(auth: NonNullable<Awaited<ReturnType<typeof getAccessWo
     .select("id,starts_at,ends_at,place:places(name,latitude,longitude)")
     .eq("trip_id", tripId).is("deleted_at", null)
     .lt("starts_at", `${nextDate}T00:00:00`).gt("ends_at", `${date}T00:00:00`)
-    .order("starts_at");
+    .order("starts_at").order("id");
   if (error) throw error;
-  const grouped = new Map<string, RouteStop>();
-  for (const row of (data ?? []) as unknown as Array<{ id: string; starts_at: string; place: { name: string; latitude: number | string; longitude: number | string } }>) {
-    const latitude = Number(row.place.latitude);
-    const longitude = Number(row.place.longitude);
-    const coordinateKey = `${latitude.toFixed(6)},${longitude.toFixed(6)}`;
-    if (!grouped.has(coordinateKey)) grouped.set(coordinateKey, { id: row.id, name: row.place.name, latitude, longitude });
-  }
-  return { trip, stops: [...grouped.values()] };
+  const stops = ((data ?? []) as unknown as Array<{ id: string; place: { name: string; latitude: number | string; longitude: number | string } }>).map(row => ({ id: row.id, name: row.place.name, latitude: Number(row.place.latitude), longitude: Number(row.place.longitude) }));
+  return { trip, stops: orderedRouteStops(stops) };
 }
 
-function toTripRoute(row: { route_kind: "road" | "straight"; route_points: unknown; distance_meters: number | null; duration_seconds: number | null }): TripRoute {
+function toTripRoute(row: { route_kind: "road" | "straight"; route_points: unknown; distance_meters: number | null; duration_seconds: number | null; route_legs?: unknown }): TripRoute {
   const points = Array.isArray(row.route_points) ? row.route_points as TripRoute["points"] : [];
   return {
     kind: row.route_kind,
     points,
+    ...(row.route_kind === "road" && Array.isArray(row.route_legs) ? { legs: row.route_legs as TripRouteLeg[] } : {}),
     ...(row.distance_meters === null ? {} : { distanceMeters: row.distance_meters }),
     ...(row.duration_seconds === null ? {} : { durationSeconds: row.duration_seconds }),
   };
@@ -63,7 +59,7 @@ async function get(request: Request, context: Context) {
     if ("response" in loaded) return loaded.response;
     if (loaded.stops.length < 2) return NextResponse.json({ route: null });
     const signature = routeSignature(tripId.data, date.data, provider.data, loaded.stops);
-    const { data, error } = await auth.supabase.from("trip_route_cache").select("route_kind,route_points,distance_meters,duration_seconds")
+    const { data, error } = await auth.supabase.from("trip_route_cache").select("route_kind,route_points,distance_meters,duration_seconds,route_legs")
       .eq("trip_id", tripId.data).eq("route_date", date.data).eq("provider", provider.data).eq("signature", signature).maybeSingle();
     if (error) throw error;
     return NextResponse.json({ route: data ? toTripRoute(data) : null });
@@ -84,7 +80,7 @@ async function calculate(request: Request, context: Context) {
     if (loaded.stops.length < 2) return NextResponse.json({ error: "동선을 보려면 서로 다른 장소가 두 곳 이상 필요합니다." }, { status: 400 });
     const signature = routeSignature(tripId.data, parsed.data.date, parsed.data.provider, loaded.stops);
     const { data: cached, error: cacheError } = await auth.supabase.from("trip_route_cache")
-      .select("route_kind,route_points,distance_meters,duration_seconds")
+      .select("route_kind,route_points,distance_meters,duration_seconds,route_legs")
       .eq("trip_id", tripId.data).eq("route_date", parsed.data.date).eq("provider", parsed.data.provider).eq("signature", signature).maybeSingle();
     if (cacheError) throw cacheError;
     if (cached) return NextResponse.json({ route: toTripRoute(cached), cached: true });
@@ -120,7 +116,7 @@ async function calculate(request: Request, context: Context) {
         });
         if (!response.ok) throw new Error(`Kakao route request failed (${response.status})`);
         const result = await response.json() as {
-          routes?: Array<{ result_code?: number; result_msg?: string; summary?: { distance?: number; duration?: number }; sections?: Array<{ roads?: Array<{ vertexes?: number[] }> }> }>;
+          routes?: Array<{ result_code?: number; result_msg?: string; summary?: { distance?: number; duration?: number }; sections?: Array<{ distance?: number; duration?: number; roads?: Array<{ vertexes?: number[] }> }> }>;
         };
         const first = result.routes?.[0];
         const vertices = first?.sections?.flatMap((section) => section.roads?.flatMap((road) => road.vertexes ?? []) ?? []) ?? [];
@@ -130,6 +126,7 @@ async function calculate(request: Request, context: Context) {
         route = {
           kind: "road",
           points: sampleRoutePoints(points),
+          legs: routeLegs(loaded.stops, first.sections),
           ...(Number.isFinite(first.summary?.distance) ? { distanceMeters: first.summary!.distance } : {}),
           ...(Number.isFinite(first.summary?.duration) ? { durationSeconds: first.summary!.duration } : {}),
         };
@@ -147,6 +144,7 @@ async function calculate(request: Request, context: Context) {
       route_points: route.points,
       distance_meters: route.distanceMeters ?? null,
       duration_seconds: route.durationSeconds ?? null,
+      p_route_legs: route.legs ?? [],
     });
     if (error) throw error;
     return NextResponse.json({ route: toTripRoute(saved), cached: false, ...(notice ? { notice } : {}) });

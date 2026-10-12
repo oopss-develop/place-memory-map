@@ -1,18 +1,15 @@
 import { createHash } from "node:crypto";
 
-export interface RouteStop {
-  id: string;
-  name: string;
-  latitude: number;
-  longitude: number;
-}
+import type { RouteStop } from "./trip-route-segments";
+export type { RouteStop } from "./trip-route-segments";
 
 export function routeSignature(tripId: string, date: string, provider: "kakao" | "osm", stops: RouteStop[]) {
   return createHash("sha256").update(JSON.stringify({
+    version: 2,
     tripId,
     date,
     provider,
-    stops: stops.map(({ id, latitude, longitude }) => [id, latitude, longitude]),
+    stops: stops.map(({ id, itemIds, latitude, longitude }) => [itemIds ?? [id], latitude, longitude]),
   })).digest("hex");
 }
 

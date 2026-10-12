@@ -82,11 +82,19 @@ export interface ScheduleItem {
   version: number;
 }
 
+export interface TripRouteLeg {
+  fromItemId: string;
+  toItemId: string;
+  distanceMeters: number;
+  durationSeconds: number;
+}
+
 export interface TripRoute {
   kind: "road" | "straight";
   points: Array<{ latitude: number; longitude: number }>;
   distanceMeters?: number;
   durationSeconds?: number;
+  legs?: TripRouteLeg[];
 }
 
 export interface MapPoint {

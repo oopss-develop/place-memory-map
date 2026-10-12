@@ -50,6 +50,7 @@ test("uses travel presets without changing map height and resets both sizes", as
   await page.getByRole("button", { name: "여행 계획", exact: true }).filter({ visible: true }).click();
   const height = page.getByRole("separator", { name: "지도와 일정 목록 높이 조절" });
   await height.focus(); await page.keyboard.press("Shift+ArrowDown");
+  await page.getByRole("button", { name: "보기 설정", exact: true }).click();
   await page.getByRole("button", { name: "화면 배치", exact: true }).click();
   await page.getByRole("menuitemradio", { name: "지도 넓게", exact: true }).click();
   await expect(page.getByRole("separator", { name: "시간표와 지도 너비 조절" })).toHaveAttribute("aria-valuenow", "35");

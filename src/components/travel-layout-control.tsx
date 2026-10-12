@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { usePanelSize } from "./panel-divider";
+import { Popover } from "radix-ui";
+import { SlidersHorizontal, X } from "lucide-react";
 import { WorkspacePicker } from "./workspace-picker";
 import { Button } from "./ui/button";
 
@@ -20,6 +22,13 @@ export function useTravelLayout(userId: string) {
     reset() { setTimeWidth(52); setMapHeight(62); remember("balanced"); },
   };
 }
-export function TravelLayoutControl({ layout }: { layout: ReturnType<typeof useTravelLayout> }) {
-  return <div className="travel-layout-control"><WorkspacePicker label="화면 배치" value={layout.preset} searchable={false} options={[...PRESETS, ...(layout.preset === "custom" ? [{ value: "custom", label: "직접 조절" }] : [])]} onChange={layout.select} /><Button variant="ghost" onClick={layout.reset}>크기 초기화</Button></div>;
+export function TravelLayoutControl({ layout, disabled }: { layout: ReturnType<typeof useTravelLayout>; disabled?: boolean }) {
+  return <Popover.Root>
+    <Popover.Trigger asChild><Button className="travel-layout-trigger" variant="outline" disabled={disabled}><SlidersHorizontal />보기 설정</Button></Popover.Trigger>
+    <Popover.Portal><Popover.Content className="travel-layout-popover" sideOffset={8} align="end" collisionPadding={16} aria-label="보기 설정">
+      <div className="travel-layout-popover-heading"><h2>보기 설정</h2><Popover.Close asChild><Button variant="ghost" size="icon" aria-label="보기 설정 닫기"><X /></Button></Popover.Close></div>
+      <p>시간표와 지도 영역의 크기를 조절합니다.</p>
+      <div className="travel-layout-control"><span>화면 배치</span><WorkspacePicker label="화면 배치" value={layout.preset} searchable={false} options={[...PRESETS, ...(layout.preset === "custom" ? [{ value: "custom", label: "직접 조절" }] : [])]} onChange={layout.select} disabled={disabled} /><Button variant="outline" onClick={layout.reset} disabled={disabled}>크기 초기화</Button></div>
+    </Popover.Content></Popover.Portal>
+  </Popover.Root>;
 }

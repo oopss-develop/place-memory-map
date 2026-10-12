@@ -34,7 +34,7 @@ beforeEach(() => {
     const builder = { select: () => builder, eq: () => builder, maybeSingle: async () => ({ data: mocks.cache, error: null }) };
     return builder;
   });
-  mocks.rpc.mockResolvedValue({ data: { ...cached }, error: null });
+  mocks.rpc.mockImplementation(async (_name, args) => ({ data: { ...cached, route_kind: args.route_kind, route_points: args.route_points, distance_meters: args.distance_meters, duration_seconds: args.duration_seconds, route_legs: args.p_route_legs }, error: null }));
   vi.stubGlobal("fetch", mocks.fetch);
 });
 
@@ -47,21 +47,41 @@ describe("trip route cache API", () => {
   });
 
   it("uses a shared cached road route without another Directions request", async () => {
-    mocks.cache = cached;
+    mocks.cache = { ...cached, route_legs: [{ fromItemId: "item-1", toItemId: "item-2", distanceMeters: 12000, durationSeconds: 900 }] };
     const response = await POST(request("POST"), context) as Response;
     expect(response.status).toBe(200);
-    expect((await response.json()).cached).toBe(true);
+    const result = await response.json();
+    expect(result.cached).toBe(true);
+    expect(result.route.legs).toEqual((mocks.cache as { route_legs: unknown }).route_legs);
     expect(mocks.fetch).not.toHaveBeenCalled();
     expect(mocks.rpc).not.toHaveBeenCalled();
   });
 
   it("calls Kakao once on an explicit cache miss and saves its road geometry", async () => {
-    mocks.fetch.mockResolvedValue(new Response(JSON.stringify({ routes: [{ result_code: 0, summary: { distance: 12000, duration: 900 }, sections: [{ roads: [{ vertexes: [127, 37.5, 127.05, 37.55, 127.1, 37.6] }] }] }] }), { status: 200 }));
+    mocks.fetch.mockResolvedValue(new Response(JSON.stringify({ routes: [{ result_code: 0, summary: { distance: 12000, duration: 900 }, sections: [{ distance: 12000, duration: 900, roads: [{ vertexes: [127, 37.5, 127.05, 37.55, 127.1, 37.6] }] }] }] }), { status: 200 }));
     const response = await POST(request("POST"), context) as Response;
     expect(response.status).toBe(200);
+    expect((await response.json()).route.legs).toEqual([{ fromItemId: "item-1", toItemId: "item-2", distanceMeters: 12000, durationSeconds: 900 }]);
     expect(mocks.fetch).toHaveBeenCalledTimes(1);
     expect(mocks.fetch.mock.calls[0][0]).toContain("apis-navi.kakaomobility.com/v1/waypoints/directions");
-    expect(mocks.rpc).toHaveBeenCalledWith("save_trip_route", expect.objectContaining({ p_route_date: "2026-10-03", route_kind: "road", distance_meters: 12000, duration_seconds: 900 }));
+    expect(mocks.rpc).toHaveBeenCalledWith("save_trip_route", expect.objectContaining({ p_route_date: "2026-10-03", route_kind: "road", distance_meters: 12000, duration_seconds: 900, p_route_legs: [{ fromItemId: "item-1", toItemId: "item-2", distanceMeters: 12000, durationSeconds: 900 }] }));
+  });
+
+  it("does not invent travel times when Directions fails", async () => {
+    mocks.fetch.mockRejectedValue(new Error("unavailable"));
+    const response = await POST(request("POST"), context) as Response;
+    const result = await response.json();
+    expect(result.route.kind).toBe("straight");
+    expect(result.route.legs).toBeUndefined();
+    expect(result.route.durationSeconds).toBeUndefined();
+    expect(mocks.rpc).toHaveBeenCalledWith("save_trip_route", expect.objectContaining({ p_route_legs: [] }));
+  });
+
+  it("restores cached leg times on GET without a route service call", async () => {
+    mocks.cache = { ...cached, route_legs: [{ fromItemId: "item-1", toItemId: "item-2", distanceMeters: 12000, durationSeconds: 900 }] };
+    const response = await GET(request("GET"), context) as Response;
+    expect((await response.json()).route.legs).toHaveLength(1);
+    expect(mocks.fetch).not.toHaveBeenCalled();
   });
 
   it("requires authentication before any database or route service access", async () => {

@@ -34,8 +34,7 @@ test.beforeEach(async ({ page }) => {
 test("downloads the whole travel plan with an embedded map and place links", async ({ page }, testInfo) => {
   await openPlanner(page); await createTrip(page); await addExisting(page);
   const downloadEvent = page.waitForEvent("download");
-  if (testInfo.project.name === "mobile") await page.getByRole("button", { name: "여행 탐색 열기" }).click();
-  await page.getByRole("button", { name: "엑셀 다운로드", exact: true }).click();
+  await page.getByRole("button", { name: "서울 2박 3일 엑셀 다운로드", exact: true }).click();
   const download = await downloadEvent;
   expect(download.suggestedFilename()).toBe("서울 2박 3일_2026-10-03_2026-10-05.xlsx");
   const path = testInfo.outputPath("travel-plan.xlsx");

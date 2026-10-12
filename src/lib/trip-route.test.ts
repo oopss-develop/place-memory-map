@@ -15,6 +15,12 @@ describe("trip route cache keys and geometry", () => {
     expect(routeSignature("trip", "2026-10-01", "osm", stops)).not.toBe(key);
   });
 
+  it("invalidates cached legs when a consecutive same-place schedule changes", () => {
+    const original = [{ ...stops[0], itemIds: ["start", "stay"] }, stops[1]];
+    const changed = [{ ...stops[0], itemIds: ["start", "new-stay"] }, stops[1]];
+    expect(routeSignature("trip", "2026-10-01", "kakao", original)).not.toBe(routeSignature("trip", "2026-10-01", "kakao", changed));
+  });
+
   it("caps long road geometry while keeping its first and last points", () => {
     const points = Array.from({ length: 8001 }, (_, index) => ({ latitude: 35 + index / 100_000, longitude: 127 + index / 100_000 }));
     const sampled = sampleRoutePoints(points);
