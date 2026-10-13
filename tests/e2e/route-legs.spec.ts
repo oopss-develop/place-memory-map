@@ -28,7 +28,15 @@ test("shows ordered segment estimates, same-place stays and return trips after r
   await page.locator(".planner-map-agenda").screenshot({path:info.outputPath("route-legs.png")});
   await page.locator('.planner-map-canvas [data-visit-id="item-0"]').click();
   await expect(legs).toHaveCount(0);
-  await page.getByRole("button", {name:"이 날짜의 모든 장소",exact:true}).click();
+  const showAll=page.getByRole("button", {name:"이 날짜의 모든 장소",exact:true});
+  await expect(showAll).toBeVisible();
+  const textHeight=await showAll.evaluate(el=>{
+    const range=document.createRange();range.selectNodeContents(el);
+    return {height:range.getBoundingClientRect().height,lineHeight:parseFloat(getComputedStyle(el).lineHeight)};
+  });
+  expect(textHeight.height).toBeLessThanOrEqual(textHeight.lineHeight+2);
+  await page.locator(".planner-map-agenda").screenshot({path:info.outputPath("agenda-show-all.png")});
+  await showAll.click();
   await expect(legs).toHaveCount(3);
   await page.reload();
   await page.getByRole("button", {name:"여행 계획",exact:true}).filter({visible:true}).click();
