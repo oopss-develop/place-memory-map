@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 async function open(page:import("@playwright/test").Page) {
   await page.goto("/");await page.getByRole("button",{name:"추억 보드",exact:true}).filter({visible:true}).click();
   await expect(page.locator(".board-status")).not.toContainText("불러오는 중");
+  await page.getByRole("button",{name:"수정 모드",exact:true}).click();
 }
 async function fixture(page:import("@playwright/test").Page) {
   return page.evaluate(()=>{

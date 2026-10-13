@@ -9,6 +9,7 @@ async function open(page:import("@playwright/test").Page){
   await page.getByRole("button",{name:"추억 보드",exact:true}).filter({visible:true}).click();
   await expect(page.getByRole("heading",{name:"추억 보드",exact:true})).toBeVisible();
   await expect(page.locator(".board-status")).not.toContainText("불러오는 중");
+  await page.getByRole("button",{name:"수정 모드",exact:true}).click();
 }
 test("photo and note placement, editing, undo, save and reload",async({page})=>{
   await open(page);
@@ -28,6 +29,7 @@ test("photo and note placement, editing, undo, save and reload",async({page})=>{
   await page.reload();
   await page.getByRole("button",{name:"추억 보드",exact:true}).filter({visible:true}).click();
   await expect(page.locator('[data-board-id]')).toHaveCount(2);
+  await page.getByRole("button",{name:"수정 모드",exact:true}).click();
   await page.locator('[data-kind="note"]').click();
   await expect(page.getByLabel("포스트잇 내용",{exact:true})).toHaveValue("함께해서 더 좋았던 하루");
   await page.screenshot({path:test.info().outputPath("memory-board-selected.png"),fullPage:true});
@@ -47,6 +49,7 @@ test("unsaved arrangements survive leaving the board and keyboard editing works"
   await page.getByRole("button",{name:"기록으로",exact:true}).click();
   await page.getByRole("button",{name:"추억 보드",exact:true}).filter({visible:true}).click();
   await expect(page.locator('[data-kind="note"]')).toHaveCount(1);
+  await page.getByRole("button",{name:"수정 모드",exact:true}).click();
   const note=page.locator('[data-kind="note"]');
   await note.focus(); await page.keyboard.press("ArrowRight");
   await expect(page.getByLabel("가로 위치",{exact:true})).toHaveValue("112");
@@ -81,6 +84,7 @@ test("paper surface responds to hover and stays still with reduced motion",async
   await open(page);await page.getByRole("button",{name:"사진 붙이기",exact:true}).click();
   await page.locator(".board-photo-options button").first().click();
   await expect(page.locator(".board-item-enhanced")).toHaveCount(1);
+  await page.getByRole("button",{name:"뷰 모드",exact:true}).click();
   await page.mouse.move(5,5);
   await page.evaluate(()=>new Promise<void>(resolve=>{let i=0;function tick(){if(++i>=45)resolve();else requestAnimationFrame(tick);}requestAnimationFrame(tick);}));
   const canvas=page.locator(".board-webgl canvas");const before=await canvas.screenshot();

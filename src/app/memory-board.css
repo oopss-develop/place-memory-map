@@ -19,3 +19,5 @@
 .board-item-enhanced .board-attachment{opacity:0}
 .memory-board-workspace{position:relative}.board-drop-hint{position:absolute;inset:16px;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;border:2px dashed #846241;border-radius:6px;background:#fffdf7ed;color:#39332c;pointer-events:none}.board-drop-hint strong{font-size:20px}.board-drop-hint span{font-size:14px}
 @media(max-width:700px){.memory-board-toolbar>div:first-child{max-width:100%;flex-wrap:wrap}.memory-board-toolbar>div:first-child>button{padding-inline:5px;gap:5px}}
+
+.board-view-mode .board-item,.board-view-mode .board-item:active{cursor:default;touch-action:pan-x pan-y}

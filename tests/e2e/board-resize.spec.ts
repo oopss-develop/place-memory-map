@@ -9,6 +9,7 @@ for (const corner of ["nw","ne","sw","se"] as const) test(`resize ${corner} stay
     localStorage.setItem("uttumak-board-v1:"+groupId,JSON.stringify({background:"pegboard",version:1,items:[{id:"11111111-1111-4111-8111-111111111111",kind:"photo",x:350,y:200,width:250,height:290,rotation:17,text:"사진",color:"cream",attachment:"tape",visitId:"resize-visit",photoId:"resize-photo"}]}));
   },groupId);
   await page.goto("/");await page.getByRole("button",{name:"추억 보드",exact:true}).filter({visible:true}).click();
+  await page.getByRole("button",{name:"수정 모드",exact:true}).click();
   const photo=page.locator('[data-kind="photo"]');await photo.click();
   await expect(photo).toHaveClass(/board-item-enhanced/);
   for(const zoomDirection of ["fit","out","in"]){
