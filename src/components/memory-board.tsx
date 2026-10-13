@@ -31,8 +31,10 @@ export default function MemoryBoard({ groupId, groups, visits, viewerId, demo, o
   const [zoom,setZoom]=useState(0.75);
   const stageRef=useRef<HTMLDivElement>(null);
   const viewportRef=useRef<HTMLDivElement>(null);
+  const autoFit=useRef(true);
   const moveable=useRef<Moveable>(null);
   const gesture=useRef(false);
+  const [gestureItem,setGestureItem]=useState<string>();
   const touchTimer=useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   useEffect(()=>()=>clearTimeout(touchTimer.current),[]);
   const groupVisits=useMemo(()=>visits.filter(v=>v.groupId===groupId),[visits,groupId]);
@@ -50,11 +52,23 @@ export default function MemoryBoard({ groupId, groups, visits, viewerId, demo, o
     const media=matchMedia("(prefers-reduced-motion: reduce)"); const update=()=>setReduced(media.matches); update();
     media.addEventListener("change",update); return ()=>media.removeEventListener("change",update);
   },[]);
+  const fitBoard=useCallback(()=>{
+    const el=viewportRef.current; if(!el)return;
+    const style=getComputedStyle(el);
+    const width=el.clientWidth-parseFloat(style.paddingLeft)-parseFloat(style.paddingRight)-2;
+    const height=el.clientHeight-parseFloat(style.paddingTop)-parseFloat(style.paddingBottom)-2;
+    setZoom(Math.max(0.01,Math.min(1,width/BOARD_WIDTH,height/BOARD_HEIGHT)));
+    el.scrollLeft=0;el.scrollTop=0;
+  },[]);
   useEffect(()=>{
     const el=viewportRef.current; if(!el)return;
-    const fit=()=>setZoom(Math.max(0.25,Math.min(1,(el.clientWidth-48)/BOARD_WIDTH)));
-    fit();
-  },[]);
+    const observer=new ResizeObserver(()=>{if(autoFit.current)fitBoard();});
+    observer.observe(el);return ()=>observer.disconnect();
+  },[fitBoard]);
+  function changeZoom(delta:number) {
+    autoFit.current=false;
+    setZoom(value=>Math.max(0.1,Math.min(1.5,value+delta)));
+  }
   useLayoutEffect(()=>{
     const el=stageRef.current?.querySelector<HTMLElement>(`[data-board-id="${selectedId}"]`) ?? null;
     setTarget(el); moveable.current?.updateRect();
@@ -71,14 +85,14 @@ export default function MemoryBoard({ groupId, groups, visits, viewerId, demo, o
       rotation:[-5,3,-2,6][index%4],text:kind==="photo" ? photo?.place ?? "" : "",color:"cream",attachment:"tape",
       ...(photo ? {visitId:photo.visitId,photoId:photo.photoId} : {})};
     changeItems([...items,clampBoardItem(item)]); setSelectedId(item.id);setTray(false);
-    setTimeout(()=>stageRef.current?.querySelector<HTMLElement>(`[data-board-id="${item.id}"]`)?.scrollIntoView({block:"nearest",inline:"nearest",behavior:"smooth"}),30);
+
   }
   function select(id:string,element:HTMLElement) {setSelectedId(id);setTarget(element);}
-  function begin() {gesture.current=true;setInteraction({x:0.5,strength:0});}
-  function transient(item:BoardItem) {const next=clampBoardItem(item);previewRef.current=next;setPreview(next);}
+  function begin() {gesture.current=true;setGestureItem(selected?.id);setInteraction({x:0.5,strength:0});}
+  function transient(item:BoardItem) {const next=clampBoardItem(item);previewRef.current=next;flushSync(()=>setPreview(next));}
   function finish() {
     if(previewRef.current) changeItems(store.board.items.map(item=>item.id===previewRef.current?.id ? previewRef.current : item) as BoardItem[]);
-    previewRef.current=null;setPreview(null);gesture.current=false;
+    previewRef.current=null;setPreview(null);gesture.current=false;setGestureItem(undefined);
   }
   function content(patch:Partial<BoardContent>) {store.change({...store.board,...patch});}
   function remove() {if(!selected)return;changeItems(items.filter(item=>item.id!==selected.id));setSelectedId(undefined);}
@@ -102,7 +116,7 @@ export default function MemoryBoard({ groupId, groups, visits, viewerId, demo, o
     </header>
     <div className="memory-board-toolbar" aria-label="보드 도구">
       <div><Button variant="outline" onClick={()=>setTray(v=>!v)} aria-expanded={tray} disabled={disabled||full}><ImagePlus size={17}/>사진 붙이기</Button><Button variant="outline" onClick={()=>create("note")} disabled={disabled||full}><StickyNote size={17}/>포스트잇</Button></div>
-      <div><Button variant="ghost" aria-label="되돌리기" disabled={disabled||!store.canUndo} onClick={()=>store.undo()}><Undo2 size={18}/></Button><Button variant="ghost" aria-label="다시 실행" disabled={disabled||!store.canRedo} onClick={()=>store.undo(true)}><Redo2 size={18}/></Button><span className="board-toolbar-divider"/><Button variant="ghost" aria-label="보드 축소" disabled={zoom<=0.25} onClick={()=>setZoom(v=>Math.max(0.25,v-0.1))}><ZoomOut size={17}/></Button><button className="board-fit" onClick={()=>setZoom(Math.max(0.25,Math.min(1,((viewportRef.current?.clientWidth??900)-48)/BOARD_WIDTH)))} aria-label="보드를 화면에 맞추기">{Math.round(zoom*100)}%</button><Button variant="ghost" aria-label="보드 확대" disabled={zoom>=1.5} onClick={()=>setZoom(v=>Math.min(1.5,v+0.1))}><ZoomIn size={17}/></Button></div>
+      <div><Button variant="ghost" aria-label="되돌리기" disabled={disabled||!store.canUndo} onClick={()=>store.undo()}><Undo2 size={18}/></Button><Button variant="ghost" aria-label="다시 실행" disabled={disabled||!store.canRedo} onClick={()=>store.undo(true)}><Redo2 size={18}/></Button><span className="board-toolbar-divider"/><Button variant="ghost" aria-label="보드 축소" disabled={zoom<=0.1} onClick={()=>changeZoom(-0.1)}><ZoomOut size={17}/></Button><button className="board-fit" onClick={()=>{autoFit.current=true;fitBoard();}} aria-label="보드를 화면에 맞추기">{Math.round(zoom*100)}%</button><Button variant="ghost" aria-label="보드 확대" disabled={zoom>=1.5} onClick={()=>changeZoom(0.1)}><ZoomIn size={17}/></Button></div>
       <select aria-label="보드 배경" value={store.board.background} onChange={e=>content({background:e.target.value as BoardContent["background"]})} disabled={disabled}><option value="pegboard">밝은 페그보드</option><option value="whiteboard">화이트보드</option><option value="cork">코르크보드</option></select>
     </div>
     <div className="board-status" role="status" aria-live="polite">{store.loading ? "보드 불러오는 중…" : store.message || (store.dirty ? "아직 저장하지 않은 배치가 있어요." : demo ? "데모 보드는 이 기기에 저장돼요." : "지도 멤버들과 함께 꾸미는 보드예요.")}<span>{items.length} / {BOARD_LIMIT}</span></div>
@@ -113,7 +127,7 @@ export default function MemoryBoard({ groupId, groups, visits, viewerId, demo, o
         <div className="board-scale-box" style={{width:BOARD_WIDTH*zoom,height:BOARD_HEIGHT*zoom}}>
           <div ref={stageRef} className={`board-stage board-${store.board.background}`} style={{width:BOARD_WIDTH,height:BOARD_HEIGHT,transform:`scale(${zoom})`}}
             onPointerDown={e=>{if(e.target===e.currentTarget) {setSelectedId(undefined);setTarget(null);}}}>
-            {graphics && items.length>0 && <div className="board-webgl" aria-hidden="true"><PaperBoard items={items} visits={groupVisits} interaction={interaction} reduced={reduced} onReady={onReady} onFailure={onFailure}/></div>}
+            {graphics && items.length>0 && <div className="board-webgl" aria-hidden="true"><PaperBoard items={items} drawingItems={gestureItem ? store.board.items : items} visits={groupVisits} interaction={interaction} reduced={reduced} onReady={onReady} onFailure={onFailure}/></div>}
             {!items.length && !store.loading && <div className="board-empty" style={{ transform: `translate(-50%, -50%) scale(${1/zoom})` }}><Pin size={30} strokeWidth={1.4}/><h2>함께한 순간을<br/>여기에 붙여 두세요.</h2><p>사진 한 장, 짧은 메모 하나.<br/>우리의 이야기가 모이는 작은 벽이에요.</p><Button onClick={()=>setTray(true)} disabled={disabled}><ImagePlus size={17}/>첫 사진 붙이기</Button><button onClick={()=>create("note")} disabled={disabled}>메모부터 남기기</button></div>}
             {items.map((item,index)=>{
               const photo=resolveBoardPhoto(item,groupVisits);
@@ -133,10 +147,17 @@ export default function MemoryBoard({ groupId, groups, visits, viewerId, demo, o
                 <div className="board-paper-fallback">{item.kind==="photo" ? <>{photo ? <img src={photo.url} alt="" draggable={false}/> : <div className="board-photo-missing">사진을 불러올 수 없어요<br/><small>기록이 삭제되었거나 사진 주소가 만료됐어요.</small></div>}<span>{item.text||photo?.place||"우리의 사진"}</span></> : <p>{item.text||"여기에 우리의 이야기를 남겨요."}</p>}</div>
               </div>;
             })}
-            <Moveable ref={moveable} target={disabled?null:target} container={stageRef.current} draggable resizable rotatable keepRatio={selected?.kind==="photo"} origin={false} snappable snapGridWidth={10} snapGridHeight={10} throttleRotate={1} zoom={1/zoom} renderDirections={["nw","ne","sw","se"]}
+            <Moveable flushSync={flushSync} ref={moveable} target={disabled?null:target} container={stageRef.current} draggable resizable rotatable keepRatio={selected?.kind==="photo"} origin={false} snappable={["draggable"]} snapGridWidth={10} snapGridHeight={10} throttleRotate={1} zoom={1/zoom} renderDirections={["nw","ne","sw","se"]}
               onDragStart={e=>{begin();e.set([selected?.x??0,selected?.y??0]);}}
               onDrag={e=>{if(selected)transient({...selected,x:e.beforeTranslate[0],y:e.beforeTranslate[1]});}} onDragEnd={finish}
-              onResizeStart={e=>{begin();e.setOrigin(["50%","50%"]);if(e.dragStart)e.dragStart.set([selected?.x??0,selected?.y??0]);}}
+              onResizeStart={e=>{
+                if(!selected)return false;
+                begin();e.set([selected.width,selected.height]);e.setOrigin(["50%","50%"]);
+                const ratio=selected.width/selected.height;
+                e.setMin(selected.kind==="photo" ? [Math.max(120,100*ratio),Math.max(100,120/ratio)] : [120,100]);
+                e.setMax(selected.kind==="photo" ? [Math.min(560,600*ratio),Math.min(600,560/ratio)] : [560,600]);
+                if(e.dragStart)e.dragStart.set([selected.x,selected.y]);
+              }}
               onResize={e=>{if(selected)transient({...selected,width:e.width,height:e.height,x:e.drag.beforeTranslate[0],y:e.drag.beforeTranslate[1]});}} onResizeEnd={finish}
               onRotateStart={e=>{begin();e.set(selected?.rotation??0);if(e.dragStart)e.dragStart.set([selected?.x??0,selected?.y??0]);}}
               onRotate={e=>{if(selected)transient({...selected,rotation:e.beforeRotate,x:e.drag.beforeTranslate[0],y:e.drag.beforeTranslate[1]});}} onRotateEnd={finish}/>

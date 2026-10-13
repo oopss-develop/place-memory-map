@@ -55,8 +55,8 @@ function lines(ctx: CanvasRenderingContext2D, text: string, width: number) {
   }
   return result;
 }
-function Paper({ item, visit, order, interaction, reduced, onReady }: {
-  item: BoardItem; visit: ReturnType<typeof resolveBoardPhoto>; order: number;
+function Paper({ item, content, visit, order, interaction, reduced, onReady }: {
+  item: BoardItem; content: BoardItem; visit: ReturnType<typeof resolveBoardPhoto>; order: number;
   interaction: PaperInteraction; reduced: boolean; onReady: (id: string, ready: boolean) => void;
 }) {
   const { invalidate } = useThree();
@@ -68,41 +68,41 @@ function Paper({ item, visit, order, interaction, reduced, onReady }: {
   useEffect(() => {
     let cancelled = false;
     let created: CanvasTexture | null = null;
-    onReady(item.id, false);
+    onReady(content.id, false);
     const draw = (image?: HTMLImageElement) => {
       if (cancelled) return;
       const canvas = document.createElement("canvas");
-      const resolution = Math.min(2, 512 / Math.max(item.width, item.height));
-      canvas.width = Math.ceil(item.width * resolution); canvas.height = Math.ceil(item.height * resolution);
+      const resolution = Math.min(2, 512 / Math.max(content.width, content.height));
+      canvas.width = Math.ceil(content.width * resolution); canvas.height = Math.ceil(content.height * resolution);
       const ctx = canvas.getContext("2d"); if (!ctx) return;
-      const scale = canvas.width / item.width;
+      const scale = canvas.width / content.width;
       ctx.scale(scale, scale);
-      ctx.fillStyle = item.kind === "note" ? colors[item.color] : "#fffdf7";
-      ctx.fillRect(0, 0, item.width, item.height);
+      ctx.fillStyle = content.kind === "note" ? colors[content.color] : "#fffdf7";
+      ctx.fillRect(0, 0, content.width, content.height);
       ctx.fillStyle = "#39332c";
       if (image) {
-        const w = item.width-20, h = item.height-48;
+        const w = content.width-20, h = content.height-48;
         const crop = Math.max(w/image.naturalWidth, h/image.naturalHeight);
         const sw=w/crop, sh=h/crop;
         ctx.drawImage(image,(image.naturalWidth-sw)/2,(image.naturalHeight-sh)/2,sw,sh,10,10,w,h);
         ctx.font = "12px sans-serif";
-        ctx.fillText((item.text || visit?.place || "우리의 사진").slice(0,35),12,item.height-15,item.width-24);
+        ctx.fillText((content.text || visit?.place || "우리의 사진").slice(0,35),12,content.height-15,content.width-24);
       } else {
-        ctx.font = `${item.kind === "note" ? 18 : 14}px sans-serif`;
-        const text = item.kind === "note" ? item.text || "여기에 우리의 이야기를 남겨요." : "사진을 불러올 수 없어요";
-        const available = Math.floor((item.height-56)/27);
-        lines(ctx,text,item.width-38).slice(0,available).forEach((line,i)=>ctx.fillText(line,19,38+i*27));
+        ctx.font = `${content.kind === "note" ? 18 : 14}px sans-serif`;
+        const text = content.kind === "note" ? content.text || "여기에 우리의 이야기를 남겨요." : "사진을 불러올 수 없어요";
+        const available = Math.floor((content.height-56)/27);
+        lines(ctx,text,content.width-38).slice(0,available).forEach((line,i)=>ctx.fillText(line,19,38+i*27));
       }
       created = new CanvasTexture(canvas); created.colorSpace = SRGBColorSpace;
-      setTexture(created); onReady(item.id, true); invalidate();
+      setTexture(created); onReady(content.id, true); invalidate();
     };
-    if (item.kind === "photo" && photoUrl) {
+    if (content.kind === "photo" && photoUrl) {
       const image = new Image(); image.crossOrigin = "anonymous";
       image.onload = () => draw(image); image.onerror = () => draw();
       image.src = photoUrl;
     } else draw();
     return () => { cancelled=true; created?.dispose(); };
-  }, [item.id, item.kind, item.color, item.text, item.width, item.height, photoUrl, visit?.place, invalidate, onReady]);
+  }, [content.id, content.kind, content.color, content.text, content.width, content.height, photoUrl, visit?.place, invalidate, onReady]);
   const materials = useMemo(() => {
     const uniforms = () => ({ uTexture: { value: null }, uBend: { value: 0 }, uPointer: { value: 0.5 }, uPin: { value: item.attachment === "pin" ? 1 : 0 } });
     return {
@@ -150,8 +150,8 @@ function Redraw({ interaction }: { interaction: PaperInteraction }) {
   useEffect(()=>invalidate(),[interaction,invalidate]);
   return null;
 }
-export default function PaperBoard({ items, visits, interaction, reduced, onReady, onFailure }: {
-  items: BoardItem[]; visits: Visit[]; interaction: PaperInteraction; reduced: boolean;
+export default function PaperBoard({ items, drawingItems, visits, interaction, reduced, onReady, onFailure }: {
+  items: BoardItem[]; drawingItems: BoardItem[]; visits: Visit[]; interaction: PaperInteraction; reduced: boolean;
   onReady: (id: string, ready: boolean) => void; onFailure: () => void;
 }) {
   return <GraphicsBoundary onFailure={onFailure}><Canvas resize={{ offsetSize: true }} orthographic frameloop="demand" dpr={[1,1.5]} gl={{ alpha: true, antialias: true }}
@@ -159,6 +159,6 @@ export default function PaperBoard({ items, visits, interaction, reduced, onRead
     onCreated={({ gl })=>{ gl.setClearColor(0x000000,0); gl.domElement.addEventListener("webglcontextlost",onFailure,{once:true}); }}>
     <OrthographicCamera makeDefault manual position={[0,0,1000]} left={-BOARD_WIDTH/2} right={BOARD_WIDTH/2} top={BOARD_HEIGHT/2} bottom={-BOARD_HEIGHT/2} near={0.1} far={2000} />
     <Redraw interaction={interaction} />
-    {items.map((item,index)=><Paper key={item.id} item={item} visit={resolveBoardPhoto(item,visits)} order={index} interaction={interaction} reduced={reduced} onReady={onReady} />)}
+    {items.map((item,index)=><Paper key={item.id} item={item} content={drawingItems.find(content=>content.id===item.id) ?? item} visit={resolveBoardPhoto(item,visits)} order={index} interaction={interaction} reduced={reduced} onReady={onReady} />)}
   </Canvas></GraphicsBoundary>;
 }
