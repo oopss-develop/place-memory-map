@@ -10,12 +10,14 @@ export const boardItemSchema = z.object({
   width: z.number().finite().min(120).max(560), height: z.number().finite().min(100).max(600),
   rotation: z.number().finite().min(-180).max(180),
   text: z.string().max(500), color: z.enum(["cream", "rose", "sage", "sky"]),
-  attachment: z.enum(["tape", "pin"]), visitId: z.string().max(100).optional(), photoId: z.string().max(100).optional(),
+  attachment: z.enum(["tape", "pin"]), visitId: z.string().max(100).optional(), photoId: z.string().max(100).optional(), uploadId: z.string().uuid().optional(),
 }).superRefine((item, ctx) => {
   if (item.x + item.width > BOARD_WIDTH || item.y + item.height > BOARD_HEIGHT)
     ctx.addIssue({ code: "custom", message: "사진과 메모는 보드 안에 놓아 주세요." });
-  if (item.kind === "photo" && (!item.visitId || !item.photoId))
+  if (item.kind === "photo" && !item.uploadId && (!item.visitId || !item.photoId))
     ctx.addIssue({ code: "custom", message: "붙일 사진을 선택해 주세요." });
+  if (item.uploadId && (item.kind !== "photo" || item.visitId || item.photoId))
+    ctx.addIssue({ code: "custom", message: "사진 출처를 하나만 선택해 주세요." });
 });
 export const boardContentSchema = z.object({
   background: z.enum(["pegboard", "whiteboard", "cork"]), items: z.array(boardItemSchema).max(BOARD_LIMIT),
@@ -33,12 +35,14 @@ export function clampBoardItem(item: BoardItem): BoardItem {
   return { ...item, width, height, x: Math.max(0, Math.min(BOARD_WIDTH - width, item.x)),
     y: Math.max(0, Math.min(BOARD_HEIGHT - height, item.y)), rotation: ((item.rotation + 180) % 360 + 360) % 360 - 180 };
 }
-export function boardPhotos(visits: Visit[]) {
+export interface BoardPhotoOption { key: string; url: string; title: string; place: string; date: string; visitId?: string; photoId?: string; uploadId?: string }
+export function boardPhotos(visits: Visit[]): BoardPhotoOption[] {
   return visits.filter(visit => !visit.deletedAt && !visit.isPlanned).flatMap(visit => visit.photoUrls.map((url, index) => ({
     key: `${visit.id}:${visit.photoIds?.[index] ?? `demo-${index}`}`, visitId: visit.id,
     photoId: visit.photoIds?.[index] ?? `demo-${index}`, url, title: visit.title, place: visit.place.name, date: visit.visitedOn,
   })));
 }
-export function resolveBoardPhoto(item: BoardItem, visits: Visit[]) {
+export function resolveBoardPhoto(item: BoardItem, visits: Visit[], uploads: BoardPhotoOption[] = []) {
+  if (item.uploadId) return uploads.find(photo => photo.uploadId === item.uploadId);
   return boardPhotos(visits).find(photo => photo.visitId === item.visitId && photo.photoId === item.photoId);
 }

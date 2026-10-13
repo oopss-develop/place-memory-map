@@ -1,7 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { StickerSeries } from "./stickers";
 import { apiRequest } from "./api-request";
-import { backupHash, offlineBackupHtml, safeBackupPath, snapshotSchema, type BackupFile, type BackupManifest } from "./backup-format";
+import { backupPhotos, backupHash, offlineBackupHtml, safeBackupPath, snapshotSchema, type BackupFile, type BackupManifest } from "./backup-format";
 export async function createWorkspaceBackup(db: SupabaseClient, options: { photos: boolean; stickers: boolean; signal: AbortSignal; progress: (text: string) => void }) {
   const { signal, progress } = options;
   progress("전체 기록을 모으는 중…");
@@ -30,7 +30,7 @@ export async function createWorkspaceBackup(db: SupabaseClient, options: { photo
   for (const [name,sql] of Object.entries(support.schemas)) await addText("schema/"+name,sql);
   await addText("기록보기.html",offlineBackupHtml(snapshot,options.photos));
   if (options.photos) {
-    const photos = snapshot.data.visit_photos.filter(p=>p.upload_state!=="pending");
+    const photos = backupPhotos(snapshot);
     for (let offset=0;offset<photos.length;offset+=100) {
       signal.throwIfAborted();
       const batch=photos.slice(offset,offset+100);

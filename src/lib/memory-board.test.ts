@@ -3,6 +3,12 @@ import { boardContentSchema, clampBoardItem, resolveBoardPhoto, type BoardItem }
 import type { Visit } from "@/types/domain";
 const item:BoardItem={id:"aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",kind:"note",x:10,y:20,width:230,height:200,rotation:3,text:"기억",color:"cream",attachment:"tape"};
 describe("memory board",()=>{
+  it("accepts uploaded-photo references but rejects mixed or absent sources",()=>{
+    const photo={...item,kind:"photo",uploadId:"bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"};
+    expect(boardContentSchema.safeParse({background:"pegboard",items:[photo]}).success).toBe(true);
+    expect(boardContentSchema.safeParse({background:"pegboard",items:[{...photo,visitId:"v",photoId:"p"}]}).success).toBe(false);
+    expect(resolveBoardPhoto(photo as BoardItem,[],[{uploadId:photo.uploadId,key:"upload",url:"signed",title:"사진",place:"직접 올린 사진",date:"2026-10-13"}])?.url).toBe("signed");
+  });
   it("rejects duplicate items, invalid coordinates and missing photo references",()=>{
     expect(boardContentSchema.safeParse({background:"pegboard",items:[item,item]}).success).toBe(false);
     expect(boardContentSchema.safeParse({background:"pegboard",items:[{...item,x:1199}]}).success).toBe(false);

@@ -2,7 +2,7 @@ import { readFile, realpath, stat } from 'node:fs/promises';
 import { resolve, sep, join } from 'node:path';
 import { createHash } from 'node:crypto';
 import JSZip from 'jszip';
-import { parseManifest, safeBackupPath, snapshotSchema } from '../src/lib/backup-format.ts';
+import { backupPhotos, parseManifest, safeBackupPath, snapshotSchema } from '../src/lib/backup-format.ts';
 export const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 export async function openBackup(path) {
   const root = resolve(path); const info = await stat(root);
@@ -28,7 +28,7 @@ export async function openBackup(path) {
   }
   const snapshot=snapshotSchema.parse(JSON.parse((await read('backup.json')).toString('utf8')));
   const paths=new Set(manifest.files.map(f=>f.path));
-  if(manifest.photosIncluded)for(const photo of snapshot.data.visit_photos.filter(p=>p.upload_state!=='pending')) {
+  if(manifest.photosIncluded)for(const photo of backupPhotos(snapshot)) {
     if(!safeBackupPath(String(photo.storage_path)) || !paths.has('photos/'+photo.storage_path))throw new Error('Missing photo original: '+photo.storage_path);
   }
   return {manifest,snapshot,read,root};

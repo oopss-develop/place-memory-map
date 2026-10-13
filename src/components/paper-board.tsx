@@ -3,7 +3,7 @@ import { Component, useEffect, useMemo, useRef, useState, type ReactNode } from 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrthographicCamera } from "@react-three/drei";
 import { CanvasTexture, DoubleSide, ShaderMaterial, SRGBColorSpace } from "three";
-import { BOARD_HEIGHT, BOARD_WIDTH, resolveBoardPhoto, type BoardItem } from "@/lib/memory-board";
+import { BOARD_HEIGHT, BOARD_WIDTH, resolveBoardPhoto, type BoardItem, type BoardPhotoOption } from "@/lib/memory-board";
 import type { Visit } from "@/types/domain";
 
 export interface PaperInteraction { id?: string; x: number; strength: number }
@@ -150,8 +150,8 @@ function Redraw({ interaction }: { interaction: PaperInteraction }) {
   useEffect(()=>invalidate(),[interaction,invalidate]);
   return null;
 }
-export default function PaperBoard({ items, drawingItems, visits, interaction, reduced, onReady, onFailure }: {
-  items: BoardItem[]; drawingItems: BoardItem[]; visits: Visit[]; interaction: PaperInteraction; reduced: boolean;
+export default function PaperBoard({ items, drawingItems, visits, uploads, interaction, reduced, onReady, onFailure }: {
+  items: BoardItem[]; drawingItems: BoardItem[]; visits: Visit[]; uploads: BoardPhotoOption[]; interaction: PaperInteraction; reduced: boolean;
   onReady: (id: string, ready: boolean) => void; onFailure: () => void;
 }) {
   return <GraphicsBoundary onFailure={onFailure}><Canvas resize={{ offsetSize: true }} orthographic frameloop="demand" dpr={[1,1.5]} gl={{ alpha: true, antialias: true }}
@@ -159,6 +159,6 @@ export default function PaperBoard({ items, drawingItems, visits, interaction, r
     onCreated={({ gl })=>{ gl.setClearColor(0x000000,0); gl.domElement.addEventListener("webglcontextlost",onFailure,{once:true}); }}>
     <OrthographicCamera makeDefault manual position={[0,0,1000]} left={-BOARD_WIDTH/2} right={BOARD_WIDTH/2} top={BOARD_HEIGHT/2} bottom={-BOARD_HEIGHT/2} near={0.1} far={2000} />
     <Redraw interaction={interaction} />
-    {items.map((item,index)=><Paper key={item.id} item={item} content={drawingItems.find(content=>content.id===item.id) ?? item} visit={resolveBoardPhoto(item,visits)} order={index} interaction={interaction} reduced={reduced} onReady={onReady} />)}
+    {items.map((item,index)=><Paper key={item.id} item={item} content={drawingItems.find(content=>content.id===item.id) ?? item} visit={resolveBoardPhoto(item,visits,uploads)} order={index} interaction={interaction} reduced={reduced} onReady={onReady} />)}
   </Canvas></GraphicsBoundary>;
 }

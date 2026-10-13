@@ -13,4 +13,5 @@ for(const [width,height] of [[1440,900],[1280,720],[390,844]] as const) test(`bo
   await expect.poll(()=>viewport.evaluate(el=>({x:el.scrollLeft,y:el.scrollTop}))).toEqual({x:0,y:0});
   await page.setViewportSize({width:Math.max(320,width-120),height:Math.max(540,height-100)});
   await expect.poll(fits).toBe(true);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });

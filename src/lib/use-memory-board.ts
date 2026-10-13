@@ -1,10 +1,14 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ApiError, apiRequest, jsonRequest } from "./api-request";
-import { boardContentSchema, emptyBoard, type BoardContent, type MemoryBoard } from "./memory-board";
+import { loadLocalBoardPhotos } from "./local-board-photos";
+import { boardContentSchema, emptyBoard, type BoardContent, type BoardItem, type BoardPhotoOption, type MemoryBoard } from "./memory-board";
 
 export function useMemoryBoard(groupId: string, viewerId: string, demo: boolean) {
   const [board, setBoard] = useState<MemoryBoard>(emptyBoard);
+  const [photos,setPhotos]=useState<BoardPhotoOption[]>([]);
+  const photosIssuedAt=useRef(0);
+  const localUrls=useRef(new Set<string>());
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
@@ -41,7 +45,14 @@ export function useMemoryBoard(groupId: string, viewerId: string, demo: boolean)
         if (demo) {
           const raw = localStorage.getItem(demoKey);
           if (raw) { const value = JSON.parse(raw); const content = boardContentSchema.parse(value); saved = { ...content, version: Number.isInteger(value.version) ? value.version : 0 }; }
-        } else saved = (await apiRequest<{ board: MemoryBoard }>(`/api/memory-board?groupId=${groupId}`, { signal: abort.signal })).board;
+          const loadedPhotos=await loadLocalBoardPhotos(groupId);
+          if(abort.signal.aborted){for(const photo of loadedPhotos)URL.revokeObjectURL(photo.url);return;}
+          for(const photo of loadedPhotos)localUrls.current.add(photo.url);setPhotos(loadedPhotos);
+        } else {
+          const loaded=await apiRequest<{board:MemoryBoard;photos?:BoardPhotoOption[];photoWarning?:string}>(`/api/memory-board?groupId=${groupId}&includePhotos=1`,{signal:abort.signal});
+          saved=loaded.board;
+          if(!abort.signal.aborted){setPhotos(loaded.photos??[]);photosIssuedAt.current=Date.now();if(loaded.photoWarning)setError(loaded.photoWarning);}
+        }
         if (abort.signal.aborted) return;
         const rawDraft = restored ? JSON.stringify(restored) : localStorage.getItem(draftKey);
         let draft: { board: MemoryBoard; at: number } | null = null;
@@ -55,11 +66,16 @@ export function useMemoryBoard(groupId: string, viewerId: string, demo: boolean)
     };
     void read();
     const sync = async () => {
-      if (demo || busy.current.dirty || busy.current.saving || !navigator.onLine || document.visibilityState === "hidden") return;
+      if (demo || !navigator.onLine || document.visibilityState === "hidden") return;
+      const renew=Date.now()-photosIssuedAt.current>50*60000;
+      if((busy.current.dirty||busy.current.saving)&&!renew)return;
       const revision = editRevision.current;
       try {
-        const { board: saved } = await apiRequest<{ board: MemoryBoard }>(`/api/memory-board?groupId=${groupId}`, { signal: abort.signal });
-        if (!abort.signal.aborted && !busy.current.dirty && !busy.current.saving && revision === editRevision.current) { apply(saved, false); setError(""); }
+
+        const loaded=await apiRequest<{board:MemoryBoard;photos?:BoardPhotoOption[];photoWarning?:string}>(`/api/memory-board?groupId=${groupId}${renew ? "&includePhotos=1" : ""}`,{signal:abort.signal});
+        const saved=loaded.board;
+        if(!abort.signal.aborted&&loaded.photos){setPhotos(loaded.photos);photosIssuedAt.current=Date.now();}
+        if (!abort.signal.aborted && !busy.current.dirty && !busy.current.saving && revision === editRevision.current) { apply(saved, false); setError(loaded.photoWarning??""); }
       } catch (issue) { if (!abort.signal.aborted) setError((issue as Error).message); }
     };
     const timer = window.setInterval(sync, 10000);
@@ -106,8 +122,10 @@ export function useMemoryBoard(groupId: string, viewerId: string, demo: boolean)
     if (busy.current.saving) return;
     setLoading(true);
     try {
-      const saved = demo ? JSON.parse(localStorage.getItem(demoKey) ?? JSON.stringify(emptyBoard())) :
-        (await apiRequest<{ board: MemoryBoard }>(`/api/memory-board?groupId=${groupId}`)).board;
+      const loaded=demo ? {board:JSON.parse(localStorage.getItem(demoKey)??JSON.stringify(emptyBoard())),photos:undefined as BoardPhotoOption[]|undefined} :
+        await apiRequest<{board:MemoryBoard;photos?:BoardPhotoOption[]}>(`/api/memory-board?groupId=${groupId}&includePhotos=1`);
+      const saved=loaded.board;
+      if(!demo&&loaded.photos&&alive.current){setPhotos(loaded.photos);photosIssuedAt.current=Date.now();}
       if (!alive.current) return;
       // Keep the local arrangement in undo history before explicitly choosing the shared version.
       setHistory({ past: [{ background: current.current.background, items: current.current.items }], future: [] });
@@ -118,7 +136,18 @@ export function useMemoryBoard(groupId: string, viewerId: string, demo: boolean)
   }
   useEffect(() => {
     const warn = (event: BeforeUnloadEvent) => { if (busy.current.dirty) event.preventDefault(); };
-    window.addEventListener("beforeunload", warn); return () => window.removeEventListener("beforeunload", warn);
+    const urls=localUrls.current;
+    window.addEventListener("beforeunload", warn); return () => {window.removeEventListener("beforeunload", warn);for(const url of urls)URL.revokeObjectURL(url);};
   }, []);
-  return { board, loading, saving, dirty, error, message, conflict, change, save, reload, undo, canUndo: history.past.length>0, canRedo: history.future.length>0 };
+  function addPhotos(added:BoardPhotoOption[]) {
+    for(const photo of added)if(photo.url.startsWith("blob:"))localUrls.current.add(photo.url);
+    setPhotos(previous=>[...previous.filter(photo=>!added.some(next=>next.uploadId===photo.uploadId)),...added]);
+  }
+  function appendItems(added:BoardItem[]) {
+    const available=80-current.current.items.length;
+    if(available<=0)return 0;
+    change({...current.current,items:[...current.current.items,...added.slice(0,available)]});
+    return Math.min(available,added.length);
+  }
+  return { board, photos, addPhotos, appendItems, loading, saving, dirty, error, message, conflict, change, save, reload, undo, canUndo: history.past.length>0, canRedo: history.future.length>0 };
 }

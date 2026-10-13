@@ -23,3 +23,9 @@ it("deletes metadata only after deleting the claimed record's files",async()=>{
   const response=await GET(request());expect(response.status).toBe(200);expect((await response.json()).purged).toBe(1);
   expect(mocks.remove).toHaveBeenCalledWith(["group/expired/photo.webp"]);expect(mocks.remove.mock.invocationCallOrder[0]).toBeLessThan(mocks.deleteRow.mock.invocationCallOrder[0]);
 });
+
+it("keeps claimed board-photo metadata when its Storage removal fails",async()=>{
+  mocks.rpc.mockImplementation(async name=>({data:name==="claim_unused_memory_board_photos"?[{id:"board-photo",storage_path:"group/board/photo.webp"}]:[],error:null}));
+  mocks.remove.mockResolvedValue({error:{message:"offline"}});
+  const response=await GET(request());expect(response.status).toBe(503);expect((await response.json()).failed).toBe(1);expect(mocks.deleteRow).not.toHaveBeenCalled();
+});

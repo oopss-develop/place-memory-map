@@ -26,5 +26,11 @@ export async function GET(request: Request) {
     if ((await db.storage.from("visit-photos").remove([photo.storage_path])).error) { failed++; continue; }
     if ((await db.from("visit_photos").delete().eq("id", photo.id).not("deleted_at", "is", null)).error) failed++;
   }
+  const {data:boardPhotos,error:boardError}=await db.rpc("claim_unused_memory_board_photos");
+  if(boardError)failed++;
+  for(const photo of Array.isArray(boardPhotos)?boardPhotos:[]) {
+    if((await db.storage.from("visit-photos").remove([photo.storage_path])).error){failed++;continue;}
+    if((await db.from("memory_board_photos").delete().eq("id",photo.id).not("purge_started_at","is",null)).error)failed++;
+  }
   return NextResponse.json({ purged, failed }, { status: failed ? 503 : 200 });
 }

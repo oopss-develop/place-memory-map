@@ -4,7 +4,7 @@ import { loadEnvConfig } from '@next/env';
 import { mkdir, readFile, writeFile, readdir } from 'node:fs/promises';
 import { resolve, dirname, join } from 'node:path';
 import { scanStickers } from './generate-sticker-catalog.mjs';
-import { snapshotSchema, safeBackupPath, offlineBackupHtml } from '../src/lib/backup-format.ts';
+import { backupPhotos, snapshotSchema, safeBackupPath, offlineBackupHtml } from '../src/lib/backup-format.ts';
 import { hash } from './backup-io.mjs';
 loadEnvConfig(process.cwd());
 const args=process.argv.slice(2);const output=args.includes('--out')?args[args.indexOf('--out')+1]:undefined;
@@ -32,7 +32,7 @@ try {
   await text('기록보기.html',offlineBackupHtml(snapshot,true));
   await add('복원안내.md',await readFile('docs/backup/README.md'));
   for(const name of (await readdir('supabase/migrations')).filter(n=>n.endsWith('.sql')).sort())await add('schema/'+name,await readFile('supabase/migrations/'+name));
-  const photos=snapshot.data.visit_photos.filter(p=>p.upload_state!=='pending');
+  const photos=backupPhotos(snapshot);
   for(const [i,photo] of photos.entries()) {
     const path=String(photo.storage_path);if(!safeBackupPath(path))throw new Error('Unsafe photo path');
     const result=await storage.storage.from('visit-photos').download(path);if(result.error)throw new Error('Photo is missing or inaccessible: '+path);

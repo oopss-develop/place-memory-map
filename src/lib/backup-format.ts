@@ -1,8 +1,8 @@
 import { z } from "zod";
-export const backupTables = ["profiles","groups","group_members","places","visits","visit_participants","visit_photos","trips","schedule_items","trip_route_cache","visit_comments","activity_logs","sticker_favorites","comment_notifications","workspace_save_requests","memory_boards"] as const;
+export const backupTables = ["profiles","groups","group_members","places","visits","visit_participants","visit_photos","trips","schedule_items","trip_route_cache","visit_comments","activity_logs","sticker_favorites","comment_notifications","workspace_save_requests","memory_boards","memory_board_photos"] as const;
 const row = z.record(z.string(),z.unknown());
 const dataShape = Object.fromEntries(backupTables.map(table=>[table,z.array(row)])) as Record<typeof backupTables[number], z.ZodArray<typeof row>>;
-export const snapshotSchema = z.object({ format: z.literal("uttumak-backup"), version: z.literal(1), createdAt: z.string(), userId: z.string().uuid(), data: z.object(dataShape).extend({ memory_boards: z.array(row).default([]) }).strict() });
+export const snapshotSchema = z.object({ format: z.literal("uttumak-backup"), version: z.literal(1), createdAt: z.string(), userId: z.string().uuid(), data: z.object(dataShape).extend({ memory_boards: z.array(row).default([]), memory_board_photos: z.array(row).default([]) }).strict() });
 export type BackupSnapshot = z.infer<typeof snapshotSchema>;
 export interface BackupFile { path: string; bytes: number; sha256: string; mime?: string }
 export interface BackupManifest { format: "uttumak-backup"; version: 1; createdAt: string; photosIncluded: boolean; stickersIncluded: boolean; files: BackupFile[] }
@@ -20,10 +20,11 @@ export function parseManifest(value: unknown): BackupManifest {
 }
 const escapeHtml = (value: unknown) => String(value ?? "").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]!));
 const fileUrl = (path: string) => escapeHtml(path.split("/").map(encodeURIComponent).join("/"));
+export function backupPhotos(snapshot:BackupSnapshot) {return [...snapshot.data.visit_photos,...snapshot.data.memory_board_photos].filter(photo=>photo.upload_state!=="pending");}
 export function validateBackupCoverage(manifest: BackupManifest, snapshot: BackupSnapshot) {
   const paths = new Set(manifest.files.map(file => file.path));
   if (!paths.has("backup.json")) throw new Error("백업 데이터가 검증 목록에 없습니다.");
-  if (manifest.photosIncluded) for (const photo of snapshot.data.visit_photos.filter(p => p.upload_state !== "pending")) {
+  if (manifest.photosIncluded) for (const photo of backupPhotos(snapshot)) {
     if (!safeBackupPath(String(photo.storage_path)) || !paths.has("photos/" + photo.storage_path)) throw new Error("사진 원본이 빠졌어요: " + photo.storage_path);
   }
 }
@@ -38,7 +39,16 @@ export function offlineBackupHtml(snapshot: BackupSnapshot, photosIncluded: bool
       return `<article><h3>${escapeHtml(visit.title)} ${visit.deleted_at ? "(휴지통)" : ""}</h3><p>${escapeHtml(visit.visited_on)} · ${escapeHtml(place?.name)} · ${escapeHtml(place?.address)}</p><p>${escapeHtml(visit.note)}</p><p>${escapeHtml((visit.tags as unknown[] ?? []).join(", "))}</p><div class="photos">${photos}</div><ul>${comments}</ul></article>`;
     }).join("");
     const trips = data.trips.filter(t=>t.group_id===group.id).map(trip=>`<article><h3>여행: ${escapeHtml(trip.name)}</h3><p>${escapeHtml(trip.start_date)} ~ ${escapeHtml(trip.end_date)}</p><ul>${data.schedule_items.filter(i=>i.trip_id===trip.id).map(i=>`<li><strong>${escapeHtml(i.title)}</strong> · ${escapeHtml(data.places.find(p=>p.id===i.place_id)?.name)}<p>${escapeHtml(i.starts_at)} ~ ${escapeHtml(i.ends_at)}</p><p>${escapeHtml(i.note)}</p></li>`).join("")}</ul></article>`).join("");
-    return `<section><h2>${escapeHtml(group.name)}</h2>${visits}${trips}</section>`;
+    const boards=data.memory_boards.filter(board=>board.group_id===group.id).map(board=>{
+      const items=(Array.isArray(board.items)?board.items:[]) as Array<Record<string,unknown>>;
+      const content=items.map(item=>{
+        const photo=item.uploadId?data.memory_board_photos.find(p=>p.id===item.uploadId):data.visit_photos.find(p=>p.id===item.photoId);
+        const image=photosIncluded&&photo?.upload_state!=="pending"&&photo&&safeBackupPath(String(photo.storage_path)) ? `<img loading="lazy" src="${fileUrl("photos/"+photo.storage_path)}" alt="보드 사진">` : "";
+        return `<div>${image}<p>${escapeHtml(item.text)}</p></div>`;
+      }).join("");
+      return `<article><h3>추억 보드</h3><div class="photos">${content}</div></article>`;
+    }).join("");
+    return `<section><h2>${escapeHtml(group.name)}</h2>${visits}${trips}${boards}</section>`;
   }).join("");
   return `<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>우뚜막 백업 기록</title><style>body{max-width:900px;margin:32px auto;padding:0 20px;font-family:system-ui;line-height:1.7}article{border:1px solid #ddd;border-radius:12px;padding:20px;margin:16px 0}p{white-space:pre-wrap;overflow-wrap:anywhere}.photos{display:flex;flex-wrap:wrap;gap:8px}.photos img{width:240px;max-width:100%;height:180px;object-fit:contain}.sticker{max-width:128px}small{color:#666}</style><h1>우뚜막 · 소중한 기록</h1><p>백업 시각: ${escapeHtml(snapshot.createdAt)}</p>${parts}</html>`;
 }

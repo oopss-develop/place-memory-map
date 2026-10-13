@@ -2,14 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getAccessWorkspaceUser } from "@/lib/access-workspace";
 import { emptyBoard, saveBoardSchema } from "@/lib/memory-board";
+import { loadBoardPhotos, memoryBoardError as boardError } from "@/lib/memory-board-server";
 
-function boardError(error: unknown) {
-  const issue = error as { code?: string; message?: string };
-  const missing = ["42P01", "PGRST202", "PGRST205"].includes(issue.code ?? "");
-  return NextResponse.json({ error: missing ? "추억 보드 DB 업데이트가 필요합니다. 202610130001_memory_boards.sql을 적용해 주세요." :
-    issue.code === "40001" ? "다른 멤버가 먼저 보드를 수정했습니다. 내 배치는 유지했어요. 최신 보드를 확인해 주세요." : issue.message ?? "보드를 저장하지 못했습니다." },
-    { status: missing ? 503 : issue.code === "40001" ? 409 : issue.code === "42501" ? 403 : 400 });
-}
 export async function GET(request: Request) {
   const auth = await getAccessWorkspaceUser();
   if (!auth) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
@@ -21,7 +15,8 @@ export async function GET(request: Request) {
     if (!member.data) return NextResponse.json({ error: "이 지도의 접근 권한이 없습니다." }, { status: 403 });
     const { data, error } = await auth.supabase.from("memory_boards").select("background,items,version").eq("group_id", parsed.data).maybeSingle();
     if (error) throw error;
-    return NextResponse.json({ board: data ?? emptyBoard() });
+    const photos = new URL(request.url).searchParams.get("includePhotos") === "1" ? await loadBoardPhotos(auth.supabase, parsed.data) : {};
+    return NextResponse.json({ board: data ?? emptyBoard(), ...photos });
   } catch (error) { return boardError(error); }
 }
 export async function PUT(request: Request) {

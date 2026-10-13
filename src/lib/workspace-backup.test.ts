@@ -35,6 +35,17 @@ beforeEach(() => {
 afterEach(() => vi.unstubAllGlobals());
 
 describe("whole workspace backup", () => {
+  it("keeps older backups without board-photo metadata readable",()=>{const old=fixture();const {memory_board_photos:omitted,...data}=old.data;expect(omitted).toEqual([]);expect(snapshotSchema.parse({...old,data}).data.memory_board_photos).toEqual([]);});
+  it("backs up external board images and rejects archives missing their files",async()=>{
+    const snapshot=fixture();snapshot.data.visit_photos=[];
+    snapshot.data.memory_board_photos=[{id:"upload",group_id:"group",storage_path:"group/board/photo.webp",upload_state:"complete"}];
+    snapshot.data.memory_boards=[{group_id:"group",items:[{kind:"photo",uploadId:"upload",text:"외부 사진"}]}];
+    const result=await createWorkspaceBackup(client(snapshot),{photos:true,stickers:false,signal:new AbortController().signal,progress:vi.fn()});
+    const zip=await JSZip.loadAsync(await result.blob.arrayBuffer());
+    expect(zip.file("photos/group/board/photo.webp")).not.toBeNull();
+    expect(await zip.file("기록보기.html")!.async("string")).toContain("photos/group/board/photo.webp");
+    expect(()=>validateBackupCoverage({...result.manifest,files:result.manifest.files.filter(file=>!file.path.startsWith("photos/"))},snapshot)).toThrow("사진 원본");
+  });
   it("includes original bytes, schemas, offline records and app settings, with verified checksums", async () => {
     localStorage.setItem("uttumak-setting", "keep");
     localStorage.setItem("sb-auth-token", "secret");
