@@ -273,6 +273,166 @@
           "#fef08a",
           "#fefce8"
         ]
+      },
+      "memory-board-pegboard": {
+        "tonalRamp": [
+          "#2c2a28",
+          "#4e4c47",
+          "#75716b",
+          "#9e9991",
+          "#c7c2b7",
+          "#f3ecdf",
+          "#f9f5ee",
+          "#fefdfb"
+        ],
+        "scope": "Shared memory board material canvas only; synthesized preview ramp is not an implementation palette.",
+        "role": "tertiary",
+        "canonical": "#f3ecdf",
+        "displayName": "Bright Pegboard"
+      },
+      "memory-board-hole": {
+        "tonalRamp": [
+          "#1f1d1a",
+          "#38342d",
+          "#544d44",
+          "#71695c",
+          "#8f8474",
+          "#aea18e",
+          "#d5cec4",
+          "#f5f4f1"
+        ],
+        "scope": "Shared memory board material canvas only; synthesized preview ramp is not an implementation palette.",
+        "role": "tertiary",
+        "canonical": "#aea18e",
+        "displayName": "Pegboard Hole"
+      },
+      "memory-board-tape": {
+        "tonalRamp": [
+          "#262115",
+          "#443b26",
+          "#655839",
+          "#89774d",
+          "#ad9662",
+          "#d3b777",
+          "#e8dab8",
+          "#faf6ef"
+        ],
+        "scope": "Shared memory board material canvas only; synthesized preview ramp is not an implementation palette.",
+        "role": "tertiary",
+        "canonical": "#d3b777",
+        "displayName": "Masking Tape"
+      },
+      "memory-board-paper": {
+        "tonalRamp": [
+          "#2e2e2c",
+          "#52514f",
+          "#7a7977",
+          "#a6a4a1",
+          "#d1cfcb",
+          "#fffdf7",
+          "#fffefb",
+          "#fffffe"
+        ],
+        "scope": "Shared memory board material canvas only; synthesized preview ramp is not an implementation palette.",
+        "role": "tertiary",
+        "canonical": "#fffdf7",
+        "displayName": "Photo Paper"
+      },
+      "memory-board-ink": {
+        "tonalRamp": [
+          "#0a0908",
+          "#12100e",
+          "#1b1815",
+          "#25211d",
+          "#2f2a24",
+          "#39332c",
+          "#989591",
+          "#e7e7e6"
+        ],
+        "scope": "Shared memory board material canvas only; synthesized preview ramp is not an implementation palette.",
+        "role": "tertiary",
+        "canonical": "#39332c",
+        "displayName": "Paper Ink"
+      },
+      "memory-board-note-cream": {
+        "tonalRamp": [
+          "#2e2b1f",
+          "#524d38",
+          "#7a7354",
+          "#a69c71",
+          "#d1c58f",
+          "#fff0ae",
+          "#fff7d5",
+          "#fffdf5"
+        ],
+        "scope": "Shared memory board material canvas only; synthesized preview ramp is not an implementation palette.",
+        "role": "tertiary",
+        "canonical": "#fff0ae",
+        "displayName": "Cream Note"
+      },
+      "memory-board-note-rose": {
+        "tonalRamp": [
+          "#2c2726",
+          "#4f4543",
+          "#776864",
+          "#a18d88",
+          "#cbb2ab",
+          "#f7d9d1",
+          "#fbebe7",
+          "#fefaf9"
+        ],
+        "scope": "Shared memory board material canvas only; synthesized preview ramp is not an implementation palette.",
+        "role": "tertiary",
+        "canonical": "#f7d9d1",
+        "displayName": "Rose Note"
+      },
+      "memory-board-note-sage": {
+        "tonalRamp": [
+          "#282926",
+          "#464a43",
+          "#6a6e64",
+          "#8f9688",
+          "#b4bdab",
+          "#dce6d1",
+          "#edf2e7",
+          "#fbfcf9"
+        ],
+        "scope": "Shared memory board material canvas only; synthesized preview ramp is not an implementation palette.",
+        "role": "tertiary",
+        "canonical": "#dce6d1",
+        "displayName": "Sage Note"
+      },
+      "memory-board-note-sky": {
+        "tonalRamp": [
+          "#272a2b",
+          "#454a4d",
+          "#686f73",
+          "#8d969c",
+          "#b2bdc5",
+          "#d9e7f0",
+          "#ebf3f7",
+          "#fafcfd"
+        ],
+        "scope": "Shared memory board material canvas only; synthesized preview ramp is not an implementation palette.",
+        "role": "tertiary",
+        "canonical": "#d9e7f0",
+        "displayName": "Sky Note"
+      },
+      "memory-board-focus": {
+        "tonalRamp": [
+          "#18120c",
+          "#2a1f15",
+          "#3f2f1f",
+          "#56402a",
+          "#6c5035",
+          "#846241",
+          "#bfad9c",
+          "#f0ece8"
+        ],
+        "scope": "Shared memory board material canvas only; synthesized preview ramp is not an implementation palette.",
+        "role": "tertiary",
+        "canonical": "#846241",
+        "displayName": "Board Focus"
       }
     },
     "typographyMeta": {
@@ -299,6 +459,18 @@
       "label": {
         "displayName": "Metadata Label",
         "purpose": "Dates, status and compact labels."
+      },
+      "memory-board-caption": {
+        "purpose": "Regular generic sans-serif WebGL photo caption; DOM fallback inherits the app font.",
+        "displayName": "Paper Caption"
+      },
+      "memory-board-note": {
+        "purpose": "Readable regular sans-serif paper-texture notes; DOM fallback inherits the app font.",
+        "displayName": "Post-it Text"
+      },
+      "memory-board-empty": {
+        "purpose": "Board-local Gowun serif exception; 22px/1.4 on mobile at 700px and below.",
+        "displayName": "Board Empty Heading"
       }
     },
     "shadows": [
@@ -381,6 +553,55 @@
         "panels": "1.08fr / 1fr timetable and map"
       },
       "agenda": "Record-like rows with separate time and place lines"
+    },
+    "memoryBoard": {
+      "sources": [
+        "src/components/memory-board.tsx",
+        "src/components/paper-board.tsx",
+        "src/app/memory-board.css"
+      ],
+      "backdrops": [
+        "pegboard",
+        "whiteboard",
+        "cork"
+      ],
+      "paper": {
+        "textureMaxEdge": "512px",
+        "hover": "Free-edge geometry bends toward pointer",
+        "canvas": "Single demand-rendered canvas",
+        "anchor": "top",
+        "stacking": "Paper and attachments follow item order, including transparent tape and pin passes",
+        "spring": {
+          "damping": 11,
+          "stiffness": 115
+        },
+        "fallback": "Ordinary DOM photos, notes and all editing",
+        "reducedMotion": "Paper stays flat",
+        "touch": "Brief lift on release"
+      },
+      "focus": {
+        "controls": "2px #846241 outline, 3px offset",
+        "item": "3px #785836 outline, 6px offset",
+        "moveable": "12px handles with 2px #846241 border"
+      },
+      "layout": {
+        "tapeSize": "88px 30px",
+        "propertiesIntermediate": "220px",
+        "holeGrid": "24px",
+        "propertiesWidth": "250px",
+        "mobilePropertiesMaxHeight": "38dvh",
+        "mobileBreakpoint": "700px"
+      },
+      "attachments": {
+        "pinHighlight": "#d4a890",
+        "pin": "#92563e",
+        "tapeOpacity": 0.83
+      },
+      "shadows": {
+        "fallbackPaper": "4px 10px 15px #42301d29",
+        "stage": "0 12px 28px #34291d22"
+      },
+      "scope": "The shared memory board is a user-approved material canvas within this neutral workspace: bright pegboard, masking tape, photographs and colored notes. Its scoped palette and paper geometry belong to this surface; navigation, dialogs and editing controls continue to use the incumbent system."
     }
   },
   "components": [
@@ -447,11 +668,19 @@
       "description": "Selected memory above the map.",
       "html": "<article class=\"ds-sheet\"><span>방문 기록</span><h2>장소 이름</h2><p>함께 남긴 기억을 확인하세요.</p><button>수정</button></article>",
       "css": ".ds-sheet{max-width:380px;padding:20px;border-radius:12px;background:var(--card,#fff);color:var(--foreground,#18181b);box-shadow:var(--shadow-overlay,0 16px 48px rgb(0 0 0 / .16));font:14px var(--font-sans,sans-serif)}.ds-sheet>span,.ds-sheet p{color:var(--muted-foreground,#71717a)}.ds-sheet>span{font-size:12px}.ds-sheet h2{margin:8px 0;font-size:20px;font-weight:600;line-height:1.4;letter-spacing:-.02em}.ds-sheet button{min-height:36px;padding:0 12px;border:1px solid var(--border,#e4e4e7);border-radius:var(--radius-md,8px);background:var(--background,#fff);color:inherit;font:500 12px var(--font-sans,sans-serif)}.ds-sheet button:hover{background:var(--accent,#f4f4f5)}.ds-sheet button:focus-visible{outline:2px solid var(--ring,#a1a1aa);outline-offset:3px}@media(max-width:820px){.ds-sheet button{min-height:44px;font-size:14px}}"
+    },
+    {
+      "name": "Memory Board Note",
+      "html": "<article class=\"ds-board-note\" tabindex=\"0\"><span class=\"ds-board-tape\" aria-hidden=\"true\"></span><p>함께 남긴 기억</p></article>",
+      "css": ".ds-board-note{position:relative;width:180px;min-height:150px;padding:20px;background:#fff0ae;color:#39332c;box-shadow:4px 10px 15px #42301d29;font:400 18px/1.5 sans-serif}.ds-board-note p{margin:8px 0}.ds-board-tape{position:absolute;left:50%;top:-13px;width:88px;height:30px;background:#d3b777c9;border:1px solid #b3915944;box-shadow:0 2px 3px #5d482512;transform:translateX(-50%) rotate(-3deg)}.ds-board-note:focus-visible{outline:3px solid #785836;outline-offset:6px}.ds-board-note:hover{box-shadow:4px 10px 15px #42301d29}",
+      "kind": "custom",
+      "description": "Board-scoped material preview; geometry and interaction remain implemented in the live canvas.",
+      "refersTo": "memory-board-note"
     }
   ],
   "narrative": {
     "northStar": "The Organized Map Workspace",
-    "overview": "The user-selected visual world is shadcn/ui New York with a Neutral base, Lucide icons, and Noto Sans KR by default. White content, soft gray navigation, thin boundaries, and compact typography make records and travel plans easy to scan.\n\nThe whole application shares this system: map journal, record drawer, account and preference menus, place details, visit and map dialogs, travel timetable and agenda, login, first-map setup, and offline screen. Warm notebook styling is superseded by the explicit request for a clean, organized shadcn interface.",
+    "overview": "The user-selected visual world is shadcn/ui New York with a Neutral base, Lucide icons, and Noto Sans KR by default. White content, soft gray navigation, thin boundaries, and compact typography make records and travel plans easy to scan.\n\nThe whole application shares this system: map journal, record drawer, account and preference menus, place details, visit and map dialogs, travel timetable and agenda, login, first-map setup, and offline screen. Warm notebook styling is superseded by the explicit request for a clean, organized shadcn interface.\n\nThe shared memory board is a user-approved material canvas within this neutral workspace: bright pegboard, masking tape, photographs and colored notes. Its scoped palette and paper geometry belong to this surface; navigation, dialogs and editing controls continue to use the incumbent system.",
     "keyCharacteristics": [
       "Neutral surfaces and dark primary actions with consistent focus and disabled states.",
       "Compact operational typography and gently curved controls.",
@@ -473,6 +702,16 @@
         "name": "The Workspace Layer Rule",
         "body": "Keep permanent workspace regions flat; use elevation to distinguish controls and content that float over the map.",
         "section": "elevation"
+      },
+      {
+        "name": "The Material Canvas Rule",
+        "section": "colors",
+        "body": "Keep the memory-board material palette scoped to its canvas, paper, attachments and selection affordances; surrounding controls inherit semantic workspace colors."
+      },
+      {
+        "name": "The Anchored Paper Rule",
+        "section": "elevation",
+        "body": "Anchor paper at the top and lift its free edge through actual geometry; settle with a damped spring and keep reduced-motion paper flat."
       }
     ],
     "dos": [
@@ -483,7 +722,7 @@
       "Do let the map, photographs, and existing pins carry content-specific visual interest."
     ],
     "donts": [
-      "Don't restore warm paper surfaces, vermilion actions, notebook rules, or mandatory serif memory headings.",
+      "Don't restore warm paper surfaces, vermilion actions, notebook rules, or mandatory serif memory headings outside the explicitly approved memory-board material canvas and its local empty state.",
       "Don't introduce a separate color, typography, or control system for travel planning.",
       "Don't infer reusable UI colors from preserved map tiles or pin assets.",
       "Don't obscure inline errors or dismiss a form while saving."

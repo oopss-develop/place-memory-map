@@ -1,8 +1,8 @@
 import { z } from "zod";
-export const backupTables = ["profiles","groups","group_members","places","visits","visit_participants","visit_photos","trips","schedule_items","trip_route_cache","visit_comments","activity_logs","sticker_favorites","comment_notifications","workspace_save_requests"] as const;
+export const backupTables = ["profiles","groups","group_members","places","visits","visit_participants","visit_photos","trips","schedule_items","trip_route_cache","visit_comments","activity_logs","sticker_favorites","comment_notifications","workspace_save_requests","memory_boards"] as const;
 const row = z.record(z.string(),z.unknown());
 const dataShape = Object.fromEntries(backupTables.map(table=>[table,z.array(row)])) as Record<typeof backupTables[number], z.ZodArray<typeof row>>;
-export const snapshotSchema = z.object({ format: z.literal("uttumak-backup"), version: z.literal(1), createdAt: z.string(), userId: z.string().uuid(), data: z.object(dataShape).strict() });
+export const snapshotSchema = z.object({ format: z.literal("uttumak-backup"), version: z.literal(1), createdAt: z.string(), userId: z.string().uuid(), data: z.object(dataShape).extend({ memory_boards: z.array(row).default([]) }).strict() });
 export type BackupSnapshot = z.infer<typeof snapshotSchema>;
 export interface BackupFile { path: string; bytes: number; sha256: string; mime?: string }
 export interface BackupManifest { format: "uttumak-backup"; version: 1; createdAt: string; photosIncluded: boolean; stickersIncluded: boolean; files: BackupFile[] }

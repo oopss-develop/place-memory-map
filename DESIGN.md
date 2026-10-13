@@ -16,6 +16,16 @@ colors:
   destructive: "#dc2626"
   rating-gold: "#ffc400"
   rating-gold-deep: "#a16207"
+  memory-board-pegboard: "#f3ecdf"
+  memory-board-hole: "#aea18e"
+  memory-board-tape: "#d3b777"
+  memory-board-paper: "#fffdf7"
+  memory-board-ink: "#39332c"
+  memory-board-note-cream: "#fff0ae"
+  memory-board-note-rose: "#f7d9d1"
+  memory-board-note-sage: "#dce6d1"
+  memory-board-note-sky: "#d9e7f0"
+  memory-board-focus: "#846241"
 typography:
   display:
     fontFamily: "var(--font-sans), sans-serif"
@@ -50,6 +60,21 @@ typography:
     fontSize: "12px"
     fontWeight: 500
     lineHeight: 1.5
+  memory-board-caption:
+    fontFamily: "sans-serif"
+    fontSize: "12px"
+    fontWeight: 400
+  memory-board-note:
+    fontFamily: "sans-serif"
+    fontSize: "18px"
+    fontWeight: 400
+    lineHeight: 1.5
+  memory-board-empty:
+    fontFamily: "var(--font-gowun), serif"
+    fontSize: "38px"
+    fontWeight: 400
+    lineHeight: 1.45
+    letterSpacing: "-.02em"
 rounded:
   sm: ".375rem"
   md: ".5rem"
@@ -108,6 +133,20 @@ components:
     textColor: "{colors.foreground}"
     rounded: "{rounded.sheet}"
     padding: "20px"
+
+  memory-board-stage:
+    backgroundColor: "{colors.memory-board-pegboard}"
+    rounded: "4px"
+  memory-board-photo:
+    backgroundColor: "{colors.memory-board-paper}"
+    textColor: "{colors.memory-board-ink}"
+    typography: "{typography.memory-board-caption}"
+    padding: "10px 10px 38px"
+  memory-board-note:
+    backgroundColor: "{colors.memory-board-note-cream}"
+    textColor: "{colors.memory-board-ink}"
+    typography: "{typography.memory-board-note}"
+    padding: "20px"
 ---
 # Design System: 우뚜막
 
@@ -118,6 +157,8 @@ components:
 The user-selected visual world is shadcn/ui New York with a Neutral base, Lucide icons, and Noto Sans KR by default. White content, soft gray navigation, thin boundaries, and compact typography make records and travel plans easy to scan.
 
 The whole application shares this system: map journal, record drawer, account and preference menus, place details, visit and map dialogs, travel timetable and agenda, login, first-map setup, and offline screen. Warm notebook styling is superseded by the explicit request for a clean, organized shadcn interface.
+
+The shared memory board is a user-approved material canvas within this neutral workspace: bright pegboard, masking tape, photographs and colored notes. Its scoped palette and paper geometry belong to this surface; navigation, dialogs and editing controls continue to use the incumbent system.
 
 **Key Characteristics:**
 
@@ -144,6 +185,12 @@ Background and card provide white content surfaces. Sidebar provides a quiet nav
 
 **The Semantic Surface Rule.** Use semantic CSS variables so color preferences apply consistently to new surfaces.
 
+### Shared memory board material palette
+
+Bright Pegboard and Pegboard Hole establish the perforated field. Masking Tape anchors warm-white Photo Paper; Paper Ink stays readable across Cream, Rose, Sage and Sky notes. Board Focus identifies material-canvas editing and selection. These named frontmatter tokens describe the implemented board palette, independently of theme preferences.
+
+**The Material Canvas Rule.** Keep the memory-board material palette scoped to its canvas, paper, attachments and selection affordances; surrounding controls inherit semantic workspace colors.
+
 ### Preferences
 
 Preserve theme IDs and browser storage: `notebook` now displays **뉴트럴** (Neutral), `pure` uses blue primary, `forest` green, `lavender` violet, and `dark` reverses neutral surfaces. These preferences keep the clean layout and type hierarchy. Compatibility aliases such as paper, ink, vermilion, and olive resolve to the new semantic roles; their names do not authorize notebook styling.
@@ -160,6 +207,8 @@ Inputs use (16px) type on mobile. Existing dense timetable metadata also uses (1
 
 **The Preference Continuity Rule.** Keep size and hierarchy consistent when a member changes their font; do not assign a mandatory serif voice to memories.
 
+Paper textures use the scoped caption and note roles: regular sans-serif captions (12px) and notes (18px). DOM fallback text inherits the app font; WebGL raster text uses generic sans-serif. The board empty-state heading is a local Gowun serif exception (38px desktop; 22px and 1.4 line height at 700px and below), not a new app heading role.
+
 ## Layout
 
 Desktop journal uses a fixed (340px) sidebar beside a flexible map in a viewport-height grid. Shared sidebar gutters are (20px), record-list gutters (12px), and the account footer anchors beneath scrolling records. Group picker, record/travel navigation, search, filters, and dated records follow a stable vertical order.
@@ -170,6 +219,8 @@ The travel planner inherits the record workspace: a (340px) navigation sidebar, 
 
 Login has a centered (360px maximum) column; first-map setup uses (400px maximum). Dialogs and scroll areas respect viewport height and safe areas. Use the observed (4/8/12/16/20/24/32px) spacing steps for alignment.
 
+The memory board uses an on-demand photo tray, a flexible scrollable canvas and a selected-item properties panel (250px desktop, 220px at 1000px and below). At 700px and below, properties move beneath the canvas with a maximum height of 38dvh; numeric position, size and rotation fields remain available alongside touch dragging. Toolbar, properties and photo actions retain 44px mobile targets; editable input text uses 16px.
+
 ## Elevation & Depth
 
 Structural navigation is flat, separated by tonal surfaces and one-pixel borders. Shared cards and buttons use subtle low shadows. Floating menus and notices use the popover shadow; place sheets and dialogs use the overlay shadow. The CSS defines popover as `0 4px 16px rgb(0 0 0 / .1)` and overlay as `0 16px 48px rgb(0 0 0 / .16)`.
@@ -178,9 +229,15 @@ Structural navigation is flat, separated by tonal surfaces and one-pixel borders
 
 Existing search overlays, desktop planner notices, and map markers retain local shadow declarations. Their legacy tints and pin drop shadows are not new reusable elevation tokens.
 
+**The Anchored Paper Rule.** Anchor paper at the top and lift its free edge through actual geometry; settle with a damped spring and keep reduced-motion paper flat.
+
+The board uses one demand-rendered WebGL canvas with paper and attachments in the same item order. Tape sits above its own sheet and below later sheets; pins and highlights obey the same stacking. Each texture is capped at 512px on either edge. Pointer hover bends the free edge; touch release gives a brief lift. The DOM fallback preserves photographs, notes and editing when graphics fail. Board-stage shadow is `0 12px 28px #34291d22`; fallback paper shadow is `4px 10px 15px #42301d29`. These material shadows are board-scoped.
+
 ## Shapes
 
 Use gently curved rectangles: small, medium, and large shared radii are in the frontmatter. Custom detail and planner sheets use the sheet radius. Badges and avatars remain round. Timetable events use a compact (6px) radius. Use one-pixel neutral borders and avoid restoring ruled notebook decoration.
+
+Board sheets remain rectangular with free edges, rather than shared card corners. Pegboard holes repeat on a 24px grid; tape spans 88px by 30px across the top of a sheet. The stage has a local 4px radius.
 
 ## Components
 
@@ -214,6 +271,10 @@ Selecting a record reveals a compact place sheet while keeping map context. Mobi
 
 Time brushing previews a range before destination selection. Events expose selected state and full details through the selection panel; movement, resizing, overlap, overnight segments, and numbered map pins retain existing behavior. Timetable geometry and small resize handles are task-specific controls, not general touch-size primitives.
 
+### Shared Memory Board
+
+Photographs and post-it notes can be freely dragged, rotated, resized and layered. Selection exposes position, size, angle, text, note color and tape/pin attachment controls, with keyboard movement and numeric editing. Explicit shared save, dirty state, conflict recovery and undo/redo remain visible in the neutral toolbar. Preserve board item focus and readable fallback content at all zoom levels. The selected pegboard-and-tape treatment is the default; optional whiteboard and cork backdrops remain board-only material choices.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -226,7 +287,7 @@ Time brushing previews a range before destination selection. Events expose selec
 
 ### Don't:
 
-- Don't restore warm paper surfaces, vermilion actions, notebook rules, or mandatory serif memory headings.
+- Don't restore warm paper surfaces, vermilion actions, notebook rules, or mandatory serif memory headings outside the explicitly approved memory-board material canvas and its local empty state.
 - Don't introduce a separate color, typography, or control system for travel planning.
 - Don't infer reusable UI colors from preserved map tiles or pin assets.
 - Don't obscure inline errors or dismiss a form while saving.

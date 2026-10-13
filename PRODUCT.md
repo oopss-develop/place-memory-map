@@ -40,6 +40,10 @@ Members switch between private groups, search Korean businesses through Kakao, a
 - Travel schedules preserve source visit history and use membership-protected database writes with conflict detection. Demo schedules are browser-local.
 - Comments, public sharing, automatic travel-time planning, notifications, and reservation integrations are out of scope. The current map can show route distance and duration with a fallback.
 
+- Each private group has one shared photo/post-it board with up to 80 items. Members arrange existing visit photos and notes through free dragging, rotation, resizing and layer order; source photos use stable IDs, and removing a board item leaves its visit and image intact.
+- Board edits are committed through explicit shared save with membership checks, private database row-level security, source-photo validation and optimistic version conflict handling. Failed saves preserve edits and a stable retry ID. Undo/redo and per-user/group device drafts support recovery; drafts expire after seven days and conflict reload preserves the local arrangement in undo history.
+- Board editing remains available through keyboard movement, mobile touch dragging and numeric position/size/rotation fields. Reduced motion keeps paper flat, and graphics failure retains ordinary photos, notes and editing. Workspace backups include the board while remaining compatible with older backups.
+
 ## Brand Commitments
 
 Product name: 우뚜막. Korean is the primary interface language. The experience must use a clean, organized shadcn interface with neutral surfaces and consistent typography and component placement.

@@ -6,7 +6,9 @@ describe("private editor drafts",()=>{
   it("isolates users and maps, and clears only the signed-out user's drafts",()=>{
     saveDraft("u1:visit:g1:new",{title:"입력"}); saveDraft("u1:visit:g2:new",{}); saveDraft("u2:visit:g1:new",{});
     expect(listDrafts("u1:visit:g1:")).toHaveLength(1);
+    localStorage.setItem("uttumak-board-draft-v1:u1:g1", "private board"); localStorage.setItem("uttumak-board-draft-v1:u2:g1", "other board");
     clearUserDrafts("u1"); expect(listDrafts("u1:")).toEqual([]); expect(listDrafts("u2:")).toHaveLength(1);
+    expect(localStorage.getItem("uttumak-board-draft-v1:u1:g1")).toBeNull(); expect(localStorage.getItem("uttumak-board-draft-v1:u2:g1")).toBe("other board");
   });
   it("expires after seven days and safely ignores corrupt data",()=>{
     vi.spyOn(Date,"now").mockReturnValue(1000); saveDraft("u:visit:g:new",{});

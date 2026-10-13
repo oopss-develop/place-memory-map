@@ -19,7 +19,10 @@ export function listDrafts<T>(prefix: string): SavedDraft<T>[] {
   return drafts.sort((a,b) => b.updatedAt-a.updatedAt);
 }
 export function clearDraft(key: string) { try { localStorage.removeItem(PREFIX + key); } catch {} }
-export function clearUserDrafts(user: string) { for (const draft of listDrafts(user + ":")) clearDraft(draft.key); }
+export function clearUserDrafts(user: string) {
+  for (const draft of listDrafts(user + ":")) clearDraft(draft.key);
+  try { for (const key of Object.keys(localStorage)) if (key.startsWith("uttumak-board-draft-v1:" + user + ":")) localStorage.removeItem(key); } catch {}
+}
 export function formValues(form: HTMLFormElement) {
   const values: Record<string, string[]> = {};
   for (const [key, value] of new FormData(form)) if (typeof value === "string") (values[key] ??= []).push(value);

@@ -4,6 +4,7 @@ import { PwaRegistration } from "@/components/pwa-registration";
 import { FontPreference } from "@/components/font-preference";
 import { ActivityProgressProvider } from "@/components/activity-progress";
 import "./globals.css";
+import "./memory-board.css";
 
 const sans = Noto_Sans_KR({
   variable: "--font-noto",
