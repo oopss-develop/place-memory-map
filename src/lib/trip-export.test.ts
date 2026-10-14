@@ -14,9 +14,9 @@ describe("trip Excel export", () => {
     await workbook.xlsx.load(await source.xlsx.writeBuffer());
     expect(workbook.worksheets.map((sheet) => sheet.name)).toEqual(["여행 계획표", "일정 상세", "지도"]);
     const plan = workbook.getWorksheet("여행 계획표")!;
-    expect(plan.getCell("A5").value).toContain("23:00 – 10-04 01:00");
-    expect(plan.getCell("B5").value).toContain("전날부터 계속");
-    expect(plan.getCell("C5").value).toBe("예정된 일정이 없어요.");
+    expect(plan.getColumn(2).values.join(" ")).toContain("23:00 – 10-04 01:00");
+    expect(plan.getCell("C5").value).toContain("전날부터 계속");
+    expect(plan.getCell("D5").value).toBe("예정된 일정이 없어요.");
     const detail = workbook.getWorksheet("일정 상세")!;
     expect(detail.rowCount).toBe(5);
     expect(detail.getCell("C5").value).toBe("2026-10-03 23:00");
@@ -32,7 +32,7 @@ describe("trip Excel export", () => {
 
   it("exports an empty trip and uses overseas map links", () => {
     const empty = createTripWorkbook(trip, [], "2026-10-05", "osm", image);
-    expect(empty.getWorksheet("여행 계획표")!.getCell("A5").value).toBe("예정된 일정이 없어요.");
+    expect(empty.getWorksheet("여행 계획표")!.getCell("B5").value).toBe("예정된 일정이 없어요.");
     expect(empty.getWorksheet("지도")!.getImages()).toHaveLength(1);
     const overseas = createTripWorkbook(trip, [item], "2026-10-03", "osm", image);
     expect(overseas.getWorksheet("일정 상세")!.getCell("I5").value).toMatchObject({ hyperlink: expect.stringContaining("https://www.openstreetmap.org/") });

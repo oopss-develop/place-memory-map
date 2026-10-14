@@ -1,5 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 import ExcelJS from "exceljs";
+import JSZip from "jszip";
+import { readFile, writeFile } from "node:fs/promises";
+import { pathToFileURL } from "node:url";
 
 const groupId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
 const visit = { id: "60000000-0000-4000-8000-000000000001", groupId, place: { id: "30000000-0000-4000-8000-000000000001", provider: "manual", name: "북촌 산책", address: "서울 종로", category: "여행", latitude: 37.58, longitude: 126.98 }, visitedOn: "2026-09-01", isPlanned: true, title: "다시 가고 싶은 곳", note: "원본 메모", rating: 4, tags: [], participants: [], photoUrls: [], markerStyle: "black-9", version: 1, updatedBy: "test" };
@@ -34,19 +37,28 @@ test.beforeEach(async ({ page }) => {
 test("downloads the whole travel plan with an embedded map and place links", async ({ page }, testInfo) => {
   await openPlanner(page); await createTrip(page); await addExisting(page);
   const downloadEvent = page.waitForEvent("download");
-  await page.getByRole("button", { name: "서울 2박 3일 엑셀 다운로드", exact: true }).click();
+  await page.getByRole("button", { name: "서울 2박 3일 전체 일정 다운로드", exact: true }).click();
   const download = await downloadEvent;
-  expect(download.suggestedFilename()).toBe("서울 2박 3일_2026-10-03_2026-10-05.xlsx");
-  const path = testInfo.outputPath("travel-plan.xlsx");
+  expect(download.suggestedFilename()).toBe("서울 2박 3일_2026-10-03_2026-10-05.zip");
+  const path = testInfo.outputPath("travel-plan.zip");
   await download.saveAs(path);
   const workbook = new ExcelJS.Workbook();
-  await workbook.xlsx.readFile(path);
-  expect(workbook.worksheets.map((sheet) => sheet.name)).toEqual(["여행 계획표", "일정 상세", "지도"]);
-  expect(workbook.getWorksheet("여행 계획표")!.getCell("C4").value).toBe("2026-10-05");
+  const zip = await JSZip.loadAsync(await readFile(path));
+  expect(zip.file("일정표.html")).toBeTruthy();
+  expect(Object.keys(zip.files).filter((name) => name.endsWith(".png"))).toHaveLength(3);
+  await workbook.xlsx.load(await zip.file("서울 2박 3일_2026-10-03_2026-10-05.xlsx")!.async("nodebuffer") as unknown as Parameters<typeof workbook.xlsx.load>[0]);
+  expect(workbook.worksheets.map((sheet) => sheet.name)).toEqual(["여행 계획표", "일정 상세", "지도 10-03", "지도 10-04", "지도 10-05"]);
+  expect(workbook.getWorksheet("여행 계획표")!.getCell("D4").value).toBe("2026-10-05");
   expect(workbook.getWorksheet("일정 상세")!.getCell("F5").value).toBe("북촌 산책");
-  expect(workbook.getWorksheet("지도")!.getImages()).toHaveLength(1);
+  expect(workbook.getWorksheet("지도 10-03")!.getImages()).toHaveLength(1);
   await expect(page.getByRole("status")).toContainText("장소 위치도와 지도 링크");
   await page.screenshot({ path: testInfo.outputPath("excel-export.png") });
+  const htmlPath = testInfo.outputPath("offline-plan.html");
+  await writeFile(htmlPath, await zip.file("일정표.html")!.async("string"));
+  await page.goto(pathToFileURL(htmlPath).href);
+  await expect(page.getByRole("heading", { name: "서울 2박 3일", exact: true })).toBeVisible();
+  await expect(page.locator("img.map")).toHaveCount(1);
+  await page.screenshot({ path: testInfo.outputPath("offline-plan.png"), fullPage: true });
 });
 
 test("trip, saved place, edit, map and persistence preserve the original memory", async ({ page }, testInfo) => {

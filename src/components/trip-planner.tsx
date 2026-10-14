@@ -83,7 +83,7 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
   const [message, setMessage] = useState("");
   const [exporting, setExporting] = useState(false);
   const busy = store.busy || exporting;
-  const mapExportRef = useRef<HTMLDivElement>(null);
+  const [exportProgress, setExportProgress] = useState("");
   const [formError, setFormError] = useState("");
   const [source, setSource] = useState<"search" | "records">("search");
   const [query, setQuery] = useState("");
@@ -264,12 +264,14 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
     if (!trip || exporting) return;
     setExporting(true);
     try {
-      const [{ downloadTripExcel }, { captureTripMap }] = await Promise.all([import("@/lib/trip-export"), import("@/lib/trip-map-export")]);
-      const { image, fallback } = await captureTripMap(mapExportRef.current, pins, date, visibleRoute);
-      await downloadTripExcel(trip, items, date, provider, image);
-      setMessage(fallback ? "엑셀을 저장했어요. 지도 배경을 가져올 수 없어 장소 위치도와 지도 링크를 넣었어요." : "전체 여행 계획과 선택한 날짜의 지도를 엑셀로 저장했어요.");
+      const [{ downloadTripBundle }, { captureTripDays }] = await Promise.all([import("@/lib/trip-bundle-export"), import("@/lib/trip-day-capture")]);
+      const maps = await captureTripDays(trip, items, provider, { date, route: visibleRoute }, setExportProgress);
+      setExportProgress("다운로드 파일 만드는 중…");
+      await downloadTripBundle(trip, items, provider, maps);
+      const fallbackDays = maps.filter((map) => map.fallback).length;
+      setMessage(fallbackDays ? `전체 일정을 저장했어요. 지도 배경을 가져오지 못한 ${fallbackDays}일은 장소 위치도와 지도 링크를 넣었어요.` : "시간표 엑셀, 날짜별 지도 이미지, 오프라인 일정표를 ZIP으로 저장했어요.");
     } catch {
-      setMessage("엑셀을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
+      setMessage("전체 일정을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
     } finally { setExporting(false); }
   }
 
@@ -287,7 +289,7 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
       <div className="planner-sidebar-footer"><h2>공통 관리</h2><CommentNotifications demo={demo} /><WorkspaceBackup userId={viewerId} demo={demo} /></div>
     </aside>
     <div className="planner-main" inert={isMobile && navigationOpen}>
-      <header className="planner-header">{sidebar?.collapsed && <DesktopSidebarToggle collapsed controls="planner-navigation" onChange={sidebar.setCollapsed} />}<Button variant="outline" className="planner-back-records" onClick={onClose}><ChevronLeft />기록으로</Button><div className="planner-heading"><Button variant="outline" className="planner-navigation-trigger" aria-label="여행 탐색 열기" aria-expanded={navigationOpen} aria-controls="planner-navigation" onClick={(event) => { navigationTrigger.current = event.currentTarget; setNavigationOpen(true); }}><Menu /></Button><div><h1>{trip?.name ?? "여행 계획"}</h1><p>{trip ? "시간표에서 일정을 정하고 지도에서 동선을 확인하세요." : "함께 떠날 여행의 장소와 시간을 계획하세요."}</p></div></div>{trip && <div className="planner-trip-actions" role="group" aria-label="여행 관리"><Button variant="outline" onClick={() => openTrip(trip)} disabled={busy}><Settings />여행 설정</Button><Button variant="outline" onClick={() => void exportExcel()} disabled={busy || routeBusy || manual} aria-label={`${trip.name} 엑셀 다운로드`} aria-busy={exporting}><Download />{exporting ? "저장 중…" : "엑셀 다운로드"}</Button><TravelLayoutControl layout={layout} disabled={busy} agendaOnRight={agendaOnRight} /></div>}{trip && <Button className="primary-button planner-add-schedule planner-mobile-add" onClick={() => createDraft()} disabled={busy}><Plus />일정 추가</Button>}</header>
+      <header className="planner-header">{sidebar?.collapsed && <DesktopSidebarToggle collapsed controls="planner-navigation" onChange={sidebar.setCollapsed} />}<Button variant="outline" className="planner-back-records" onClick={onClose}><ChevronLeft />기록으로</Button><div className="planner-heading"><Button variant="outline" className="planner-navigation-trigger" aria-label="여행 탐색 열기" aria-expanded={navigationOpen} aria-controls="planner-navigation" onClick={(event) => { navigationTrigger.current = event.currentTarget; setNavigationOpen(true); }}><Menu /></Button><div><h1>{trip?.name ?? "여행 계획"}</h1><p>{trip ? "시간표에서 일정을 정하고 지도에서 동선을 확인하세요." : "함께 떠날 여행의 장소와 시간을 계획하세요."}</p></div></div>{trip && <div className="planner-trip-actions" role="group" aria-label="여행 관리"><Button variant="outline" onClick={() => openTrip(trip)} disabled={busy}><Settings />여행 설정</Button><Button variant="outline" onClick={() => void exportExcel()} disabled={busy || routeBusy || manual} title="시간표 엑셀 · 날짜별 지도 PNG · 오프라인 일정표 (ZIP)" aria-label={`${trip.name} 전체 일정 다운로드`} aria-busy={exporting}><Download />{exporting ? exportProgress || "준비 중…" : "전체 일정 다운로드"}</Button><TravelLayoutControl layout={layout} disabled={busy} agendaOnRight={agendaOnRight} /></div>}{trip && <Button className="primary-button planner-add-schedule planner-mobile-add" onClick={() => createDraft()} disabled={busy}><Plus />일정 추가</Button>}</header>
     {!online && <div className="planner-message" role="status">오프라인 · 입력 내용은 초안으로 보관됩니다.</div>}
     {store.busy && <div className="saving-status" role="status">저장 중…</div>}
     {(message || store.error) && <div className={`planner-message ${store.error ? "has-error" : ""}`} role={store.error ? "alert" : "status"}>{store.error || message}<button aria-label="안내 닫기" onClick={() => setMessage("")}><X size={16} /></button>{store.error && <button onClick={() => void store.refresh().catch((error) => setMessage(error.message))}>다시 불러오기</button>}</div>}
@@ -303,7 +305,7 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
           </div>
         </section>
         <PanelDivider label="시간표와 지도 너비 조절" axis="x" value={timeWidth} initial={52} minBefore={240} minAfter={280} onChange={setTimeWidth} />
-        <section ref={mapPanelRef} className="planner-map-panel" aria-label="지도와 동선"><header className="planner-panel-heading planner-map-heading"><h2>지도 · 동선</h2><div className="planner-map-toolbar"><ToggleGroup className="planner-map-controls" type="single" value={provider} disabled={busy} onValueChange={(value) => { if (value === "kakao" || value === "osm") setProvider(value); }} spacing={1} aria-label="일정 지도 선택"><ToggleGroupItem value="kakao">국내</ToggleGroupItem><ToggleGroupItem value="osm">해외</ToggleGroupItem></ToggleGroup><Button variant="outline" disabled={busy || pins.length < 2 || routeBusy} onClick={() => { if (visibleRoute) { setSavedRoute(undefined); setRouteFeedback(undefined); } else void showRoute(); }}>{routeBusy ? "경로 확인 중…" : visibleRoute ? "동선 숨기기" : "동선 확인"}</Button></div></header>{manual && <div className="planner-manual-banner">일정 장소를 지도에서 선택하세요.<button onClick={() => setManual(false)}>취소하고 돌아가기</button></div>}<div className={`planner-map-content ${agendaOnRight ? "agenda-right" : "agenda-bottom"}`}><div className="planner-map-canvas" ref={mapExportRef}>
+        <section ref={mapPanelRef} className="planner-map-panel" aria-label="지도와 동선"><header className="planner-panel-heading planner-map-heading"><h2>지도 · 동선</h2><div className="planner-map-toolbar"><ToggleGroup className="planner-map-controls" type="single" value={provider} disabled={busy} onValueChange={(value) => { if (value === "kakao" || value === "osm") setProvider(value); }} spacing={1} aria-label="일정 지도 선택"><ToggleGroupItem value="kakao">국내</ToggleGroupItem><ToggleGroupItem value="osm">해외</ToggleGroupItem></ToggleGroup><Button variant="outline" disabled={busy || pins.length < 2 || routeBusy} onClick={() => { if (visibleRoute) { setSavedRoute(undefined); setRouteFeedback(undefined); } else void showRoute(); }}>{routeBusy ? "경로 확인 중…" : visibleRoute ? "동선 숨기기" : "동선 확인"}</Button></div></header>{manual && <div className="planner-manual-banner">일정 장소를 지도에서 선택하세요.<button onClick={() => setManual(false)}>취소하고 돌아가기</button></div>}<div className={`planner-map-content ${agendaOnRight ? "agenda-right" : "agenda-bottom"}`}><div className="planner-map-canvas" >
           <KakaoMap key={`${provider}-${tab}`} visits={pins} mapProvider={provider} selectedId={selectedPin?.id} selectionRequest={0} manualMode={manual} onManualPoint={manualPoint} onSelect={(pin) => { setPinChoices(pin.items.map((item) => item.id)); setSelectedId(pin.items[0].id); }} route={visibleRoute} />
 
           

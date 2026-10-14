@@ -3,14 +3,15 @@ import { daySegments, tripDates } from "@/lib/timetable";
 import type { MapPoint, ScheduleItem, Trip } from "@/types/domain";
 
 export interface ExportMapImage { dataUrl: string; width: number; height: number; description: string }
-const colors = { ink: "162D38", paper: "F4EFDF", sheet: "FFFDF6", rule: "C8C0A9", accent: "D84C32" };
+const colors = { ink: "243746", paper: "F1F5F9", sheet: "FFFFFF", rule: "CBD5E1", accent: "0369A1" };
+export interface DayMapImage { date: string; image: ExportMapImage; fallback: boolean }
 
 export function tripExportFilename(trip: Trip) {
   const name = trip.name.replace(/[<>:"/\\|?*\u0000-\u001f]/g, "_").replace(/[. ]+$/g, "").slice(0, 80) || "여행";
   return `${name}_${trip.startDate}_${trip.endDate}.xlsx`;
 }
 
-function mapLink(point: MapPoint, provider: "kakao" | "osm") {
+export function mapLink(point: MapPoint, provider: "kakao" | "osm") {
   const { name, latitude, longitude } = point.place;
   return provider === "kakao"
     ? `https://map.kakao.com/link/map/${encodeURIComponent(name)},${latitude},${longitude}`
@@ -58,31 +59,63 @@ function timeRange(item: ScheduleItem) {
   return `${item.startsAt.slice(11, 16)} – ${end}`;
 }
 
-export function createTripWorkbook(trip: Trip, inputItems: ScheduleItem[], date: string, provider: "kakao" | "osm", mapImage: ExportMapImage) {
+export function createTripWorkbook(trip: Trip, inputItems: ScheduleItem[], date: string, provider: "kakao" | "osm", mapImage: ExportMapImage, dailyMaps?: DayMapImage[]) {
   const items = inputItems.filter((item) => item.tripId === trip.id).sort((a, b) => a.startsAt.localeCompare(b.startsAt) || a.id.localeCompare(b.id));
   const workbook = new ExcelJS.Workbook();
   workbook.creator = "우뚜막";
   const subtitle = `${trip.startDate} – ${trip.endDate} · 현지 시각 (${trip.timeZone}) · ${items.length}개 일정`;
   const dates = tripDates(trip);
   const plan = workbook.addWorksheet("여행 계획표");
-  setupSheet(plan, trip.name, subtitle, dates.length);
-  plan.columns = dates.map(() => ({ width: 34 }));
-  header(plan, dates);
   const days = dates.map((day) => daySegments(items, day));
-  const maxRows = Math.max(1, ...days.map((segments) => segments.length));
-  for (let index = 0; index < maxRows; index++) {
+  const laneCounts = days.map((segments) => Math.max(1, ...segments.map((s) => s.lanes)));
+  const columnCount = 1 + laneCounts.reduce((a, b) => a + b, 0);
+  setupSheet(plan, trip.name, subtitle, columnCount);
+  plan.columns = [{ width: 11 }, ...laneCounts.flatMap((count) => Array.from({ length: count }, () => ({ width: 32 })))];
+  header(plan, ["시간", ...dates.flatMap((day, index) => Array(laneCounts[index]).fill(day))]);
+  let firstColumn = 2;
+  laneCounts.forEach((count) => {
+    if (count > 1) plan.mergeCells(4, firstColumn, 4, firstColumn + count - 1);
+    firstColumn += count;
+  });
+  const allSegments = days.flat();
+  const from = allSegments.length ? Math.floor(Math.min(...allSegments.map((s) => s.start)) / 60) * 60 : 480;
+  const to = allSegments.length ? Math.min(1440, Math.ceil(Math.max(...allSegments.map((s) => s.end)) / 60) * 60) : 1080;
+  const boundaries = new Set<number>([from, to]);
+  for (let minute = from; minute < to; minute += 30) boundaries.add(minute);
+  allSegments.forEach((segment) => { boundaries.add(segment.start); boundaries.add(segment.end); });
+  const ticks = [...boundaries].sort((a, b) => a - b);
+  ticks.slice(0, -1).forEach((minute, index) => {
     const row = plan.getRow(index + 5);
-    row.values = days.map((segments, dayIndex) => {
-      const segment = segments[index];
-      if (!segment) return index === 0 ? "예정된 일정이 없어요." : "";
-      const { item } = segment;
-      const continuation = item.startsAt.slice(0, 10) < dates[dayIndex] ? "(전날부터 계속) " : "";
-      return `${segment.order}. ${item.title}\n${continuation}${timeRange(item)}\n${item.place.name}`;
-    });
+    row.values = [minute / 1440, ...Array(columnCount - 1).fill("")];
     bodyRow(row);
-    row.height = 82;
-  }
+    row.getCell(1).numFmt = "hh:mm";
+    row.height = Math.max(28, (ticks[index + 1] - minute) * 1.6);
+  });
+  firstColumn = 2;
+  days.forEach((segments, dayIndex) => {
+    if (!segments.length) plan.getCell(5, firstColumn).value = "예정된 일정이 없어요.";
+    segments.forEach(({ item, start, end, lane, order }) => {
+      const top = ticks.indexOf(start) + 5;
+      const bottom = ticks.indexOf(end) + 4;
+      const col = firstColumn + lane;
+      if (bottom > top) plan.mergeCells(top, col, bottom, col);
+      const cell = plan.getCell(top, col);
+      const continuation = item.startsAt.slice(0, 10) < dates[dayIndex] ? "(전날부터 계속) " : "";
+      cell.value = `${order}. ${item.title}\n${continuation}${timeRange(item)}\n${item.place.name}`;
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: dayIndex % 2 ? "ECFDF5" : "E0F2FE" } };
+      cell.font = { name: "맑은 고딕", size: 11, color: { argb: colors.ink }, bold: true };
+      cell.alignment = { wrapText: true, vertical: "top", indent: 1 };
+      // Short visits still need room for their title, precise time and place.
+      const needed = 22 + 16 * (Math.ceil(item.title.length / 15) + Math.ceil(item.place.name.length / 15) + (continuation ? 2 : 1));
+      let available = 0;
+      for (let row = top; row <= bottom; row++) available += plan.getRow(row).height ?? 28;
+      if (available < needed) plan.getRow(top).height = (plan.getRow(top).height ?? 28) + needed - available;
+    });
+    firstColumn += laneCounts[dayIndex];
+  });
+  plan.views = [{ state: "frozen", ySplit: 4, xSplit: 1, showGridLines: false }];
   plan.pageSetup.printTitlesRow = "1:4";
+  plan.pageSetup.printTitlesColumn = "A:A";
 
   const detail = workbook.addWorksheet("일정 상세");
   setupSheet(detail, `${trip.name} · 일정 상세`, subtitle, 9);
@@ -96,7 +129,10 @@ export function createTripWorkbook(trip: Trip, inputItems: ScheduleItem[], date:
   });
   if (items.length) detail.autoFilter = { from: "A4", to: `I${items.length + 4}` };
 
-  const map = workbook.addWorksheet("지도");
+  for (const entry of dailyMaps ?? [{ date, image: mapImage, fallback: false }]) {
+  const mapImage = entry.image;
+  const date = entry.date;
+  const map = workbook.addWorksheet(dailyMaps ? `지도 ${date.slice(5)}` : "지도");
   setupSheet(map, `${trip.name} · ${date} 지도`, mapImage.description, 6);
   map.columns = [9, 22, 32, 42, 16, 16].map((width) => ({ width }));
   const imageWidth = Math.min(960, mapImage.width);
@@ -113,6 +149,7 @@ export function createTripWorkbook(trip: Trip, inputItems: ScheduleItem[], date:
     row.getCell(3).font = { name: "맑은 고딕", size: 11, underline: true, color: { argb: colors.accent } };
   });
   map.views = [{ showGridLines: false }];
+  }
   return workbook;
 }
 
