@@ -8,7 +8,9 @@ it("composites a real same-origin PNG with projected route/pins and preserves th
     naturalWidth = 960; naturalHeight = 600; onload?: () => void;
     set src(value: string) { images.push({ src: value }); queueMicrotask(() => this.onload?.()); }
   });
-  const ctx = { drawImage: vi.fn(), beginPath: vi.fn(), lineTo: vi.fn(), moveTo: vi.fn(), stroke: vi.fn(), setLineDash: vi.fn() };
+  const strokes: Array<{ width: number; color: string }> = [];
+  const ctx = { lineWidth: 0, strokeStyle: "", drawImage: vi.fn(), beginPath: vi.fn(), lineTo: vi.fn(), moveTo: vi.fn(), stroke: vi.fn(), setLineDash: vi.fn() };
+  ctx.stroke.mockImplementation(() => strokes.push({ width: ctx.lineWidth, color: ctx.strokeStyle }));
   vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(ctx as unknown as CanvasRenderingContext2D);
   vi.spyOn(HTMLCanvasElement.prototype, "toDataURL").mockReturnValue("data:image/png;base64,test");
   vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, blob: async () => new Blob(["png"], { type: "image/png" }) }));
@@ -19,6 +21,8 @@ it("composites a real same-origin PNG with projected route/pins and preserves th
   expect(ctx.drawImage).toHaveBeenCalledWith(expect.anything(), 98, 192, 44, 48);
   expect(ctx.drawImage).toHaveBeenLastCalledWith(expect.anything(), 0, 570, 960, 30, 0, 570, 960, 30);
   expect(ctx.lineTo).toHaveBeenCalledWith(400, 300);
+  expect(strokes).toEqual([{ width: 12, color: "#ffffff" }, { width: 7, color: "#0369a1" }]);
+  expect(ctx.setLineDash).toHaveBeenCalledWith([]);
   expect(decodeURIComponent(images[1].src)).toContain("1,3");
   expect(revoke).toHaveBeenCalledWith("blob:map");
 });

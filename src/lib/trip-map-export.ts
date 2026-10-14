@@ -31,8 +31,9 @@ export function drawPlaceOverview(pins: MapPoint[], date: string, route?: TripRo
     const scale = Math.min(800 / Math.max(.002, maxX - minX), 350 / Math.max(.002, maxY - minY));
     const position = (p: { x: number; y: number }) => ({ x: 480 + (p.x - (minX + maxX) / 2) * scale, y: 325 - (p.y - (minY + maxY) / 2) * scale });
     if (routePoints.length > 1) {
-      ctx.strokeStyle = "#d84c32";
-      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#0369a1";
+      ctx.lineWidth = 7;
+      ctx.lineCap = "round";
       ctx.setLineDash(route?.kind === "straight" ? [8, 6] : []);
       ctx.beginPath();
       routePoints.forEach((p, index) => { const pos = position(p); if (index) ctx.lineTo(pos.x, pos.y); else ctx.moveTo(pos.x, pos.y); });

@@ -38,8 +38,8 @@ export async function captureKakaoStaticMap(view: KakaoExportView, date: string,
     if (view.routePoints.length > 1) {
       ctx.beginPath();
       view.routePoints.forEach((point, index) => { if (index) ctx.lineTo(point.x, point.y); else ctx.moveTo(point.x, point.y); });
-      ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 9; ctx.lineJoin = "round"; ctx.stroke();
-      ctx.strokeStyle = "#0369a1"; ctx.lineWidth = 5;
+      ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 12; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.stroke();
+      ctx.strokeStyle = "#0369a1"; ctx.lineWidth = 7;
       ctx.setLineDash(route?.kind === "straight" ? [8, 6] : []); ctx.stroke(); ctx.setLineDash([]);
     }
     const markers = await Promise.all(view.pins.map((pin) => loadImage(tripMarkerDataUrl(pin.number))));

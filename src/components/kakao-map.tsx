@@ -397,9 +397,10 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
     }
     const bounds = new window.kakao.maps.LatLngBounds();
     visibleVisits.forEach((visit) => bounds.extend(new window.kakao.maps.LatLng(visit.place.latitude, visit.place.longitude)));
+    if (exportViewRef) route?.points.forEach((point) => bounds.extend(new window.kakao.maps.LatLng(point.latitude, point.longitude)));
     mapRef.current.setBounds(bounds, 72, 72, 72, 72);
     lastBoundsSignatureRef.current = boundsSignature;
-  }, [apiKey, highlightedIds, mapFocus, onAnchorChange, onDismissPopup, ready, selectedId, selectionRequest, visits]);
+  }, [apiKey, highlightedIds, mapFocus, onAnchorChange, onDismissPopup, ready, selectedId, selectionRequest, visits, exportViewRef, route]);
 
   useEffect(() => {
     if (!selectedId || !onAnchorChange) return;

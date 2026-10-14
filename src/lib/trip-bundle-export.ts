@@ -31,7 +31,7 @@ export async function createTripBundle(trip: Trip, items: ScheduleItem[], provid
   zip.file(tripExportFilename(trip), await workbook.xlsx.writeBuffer());
   zip.file("일정표.html", tripOfflineHtml(trip, items, provider, maps));
   for (const { date, image } of maps) zip.file(`지도/${date}.png`, image.dataUrl.split(",")[1], { base64: true });
-  zip.file("읽어주세요.txt", "압축을 푼 뒤 일정표.html을 열면 시간표와 날짜별 지도·방문 순서를 볼 수 있습니다.\n엑셀: 시간표, 일정 상세, 날짜별 지도 시트\n지도 폴더: 날짜별 PNG 이미지\n지도 배경을 가져올 수 없는 날짜에는 위치도라고 표시됩니다.\n자동차 동선은 다운로드할 때 화면에 표시된 날짜의 경로만 포함됩니다. 다른 날짜는 장소 핀을 표시합니다.\n");
+  zip.file("읽어주세요.txt", "압축을 푼 뒤 일정표.html을 열면 시간표와 날짜별 지도·방문 순서를 볼 수 있습니다.\n엑셀: 시간표, 일정 상세, 날짜별 지도 시트\n지도 폴더: 날짜별 PNG 이미지\n지도 배경을 가져올 수 없는 날짜에는 위치도라고 표시됩니다.\n날짜별 자동차 동선을 자동으로 준비합니다. 파란 굵은 실선은 자동차 경로이며, 도로 경로를 가져오지 못했거나 해외·데모 지도인 경우 방문 순서를 점선으로 연결하고 지도 설명에 표시합니다.\n");
   return zip.generateAsync({ type: "blob", compression: "DEFLATE" });
 }
 

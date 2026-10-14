@@ -1,3 +1,4 @@
+import { resolveExportRoute, exportRouteDescription } from "@/lib/trip-export-route";
 import { captureKakaoStaticMap, type KakaoExportViewRef } from "@/lib/trip-kakao-static-export";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
@@ -19,14 +20,17 @@ export function exportDayPins(items: ScheduleItem[], date: string): MapPoint[] {
 }
 
 // A separate, full-sized map fits every pin without changing the user's viewport/date.
-export async function captureTripDays(trip: Trip, input: ScheduleItem[], provider: "kakao" | "osm", current: { date: string; route: TripRoute | null }, progress: (text: string) => void): Promise<DayMapImage[]> {
+export async function captureTripDays(trip: Trip, input: ScheduleItem[], provider: "kakao" | "osm", current: { date: string; route: TripRoute | null; demo?: boolean }, progress: (text: string) => void): Promise<DayMapImage[]> {
   const items = input.filter((item) => item.tripId === trip.id);
   const dates = tripDates(trip);
   const output: DayMapImage[] = [];
   for (const [index, date] of dates.entries()) {
     progress(`지도 ${index + 1}/${dates.length} 준비 중…`);
     const pins = exportDayPins(items, date);
-    const route = date === current.date ? current.route : null;
+    progress(`동선 ${index + 1}/${dates.length} 준비 중…`);
+    const route = await resolveExportRoute(trip.id, items, date, provider, date === current.date ? current.route : null, current.demo);
+    const description = exportRouteDescription(route);
+    progress(`지도 ${index + 1}/${dates.length} 준비 중…`);
     if (!pins.length) {
       output.push({ date, image: drawPlaceOverview([], date), fallback: false });
       continue;
@@ -53,11 +57,13 @@ export async function captureTripDays(trip: Trip, input: ScheduleItem[], provide
       }
       if (provider === "kakao" && exportViewRef.current) {
         try {
-          output.push({ date, image: await captureKakaoStaticMap(exportViewRef.current(), date, route), fallback: false });
+          const image = await captureKakaoStaticMap(exportViewRef.current(), date, route);
+          output.push({ date, image: { ...image, description: `${image.description} · ${description}` }, fallback: false });
           continue;
         } catch { /* Preserve the existing capture/overview fallback if the API is unavailable. */ }
       }
-      output.push({ date, ...await captureTripMap(host, pins, date, route) });
+      const result = await captureTripMap(host, pins, date, route);
+      output.push({ date, ...result, image: { ...result.image, description: `${result.image.description}${description ? ` · ${description}` : ""}` } });
     } finally {
       root.unmount();
       host.remove();

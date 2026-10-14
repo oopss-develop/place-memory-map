@@ -265,7 +265,7 @@ export function TripPlanner({ viewerId = "demo", groupId, groups, visits, demo, 
     setExporting(true);
     try {
       const [{ downloadTripBundle }, { captureTripDays }] = await Promise.all([import("@/lib/trip-bundle-export"), import("@/lib/trip-day-capture")]);
-      const maps = await captureTripDays(trip, items, provider, { date, route: visibleRoute }, setExportProgress);
+      const maps = await captureTripDays(trip, items, provider, { date, route: visibleRoute, demo }, setExportProgress);
       setExportProgress("다운로드 파일 만드는 중…");
       await downloadTripBundle(trip, items, provider, maps);
       const fallbackDays = maps.filter((map) => map.fallback).length;
