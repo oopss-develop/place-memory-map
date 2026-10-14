@@ -1,3 +1,4 @@
+import { captureKakaoStaticMap, type KakaoExportViewRef } from "@/lib/trip-kakao-static-export";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 import { KakaoMap } from "@/components/kakao-map";
@@ -35,8 +36,9 @@ export async function captureTripDays(trip: Trip, input: ScheduleItem[], provide
     host.style.cssText = "position:fixed;left:-12000px;top:0;width:960px;height:600px;pointer-events:none;background:white";
     document.body.append(host);
     const root = createRoot(host);
+    const exportViewRef: KakaoExportViewRef = { current: null };
     try {
-      root.render(createElement(KakaoMap, { visits: pins, mapProvider: provider, selectionRequest: 0, manualMode: false, onSelect: () => {}, onManualPoint: () => {}, route }));
+      root.render(createElement(KakaoMap, { visits: pins, mapProvider: provider, selectionRequest: 0, manualMode: false, onSelect: () => {}, onManualPoint: () => {}, route, exportViewRef }));
       const deadline = Date.now() + 12000;
       let signature = "", stable = 0;
       while (Date.now() < deadline) {
@@ -47,7 +49,13 @@ export async function captureTripDays(trip: Trip, input: ScheduleItem[], provide
         if (images.length && images.every((img) => img.complete && img.naturalWidth) && next === signature) stable++;
         else stable = 0;
         signature = next;
-        if (stable >= 3) break;
+        if (stable >= 3 || (provider === "kakao" && exportViewRef.current && Date.now() > deadline - 11000)) break;
+      }
+      if (provider === "kakao" && exportViewRef.current) {
+        try {
+          output.push({ date, image: await captureKakaoStaticMap(exportViewRef.current(), date, route), fallback: false });
+          continue;
+        } catch { /* Preserve the existing capture/overview fallback if the API is unavailable. */ }
       }
       output.push({ date, ...await captureTripMap(host, pins, date, route) });
     } finally {

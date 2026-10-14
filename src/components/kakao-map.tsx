@@ -6,12 +6,14 @@ import { MapPin } from "lucide-react";
 import { markerSvgDataUrl, normalizeMarkerStyle, tripMarkerDataUrl } from "@/lib/marker-styles";
 import type { MapPoint, TripRoute } from "@/types/domain";
 import { OpenStreetMap } from "@/components/osm-map";
+import type { KakaoExportViewRef } from "@/lib/trip-kakao-static-export";
 import { MapOfflineFallback } from "@/components/map-offline-fallback";
 
 declare global { interface Window { kakao?: any; } }
 
 interface Props<T extends MapPoint> {
   visits: T[];
+  exportViewRef?: KakaoExportViewRef;
   mapProvider: "kakao" | "osm";
   selectedId?: string;
   selectionRequest: number;
@@ -45,7 +47,7 @@ function fallbackMapPosition(latitude: number, longitude: number) {
   return { left: Math.max(8, Math.min(88, left)), top: Math.max(8, Math.min(84, top)) };
 }
 
-export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, pulseLocation, route, highlightedIds = EMPTY_HIGHLIGHTED_IDS }: Props<T>) {
+export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, selectionRequest, manualMode, onSelect, onAnchorChange, onDismissPopup, onManualPoint, focusLocation, mapFocus, maxZoomRequest, pulseLocation, route, highlightedIds = EMPTY_HIGHLIGHTED_IDS, exportViewRef }: Props<T>) {
   const ref = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
@@ -60,6 +62,20 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
   const lastBoundsSignatureRef = useRef("");
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    if (!exportViewRef || !ready || mapProvider !== "kakao") return;
+    exportViewRef.current = () => {
+      const map = mapRef.current;
+      const center = map.getCenter();
+      const projection = map.getProjection();
+      const project = (point: { latitude: number; longitude: number }) => {
+        const pixel = projection.containerPointFromCoords(new window.kakao.maps.LatLng(point.latitude, point.longitude));
+        return { x: pixel.x, y: pixel.y };
+      };
+      return { latitude: center.getLat(), longitude: center.getLng(), level: map.getLevel(), pins: visits.map((pin, index) => ({ ...project(pin.place), number: pin.pinNumber ?? String(index + 1) })), routePoints: route?.points.map(project) ?? [] };
+    };
+    return () => { exportViewRef.current = null; };
+  }, [exportViewRef, ready, mapProvider, visits, route]);
   const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_JS_KEY;
   const selectedVisit = visits.find((visit) => visit.id === selectedId);
   const pulseTarget = selectedVisit?.place ?? pulseLocation;
