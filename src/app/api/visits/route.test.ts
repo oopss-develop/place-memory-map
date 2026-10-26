@@ -21,3 +21,9 @@ it("checks restore version and refuses expired or inaccessible records",async()=
   expect((await restore(request({id,version:2}))).status).toBe(403);expect((await restore(request({id,version:2}))).status).toBe(410);
   expect(mocks.rpc).toHaveBeenCalledWith("restore_visit",{target_id:id,expected_version:2});
 });
+
+it("atomically saves and links bucket-list visits through the protected RPC", async()=>{
+  expect((await POST(request({...body,bucketId:id,bucketVersion:2}))).status).toBe(201);
+  expect(mocks.rpc).toHaveBeenCalledWith("save_bucket_visit",expect.objectContaining({input:expect.objectContaining({bucketId:id,bucketVersion:2}),request_id:id,creating:true}));
+  expect((await POST(request({...body,bucketId:"invalid"}))).status).toBe(400);
+});

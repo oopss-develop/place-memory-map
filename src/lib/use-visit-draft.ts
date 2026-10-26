@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { listDrafts, type SavedDraft } from "./drafts";
-import type { Place, Visit } from "@/types/domain";
+import type { BucketItem, Place, Visit } from "@/types/domain";
 import type { MarkerStyle } from "./marker-styles";
-export type VisitDraftData = { place: Place; editing: Visit | null; fields: Record<string,string[]>; markerStyle: MarkerStyle; requestId: string; hadPhotos: boolean; memoryRequestId?: string; photoRequests?: Array<{ id: string; name: string; size: number; modified: number }> };
+export type VisitDraftData = { bucketSource?: BucketItem; place: Place; editing: Visit | null; fields: Record<string,string[]>; markerStyle: MarkerStyle; requestId: string; hadPhotos: boolean; memoryRequestId?: string; photoRequests?: Array<{ id: string; name: string; size: number; modified: number }> };
 export function useVisitDraft(userKey: string, activeGroupId: string, draftPlace: Place | null) {
   const [visitDrafts, setVisitDrafts] = useState<SavedDraft<VisitDraftData>[]>([]);
   const [restoredFields, setRestoredFields] = useState<Record<string,string[]> | null>(null);

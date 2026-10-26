@@ -913,3 +913,63 @@ dialog:modal {
 .backup-verify input { display: block; width: 100%; max-width: 240px; font-size: 11px; margin-top: 4px; }
 .backup-progress { padding: 12px; background: var(--secondary); border-radius: 8px; }
 .workspace-backup-dialog details { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; font-size: 13px; }
+
+/* Bucket list shares the workspace's neutral surfaces and native dialog focus. */
+.bucket-dialog { position: fixed; inset: 0; width: 100vw; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 0; border: 0; color: var(--foreground); background: var(--background); overflow-y: auto; }
+.bucket-dialog::backdrop { background: var(--background); }
+.bucket-header { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 16px; padding: 16px 24px; border-bottom: 1px solid var(--border); background: var(--background); }
+.bucket-header h1 { font-size: 20px; font-weight: 600; margin-right: auto; }
+.bucket-workspace { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.bucket-content { max-width: 1200px; margin: auto; padding: 24px; }
+.bucket-muted { color: var(--muted-foreground); font-size: 13px; }
+.bucket-tools { display: flex; gap: 16px; flex-wrap: wrap; margin: 24px 0; }
+.bucket-tools > input { flex: 1; min-width: 220px; }
+.bucket-filters, .bucket-actions, .bucket-meta, .bucket-tags { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.bucket-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; list-style: none; padding: 0; }
+.bucket-card, .bucket-editor { min-width: 0; border: 1px solid var(--border); border-radius: 10px; padding: 24px; background: var(--card); }
+.bucket-card h2, .bucket-editor h2 { font-size: 18px; font-weight: 600; margin: 16px 0 12px; overflow-wrap: anywhere; }
+.bucket-card p { margin-block: 12px; overflow-wrap: anywhere; }
+.bucket-reason { white-space: pre-wrap; font-size: 14px; line-height: 1.65; }
+.bucket-card > .bucket-actions { margin-top: 20px; }
+.bucket-empty { display: grid; justify-items: center; text-align: center; gap: 12px; padding: 64px 16px; color: var(--muted-foreground); }
+.bucket-editor { margin: 20px 0; }
+.bucket-editor fieldset { display: grid; gap: 16px; border: 0; padding: 0; min-width: 0; }
+.bucket-editor label, .bucket-comments label, .bucket-manual label { display: grid; gap: 8px; font-size: 14px; }
+.bucket-editor > .bucket-actions { justify-content: flex-end; margin-top: 24px; }
+.bucket-dialog select { min-height: 40px; max-width: 100%; border: 1px solid var(--input); border-radius: 6px; background: var(--background); color: var(--foreground); padding: 6px 10px; font-size: 14px; }
+.bucket-search { display: flex; gap: 8px; margin: 12px 0; }
+.bucket-place-value { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--muted); border-radius: 6px; }
+.bucket-place-value > div { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.bucket-place-value p { font-size: 12px; color: var(--muted-foreground); }
+.bucket-place-results { display: grid; gap: 4px; max-height: 280px; overflow-y: auto; }
+.bucket-place-results button { display: flex; flex-direction: column; align-items: flex-start; height: auto; min-height: 44px; white-space: normal; }
+.bucket-place-results small { color: var(--muted-foreground); }
+.bucket-manual { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.bucket-comments { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+.bucket-comments article { padding: 12px 0; border-bottom: 1px solid var(--border); }
+.bucket-comments p { white-space: pre-wrap; }
+.bucket-comments time { display: block; font-size: 12px; color: var(--muted-foreground); }
+.bucket-comments label { margin: 16px 0 8px; }
+.bucket-reference { padding: 12px; background: var(--muted); border-radius: 6px; font-size: 14px; }
+.bucket-reference p { white-space: pre-wrap; margin: 8px 0; }
+.bucket-reference small { color: var(--muted-foreground); }
+.journal-view-switch { flex-wrap: wrap; }
+@media(max-width: 760px) {
+ .bucket-header { gap: 8px; padding: 12px; flex-wrap: wrap; }
+ .bucket-header h1 { font-size: 18px; }
+ .bucket-workspace { order: 4; flex-basis: 100%; }
+ .bucket-content { padding: 16px; }
+ .bucket-grid { grid-template-columns: minmax(0, 1fr); }
+ .bucket-card, .bucket-editor { padding: 16px; }
+ .bucket-dialog input, .bucket-dialog textarea, .bucket-dialog select { font-size: 16px; }
+ .bucket-dialog button { min-height: 44px; }
+ .bucket-tools { display: grid; gap: 12px; }
+ .bucket-search { flex-wrap: wrap; }
+ .bucket-search input { flex: 1; min-width: 130px; }
+ .bucket-manual { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media(max-width: 820px) {
+ .mobile-nav { display: flex; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; }
+ .mobile-nav button { flex: 0 0 max(64px, calc(100% / 5)); font-size: 11px; white-space: nowrap; }
+}

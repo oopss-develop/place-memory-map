@@ -8,9 +8,9 @@ async function save(request: Request, creating: boolean) {
   const auth = await getAccessWorkspaceUser();
   if (!auth) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });
   const body = await request.json().catch(() => null);
-  const parsed = visitSchema.extend({ requestId: z.string().uuid().optional() }).safeParse(body);
+  const parsed = visitSchema.extend({ place: visitSchema.shape.place.extend({ id: z.string().uuid().optional() }), requestId: z.string().uuid().optional(), bucketId: z.string().uuid().optional(), bucketVersion: z.number().int().positive().optional() }).safeParse(body);
   if (!parsed.success || (!creating && !parsed.data.id)) return NextResponse.json({ error: "기록 입력을 확인해 주세요." }, { status: 400 });
-  const { data, error } = await auth.supabase.rpc("save_visit", { input: parsed.data, request_id: parsed.data.requestId ?? crypto.randomUUID(), creating });
+  const { data, error } = await auth.supabase.rpc(parsed.data.bucketId ? "save_bucket_visit" : "save_visit", { input: parsed.data, request_id: parsed.data.requestId ?? crypto.randomUUID(), creating });
   if (error) return NextResponse.json({ error: error.code === "PGRST202" ? "저장소 업데이트가 필요합니다. 관리자에게 문의해 주세요." : error.message }, { status: rpcStatus(error.code) });
   return NextResponse.json(data, { status: creating ? 201 : 200 });
 }

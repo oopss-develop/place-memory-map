@@ -18,7 +18,7 @@ test("keeps actions with their targets and selection height stable", async ({ pa
   await page.setViewportSize({ width: 1440, height: 900 });
   const management = page.getByRole("group", { name: "여행 관리", exact: true });
   await expect(management.getByRole("button", { name: "여행 설정", exact: true })).toBeVisible();
-  await expect(management.getByRole("button", { name: "제주 2박 3일 엑셀 다운로드", exact: true })).toBeVisible();
+  await expect(management.getByRole("button", { name: "제주 2박 3일 전체 일정 다운로드", exact: true })).toBeVisible();
   await expect(page.getByRole("region", { name: "시간표 편집", exact: true }).getByRole("button", { name: "일정 추가", exact: true })).toBeVisible();
   await expect(page.getByRole("region", { name: "지도와 동선", exact: true }).getByRole("button", { name: "동선 확인", exact: true })).toBeDisabled();
   const selection = page.getByRole("region", { name: "선택 일정", exact: true });
@@ -61,7 +61,7 @@ test("keeps actions with their targets and selection height stable", async ({ pa
 test("keeps mobile creation and travel management accessible", async ({ page }, info) => {
   test.skip(info.project.name !== "mobile", "mobile workflow");
   await expect(page.getByRole("button", { name: "일정 추가", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "제주 2박 3일 엑셀 다운로드", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "제주 2박 3일 전체 일정 다운로드", exact: true })).toBeVisible();
   await page.getByRole("radio", { name: "지도", exact: true }).click();
   await expect(page.getByRole("heading", { name: "지도 · 동선", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "동선 확인", exact: true })).toBeVisible();

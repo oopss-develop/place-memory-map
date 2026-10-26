@@ -1,0 +1,120 @@
+import { expect, test } from "@playwright/test";
+const groupId = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(groupId => {
+    if (!localStorage.getItem("bucket-fixture-ready")) {
+      localStorage.setItem("place-memory-groups-v1", JSON.stringify([{ id: groupId, name: "우리 지도", role: "owner", memberCount: 2 }]));
+      localStorage.setItem("place-memory-visits-v2", JSON.stringify([{ id: "11111111-1111-4111-8111-111111111111", groupId, place: { id: "22222222-2222-4222-8222-222222222222", provider: "manual", name: "서울 숲", address: "서울", category: "산책", latitude: 37.54, longitude: 127.04 }, visitedOn: "2026-10-01", isPlanned: false, title: "산책", note: "", rating: 5, tags: [], participants: [], photoUrls: [], markerStyle: "black-9", version: 1, updatedBy: "나" }]));
+      localStorage.setItem("place-memory-install-prompt-dismissed-v1", "true");
+      localStorage.setItem("bucket-fixture-ready", "true");
+    }
+  }, groupId);
+  await page.goto("/");
+});
+async function openBucket(page: import("@playwright/test").Page) {
+  await page.getByRole("button", { name: "버킷리스트", exact: true }).click();
+  const bucket = page.getByRole("dialog", { name: "버킷리스트", exact: true });
+  await expect(bucket).toBeVisible();
+  return bucket;
+}
+test("saves an undated wish, adds/removes its optional place and preserves discussion through stamping", async ({ page }) => {
+  let bucket = await openBucket(page);
+  await bucket.getByRole("button", { name: "추가", exact: true }).click();
+  let form = bucket.getByRole("form", { name: "버킷리스트 추가" });
+  await form.getByLabel("종류", { exact: true }).selectOption("activity");
+  await form.getByLabel("제목", { exact: true }).fill("함께 도자기 만들기");
+  await form.getByLabel("버킷리스트인 이유").fill("서로 만들어준 컵으로 커피 마시고 싶어서");
+  await expect(form.locator('input[type="date"]')).toHaveCount(0);
+  await form.getByRole("button", { name: "저장", exact: true }).click();
+  let card = bucket.locator(".bucket-card").filter({ hasText: "함께 도자기 만들기" });
+  await expect(card).toBeVisible();
+  await expect(card).not.toContainText("서울 숲");
+  await page.reload();
+  bucket = await openBucket(page);
+  card = bucket.locator(".bucket-card").filter({ hasText: "함께 도자기 만들기" });
+  await card.getByRole("button", { name: "수정", exact: true }).click();
+  form = bucket.getByRole("form", { name: "버킷리스트 수정" });
+  await form.getByLabel("기존 기록에서 장소 선택").selectOption("22222222-2222-4222-8222-222222222222");
+  await form.getByRole("button", { name: "장소 제거" }).click();
+  await expect(form.locator(".bucket-place-value")).toHaveCount(0);
+  await form.getByLabel("기존 기록에서 장소 선택").selectOption("22222222-2222-4222-8222-222222222222");
+  await form.getByRole("button", { name: "저장", exact: true }).click();
+  await expect(card).toContainText("서울 숲");
+  await card.getByRole("button", { name: "댓글", exact: true }).click();
+  await card.getByLabel("댓글 남기기").fill("여름에 함께 가자!");
+  await card.getByRole("button", { name: "댓글 등록" }).click();
+  await expect(card).toContainText("여름에 함께 가자!");
+  await card.getByRole("button", { name: "도장깨기", exact: true }).click();
+  let visit = page.getByRole("dialog", { name: "새 방문 기록", exact: true });
+  await expect(visit).toBeVisible();
+  await expect(visit.getByLabel("기록 제목", { exact: true })).toHaveValue("함께 도자기 만들기");
+  await expect(visit.getByLabel("방문 예정")).toBeChecked();
+  await visit.getByLabel("방문한 날").fill("2026-10-01");
+  await visit.getByRole("button", { name: "지도에 기록 남기기" }).click();
+  await expect(visit).not.toBeVisible();
+  await expect(card).toContainText("일정 잡음");
+  await card.getByRole("button", { name: "도장깨기 · 다녀왔어요" }).click();
+  visit = page.getByRole("dialog", { name: "기록 고치기", exact: true });
+  await expect(visit.getByLabel("방문 예정")).not.toBeChecked();
+  await visit.getByLabel("무엇을 했나요?").fill("드디어 우리 컵 완성!");
+  await visit.getByRole("button", { name: "수정 내용 저장" }).click();
+  await expect(visit).not.toBeVisible();
+  await expect(card.getByRole("button", { name: "기록 보기" })).toBeVisible();
+  await expect(card).toContainText("서로 만들어준 컵으로 커피 마시고 싶어서");
+  await expect(card).toContainText("여름에 함께 가자!");
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("place-memory-visits-v2") ?? "[]"));
+  expect(saved.filter((v: { title: string }) => v.title === "함께 도자기 만들기")).toHaveLength(1);
+  expect(await bucket.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+  await bucket.evaluate(el => { el.scrollTop = 0; });
+  await page.screenshot({ path: test.info().outputPath("bucket-list-completed.png") });
+  await card.getByRole("button", { name: "삭제", exact: true }).click();
+  const confirmation = page.getByRole("dialog", { name: "삭제 확인" });
+  await expect(confirmation).toBeVisible();
+  await confirmation.getByRole("button", { name: "삭제", exact: true }).click();
+  await expect(card).toHaveCount(0);
+});
+
+test("an activity without a place asks for one only when stamping, and cancelled stamping leaves it unfinished", async ({ page }) => {
+  const bucket = await openBucket(page);
+  await bucket.getByRole("button", { name: "추가", exact: true }).click();
+  const form = bucket.getByRole("form", { name: "버킷리스트 추가" });
+  await form.getByLabel("제목", { exact: true }).fill("새로운 경험");
+  await form.getByRole("button", { name: "저장", exact: true }).click();
+  const card = bucket.locator(".bucket-card").filter({ hasText: "새로운 경험" });
+  await card.getByRole("button", { name: "도장깨기", exact: true }).click();
+  const picker = bucket.getByRole("region", { name: "도장깨기 장소 선택" });
+  await expect(picker).toBeVisible();
+  await picker.getByLabel("기존 기록에서 장소 선택").selectOption("22222222-2222-4222-8222-222222222222");
+  const visit = page.getByRole("dialog", { name: "새 방문 기록", exact: true });
+  await expect(visit).toBeVisible();
+  await visit.getByRole("button", { name: "취소", exact: true }).click();
+  await expect(card).toContainText("하고 싶은 것");
+  await expect(card).not.toContainText("일정 잡음");
+});
+
+test("restores a wish draft, supports continuous entry and keeps future stamping planned", async ({ page }) => {
+  let bucket = await openBucket(page);
+  await bucket.getByRole("button", { name: "추가", exact: true }).click();
+  let form = bucket.getByRole("form", { name: "버킷리스트 추가" });
+  await form.getByLabel("제목", { exact: true }).fill("미래의 소망");
+  await form.getByRole("button", { name: "닫기 · 초안 보관" }).click();
+  await page.reload();
+  bucket = await openBucket(page);
+  await bucket.getByRole("button", { name: "추가", exact: true }).click();
+  form = bucket.getByRole("form", { name: "버킷리스트 추가" });
+  await expect(form.getByLabel("제목", { exact: true })).toHaveValue("미래의 소망");
+  await form.getByLabel("기존 기록에서 장소 선택").selectOption("22222222-2222-4222-8222-222222222222");
+  await form.getByRole("button", { name: "저장 후 계속 추가" }).click();
+  await expect(form.getByLabel("제목", { exact: true })).toHaveValue("");
+  await form.getByLabel("제목", { exact: true }).fill("다음 소망");
+  await form.getByRole("button", { name: "저장", exact: true }).click();
+  await expect(bucket.locator(".bucket-card")).toHaveCount(2);
+  const card = bucket.locator(".bucket-card").filter({ hasText: "미래의 소망" });
+  await card.getByRole("button", { name: "도장깨기", exact: true }).click();
+  const visit = page.getByRole("dialog", { name: "새 방문 기록", exact: true });
+  await visit.getByLabel("방문한 날").fill("2099-01-01");
+  await visit.getByLabel("방문 예정").uncheck();
+  await visit.getByRole("button", { name: "지도에 기록 남기기" }).click();
+  await expect(card).toContainText("일정 잡음");
+  await expect(card.getByRole("button", { name: "기록 보기" })).toHaveCount(0);
+});

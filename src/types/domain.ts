@@ -104,3 +104,24 @@ export interface MapPoint {
   pinLabel?: string;
   pinNumber?: string;
 }
+
+export interface BucketItem {
+  id: string;
+  group_id: string;
+  title: string;
+  kind: "place" | "activity";
+  reason: string;
+  place: Place | null;
+  tags: string[];
+  visit_id: string | null;
+  version: number;
+  created_at: string;
+}
+export interface BucketComment {
+  id: string;
+  bucket_id: string;
+  author_id: string;
+  body: string;
+  created_at: string;
+  profiles?: { display_name: string };
+}

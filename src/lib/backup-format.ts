@@ -1,8 +1,8 @@
 import { z } from "zod";
-export const backupTables = ["profiles","groups","group_members","places","visits","visit_participants","visit_photos","trips","schedule_items","trip_route_cache","visit_comments","activity_logs","sticker_favorites","comment_notifications","workspace_save_requests","memory_boards","memory_board_photos"] as const;
+export const backupTables = ["profiles","groups","group_members","places","visits","visit_participants","visit_photos","trips","schedule_items","trip_route_cache","visit_comments","activity_logs","sticker_favorites","comment_notifications","workspace_save_requests","memory_boards","memory_board_photos","bucket_items","bucket_comments"] as const;
 const row = z.record(z.string(),z.unknown());
 const dataShape = Object.fromEntries(backupTables.map(table=>[table,z.array(row)])) as Record<typeof backupTables[number], z.ZodArray<typeof row>>;
-export const snapshotSchema = z.object({ format: z.literal("uttumak-backup"), version: z.literal(1), createdAt: z.string(), userId: z.string().uuid(), data: z.object(dataShape).extend({ memory_boards: z.array(row).default([]), memory_board_photos: z.array(row).default([]) }).strict() });
+export const snapshotSchema = z.object({ format: z.literal("uttumak-backup"), version: z.literal(1), createdAt: z.string(), userId: z.string().uuid(), data: z.object(dataShape).extend({ bucket_items: z.array(row).default([]), bucket_comments: z.array(row).default([]), memory_boards: z.array(row).default([]), memory_board_photos: z.array(row).default([]) }).strict() });
 export type BackupSnapshot = z.infer<typeof snapshotSchema>;
 export interface BackupFile { path: string; bytes: number; sha256: string; mime?: string }
 export interface BackupManifest { format: "uttumak-backup"; version: 1; createdAt: string; photosIncluded: boolean; stickersIncluded: boolean; files: BackupFile[] }
@@ -48,7 +48,8 @@ export function offlineBackupHtml(snapshot: BackupSnapshot, photosIncluded: bool
       }).join("");
       return `<article><h3>추억 보드</h3><div class="photos">${content}</div></article>`;
     }).join("");
-    return `<section><h2>${escapeHtml(group.name)}</h2>${visits}${trips}${boards}</section>`;
+    const buckets = data.bucket_items.filter(b=>b.group_id===group.id).map(b=>`<article><h3>버킷리스트: ${escapeHtml(b.title)} ${b.deleted_at ? "(삭제됨)" : ""}</h3><p>${escapeHtml((b.place as Record<string,unknown> | null)?.name)}</p><p>${escapeHtml(b.reason)}</p><ul>${data.bucket_comments.filter(c=>c.bucket_id===b.id).map(c=>`<li>${escapeHtml(profileNames.get(c.author_id))}: ${escapeHtml(c.body)}</li>`).join("")}</ul></article>`).join("");
+    return `<section><h2>${escapeHtml(group.name)}</h2>${visits}${trips}${boards}${buckets}</section>`;
   }).join("");
   return `<!doctype html><html lang="ko"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>우뚜막 백업 기록</title><style>body{max-width:900px;margin:32px auto;padding:0 20px;font-family:system-ui;line-height:1.7}article{border:1px solid #ddd;border-radius:12px;padding:20px;margin:16px 0}p{white-space:pre-wrap;overflow-wrap:anywhere}.photos{display:flex;flex-wrap:wrap;gap:8px}.photos img{width:240px;max-width:100%;height:180px;object-fit:contain}.sticker{max-width:128px}small{color:#666}</style><h1>우뚜막 · 소중한 기록</h1><p>백업 시각: ${escapeHtml(snapshot.createdAt)}</p>${parts}</html>`;
 }

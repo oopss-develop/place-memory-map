@@ -69,3 +69,12 @@ All core pin information must also be reachable through a keyboard-accessible li
 Record saves and photo uploads report separate outcomes. Stable request IDs protect retries; an atomic database transaction saves visits and participants. Visit deletion preserves photos for 30 days, offers 10-second undo, and exposes a membership- and version-checked trash restore. Individual photo deletion is available in the enlargement dialog. Daily authenticated maintenance removes expired Storage files before metadata.
 
 Visit and schedule text drafts are device-local, isolated by user/map/entity, debounce at 500ms and expire after seven days. Unuploaded photo files are excluded. Conflicts preserve input and show the latest title and note for explicit review. Saved record search combines query, dates, visit state, tags and participants; map and list share the same result.
+
+## Bucket List
+
+- Each shared map has a bucket-list tab for places to visit and activities to try. Only the title and kind are required; dates, locations, ratings and participants are not required when collecting wishes.
+- Members can optionally search for a domestic or overseas place, reuse a recorded place, or enter coordinates manually. Locations can be added, replaced or removed later. Reasons and tags are editable independently of visit notes; each wish has a shared comment discussion.
+- “도장깨기” reuses the visit form, asking for a place if missing and pre-filling the wish title and tags. A planned record means “일정 잡음”; a completed record means “완료”. Future dates are saved as planned. An existing planned record is updated when completing the wish.
+- The database saves the visit and its bucket link atomically, with group membership, optimistic versions and retry protection. Original reasons and discussions survive completion and linked-visit deletion. Deleting a wish preserves its visit; deleting a visit returns its wish to an unfinished state.
+- Bucket drafts are isolated by user/map/item and expire after seven days. Demo wishes and comments are device-local. Workspace backups and the offline viewer include bucket items and comments, with defaults for older backups.
+- Apply `supabase/migrations/202610260001_bucket_list.sql` before enabling the feature on a connected database. The first release links to dated visit records; dedicated travel timetable import and a bucket-only map view are follow-up work.
