@@ -38,7 +38,7 @@ begin
     raise exception '댓글에 접근할 수 없습니다.' using errcode = '42501';
   end if;
   if saved.body <> btrim(comment_body) then
-    raise exception '전송한 댓글을 확인한 뒤 새 댓글을 작성해 주세요.' using errcode = '40001';
+    raise exception '전송한 댓글을 확인한 뒤 새 댓글을 작성해 주세요.' using errcode = 'PT409';
   end if;
   return saved;
 end $$;
@@ -96,7 +96,7 @@ begin
     raise exception '댓글에 접근할 수 없습니다.' using errcode = '42501';
   end if;
   if saved.body is distinct from cleaned or saved.sticker_id is distinct from comment_sticker_id then
-    raise exception '이미 전송한 댓글입니다.' using errcode = '40001';
+    raise exception '이미 전송한 댓글입니다.' using errcode = 'PT409';
   end if;
   return saved;
 end $$;

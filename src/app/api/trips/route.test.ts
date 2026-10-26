@@ -23,7 +23,7 @@ describe("trip routes", () => {
     expect(mocks.rpc).not.toHaveBeenCalled();
   });
   it("returns a conflict instead of overwriting another member", async () => {
-    mocks.rpc.mockResolvedValue({ error: { code: "40001", message: "다른 멤버가 먼저 수정했습니다." } });
+    mocks.rpc.mockResolvedValue({ error: { code: "PT409", message: "다른 멤버가 먼저 수정했습니다." } });
     const response = await POST(request({ ...payload, id: tripId }));
     expect(response.status).toBe(409);
     expect((await response.json()).error).toContain("다른 멤버");

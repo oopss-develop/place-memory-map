@@ -22,7 +22,7 @@ select throws_ok($$select public.reserve_visit_photo(current_setting('test.visit
 select lives_ok($$select public.complete_visit_photo(current_setting('test.visit_id')::uuid,'50000000-0000-4000-8000-000000000001')$$,'complete upload');
 update public.visits set deleted_at=now(),version=2 where id=current_setting('test.visit_id')::uuid;
 select is((select count(*)::int from public.visit_photos),1,'soft deletion retains photo metadata');
-select throws_ok($$select public.restore_visit(current_setting('test.visit_id')::uuid,1)$$,'40001',null,'stale restore rejected');
+select throws_ok($$select public.restore_visit(current_setting('test.visit_id')::uuid,1)$$,'PT409',null,'stale restore rejected');
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000002',true);
 select is((select count(*)::int from public.visits),0,'outsider cannot read trash');
 select is((select count(*)::int from public.visit_photos),0,'outsider cannot read photos');
@@ -31,7 +31,7 @@ select throws_ok($$select public.reserve_visit_photo(current_setting('test.visit
 select set_config('request.jwt.claim.sub','10000000-0000-4000-8000-000000000001',true);
 select is((public.restore_visit(current_setting('test.visit_id')::uuid,2)->>'version')::int,3,'restore increments version');
 select is((select count(*)::int from public.visit_photos where upload_state='complete'),1,'restore retains completed photos');
-select throws_ok($$select public.save_visit(current_setting('test.visit_input')::jsonb||jsonb_build_object('id',current_setting('test.visit_id'),'version',1),'40000000-0000-4000-8000-000000000002',false)$$,'40001',null,'stale edit rejected');
+select throws_ok($$select public.save_visit(current_setting('test.visit_input')::jsonb||jsonb_build_object('id',current_setting('test.visit_id'),'version',1),'40000000-0000-4000-8000-000000000002',false)$$,'PT409',null,'stale edit rejected');
 update public.visits set deleted_at=now()-interval '31 days',version=4 where id=current_setting('test.visit_id')::uuid;
 select throws_ok($$select public.restore_visit(current_setting('test.visit_id')::uuid,4)$$,'P0002',null,'expired record cannot restore');
 select throws_ok($$select public.claim_expired_visits()$$,'42501',null,'cleanup is service-role only');

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getAccessWorkspaceUser } from "@/lib/access-workspace";
 import { bucketSchema } from "@/lib/bucket-list";
 import { readPages } from "@/lib/data";
-const status = (code?: string) => code === "42501" ? 403 : code === "40001" ? 409 : code === "P0002" ? 404 : ["PGRST202", "42P01"].includes(code ?? "") ? 503 : 400;
+const status = (code?: string) => code === "42501" ? 403 : ["40001", "PT409"].includes(code ?? "") ? 409 : code === "P0002" ? 404 : ["PGRST202", "42P01"].includes(code ?? "") ? 503 : 400;
 export async function GET(request: Request) {
   const auth = await getAccessWorkspaceUser();
   if (!auth) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });

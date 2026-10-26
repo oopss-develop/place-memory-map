@@ -23,7 +23,7 @@ it("rejects incomplete titles and invalid coordinates before saving", async () =
   expect(mocks.rpc).not.toHaveBeenCalled();
 });
 it("reports concurrent edits and permission failures instead of claiming success", async () => {
-  mocks.rpc.mockResolvedValueOnce({ error: { code: "40001", message: "다른 멤버가 수정했습니다." } }).mockResolvedValueOnce({ error: { code: "42501", message: "접근할 수 없습니다." } });
+  mocks.rpc.mockResolvedValueOnce({ error: { code: "PT409", message: "다른 멤버가 수정했습니다." } }).mockResolvedValueOnce({ error: { code: "42501", message: "접근할 수 없습니다." } });
   expect((await PUT(request(input))).status).toBe(409);
   expect((await DELETE(request({ id, version: 1 }))).status).toBe(403);
 });

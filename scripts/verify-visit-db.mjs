@@ -34,6 +34,9 @@ try {
     await db.exec(await readFile("supabase/migrations/"+name,"utf8"));
     console.log("Migration:",name);
   }
+  // Reapplying the fix must preserve RPC definitions, grants and conflict checks.
+  await db.exec(await readFile("supabase/migrations/202610260002_non_retryable_conflicts.sql", "utf8"));
+  check((await query("select count(*)::int as n from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','private') and p.prokind='f' and p.prosrc like '%40001%'"))[0].n, 0, "application RPCs never raise retryable serialization errors");
   await query("insert into auth.users(id,email) values ($1,'owner@example.test'),($2,'outsider@example.test')",[owner,outsider]);
   await query("insert into public.groups(id,name,created_by) values($1,'SQL verification',$2)",[group,owner]);
   await query("insert into public.group_members(group_id,user_id,role) values($1,$2,'owner')",[group,owner]);
@@ -64,7 +67,7 @@ try {
   check(await query("select id,body,sticker_id from public.visit_comments order by id"), beforeRepair, "repair is repeatable and preserves comments");
   check(await count("comment_notifications"),1,"repair does not duplicate existing notifications");
   check(await count("visit_comments"),1,"comment retries create only one comment");
-  await rejects("select public.add_visit_comment($1,$2,$3)",[visit.id,commentId,"changed"],"40001");
+  await rejects("select public.add_visit_comment($1,$2,$3)",[visit.id,commentId,"changed"],"PT409");
   await rejects("select public.add_visit_comment($1,$2,$3)",[visit.id,"60000000-0000-4000-8000-000000000002"," "],"22023");
   await rejects("select public.add_visit_comment($1,$2,$3)",[visit.id,"60000000-0000-4000-8000-000000000002","x".repeat(1001)],"22023");
   const sid="60000000-0000-4000-8000-000000000003";
@@ -72,7 +75,7 @@ try {
   await query("select public.add_visit_comment($1,$2,$3,$4)",sa);
   await query("select public.add_visit_comment($1,$2,$3,$4)",sa);
   check(await count("visit_comments"),2,"sticker-only retries create one comment");
-  await rejects("select public.add_visit_comment($1,$2,$3,$4)",[visit.id,sid,"","02_뚜냥/01_안녕.png"],"40001");
+  await rejects("select public.add_visit_comment($1,$2,$3,$4)",[visit.id,sid,"","02_뚜냥/01_안녕.png"],"PT409");
   for(const path of ["../bad.gif","a/../bad.gif","a/b.preview.png","a/b.svg",""]) await rejects("select public.add_visit_comment($1,$2,$3,$4)",[visit.id,sid,"",path],"22023");
   await identity(outsider);
   await rejects("select public.add_visit_comment($1,$2,$3,$4)",sa,"42501");
@@ -133,8 +136,8 @@ try {
   const wall=await writeBoard(boardInput);
   check(wall.version,1,"first board save starts at version one");
   check((await writeBoard(boardInput)).version,1,"board save retries are idempotent");
-  await rejects("select public.save_memory_board($1::jsonb)",[JSON.stringify({...boardInput,background:"whiteboard"})],"40001");
-  await rejects("select public.save_memory_board($1::jsonb)",[JSON.stringify({...boardInput,requestId:"80000000-0000-4000-8000-000000000002"})],"40001");
+  await rejects("select public.save_memory_board($1::jsonb)",[JSON.stringify({...boardInput,background:"whiteboard"})],"PT409");
+  await rejects("select public.save_memory_board($1::jsonb)",[JSON.stringify({...boardInput,requestId:"80000000-0000-4000-8000-000000000002"})],"PT409");
   await rejects("select public.save_memory_board($1::jsonb)",[JSON.stringify({...boardInput,version:1,requestId:"80000000-0000-4000-8000-000000000002",items:[boardNote,boardNote]})],"22023");
   await rejects("select public.save_memory_board($1::jsonb)",[JSON.stringify({...boardInput,version:1,requestId:"80000000-0000-4000-8000-000000000002",items:[{...boardNote,x:1199}]})],"22023");
   await rejects("select public.save_memory_board($1::jsonb)",[JSON.stringify({...boardInput,version:1,requestId:"80000000-0000-4000-8000-000000000002",items:[{...boardPhoto,photoId:"90000000-0000-4000-8000-000000000001"}]})],"42501");
@@ -146,13 +149,13 @@ try {
   const updateKey="40000000-0000-4000-8000-000000000002";
   check((await save({...input,id:visit.id},updateKey,false)).version,2,"update increments version");
   check((await save({...input,id:visit.id},updateKey,false)).version,2,"update replay does not increment again");
-  await rejects("select public.save_visit($1::jsonb,$2,false)",[JSON.stringify({...input,id:visit.id}),"40000000-0000-4000-8000-000000000003"],"40001");
+  await rejects("select public.save_visit($1::jsonb,$2,false)",[JSON.stringify({...input,id:visit.id}),"40000000-0000-4000-8000-000000000003"],"PT409");
   await query("update public.visits set deleted_at=now(),version=3 where id=$1",[visit.id]);
   check((await writeBoard({...boardInput,version:1,requestId:"80000000-0000-4000-8000-000000000002"})).version,2,"deleted source photos do not prevent editing existing board items");
   check(await count("visit_comments"),0,"comments are hidden on deleted visits");
   await rejects("select public.add_visit_comment($1,$2,$3)",[visit.id,"60000000-0000-4000-8000-000000000002","deleted"],"42501");
   check(await count("visit_photos"),1,"deleting a record retains its photos");
-  await rejects("select public.restore_visit($1,2)",[visit.id],"40001");
+  await rejects("select public.restore_visit($1,2)",[visit.id],"PT409");
   await identity(outsider);
   check(await count("visits"),0,"outsider cannot read trash");check(await count("visit_photos"),0,"outsider cannot read photo metadata");
   await rejects("select public.restore_visit($1,3)",[visit.id],"42501");
@@ -238,7 +241,7 @@ try {
   const uploaded=await reserveBoard();
   check((await reserveBoard()).id,uploaded.id,"board photo reservation retries reuse the same ID");
   check((await reserveBoard("90000000-0000-4000-8000-000000000012")).id,uploaded.id,"identical compressed content reuses one stored board photo");
-  await rejects("select public.reserve_memory_board_photo($1,$2,$3,$4,'사진')",[group,uploadedId,"d".repeat(64),350000],"40001");
+  await rejects("select public.reserve_memory_board_photo($1,$2,$3,$4,'사진')",[group,uploadedId,"d".repeat(64),350000],"PT409");
   await rejects("select public.reserve_memory_board_photo($1,$2,$3,$4,'사진')",[group,"90000000-0000-4000-8000-000000000012","d".repeat(64),350001],"22023");
   await rejects("select public.complete_memory_board_photo($1)",[uploaded.id],"55000");
   await query("insert into storage.objects(bucket_id,name) values('visit-photos',$1)",[uploaded.storage_path]);
@@ -300,8 +303,8 @@ try {
   const stamped=(await query(stampSql,[JSON.stringify(stampInput),bucketId,true]))[0].visit;
   check((await query(stampSql,[JSON.stringify(stampInput),bucketId,true]))[0].visit.id,stamped.id,"stamp retry reuses one visit");
   check((await query("select visit_id from public.bucket_items where id=$1",[bucketId]))[0].visit_id,stamped.id,"stamp links saved visit atomically");
-  await rejects(stampSql,[JSON.stringify(stampInput),bucketCommentId,true],"40001");
-  await rejects(bucketSql,[JSON.stringify({...bucketInput,requestId:bucketCommentId}),false],"40001");
+  await rejects(stampSql,[JSON.stringify(stampInput),bucketCommentId,true],"PT409");
+  await rejects(bucketSql,[JSON.stringify({...bucketInput,requestId:bucketCommentId}),false],"PT409");
   const completedInput={...stampInput,id:stamped.id,version:stamped.version,isPlanned:false};
   await query(stampSql,[JSON.stringify(completedInput),bucketCommentId,false]);
   check((await query("select is_planned from public.visits where id=$1",[stamped.id]))[0].is_planned,false,"planned bucket completes by updating its linked visit");

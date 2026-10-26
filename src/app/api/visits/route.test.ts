@@ -12,8 +12,8 @@ it("passes an unchanged idempotency key on repeated create requests",async()=>{
   expect((await POST(request(body))).status).toBe(201);expect((await POST(request(body))).status).toBe(201);
   expect(mocks.rpc.mock.calls.every(call=>call[1].request_id===id && call[0]==="save_visit")).toBe(true);
 });
-it("returns conflicts and permission failures without pretending the save succeeded",async()=>{
-  mocks.rpc.mockResolvedValueOnce({error:{code:"40001",message:"최신 버전 확인"}}).mockResolvedValueOnce({error:{code:"42501",message:"권한 없음"}});
+it.each(["40001", "PT409"])("returns %s conflicts and permission failures without pretending the save succeeded",async(code)=>{
+  mocks.rpc.mockResolvedValueOnce({error:{code,message:"최신 버전 확인"}}).mockResolvedValueOnce({error:{code:"42501",message:"권한 없음"}});
   expect((await PUT(request({...body,id,version:1}))).status).toBe(409);expect((await POST(request(body))).status).toBe(403);
 });
 it("checks restore version and refuses expired or inaccessible records",async()=>{

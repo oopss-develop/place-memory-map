@@ -20,7 +20,7 @@ async function write(request: Request, context: Context, removing: boolean) {
   const id = z.string().uuid().safeParse((await context.params).bucketId);
   if (!parsed.success || !id.success || (!removing && !parsed.data.body)) return NextResponse.json({ error: "댓글을 1~1000자로 입력해 주세요." }, { status: 400 });
   const { data, error } = await auth.supabase.rpc("write_bucket_comment", { target_id: id.data, comment_id: parsed.data.id, comment_body: parsed.data.body, removing });
-  if (error) return NextResponse.json({ error: error.message }, { status: error.code === "42501" ? 403 : error.code === "40001" ? 409 : 400 });
+  if (error) return NextResponse.json({ error: error.message }, { status: error.code === "42501" ? 403 : ["40001", "PT409"].includes(error.code ?? "") ? 409 : 400 });
   return NextResponse.json(data);
 }
 export async function POST(request: Request, context: Context) { return write(request, context, false); }

@@ -75,7 +75,7 @@ async function write(request: Request, { params }: Context, deleting: boolean) {
       : await auth.supabase.rpc("add_visit_comment", { ...args, comment_body: comment!.body, ...(comment?.stickerId ? { comment_sticker_id: comment.stickerId } : {}) });
     if (error) {
       if (missingSchema(error)) return NextResponse.json({ error: schemaMessage, code: "COMMENT_SCHEMA_MISSING" }, { status: 503, headers });
-      const status = error.code === "42501" ? 403 : error.code === "40001" ? 409 : error.code === "22023" ? 400 : 503;
+      const status = error.code === "42501" ? 403 : ["40001", "PT409"].includes(error.code ?? "") ? 409 : error.code === "22023" ? 400 : 503;
       return NextResponse.json({ error: status === 403 ? "기록 접근 권한이 없거나 본인 댓글이 아닙니다." : status === 409 ? "이미 전송된 댓글입니다. 새로고침 후 확인해 주세요." : "댓글을 저장하지 못했습니다. 다시 시도해 주세요." }, { status, headers });
     }
     return NextResponse.json({ ok: true }, { headers });

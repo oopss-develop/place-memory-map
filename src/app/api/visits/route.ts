@@ -3,7 +3,7 @@ import { z } from "zod";
 import { visitSchema } from "@/lib/schemas";
 import { getAccessWorkspaceUser } from "@/lib/access-workspace";
 
-const rpcStatus = (code?: string) => code === "42501" ? 403 : code === "40001" ? 409 : code === "P0002" ? 404 : code === "PGRST202" || code === "42703" ? 503 : 400;
+const rpcStatus = (code?: string) => code === "42501" ? 403 : ["40001", "PT409"].includes(code ?? "") ? 409 : code === "P0002" ? 404 : code === "PGRST202" || code === "42703" ? 503 : 400;
 async function save(request: Request, creating: boolean) {
   const auth = await getAccessWorkspaceUser();
   if (!auth) return NextResponse.json({ error: "로그인이 필요합니다." }, { status: 401 });

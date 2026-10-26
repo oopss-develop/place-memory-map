@@ -29,7 +29,7 @@ it("preserves a comment UUID across retries and trims its text", async () => {
   expect(mocks.rpc).toHaveBeenCalledWith("add_visit_comment", { target_visit: id, comment_id: id, comment_body: "hi" });
 });
 it("surfaces membership, author and retry conflicts", async () => {
-  mocks.rpc.mockResolvedValueOnce({ error: { code: "42501" } }).mockResolvedValueOnce({ error: { code: "40001" } });
+  mocks.rpc.mockResolvedValueOnce({ error: { code: "42501" } }).mockResolvedValueOnce({ error: { code: "PT409" } });
   expect((await DELETE(request({ id }), context)).status).toBe(403);
   expect((await POST(request({ id, body: "changed" }), context)).status).toBe(409);
 });
