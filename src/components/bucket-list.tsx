@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, Check, MapPin, Plus, Search, Stamp, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -75,16 +75,33 @@ export function BucketList(props: Props) {
       <p className="bucket-muted">날짜는 나중에. 가고 싶은 곳과 하고 싶은 일을 먼저 모아두세요.</p>
       {demo && <p className="bucket-muted">체험 모드 · 이 기기에 저장됩니다.</p>}
       {error && <div role="alert"><p>{error}</p><Button variant="outline" onClick={() => void load().then(() => setError("")).catch(error => setError(error.message))}>새로고침</Button></div>}
-      {editor && <BucketEditor key={editor === "new" ? "new" : editor.id} item={editor === "new" ? undefined : editor} groupId={groupId} visits={visits} viewerId={viewerId} demo={demo} onBusy={setBusy} onCancel={() => setEditor(null)} onSaved={(saved, again) => { update([saved, ...items.filter(item => item.id !== saved.id)]); setEditor(null); if (again) setTimeout(() => setEditor("new"), 0); }} />}
-      {stamping && <section className="bucket-editor" aria-label="도장깨기 장소 선택"><h2>{stamping.title} · 어디에서 할까요?</h2><p>기록에 남길 장소를 선택한 뒤 날짜와 나머지 값을 입력하세요.</p><BucketPlacePicker value={null} onChange={place => { if (place) { props.onStamp(stamping, place); setStamping(undefined); } }} visits={visits} groupId={groupId} /><Button variant="ghost" onClick={() => setStamping(undefined)}>취소</Button></section>}
+      {editor && <BucketPopup label={editor === "new" ? "버킷리스트 추가" : "버킷리스트 수정"} busy={busy} onClose={() => setEditor(null)}><BucketEditor key={editor === "new" ? "new" : editor.id} item={editor === "new" ? undefined : editor} groupId={groupId} visits={visits} viewerId={viewerId} demo={demo} onBusy={setBusy} onCancel={() => setEditor(null)} onSaved={(saved, again) => { update([saved, ...items.filter(item => item.id !== saved.id)]); setEditor(null); if (again) setTimeout(() => setEditor("new"), 0); }} /></BucketPopup>}
+      {stamping && <BucketPopup label="도장깨기 장소 선택" busy={busy} onClose={() => setStamping(undefined)}><section className="bucket-editor" aria-label="도장깨기 장소 선택"><h2>{stamping.title} · 어디에서 할까요?</h2><p>기록에 남길 장소를 선택한 뒤 날짜와 나머지 값을 입력하세요.</p><BucketPlacePicker value={null} onChange={place => { if (place) { props.onStamp(stamping, place); setStamping(undefined); } }} visits={visits} groupId={groupId} /><Button variant="ghost" onClick={() => setStamping(undefined)}>취소</Button></section></BucketPopup>}
       <div className="bucket-tools"><Input aria-label="버킷리스트 검색" placeholder="제목, 이유, 장소, 태그 검색" value={query} onChange={event => setQuery(event.target.value)} /><div className="bucket-filters" aria-label="버킷리스트 상태">{([['all','전체'], ...Object.entries(labels)]).map(([value,label]) => <Button key={value} variant={filter === value ? "default" : "outline"} aria-pressed={filter === value} onClick={() => setFilter(value)}>{label}</Button>)}</div></div>
-      {loading ? <p role="status">버킷리스트 불러오는 중…</p> : !visible.length ? <div className="bucket-empty"><Stamp /><h2>{items.length ? "조건에 맞는 항목이 없어요." : "우리의 다음 소망을 적어보세요."}</h2><p>장소와 날짜가 정해지지 않아도 괜찮아요.</p></div> : <ul className="bucket-grid">{visible.map(item => {
+      <div className="bucket-list-scroll">{loading ? <p role="status">버킷리스트 불러오는 중…</p> : !visible.length ? <div className="bucket-empty"><Stamp /><h2>{items.length ? "조건에 맞는 항목이 없어요." : "우리의 다음 소망을 적어보세요."}</h2><p>장소와 날짜가 정해지지 않아도 괜찮아요.</p></div> : <ul className="bucket-grid">{visible.map(item => {
         const status = bucketStatus(item, visits);
         const visit = visits.find(v => v.id === item.visit_id && !v.deletedAt);
-        return <li key={item.id} className="bucket-card"><div className="bucket-meta"><Badge variant="outline">{item.kind === "place" ? "가고 싶은 곳" : "하고 싶은 것"}</Badge><Badge variant="secondary">{status === "completed" && <Check size={14} />}{labels[status]}</Badge></div><h2>{item.title}</h2>{item.place && <p className="bucket-muted"><MapPin size={14} />{item.place.name}{item.place.address && ` · ${item.place.address}`}</p>}<p className="bucket-reason">{item.reason || "이 버킷리스트를 담은 이유를 남겨보세요."}</p><div className="bucket-tags">{item.tags.map(tag => <Badge key={tag} variant="outline">#{tag}</Badge>)}</div>{visit && <p className="bucket-muted">{status === "completed" ? "완료" : "예정"} · {visit.visitedOn}</p>}<div className="bucket-actions"><Button variant="ghost" onClick={() => setDetail(detail === item.id ? undefined : item.id)} aria-expanded={detail === item.id}>댓글</Button><Button variant="ghost" disabled={busy} onClick={() => setEditor(item)}>수정</Button><Button variant="ghost" disabled={busy} onClick={() => void remove(item)}>삭제</Button>{status === "completed" ? <Button variant="outline" disabled={busy} onClick={() => props.onVisit(item.visit_id!)}>기록 보기</Button> : <Button disabled={busy} onClick={() => stamp(item)}><Stamp />{status === "planned" ? "도장깨기 · 다녀왔어요" : "도장깨기"}</Button>}</div>{detail === item.id && <BucketComments key={item.id} itemId={item.id} viewerId={viewerId} viewerName={props.viewerName} demo={demo} storageKey={storageKey} />}</li>;
-      })}</ul>}
+        return <li key={item.id} className="bucket-card"><div className="bucket-meta"><Badge variant="outline">{item.kind === "place" ? "가고 싶은 곳" : "하고 싶은 것"}</Badge><Badge variant="secondary">{status === "completed" && <Check size={14} />}{labels[status]}</Badge></div><h2><button className="bucket-card-open" disabled={busy} onClick={() => setEditor(item)} aria-label={`${item.title} 세부 입력`}>{item.title}</button></h2>{item.place && <p className="bucket-muted"><MapPin size={14} />{item.place.name}{item.place.address && ` · ${item.place.address}`}</p>}<p className="bucket-reason">{item.reason || "이 버킷리스트를 담은 이유를 남겨보세요."}</p><div className="bucket-tags">{item.tags.map(tag => <Badge key={tag} variant="outline">#{tag}</Badge>)}</div>{visit && <p className="bucket-muted">{status === "completed" ? "완료" : "예정"} · {visit.visitedOn}</p>}<div className="bucket-actions"><Button variant="ghost" onClick={() => setDetail(detail === item.id ? undefined : item.id)} aria-expanded={detail === item.id}>댓글</Button><Button variant="ghost" disabled={busy} onClick={() => setEditor(item)}>수정</Button><Button variant="ghost" disabled={busy} onClick={() => void remove(item)}>삭제</Button>{status === "completed" ? <Button variant="outline" disabled={busy} onClick={() => props.onVisit(item.visit_id!)}>기록 보기</Button> : <Button disabled={busy} onClick={() => stamp(item)}><Stamp />{status === "planned" ? "도장깨기 · 다녀왔어요" : "도장깨기"}</Button>}</div>{detail === item.id && <BucketComments key={item.id} itemId={item.id} viewerId={viewerId} viewerName={props.viewerName} demo={demo} storageKey={storageKey} />}</li>;
+      })}</ul>}</div>
+      <footer className="bucket-footer">{visible.length}개의 버킷리스트 <span>항목 제목을 눌러 세부 내용을 입력하세요.</span></footer>
     </div>
     {confirmation.dialog}
+  </dialog>;
+}
+
+function BucketPopup({ label, busy, onClose, children }: { label: string; busy: boolean; onClose: () => void; children: ReactNode }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  useLayoutEffect(() => {
+    const element = dialog.current;
+    const trigger = document.activeElement;
+    element?.showModal();
+    return () => {
+      element?.close();
+      if (trigger instanceof HTMLElement && trigger.isConnected) trigger.focus({ preventScroll: true });
+    };
+  }, []);
+  return <dialog ref={dialog} className="bucket-popup" aria-label={label} onCancel={event => { event.preventDefault(); event.stopPropagation(); if (!busy) onClose(); }}>
+    {children}
   </dialog>;
 }
 

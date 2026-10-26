@@ -973,3 +973,50 @@ dialog:modal {
  .mobile-nav { display: flex; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; }
  .mobile-nav button { flex: 0 0 max(64px, calc(100% / 5)); font-size: 11px; white-space: nowrap; }
 }
+
+/* Bound the bucket workspace to the viewport; only its list scrolls. */
+.bucket-dialog:modal { width: calc(100vw - 24px); height: calc(100dvh - 32px); max-width: 1200px; display: flex; flex-direction: column; overflow: hidden; }
+.bucket-header { position: static; flex: 0 0 auto; min-width: 0; }
+.bucket-header h1 { min-width: 0; }
+.bucket-workspace { min-width: 0; }
+.bucket-workspace select { min-width: 0; flex: 1; }
+.bucket-content { display: flex; flex: 1; flex-direction: column; gap: 8px; width: 100%; min-width: 0; min-height: 0; margin: 0 auto; padding: 16px 24px 12px; overflow: hidden; }
+.bucket-tools { flex: 0 0 auto; min-width: 0; margin: 8px 0; gap: 12px; }
+.bucket-tools > input { min-width: 0; width: 100%; }
+.bucket-filters { gap: 4px; }
+.bucket-filters button { padding-inline: 10px; }
+.bucket-list-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.bucket-grid { margin: 0; gap: 12px; }
+.bucket-card { padding: 16px; }
+.bucket-card h2 { margin: 10px 0 8px; }
+.bucket-card-open { display: block; width: 100%; text-align: left; white-space: normal; overflow-wrap: anywhere; border-radius: 4px; cursor: pointer; }
+.bucket-card-open:hover { text-decoration: underline; text-underline-offset: 4px; }
+.bucket-card-open:focus-visible { outline: 2px solid var(--ring); outline-offset: 4px; }
+.bucket-card > .bucket-reason { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.bucket-card > .bucket-muted { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bucket-card > .bucket-actions { margin-top: 12px; gap: 4px; }
+.bucket-card > .bucket-actions button { padding-inline: 8px; }
+.bucket-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; flex: 0 0 auto; border-top: 1px solid var(--border); padding-top: 10px; font-size: 12px; color: var(--muted-foreground); }
+.bucket-popup:modal { width: min(600px, calc(100vw - 24px)); padding: 0; border: 1px solid var(--border); background: var(--card); color: var(--foreground); box-shadow: var(--shadow-overlay); overflow-y: auto; overscroll-behavior: contain; }
+.bucket-popup::backdrop { background: rgb(0 0 0 / .45); }
+.bucket-popup .bucket-editor { margin: 0; border: 0; border-radius: 0; }
+.bucket-popup .bucket-editor h2 { margin-top: 0; }
+.bucket-popup input, .bucket-popup textarea, .bucket-popup select, .bucket-place-picker { min-width: 0; max-width: 100%; }
+.bucket-popup select { min-height: 40px; border: 1px solid var(--input); border-radius: 6px; background: var(--background); color: var(--foreground); padding: 6px 10px; }
+.bucket-search { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; }
+.bucket-place-picker > select { width: 100%; }
+@media (max-width: 760px) {
+  .bucket-dialog:modal { width: calc(100vw - 16px); height: calc(100dvh - 16px); max-width: calc(100vw - 16px); max-height: calc(100dvh - 16px); }
+  .bucket-header { padding: 8px 12px; }
+  .bucket-content { padding: 12px; }
+  .bucket-tools { display: flex; flex-direction: column; gap: 8px; margin: 4px 0; }
+  .bucket-filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .bucket-filters button { padding-inline: 4px; font-size: 12px; }
+  .bucket-popup input, .bucket-popup textarea, .bucket-popup select { font-size: 16px; }
+  .bucket-popup button { min-height: 44px; }
+  .bucket-search input { min-width: 0; }
+  .bucket-search button { padding-inline: 10px; }
+  .bucket-search button svg { display: none; }
+  .bucket-editor > .bucket-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .bucket-editor > .bucket-actions button { white-space: normal; height: auto; }
+}

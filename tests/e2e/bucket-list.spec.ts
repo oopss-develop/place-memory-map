@@ -118,3 +118,40 @@ test("restores a wish draft, supports continuous entry and keeps future stamping
   await expect(card).toContainText("일정 잡음");
   await expect(card.getByRole("button", { name: "기록 보기" })).toHaveCount(0);
 });
+
+
+test("fits narrow viewports and opens detail entry in a bounded popup", async ({ page }) => {
+  const bucket = await openBucket(page);
+  await bucket.getByRole("button", { name: "추가", exact: true }).click();
+  const form = bucket.getByRole("form", { name: "버킷리스트 추가" });
+  await form.getByLabel("제목", { exact: true }).fill("바다 보면서 커피 마시기");
+  await form.getByRole("button", { name: "저장", exact: true }).click();
+  for (const width of [320, 390, 768, 1280]) {
+    await page.setViewportSize({ width, height: width === 768 ? 600 : 844 });
+    const bounds = await bucket.evaluate(el => {
+      const rect = el.getBoundingClientRect();
+      return { left: rect.left, right: rect.right, bottom: rect.bottom, overflow: el.scrollWidth > el.clientWidth, verticalOverflow: el.scrollHeight > el.clientHeight };
+    });
+    expect(bounds.left).toBeGreaterThanOrEqual(0);
+    expect(bounds.right).toBeLessThanOrEqual(width);
+    expect(bounds.bottom).toBeLessThanOrEqual(width === 768 ? 600 : 844);
+    expect(bounds.overflow).toBe(false);
+    expect(bounds.verticalOverflow).toBe(false);
+    await expect(bucket.locator(".bucket-footer")).toBeInViewport();
+    await bucket.getByRole("button", { name: "바다 보면서 커피 마시기 세부 입력" }).click();
+    const popup = page.getByRole("dialog", { name: "버킷리스트 수정", exact: true });
+    await expect(popup).toBeVisible();
+    await expect(popup.getByLabel("제목", { exact: true })).toHaveValue("바다 보면서 커피 마시기");
+    await expect(popup).toBeInViewport();
+    expect(await popup.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+    await popup.getByRole("button", { name: "장소 직접 입력" }).click();
+    expect(await popup.evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+    await page.screenshot({ path: test.info().outputPath(`bucket-popup-${width}.png`) });
+    await page.keyboard.press("Escape");
+    await expect(popup).toHaveCount(0);
+    await expect(bucket).toBeVisible();
+    await expect(bucket.getByRole("button", { name: "바다 보면서 커피 마시기 세부 입력" })).toBeFocused();
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: test.info().outputPath("bucket-list-responsive.png") });
+});
