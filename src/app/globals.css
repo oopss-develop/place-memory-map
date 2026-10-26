@@ -613,10 +613,10 @@ button, select { cursor: pointer; }
   .osm-pin-icon.selected img { animation: none; transform: none; }
   .rating-particle, .rating-fall-fragment { display: none; }
 }
-.journal-view-switch { margin: 0 20px; padding: 4px; gap: 4px; border-bottom: 0; background: var(--muted); border-radius: 8px; }
-.journal-view-switch button { border: 1px solid transparent; color: var(--muted-foreground); background: transparent; min-height: 36px; font-size: 14px; font-weight: 500; border-radius: 6px; }
+.journal-view-switch { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0 20px; padding: 4px; gap: 4px; border-bottom: 0; background: var(--muted); border-radius: 8px; }
+.journal-view-switch button { min-width: 0; padding: 8px 12px; white-space: nowrap; border: 1px solid transparent; color: var(--muted-foreground); background: transparent; min-height: 36px; font-size: 14px; font-weight: 500; border-radius: 6px; }
 .journal-view-switch button:hover { background: var(--accent); color: var(--accent-foreground); }
-.journal-view-switch, .planner-view-switch { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.planner-view-switch { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .journal-view-switch a, .planner-view-switch a { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 6px; border-radius: 6px; font-size: 14px; font-weight: 500; white-space: nowrap; color: var(--muted-foreground); text-decoration: none; }
 .journal-view-switch a:hover, .planner-view-switch a:hover { background: var(--accent); color: var(--accent-foreground); }
 .journal-view-switch a:focus-visible, .planner-view-switch a:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
@@ -953,7 +953,7 @@ dialog:modal {
 .bucket-reference { padding: 12px; background: var(--muted); border-radius: 6px; font-size: 14px; }
 .bucket-reference p { white-space: pre-wrap; margin: 8px 0; }
 .bucket-reference small { color: var(--muted-foreground); }
-.journal-view-switch { flex-wrap: wrap; }
+.journal-view-switch > a { grid-column: 1 / -1; min-height: 36px; margin-top: 2px; border-top: 1px solid var(--border); border-radius: 0 0 6px 6px; font-size: 13px; }
 @media(max-width: 760px) {
  .bucket-header { gap: 8px; padding: 12px; flex-wrap: wrap; }
  .bucket-header h1 { font-size: 18px; }
