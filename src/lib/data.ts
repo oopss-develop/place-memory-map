@@ -21,9 +21,12 @@ export async function readPages<T>(query: (from: number, to: number) => PromiseL
  for(let offset=0;;offset+=250){ const {data,error}=await query(offset,offset+249); if(error) throw error; rows.push(...(data??[]) as T[]); if(!data || data.length<250) return rows; }
 }
 export async function loadDashboardSnapshot(db:SupabaseClient,userId:string,requestedGroupId?:string){
- const memberships=await readPages<MembershipRow>((from,to)=>db.from("group_members").select("role,groups(id,name,created_by)").eq("user_id",userId).order("group_id").range(from,to));
+ // Both queries use the authenticated client's RLS and do not depend on each other.
+ const [memberships, counts] = await Promise.all([
+   readPages<MembershipRow>((from,to)=>db.from("group_members").select("role,groups(id,name,created_by)").eq("user_id",userId).order("group_id").range(from,to)),
+   readPages<{group_id:string;visit_count:number;member_count:number}>((from,to)=>db.rpc("dashboard_group_counts").order("group_id").range(from,to)),
+ ]);
  const groups:Group[]=memberships.map(row=>({id:row.groups.id,name:row.groups.name,role:row.role,memberCount:0,ownerId:row.groups.created_by,visitCount:0}));
- const counts=await readPages<{group_id:string;visit_count:number;member_count:number}>((from,to)=>db.rpc("dashboard_group_counts").order("group_id").range(from,to));
  for(const group of groups){const count=counts.find(row=>row.group_id===group.id);group.memberCount=Number(count?.member_count??0);group.visitCount=Number(count?.visit_count??0);}
  const groupId=groups.some(group=>group.id===requestedGroupId)?requestedGroupId:groups[0]?.id;
  if(requestedGroupId && !groups.some(group=>group.id===requestedGroupId)) throw Object.assign(new Error("이 지도의 접근 권한이 없어졌습니다."),{status:403});
@@ -38,9 +41,13 @@ export async function loadDashboardSnapshot(db:SupabaseClient,userId:string,requ
 export async function materializeDashboard(db:SupabaseClient,snapshot:Awaited<ReturnType<typeof loadDashboardSnapshot>>):Promise<DashboardData>{
  const photos=snapshot.rows.flatMap(row=>(row.visit_photos??[]).filter(p=>!p.deleted_at&&p.upload_state!=="pending"));
  const links=new Map<string,string>();let failed=false;
- for(let offset=0;offset<photos.length;offset+=250){
-  const batch=photos.slice(offset,offset+250);
-  try{const {data,error}=await db.storage.from("visit-photos").createSignedUrls(batch.map(photo=>photo.storage_path),3600);if(error)failed=true;for(const [index,photo] of batch.entries()){const url=data?.[index]?.signedUrl;if(url)links.set(photo.id,url);else failed=true;}}catch{failed=true;}
+ // Sign up to four batches concurrently without flooding Storage for large maps.
+ for(let offset=0;offset<photos.length;offset+=1000){
+  await Promise.all([0,250,500,750].map(async start => {
+   const batch=photos.slice(offset+start,Math.min(offset+start+250,offset+1000));
+   if(!batch.length)return;
+   try{const {data,error}=await db.storage.from("visit-photos").createSignedUrls(batch.map(photo=>photo.storage_path),3600);if(error)failed=true;for(const [index,photo] of batch.entries()){const url=data?.[index]?.signedUrl;if(url)links.set(photo.id,url);else failed=true;}}catch{failed=true;}
+  }));
  }
  const visits=snapshot.rows.map(row=>{
  const signed=(row.visit_photos??[]).filter(photo=>links.has(photo.id)).sort((a,b)=>a.sort_order-b.sort_order).map(photo=>({id:photo.id,url:links.get(photo.id)}));

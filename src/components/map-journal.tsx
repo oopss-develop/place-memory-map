@@ -6,7 +6,9 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, typ
 import { flushSync } from "react-dom";
 import dynamic from "next/dynamic";
 const MemoryBoard = dynamic(() => import("./memory-board"), { ssr: false, loading: () => <div role="status" className="dashboard-error">추억 보드 불러오는 중…</div> });
-import { BucketList } from "./bucket-list";
+const BucketList = dynamic(() => import("./bucket-list").then((module) => module.BucketList), {
+  loading: () => <div role="status" className="dashboard-error">버킷리스트 불러오는 중…</div>,
+});
 import { VisitComments } from "./visit-comments";
 import { useRouter } from "next/navigation";
 import Link from "./app-link";
@@ -14,7 +16,9 @@ import { CalendarDays, Camera, Check, ChevronDown, ChevronLeft, ChevronRight, Fi
 import { KakaoMap, type MapAnchor } from "@/components/kakao-map";
 import { DesktopSidebarToggle, useDesktopSidebar } from "./desktop-sidebar-toggle";
 import { useActivityProgress } from "./activity-progress";
-import { TripPlanner } from "@/components/trip-planner";
+const TripPlanner = dynamic(() => import("@/components/trip-planner").then((module) => module.TripPlanner), {
+  loading: () => <div role="status" className="dashboard-error">여행 계획 불러오는 중…</div>,
+});
 import { GroupOnboarding } from "@/components/group-onboarding";
 import { InstallAppButton } from "@/components/install-app-button";
 import { FontPicker } from "@/components/font-preference";

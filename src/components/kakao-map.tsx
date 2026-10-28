@@ -2,6 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @next/next/no-img-element */
 import { useEffect, useRef, useState } from "react";
+import { preload } from "react-dom";
 import { MapPin } from "lucide-react";
 import { markerSvgDataUrl, normalizeMarkerStyle, tripMarkerDataUrl } from "@/lib/marker-styles";
 import type { MapPoint, TripRoute } from "@/types/domain";
@@ -77,6 +78,15 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
     return () => { exportViewRef.current = null; };
   }, [exportViewRef, ready, mapProvider, visits, route]);
   const apiKey = process.env.NEXT_PUBLIC_KAKAO_MAP_JS_KEY;
+  const sdkUrl = apiKey
+    ? `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false&libraries=clusterer`
+    : undefined;
+  // Emit a resource hint during SSR so the SDK downloads alongside hydration.
+  // Use the same URL as the script below to reuse the request without executing
+  // the SDK early or changing Kakao's manual initialization sequence.
+  if (sdkUrl && mapProvider === "kakao") {
+    preload(sdkUrl, { as: "script" });
+  }
   const selectedVisit = visits.find((visit) => visit.id === selectedId);
   const pulseTarget = selectedVisit?.place ?? pulseLocation;
   const pulseLatitude = pulseTarget?.latitude;
@@ -97,7 +107,7 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
   }, [ready, mapProvider]);
 
   useEffect(() => {
-    if (!apiKey || !ref.current || mapProvider === "osm") return;
+    if (!sdkUrl || !ref.current || mapProvider === "osm") return;
     const timeout = window.setTimeout(() => setFailed(true), 12000);
     const boot = () => window.kakao?.maps.load(() => {
       if (!ref.current) return;
@@ -129,13 +139,13 @@ export function KakaoMap<T extends MapPoint>({ visits, mapProvider, selectedId, 
     });
     if (window.kakao?.maps) { boot(); return () => clearTimeout(timeout); }
     const script = document.createElement("script");
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${apiKey}&autoload=false&libraries=clusterer`;
+    script.src = sdkUrl;
     script.async = true;
     script.onload = boot;
     script.onerror = () => { clearTimeout(timeout); setFailed(true); };
     document.head.appendChild(script);
     return () => { clearTimeout(timeout); script.onload = null; script.onerror = null; };
-  }, [apiKey, mapProvider]);
+  }, [sdkUrl, mapProvider]);
 
   useEffect(() => {
     // 선택 핀의 파동 효과는 잠시 비활성화합니다. 선택된 핀 자체의 바운스만 사용합니다.

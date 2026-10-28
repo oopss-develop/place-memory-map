@@ -15,6 +15,7 @@ export function useVisitStore(initialData: DashboardData, groupId: string, pause
   const revision = useRef(0);
   const foregroundLoading = useRef(false);
   const etag = useRef("");
+  const serverSnapshot = useRef({ data: initialData, leftInitialGroup: false });
   const photosIssuedAt = useRef(0);
   const controller = useRef<AbortController | null>(null);
   const current = useRef({ groupId, paused });
@@ -57,13 +58,19 @@ export function useVisitStore(initialData: DashboardData, groupId: string, pause
     finally { if (requestRevision === revision.current) { foregroundLoading.current = false; setLoading(false); } }
   }, [groupId, initialData.demoMode, viewerId]);
   useEffect(() => {
-    etag.current = (initialData.activeGroupId ?? initialData.groups[0]?.id) === groupId ? initialData.etag ?? "" : ""; revision.current++;
-    const timer = setTimeout(() => { if (!initialData.demoMode) void refresh(); }, 0);
+    const initialGroupId = initialData.activeGroupId ?? initialData.groups[0]?.id;
+    if (serverSnapshot.current.data !== initialData) serverSnapshot.current = { data: initialData, leftInitialGroup: false };
+    if (groupId !== initialGroupId) serverSnapshot.current.leftInitialGroup = true;
+    const hasServerSnapshot = groupId === initialGroupId && !serverSnapshot.current.leftInitialGroup && Boolean(initialData.etag) && !initialData.photoWarning;
+    etag.current = hasServerSnapshot ? initialData.etag ?? "" : ""; revision.current++;
+    // The server just fetched this group. Keep polling/focus updates, but avoid
+    // another dashboard request competing with the first map render.
+    const timer = setTimeout(() => { if (!initialData.demoMode && !hasServerSnapshot) void refresh(); }, 0);
     const sync = () => { if (!navigator.onLine || document.visibilityState === "hidden") { revision.current++; controller.current?.abort(); foregroundLoading.current = false; setLoading(false); } else void refresh(false, false, true); };
     const interval = setInterval(sync, 10000);
     window.addEventListener("focus", sync); window.addEventListener("online", sync); window.addEventListener("offline", sync); document.addEventListener("visibilitychange", sync);
     const invalidate = () => { revision.current++; foregroundLoading.current = false; };
     return () => { clearTimeout(timer); clearInterval(interval); invalidate(); controller.current?.abort(); window.removeEventListener("focus", sync); window.removeEventListener("online", sync); window.removeEventListener("offline", sync); document.removeEventListener("visibilitychange", sync); };
-  }, [groupId, initialData.demoMode, initialData.activeGroupId, initialData.groups, initialData.etag, refresh]);
+  }, [groupId, initialData.demoMode, initialData.activeGroupId, initialData.groups, initialData.etag, initialData.photoWarning, initialData, refresh]);
   return { visits, setVisits, groups, setGroups, members, refresh, error, photoWarning, loading };
 }

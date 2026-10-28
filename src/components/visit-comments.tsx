@@ -6,7 +6,10 @@ import { Button } from "./ui/button";
 import { useConfirmation } from "./confirmation";
 
 import type { Sticker } from "@/lib/stickers";
-import { StickerPicker } from "./sticker-picker";
+import dynamic from "next/dynamic";
+const StickerPicker = dynamic(() => import("./sticker-picker").then((module) => module.StickerPicker), {
+  loading: () => <p role="status">이모티콘 불러오는 중…</p>,
+});
 import { StickerImage } from "./sticker-image";
 
 interface CommentsResult { comments: Comment[]; warning?: string; stickersAvailable?: boolean }

@@ -3,9 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Download, ShieldCheck } from "lucide-react";
 import { Button } from "./ui/button";
-import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
-import { createWorkspaceBackup } from "@/lib/workspace-backup";
-import { backupHash, parseManifest, snapshotSchema, validateBackupCoverage } from "@/lib/backup-format";
 export function WorkspaceBackup({ userId = "viewer", demo = false }: { userId?: string; demo?: boolean }) {
   const [open,setOpen]=useState(false);
   const [busy,setBusy]=useState(false);
@@ -27,6 +24,10 @@ export function WorkspaceBackup({ userId = "viewer", demo = false }: { userId?: 
     lock.current=true;setBusy(true);setError("");setMessage("");
     const abort=new AbortController();controller.current=abort;
     try {
+      const [{ createWorkspaceBackup }, { createSupabaseBrowserClient }] = await Promise.all([
+        import("@/lib/workspace-backup"), import("@/lib/supabase/browser"),
+      ]);
+      abort.signal.throwIfAborted();
       const result=await createWorkspaceBackup(createSupabaseBrowserClient(),{photos,stickers,signal:abort.signal,progress:setMessage});
       const url=URL.createObjectURL(result.blob);const link=document.createElement("a");link.href=url;link.download=result.filename;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);
       const date=new Date().toISOString();try {localStorage.setItem(key,date);}catch{}setLast(date);
@@ -39,7 +40,11 @@ export function WorkspaceBackup({ userId = "viewer", demo = false }: { userId?: 
     lock.current=true;setBusy(true);setError("");setMessage("백업 파일을 확인하는 중…"); const abort=new AbortController();controller.current=abort;
     try {
       if(file.size>512*1024*1024)throw new Error("512MB 이상 파일은 PC 복원 도구에서 확인해 주세요.");
-      const {default:JSZip}=await import("jszip");const zip=await JSZip.loadAsync(await file.arrayBuffer());
+      const [{ default: JSZip }, { backupHash, parseManifest, snapshotSchema, validateBackupCoverage }] = await Promise.all([
+        import("jszip"), import("@/lib/backup-format"),
+      ]);
+      abort.signal.throwIfAborted();
+      const zip=await JSZip.loadAsync(await file.arrayBuffer());
       const manifestFile=zip.file("manifest.json");if(!manifestFile)throw new Error("우뚜막 백업 파일이 아닙니다.");
       const manifest=parseManifest(JSON.parse(await manifestFile.async("string")));
       let bytes=0;

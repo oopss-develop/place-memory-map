@@ -14,6 +14,8 @@ const sans = Noto_Sans_KR({
 
 const serif = Gowun_Batang({
   variable: "--font-gowun",
+  // This is an optional font; let CSS load it only when selected or displayed.
+  preload: false,
   subsets: ["latin"],
   weight: ["400", "700"],
   display: "swap",
